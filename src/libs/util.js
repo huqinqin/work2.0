@@ -38,9 +38,21 @@ export const getMenuByRouter = (list, access) => {
         name: item.name,
         meta: item.meta
       }
-      if (hasChild(item) && showThisMenuEle(item, access)) {
-        obj.children = getMenuByRouter(item.children, access)
+      if (hasChild(item)) {
+        if (item.children.length === 1) {
+          const child = item.children[0]
+          obj = {
+            icon: (child.meta && child.meta.icon) || '',
+            name: child.name,
+            meta: child.meta
+          }
+        } else if (showThisMenuEle(item, access)) {
+          obj.children = getMenuByRouter(item.children, access)
+        }
       }
+      // if (hasChild(item) && showThisMenuEle(item, access)) {
+      //   obj.children = getMenuByRouter(item.children, access)
+      // }
       if (showThisMenuEle(item, access)) res.push(obj)
     }
   })
@@ -60,7 +72,12 @@ export const getBreadCrumbList = (routeMetched) => {
     }
     return obj
   })
+  let list = []
   res = res.filter(item => {
+    if (list.some(sub => sub.meta.title === item.meta.title)) {
+      return false
+    }
+    list.push(item)
     return !item.meta.hideInMenu
   })
   return [{
