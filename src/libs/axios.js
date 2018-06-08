@@ -1,90 +1,123 @@
-import Axios from 'axios'
+import axios from 'axios' // 注意先安装哦
 import baseURL from '_conf/url'
 import { Message } from 'iview'
-import Cookies from 'js-cookie'
-import { TOKEN_KEY } from '@/libs/util'
-class httpRequest {
-  constructor () {
-    this.options = {
-      method: '',
-      url: ''
-    }
-    // 存储请求队列
-    this.queue = {}
-  }
-  // 销毁请求实例
-  destroy (url) {
-    delete this.queue[url]
-    const queue = Object.keys(this.queue)
-    return queue.length
-  }
-  // 请求拦截
-  interceptors (instance, url) {
-    // 添加请求拦截器
-    instance.interceptors.request.use(config => {
-      if (!config.url.includes('/users')) {
-        config.headers['x-access-token'] = Cookies.get(TOKEN_KEY)
-      }
-      // Spin.show()
-      // 在发送请求之前做些什么
-      return config
-    }, error => {
-      // 对请求错误做些什么
-      return Promise.reject(error)
-    })
+axios.defaults.baseURL = baseURL
 
-    // 添加响应拦截器
-    instance.interceptors.response.use((res) => {
-      let { data } = res
-      const is = this.destroy(url)
-      if (!is) {
-        setTimeout(() => {
-          // Spin.hide()
-        }, 500)
-      }
-      if (!(data instanceof Blob)) {
-        if (data.code !== 200) {
-          // 后端服务在个别情况下回报201，待确认
-          if (data.code === 401) {
-            Cookies.remove(TOKEN_KEY)
-            window.location.href = '/#/login'
-            Message.error('未登录，或登录失效，请登录')
-          } else {
-            if (data.msg) Message.error(data.msg)
-          }
-          return false
-        }
-      }
-      return data
-    }, (error) => {
-      Message.error('服务内部错误')
-      // 对响应错误做点什么
-      return Promise.reject(error)
-    })
+// request 拦截器
+axios.interceptors.request.use(
+  config => {
+    // Tip: 1
+    // 请求开始的时候可以结合 vuex 开启全屏的 loading 动画
+
+    // Tip: 2
+    // 带上 token , 可以结合 vuex 或者重 localStorage
+    return config
+  },
+  error => {
+    // 请求错误时做些事(接口错误、超时等)
+    // Tip: 4
+    // 关闭loadding
+    console.log('request:', error)
+
+    //  1.判断请求超时
+    if (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1) {
+      console.log('根据你设置的timeout/真的请求超时 判断请求现在超时了，你可以在这里加入超时的处理方案')
+      // return service.request(originalRequest);//例如再重复请求一次
+    }
+    //  2.需要重定向到错误页面
+    // const errorInfo = error.response
+    // console.log(errorInfo)
+    // if (errorInfo) {
+    // error =errorInfo.data//页面那边catch的时候就能拿到详细的错误信息,看最下边的Promise.reject
+    //   const errorStatus = errorInfo.status // 404 403 500 ... 等
+    //   router.push({
+    //     path: `/error/${errorStatus}`
+    //   })
+    // }
+    return Promise.reject(error) // 在调用的那边可以拿到(catch)你想返回的错误信息
   }
-  // 创建实例
-  create () {
-    let conf = {
-      baseURL: baseURL,
-      // timeout: 2000,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'X-URL-PATH': location.pathname
+)
+
+// response 拦截器
+axios.interceptors.response.use(
+  response => {
+    let res
+    // IE9时response.data是undefined，因此需要使用response.request.responseText(Stringify后的字符串)
+    if (response.data === undefined) {
+      res = response.request.responseText
+    } else {
+      res = response.data
+    }
+    // 根据返回的code值来做不同的处理（和后端约定）
+    switch (res.code) {
+      case '':
+        break
+      default:
+    }
+    // 若不是正确的返回code，且已经登录，就抛出错误
+    // const err = new Error(data.description)
+
+    // err.data = data
+    // err.response = response
+
+    // throw err
+    return res.data
+  },
+  err => {
+    if (err && err.response) {
+      switch (err.response.status) {
+        case 400:
+          err.message = '请求错误'
+          break
+
+        case 401:
+          err.message = '未授权，请登录'
+          break
+
+        case 403:
+          err.message = '拒绝访问'
+          break
+
+        case 404:
+          err.message = `请求地址出错: ${err.response.config.url}`
+          break
+
+        case 408:
+          err.message = '请求超时'
+          break
+
+        case 500:
+          err.message = '服务器内部错误'
+          break
+
+        case 501:
+          err.message = '服务未实现'
+          break
+
+        case 502:
+          err.message = '网关错误'
+          break
+
+        case 503:
+          err.message = '服务不可用'
+          break
+
+        case 504:
+          err.message = '网关超时'
+          break
+
+        case 505:
+          err.message = 'HTTP版本不受支持'
+          break
+
+        default:
       }
     }
-    return Axios.create(conf)
+    console.error(err)
+    // 此处我使用的是 element UI 的提示组件
+    Message.error(`ERROR: ${err}`)
+    return Promise.reject(err) // 返回接口返回的错误信息
   }
-  // 合并请求实例
-  mergeReqest (instances = []) {
-    //
-  }
-  // 请求实例
-  request (options) {
-    var instance = this.create()
-    this.interceptors(instance, options.url)
-    options = Object.assign({}, options)
-    this.queue[options.url] = instance
-    return instance(options)
-  }
-}
-export default httpRequest
+)
+
+export default axios

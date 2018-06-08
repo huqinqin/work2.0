@@ -1,4 +1,3 @@
-import { getParams } from '@/libs/util'
 const USER_MAP = {
   super_admin: {
     name: 'super_admin',
@@ -18,6 +17,7 @@ const USER_MAP = {
 
 export const login = req => {
   req = JSON.parse(req.body)
+  console.log('req', req)
   return {
     code: 200,
     data: {token: USER_MAP[req.userName].token},
@@ -26,10 +26,9 @@ export const login = req => {
 }
 
 export const getUserInfo = req => {
-  const params = getParams(req.url)
   return {
     code: 200,
-    data: USER_MAP[params.token],
+    data: USER_MAP.super_admin,
     msg: ''
   }
 }
