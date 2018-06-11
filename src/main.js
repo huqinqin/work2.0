@@ -8,8 +8,8 @@ import iView from 'iview'
 import i18n from '@/locale'
 import config from '@/config'
 import 'iview/dist/styles/iview.css'
-// import env from '../config/env'
-// if (env === 'development') require('@/mock')
+import env from '../config/env'
+if (env === 'development') require('@/mock')
 
 Vue.use(iView)
 Vue.config.productionTip = false

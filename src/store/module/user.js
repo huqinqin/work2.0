@@ -31,24 +31,20 @@ export default {
   actions: {
     // 登录
     handleLogin ({ commit }, {userName, password}) {
-      userName = userName.trim()
+      console.log(userName, password)
       return new Promise((resolve, reject) => {
         api.get('/user/login', {
-          account: userName,
-          password: md5(password),
-          source: 'PC'
+          params: {
+            account: userName,
+            password: md5(password),
+            source: 'PC'
+          }
         }).then(data => {
-          console.log('data', data)
+          commit('setToken', data.session)
+          resolve()
+        }).catch(err => {
+          reject(err)
         })
-        // api.post('tokens', {
-        //   userName,
-        //   password
-        // }).then(data => {
-        //   commit('setToken', data)
-        //   resolve()
-        // }).catch(err => {
-        //   reject(err)
-        // })
       })
     },
     // 退出登录
