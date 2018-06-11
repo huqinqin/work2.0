@@ -33,6 +33,35 @@ export default [
     ]
   },
   {
+    path: '/config-page',
+    meta: {
+      icon: 'lock-combination',
+      title: '配置页面'
+    },
+    name: 'config-page',
+    component: Main,
+    children: [
+      {
+        path: 'home',
+        name: 'config-page-home',
+        meta: {
+          icon: 'lock-combination',
+          title: '配置首页'
+        },
+        component: () => import('@/view/ConfigPageHome.vue')
+      },
+      {
+        path: 'activity',
+        name: 'config-page-activity',
+        meta: {
+          icon: 'lock-combination',
+          title: '配置活动'
+        },
+        component: () => import('@/view/ConfigPageActivity.vue')
+      }
+    ]
+  },
+  {
     path: '/allocation',
     redirect: '/allocation/index',
     meta: {
