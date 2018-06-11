@@ -1,7 +1,7 @@
 import axios from 'axios' // 注意先安装哦
-import baseURL from '_conf/url'
+// import baseURL from '_conf/url'
 import { Message } from 'iview'
-axios.defaults.baseURL = baseURL
+axios.defaults.baseURL = '/gateway'
 
 // request 拦截器
 axios.interceptors.request.use(

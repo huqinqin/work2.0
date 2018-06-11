@@ -1,3 +1,4 @@
+const baseURL = 'http://47.96.141.89:8085'
 const path = require('path')
 const fs = require('fs')
 
@@ -23,6 +24,11 @@ module.exports = {
   // https://www.foobar.com/my-app/
   // then change this to '/my-app/'
   baseUrl: BASE_URL,
+  devServer: {
+    proxy: {
+      '/gateway': { target: baseURL }
+    }
+  },
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
   chainWebpack: config => {

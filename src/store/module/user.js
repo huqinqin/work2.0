@@ -1,5 +1,6 @@
 import api from '@/libs/axios.js'
 import { setToken, getToken } from '@/libs/util'
+import md5 from 'md5'
 
 export default {
   state: {
@@ -32,15 +33,22 @@ export default {
     handleLogin ({ commit }, {userName, password}) {
       userName = userName.trim()
       return new Promise((resolve, reject) => {
-        api.post('tokens', {
-          userName,
-          password
+        api.get('/user/login', {
+          account: userName,
+          password: md5(password),
+          source: 'PC'
         }).then(data => {
-          commit('setToken', data)
-          resolve()
-        }).catch(err => {
-          reject(err)
+          console.log('data', data)
         })
+        // api.post('tokens', {
+        //   userName,
+        //   password
+        // }).then(data => {
+        //   commit('setToken', data)
+        //   resolve()
+        // }).catch(err => {
+        //   reject(err)
+        // })
       })
     },
     // 退出登录
