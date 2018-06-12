@@ -3,7 +3,7 @@
     <div v-if="isExist">
       <a :href="'/detail?t=' + new Date().getTime() +'#/info?id=' + product.id" target="_blank">
         <div class="img" :style="{backgroundImage : 'url(' + product.image + '!item_middle)'}"></div>
-        <p :title="product.title" class="name">{{product.title}}</p>
+        <p :title="product.title" class="name">{{product.name}}</p>
         <div class="item-price">
           <p class="price">
             <span class="realPrice">
@@ -39,7 +39,7 @@ export default {
     product: {
       id: '',
       image: '',
-      title: '',
+      name: '',
       realPrice: '',
       oldPrice: ''
     }
@@ -82,6 +82,7 @@ li {
   /*margin-top: 36px;*/
   border: 1px solid #f2f2f2;
   margin-bottom: 12px;
+  margin-right: 12px;
   .img {
     width: 100%;
     height: 222px;

@@ -9,6 +9,7 @@ import i18n from '@/locale'
 import config from '@/config'
 import 'iview/dist/styles/iview.css'
 import env from '../config/env'
+import api from '@/libs/axios.js'
 if (env === 'development') require('@/mock')
 
 Vue.use(iView)
@@ -17,6 +18,7 @@ Vue.config.productionTip = false
  * @description 全局注册应用配置
  */
 Vue.prototype.$config = config
+Vue.prototype.$api = api
 
 iView.i18n((key, value) => i18n.t(key, value))
 

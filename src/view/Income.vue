@@ -1,91 +1,80 @@
 <template>
-    <Card>
-      <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
-        <FormItem prop="user">
-            <Input type="text" v-model="formInline.user" placeholder="Username">
-                <Icon type="ios-person-outline" slot="prepend"></Icon>
-            </Input>
-        </FormItem>
-        <FormItem prop="password">
-            <Input type="password" v-model="formInline.password" placeholder="Password">
-                <Icon type="ios-locked-outline" slot="prepend"></Icon>
-            </Input>
-        </FormItem>
-        <FormItem>
-            <Button type="primary" @click="handleSubmit('formInline')">Signin</Button>
-        </FormItem>
-    </Form>
-        <Table highlight-row ref="currentRowi-table" :columns="columns3" :data="data1"></Table>
-        <Button @click="handleClearCurrentRow">Clear</Button>
-    </Card>
+  <card>
+    <i-form ref="filter" :model="filter" inline>
+      <form-item prop="image">
+        <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
+      </form-item>
+      <form-item prop="id">
+        <i-input v-model="filter.id" type="text" placeholder="商品ID" ></i-input>
+      </form-item>
+      <form-item prop="name">
+        <i-input v-model="filter.name" type="text" placeholder="商品名称" ></i-input>
+      </form-item>
+      <form-item prop="brand">
+        <i-input v-model="filter.brand" type="text" placeholder="商品品牌" ></i-input>
+      </form-item>
+      <form-item prop="label">
+        <i-input v-model="filter.label" type="text" placeholder="商品标签" ></i-input>
+      </form-item>
+      <form-item prop="total">
+        <i-input v-model="filter.total" type="text" placeholder="商品出售总数" ></i-input>
+      </form-item>
+      <form-item prop="createAt">
+        <date-picker type="datetimerange" placeholder="商品创建时间"></date-picker>
+      </form-item>
+      <form-item prop="status">
+        <i-input v-model="filter.status" type="text" placeholder="商品状态" ></i-input>
+      </form-item>
+      <form-item>
+        <i-button type="primary">查询</i-button>
+        <i-button type="error">删除所选</i-button>
+      </form-item>
+    </i-form>
+    <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
+  </card>
 </template>
 <script>
 export default {
   data () {
     return {
-      formInline: {
-        user: '',
-        password: ''
+      filter: {
+        image: '', id: '', name: '', brand: '', label: '', total: '', createAt: '', status: ''
       },
-      ruleInline: {
-        user: [
-          { required: true, message: 'Please fill in the user name', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: 'Please fill in the password.', trigger: 'blur' },
-          { type: 'string', min: 6, message: 'The password length cannot be less than 6 bits', trigger: 'blur' }
-        ]
-      },
-      columns3: [
+      columns: [
         {
-          type: 'index',
+          type: 'selection',
           width: 60,
           align: 'center'
         },
         {
-          title: 'Name',
+          title: '商品图片',
+          key: 'image'
+        }, {
+          title: '商品ID',
+          key: 'id'
+        }, {
+          title: '商品名称',
           key: 'name'
-        },
-        {
-          title: 'Age',
-          key: 'age'
-        },
-        {
-          title: 'Address',
-          key: 'address'
+        }, {
+          title: '商品品牌',
+          key: 'brand'
+        }, {
+          title: '商品标签',
+          key: 'label'
+        }, {
+          title: '商品出售总数',
+          key: 'total'
+        }, {
+          title: '商品创建时间',
+          key: 'createAt'
+        }, {
+          title: '商品状态',
+          key: 'status'
         }
       ],
-      data1: [
-        {
-          name: 'John Brown',
-          age: 18,
-          address: 'New York No. 1 Lake Park',
-          date: '2016-10-03'
-        },
-        {
-          name: 'Jim Green',
-          age: 24,
-          address: 'London No. 1 Lake Park',
-          date: '2016-10-01'
-        },
-        {
-          name: 'Joe Black',
-          age: 30,
-          address: 'Sydney No. 1 Lake Park',
-          date: '2016-10-02'
-        },
-        {
-          name: 'Jon Snow',
-          age: 26,
-          address: 'Ottawa No. 2 Lake Park',
-          date: '2016-10-04'
-        }
+      list: [
+        {}
       ]
-    }
-  },
-  methods: {
-    handleClearCurrentRow () {
-      this.$refs.currentRowTable.clearCurrentRow()
     }
   }
 }
