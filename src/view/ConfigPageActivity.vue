@@ -1,60 +1,45 @@
 <template>
   <card class="config-page-wrapper">
+    <p slot="title">配置</p>
+    <span slot="extra">
+      <a href="#" slot="extra" @click.prevent="changeLimit">
+          <Icon type="ios-plus-empty"></Icon>
+          新增模块
+      </a>
+    </span>
+    <LayoutModuleBanner></LayoutModuleBanner>
+    <LayoutModuleFloor></LayoutModuleFloor>
+    <LayoutModuleProduct></LayoutModuleProduct>
+    <LayoutModuleIntro></LayoutModuleIntro>
+    <div class="empty-column">
+      <div class="operate-list">
+        <ButtonGroup vertical>
+          <Button type="ghost" icon="edit">编辑</Button>
+          <Button type="ghost" icon="trash-a">删除</Button>
+          <Button type="ghost" icon="arrow-up-a">上移</Button>
+          <Button type="ghost" icon="arrow-down-a">下移</Button>
+        </ButtonGroup>
+      </div>
+    </div>
     <div class="search-result">
       <ul class="result">
         <LayoutProduct v-for="product in products" :key="product.id" :product="product"></LayoutProduct>
       </ul>
     </div>
-    <i-button type="primary" @click="showProductsModal">Submit</i-button>
-    <Modal
-        v-model="modal"
-        title="Common Modal dialog box title" width="80%">
-          <i-form ref="filter" :model="filter" inline>
-            <form-item prop="image">
-              <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
-            </form-item>
-            <form-item prop="id">
-              <i-input v-model="filter.id" type="text" placeholder="商品ID" ></i-input>
-            </form-item>
-            <form-item prop="name">
-              <i-input v-model="filter.name" type="text" placeholder="商品名称" ></i-input>
-            </form-item>
-            <form-item prop="brand">
-              <i-input v-model="filter.brand" type="text" placeholder="商品品牌" ></i-input>
-            </form-item>
-            <form-item prop="label">
-              <i-input v-model="filter.label" type="text" placeholder="商品标签" ></i-input>
-            </form-item>
-            <form-item prop="total">
-              <i-input v-model="filter.total" type="text" placeholder="商品出售总数" ></i-input>
-            </form-item>
-            <form-item prop="createAt">
-              <date-picker type="datetimerange" placeholder="商品创建时间"></date-picker>
-            </form-item>
-            <form-item prop="status">
-              <i-input v-model="filter.status" type="text" placeholder="商品状态" ></i-input>
-            </form-item>
-            <form-item>
-              <i-button type="primary">查询</i-button>
-              <i-button type="primary">添加所选</i-button>
-            </form-item>
-          </i-form>
-          <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
-          <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
-            <div style="float:right;">
-              <Page :total="40" size="small" show-elevator show-sizer></Page>
-            </div>
-          </div>
-    </Modal>
   </card>
 </template>
 <script>
 export default {
   name: 'ConfigPageActivity',
-  components: {LayoutProduct: () => import('@/view/components/LayoutProduct.vue')},
+  components: {
+    LayoutProduct: () => import('@/view/components/LayoutProduct.vue'),
+    LayoutModuleBanner: () => import('@/view/components/LayoutModuleBanner'),
+    LayoutModuleFloor: () => import('@/view/components/LayoutModuleFloor'),
+    LayoutModuleProduct: () => import('@/view/components/LayoutModuleProduct'),
+    LayoutModuleIntro: () => import('@/view/components/LayoutModuleIntro')
+  },
   data () {
     return {
-      modal: false,
       products: [],
       filter: {
         image: '', id: '', name: '', brand: '', label: '', total: '', createAt: '', status: ''
@@ -138,9 +123,6 @@ export default {
     }
   },
   methods: {
-    showProductsModal () {
-      this.modal = true
-    },
     submit () {
       this.$api.get('/store/item/get_manage_list', {
         params: {
@@ -183,8 +165,25 @@ export default {
   }
 }
 </style>
-<style>
-.ivu-modal-footer{
+<style lang="less">
+.empty-column {
+  text-align: center;
+  height: 380px;
+  width: 100%;
+  border: 1px dotted #ccc;
+  position: relative;
+}
+.module-content{
+  position: relative;
+}
+.module-content:hover .operate-list {
+  display: inline;
+}
+.operate-list{
   display: none;
+  position: absolute;
+  z-index: 99;
+  top: 0;
+  right: 0;
 }
 </style>
