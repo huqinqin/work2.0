@@ -14,16 +14,20 @@
       </i-col>
     </row>
     <form-item>
-        <i-button type="primary">Submit</i-button>
+        <i-button type="primary" @click="submit">Submit</i-button>
         <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
     </form-item>
   </i-form>
+  <span v-for="(item, index) in list" :key="index">
+    {{item}}
+  </span>
 </card>
 </template>
 <script>
 export default {
   data () {
     return {
+      list: [],
       form: {
         input: '', input2: ''
       },
@@ -41,6 +45,17 @@ export default {
 
       }
     }
+  },
+  methods: {
+    submit () {
+      this.list.push({name: 'q'})
+      this.list.push({name: 'q2'})
+    }
+  },
+  beforeMount () {
+    // this.list.push({name: 'q'})
+    // this.list.push({name: 'q2'})
+    // this.list = ['q', '2']
   }
 }
 </script>

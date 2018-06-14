@@ -2,37 +2,34 @@
   <card class="config-page-wrapper">
     <p slot="title">配置</p>
     <span slot="extra">
-      <a href="#" slot="extra" @click.prevent="changeLimit">
+      <a href="#" slot="extra" @click.prevent="showAddModule">
           <Icon type="ios-plus-empty"></Icon>
           新增模块
       </a>
     </span>
-    <LayoutModuleBanner></LayoutModuleBanner>
-    <LayoutModuleFloor></LayoutModuleFloor>
-    <LayoutModuleProduct></LayoutModuleProduct>
-    <LayoutModuleIntro></LayoutModuleIntro>
-    <div class="empty-column">
-      <div class="operate-list">
-        <ButtonGroup vertical>
-          <Button type="ghost" icon="edit">编辑</Button>
-          <Button type="ghost" icon="trash-a">删除</Button>
-          <Button type="ghost" icon="arrow-up-a">上移</Button>
-          <Button type="ghost" icon="arrow-down-a">下移</Button>
-        </ButtonGroup>
-      </div>
+    <div>
+      <component v-for="(item, index) in list" :is="modules[item.type - 1]" :key="index" @delete="delModule(index)" @up="upModule(index)" @down="downModule(index)"></component>
     </div>
-    <div class="search-result">
-      <ul class="result">
-        <LayoutProduct v-for="product in products" :key="product.id" :product="product"></LayoutProduct>
-      </ul>
-    </div>
+    <Modal
+      v-model="modal"
+      @on-ok="addModule"
+      title="新增模块">
+      <span v-for="(item, index) in list" :key="index">
+        {{index}}:{{item}}
+      </span>
+      <Select v-model="moduleType" style="width:200px">
+        <Option :value="1">Banner模块</Option>
+        <Option :value="2">楼层模块</Option>
+        <Option :value="3">商品模块</Option>
+        <Option :value="4">说明模块</Option>
+      </Select>
+    </Modal>
   </card>
 </template>
 <script>
 export default {
   name: 'ConfigPageActivity',
   components: {
-    LayoutProduct: () => import('@/view/components/LayoutProduct.vue'),
     LayoutModuleBanner: () => import('@/view/components/LayoutModuleBanner'),
     LayoutModuleFloor: () => import('@/view/components/LayoutModuleFloor'),
     LayoutModuleProduct: () => import('@/view/components/LayoutModuleProduct'),
@@ -40,114 +37,51 @@ export default {
   },
   data () {
     return {
-      products: [],
-      filter: {
-        image: '', id: '', name: '', brand: '', label: '', total: '', createAt: '', status: ''
-      },
-      columns: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: '商品图片',
-          key: 'image',
-          render: (h, params) => {
-            return h('div', [
-              h('img', {
-                attrs: {
-                  src: params.row.image
-                },
-                style: {
-                  width: '40px',
-                  height: '40px'
-                },
-                on: {
-                  click: () => {
-                    console.log(params)
-                  }
-                }
-              })
-            ])
-          }
-        }, {
-          title: '商品ID',
-          key: 'id'
-        }, {
-          title: '商品名称',
-          key: 'name'
-        }, {
-          title: '商品品牌',
-          key: 'brand'
-        }, {
-          title: '商品标签',
-          key: 'label'
-        }, {
-          title: '商品出售总数',
-          key: 'total'
-        }, {
-          title: '商品创建时间',
-          key: 'createAt'
-        }, {
-          title: '商品状态',
-          key: 'status'
-        }, {
-          title: '操作',
-          key: 'action',
-          width: 150,
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.products.push(params.row)
-                  }
-                }
-              }, '添加')
-            ])
-          }
-        }
-      ],
-      list: [
-        {}
-      ]
+      modal: false,
+      modules: ['LayoutModuleBanner', 'LayoutModuleFloor', 'LayoutModuleProduct', 'LayoutModuleIntro'],
+      moduleType: 1,
+      list: []
     }
   },
   methods: {
-    submit () {
-      this.$api.get('/store/item/get_manage_list', {
-        params: {
-          order_by: 'cdate desc',
-          page: 1,
-          page_size: 10,
-          wholesale_item_query: {keywords: '', cdateMin: '', 'cdateMax': '', 'type': 0}
-        }
-      })
-    }
-  },
-  beforeMount () {
-    this.$api.get('/store/item/get_manage_list', {
-      params: {
-        order_by: 'cdate desc',
-        page: 1,
-        page_size: 10,
-        wholesale_item_query: {keywords: '', cdateMin: '', 'cdateMax': '', 'type': 0}
+    showAddModule () {
+      this.modal = true
+    },
+    addModule () {
+      let module = { type: this.moduleType, data: '' }
+      switch (this.moduleType) {
+        case 1:
+          break
+        case 2:
+          break
+        case 3:
+          module.data = {'name': '未命名楼层', 'products': []}
+          break
+        case 4:
+          module.data = []
+          break
+        default:
+          break
       }
-    }).then(data => {
-      this.list = data.map(({ full_url: image, id, item_name: name, brand, tag: label, order_num: total, cdate: createAt, status_cname: status, price_real: realPrice, price: oldPrice }) => ({
-        image, id, name, brand, label, total, createAt, status, realPrice, oldPrice
-      }))
-      console.log(data)
-    })
+      this.list.push(module)
+    },
+    delModule (index) {
+      this.list.splice(index, 1)
+    },
+    upModule (index) {
+      if (index > 0) {
+        const temp = this.list[index]
+        this.list.splice(index, 1, this.list[index - 1])
+        this.list.splice(index - 1, 1, temp)
+      }
+    },
+    downModule (index) {
+      if (index < this.list.length - 1) {
+        const temp = this.list[index]
+        this.list.splice(index, 1, this.list[index + 1])
+        this.list.splice(index + 1, 1, temp)
+      }
+    }
   }
 }
 </script>

@@ -1,6 +1,14 @@
 <template>
   <li class="fiveDis">
-    <div v-if="isExist">
+    <div class="product" v-if="isExist">
+      <div class="operate-list">
+        <ButtonGroup vertical>
+          <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
+          <Button type="primary" icon="trash-a">删除</Button>
+          <Button type="primary" icon="arrow-left-a">左移</Button>
+          <Button type="primary" icon="arrow-right-a">右移</Button>
+        </ButtonGroup>
+      </div>
       <a :href="'/detail?t=' + new Date().getTime() +'#/info?id=' + product.id" target="_blank">
         <div class="img" :style="{backgroundImage : 'url(' + product.image + '!item_middle)'}"></div>
         <p :title="product.title" class="name">{{product.name}}</p>
@@ -52,6 +60,16 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.product{
+  position: relative;
+  & .operate-list{
+    display: none;
+  }
+  &:hover .operate-list{
+    left: 0;
+    display: inline;
+  }
+}
 .empty-product {
   text-align: center;
   height: 400px;

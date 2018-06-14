@@ -3,9 +3,9 @@
     <div class="operate-list">
       <ButtonGroup vertical>
         <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-        <Button type="primary" icon="trash-a">删除</Button>
-        <Button type="primary" icon="arrow-up-a">上移</Button>
-        <Button type="primary" icon="arrow-down-a">下移</Button>
+        <Button type="primary" icon="trash-a" @click="$emit('delete')">删除</Button>
+        <Button type="primary" icon="arrow-up-a" @click="$emit('up')">上移</Button>
+        <Button type="primary" icon="arrow-down-a" @click="$emit('down')">下移</Button>
       </ButtonGroup>
     </div>
     <div data-v-26f98978="" id="0" class="item-level">
