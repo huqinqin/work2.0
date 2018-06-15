@@ -8,7 +8,7 @@
       </a>
     </span>
     <div>
-      <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index" @setCurIndex="setCurIndex"></component>
+      <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index"></component>
     </div>
     <Modal
       v-model="modal"
@@ -145,7 +145,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.editModule(params.row)
+                    this.editModule([params.row])
                   }
                 }
               }, '添加')
@@ -166,46 +166,6 @@ export default {
     ...mapMutations(['addModule', 'editModule', 'toggleModal']),
     showAddModule () {
       this.modal = true
-    },
-    setCurIndex (index) {
-      this.curIndex = index
-    },
-    setModuleData (data, index) {
-      let module = this.list[index]
-      if ([1, 2].indexOf(module.type) > -1) {
-        module.data = data
-      }
-      if (module.type === 3) {
-        module.data.push(data)
-      }
-      if (module.type === 4) {
-        console.log(data)
-        if (Array.isArray(data) && data.length > 0) {
-          module.data.products = module.data.products.concat(data)
-        }
-        if (typeof data === 'string') {
-          module.data.name = data
-        }
-      }
-      this.$set(this.list, index, module)
-      console.log(data, index)
-    },
-    delModule (index) {
-      this.list.splice(index, 1)
-    },
-    upModule (index) {
-      if (index > 0) {
-        const temp = this.list[index]
-        this.list.splice(index, 1, this.list[index - 1])
-        this.list.splice(index - 1, 1, temp)
-      }
-    },
-    downModule (index) {
-      if (index < this.list.length - 1) {
-        const temp = this.list[index]
-        this.list.splice(index, 1, this.list[index + 1])
-        this.list.splice(index + 1, 1, temp)
-      }
     }
   },
   beforeMount () {

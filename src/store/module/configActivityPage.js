@@ -64,7 +64,7 @@ export default {
         module.data = data
       }
       if (module.type === 3) {
-        module.data.push(data)
+        module.data = module.data.concat(data)
       }
       if (module.type === 4) {
         console.log(data)
