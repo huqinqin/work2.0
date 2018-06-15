@@ -7,10 +7,12 @@
     </div>
     <Modal
       v-model="modal"
+      @on-ok="save"
       title="配置图片栏目">
       <Upload
         multiple
         type="drag"
+        :on-success="onSuccess"
         action="//jsonplaceholder.typicode.com/posts/">
         <div style="padding: 20px 0">
             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
@@ -18,33 +20,46 @@
         </div>
       </Upload>
     </Modal>
-    <div class="operate-list">
+    <div class="operate-list" @click="setModuleIndex(index)">
       <ButtonGroup vertical>
         <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-        <Button type="primary" icon="trash-a" @click="$emit('delete')">删除</Button>
-        <Button type="primary" icon="arrow-up-a" @click="$emit('up')">上移</Button>
-        <Button type="primary" icon="arrow-down-a" @click="$emit('down')">下移</Button>
+        <Button type="primary" icon="trash-a" @click="delModule()">删除</Button>
+        <Button type="primary" icon="arrow-up-a" @click="upModule()">上移</Button>
+        <Button type="primary" icon="arrow-down-a" @click="downModule()">下移</Button>
       </ButtonGroup>
     </div>
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'LayoutBannerModule',
   data () {
     return {
-      image: '',
       modal: false
     }
   },
+  props: {
+    index: Number
+  },
   computed: {
     isExist () {
-      return this.image !== ''
+      return this.data !== ''
+    },
+    data () {
+      return this.$store.state.configActivity.config[this.index].data
     }
   },
   methods: {
+    ...mapMutations(['delModule', 'upModule', 'downModule', 'setModuleIndex', 'editModule']),
     showEditDialog () {
       this.modal = true
+    },
+    onSuccess () {
+      this.$emit('change', 'test')
+    },
+    save () {
+      this.editModule('test')
     }
   }
 }

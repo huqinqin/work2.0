@@ -1,12 +1,12 @@
 <template>
   <li class="fiveDis">
     <div class="product" v-if="isExist">
-      <div class="operate-list">
+      <div class="operate-list" @click.capture="setProductIndex(index)">
         <ButtonGroup vertical>
           <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-          <Button type="primary" icon="trash-a">删除</Button>
-          <Button type="primary" icon="arrow-left-a">左移</Button>
-          <Button type="primary" icon="arrow-right-a">右移</Button>
+          <Button type="primary" icon="trash-a" @click="delProduct">删除</Button>
+          <Button type="primary" icon="arrow-left-a" @click="moveProduct(-1)">左移</Button>
+          <Button type="primary" icon="arrow-right-a" @click="moveProduct(1)">右移</Button>
         </ButtonGroup>
       </div>
       <a :href="'/detail?t=' + new Date().getTime() +'#/info?id=' + product.id" target="_blank">
@@ -32,6 +32,7 @@
 </template>
 <script>
 import isEmpty from 'lodash.isempty'
+import { mapMutations } from 'vuex'
 export default {
   name: 'LayoutProduct',
   data () {
@@ -50,11 +51,18 @@ export default {
       name: '',
       realPrice: '',
       oldPrice: ''
-    }
+    },
+    index: Number
   },
   filters: {
     formatPrice (val) {
       return `$${(val / 100).toFixed(2)}`
+    }
+  },
+  methods: {
+    ...mapMutations(['toggleModal', 'setProductIndex', 'moveProduct', 'delProduct']),
+    showEditDialog () {
+      this.toggleModal()
     }
   }
 }

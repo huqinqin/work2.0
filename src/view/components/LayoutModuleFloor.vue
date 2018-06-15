@@ -1,11 +1,11 @@
 <template>
   <div class="module-content">
     <div class="operate-list">
-      <ButtonGroup vertical>
+      <ButtonGroup vertical @click="setModuleIndex(index)">
         <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-        <Button type="primary" icon="trash-a" @click="$emit('delete')">删除</Button>
-        <Button type="primary" icon="arrow-up-a" @click="$emit('up')">上移</Button>
-        <Button type="primary" icon="arrow-down-a" @click="$emit('down')">下移</Button>
+        <Button type="primary" icon="trash-a" @click="delModule()">删除</Button>
+        <Button type="primary" icon="arrow-up-a" @click="upModule()">上移</Button>
+        <Button type="primary" icon="arrow-down-a" @click="downModule()">下移</Button>
       </ButtonGroup>
     </div>
     <div data-v-26f98978="" id="0" class="item-level">
@@ -13,18 +13,20 @@
         <div data-v-26f98978="" class="item-list-title">
           <div data-v-26f98978="" class="i">
             <span data-v-26f98978="" class="border"></span>
-            <span data-v-26f98978="">IP Camera</span>
+            <span data-v-26f98978="">{{data.name}}</span>
           </div>
         </div>
       </a>
       <ul data-v-26f98978="" class="item-list-box">
-        <LayoutProduct v-for="product in products" :key="product.id" :product="product"></LayoutProduct>
+        <LayoutProduct v-for="product in data.products" :key="product.id" :product="product"></LayoutProduct>
         <LayoutProduct v-if="products.length === 0"></LayoutProduct>
       </ul>
     </div>
     <Modal
-      v-model="modal"
-      title="Common Modal dialog box title" width="80%" class="no-footer">
+      v-model="modal" width="80%" class="no-footer">
+      <div slot="header">
+        <Input :value="data.name" @on-change="$emit('change', $event.target.value)" placeholder="Enter name..."></Input>
+      </div>
       <i-form ref="filter" :model="filter" inline>
         <form-item prop="image">
           <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
@@ -65,6 +67,7 @@
   </div>
 </template>
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'LayoutFloorModule',
   components: {
@@ -73,6 +76,7 @@ export default {
   data () {
     return {
       modal: false,
+      name: '',
       products: [],
       filter: {
         image: '', id: '', name: '', brand: '', label: '', total: '', createAt: '', status: ''
@@ -142,7 +146,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.products.push(params.row)
+                    this.$emit('change', [params.row])
                   }
                 }
               }, '添加')
@@ -155,9 +159,21 @@ export default {
       ]
     }
   },
+  props: {
+    data: {
+      type: Object,
+      default () {
+        return {
+          name: '未命名楼层',
+          products: []
+        }
+      }
+    }
+  },
   methods: {
+    ...mapMutations(['setModuleIndex']),
     showEditDialog () {
-      this.modal = true
+      this.toggleModal()
     }
   },
   beforeMount () {
