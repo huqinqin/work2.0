@@ -100,5 +100,11 @@ export default {
       products.splice(productIndex, 1, newProduct)
     }
   },
-  actions: {}
+  actions: {
+    delProduct ({commit, state}) {
+      commit('delProduct')
+      let products = getProducts(state.config[state.moduleIndex])
+      commit('delSelectedIds', [products[state.productIndex].id])
+    }
+  }
 }

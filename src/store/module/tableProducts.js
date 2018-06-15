@@ -10,7 +10,13 @@ export default {
       state.products = products
     },
     setSelectedIds (state, selectedIds) {
-      state.selectedIds = selectedIds
+      state.selectedIds = state.selectedIds.concat(selectedIds)
+    },
+    delSelectedIds (state, selectedIds) {
+      selectedIds.forEach(id => {
+        const index = state.selectedIds.indexOf(id)
+        state.selectedIds.splice(index, 1)
+      })
     },
     toggleModal (state) {
       state.show = !state.show
@@ -35,7 +41,12 @@ export default {
   },
   getters: {
     products: state => {
-      return state.products.map(product => product)
+      return state.products.map(product => {
+        if (state.selectedIds.indexOf(product.id) > -1) {
+          return { ...product, _disabled: true }
+        }
+        return product
+      })
     }
   }
 }

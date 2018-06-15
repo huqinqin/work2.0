@@ -64,7 +64,7 @@
   </card>
 </template>
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 export default {
   name: 'ConfigPageActivity',
   components: {
@@ -157,11 +157,13 @@ export default {
       curIndex: 0
     }
   },
-  computed: mapState({
-    config: state => state.configActivity.config,
-    modalTable: state => state.tableProducts.show,
-    products: state => state.tableProducts.products
-  }),
+  computed: {
+    ...mapState({
+      config: state => state.configActivity.config,
+      modalTable: state => state.tableProducts.show
+    }),
+    ...mapGetters(['products'])
+  },
   methods: {
     ...mapMutations(['addModule', 'editModule', 'toggleModal']),
     showAddModule () {

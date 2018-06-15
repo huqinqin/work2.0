@@ -32,7 +32,7 @@
 </template>
 <script>
 import isEmpty from 'lodash.isempty'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 export default {
   name: 'LayoutProduct',
   data () {
@@ -60,7 +60,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['toggleModal', 'setProductIndex', 'moveProduct', 'delProduct']),
+    ...mapMutations(['toggleModal', 'setProductIndex', 'moveProduct']),
+    ...mapActions(['delProduct']),
     showEditDialog () {
       this.toggleModal()
     }
