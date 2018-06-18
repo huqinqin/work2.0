@@ -1,5 +1,5 @@
 <template>
-  <card class="config-page-wrapper">
+  <card>
     <p slot="title">配置</p>
     <span slot="extra">
       <a href="#" slot="extra" @click.prevent="showAddModule">
@@ -7,8 +7,10 @@
           新增模块
       </a>
     </span>
-    <div>
-      <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index"></component>
+    <div class="config-page-wrapper">
+      <div class="config-page">
+        <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index"></component>
+      </div>
     </div>
     <Modal
       v-model="modal"
@@ -146,6 +148,7 @@ export default {
                 on: {
                   click: () => {
                     this.editModule([params.row])
+                    this.setSelectedIds([params.row.id])
                   }
                 }
               }, '添加')
@@ -165,7 +168,7 @@ export default {
     ...mapGetters(['products'])
   },
   methods: {
-    ...mapMutations(['addModule', 'editModule', 'toggleModal']),
+    ...mapMutations(['addModule', 'editModule', 'toggleModal', 'setSelectedIds']),
     showAddModule () {
       this.modal = true
     }

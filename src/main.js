@@ -8,6 +8,7 @@ import iView from 'iview'
 import i18n from '@/locale'
 import config from '@/config'
 import 'iview/dist/styles/iview.css'
+import '@/assets/coverage.less'
 import env from '../config/env'
 import api from '@/libs/axios.js'
 if (env === 'development') require('@/mock')

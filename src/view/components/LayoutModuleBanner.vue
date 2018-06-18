@@ -43,11 +43,11 @@ export default {
     index: Number
   },
   computed: {
-    isExist () {
-      return this.data !== ''
-    },
     data () {
       return this.$store.state.configActivity.config[this.index].data
+    },
+    isExist () {
+      return this.data !== ''
     }
   },
   methods: {
