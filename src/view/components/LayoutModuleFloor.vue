@@ -1,11 +1,11 @@
 <template>
   <div class="module-content">
-    <div class="operate-list" @click="setModuleIndex(index)">
+    <div class="operate-list" @click.capture="handleButton">
       <ButtonGroup vertical>
-        <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-        <Button type="primary" icon="trash-a" @click="delModule()">删除</Button>
-        <Button type="primary" icon="arrow-up-a" @click="upModule()">上移</Button>
-        <Button type="primary" icon="arrow-down-a" @click="downModule()">下移</Button>
+        <Button type="primary" icon="edit">编辑</Button>
+        <Button type="primary" icon="trash-a">删除</Button>
+        <Button type="primary" icon="arrow-up-a">上移</Button>
+        <Button type="primary" icon="arrow-down-a">下移</Button>
       </ButtonGroup>
     </div>
     <div data-v-26f98978="" id="0" class="item-level">
@@ -14,24 +14,25 @@
           <div data-v-26f98978="" class="i">
             <span data-v-26f98978="" class="border"></span>
             <span data-v-26f98978="">
-              <Input :value="name" placeholder="Enter name..." @on-change="changeName" style="width: 300px" @on-focus="setModuleIndex(index)"></Input>
+              <Input :value="data.name" placeholder="Enter name..." @on-change="changeName" style="width: 300px"></Input>
             </span>
           </div>
         </div>
       </a>
       <ul data-v-26f98978="" class="item-list-box">
-        <LayoutProduct v-for="(product, index) in products" :key="product.id" :product="product" :index="index"></LayoutProduct>
-        <LayoutProduct v-if="products.length === 0"></LayoutProduct>
+        <LayoutProduct v-for="(product, index) in data.products" :key="product.id" :product="product" :index="index" @handle="handleProduct"></LayoutProduct>
+        <LayoutProductEmpty v-if="data.products.length === 0"></LayoutProductEmpty>
       </ul>
     </div>
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import trim from 'lodash.trim'
 export default {
   name: 'LayoutFloorModule',
   components: {
-    LayoutProduct: () => import('@/view/components/LayoutProduct')
+    LayoutProduct: () => import('@/view/components/LayoutProduct'),
+    LayoutProductEmpty: () => import('@/view/components/LayoutProductEmpty')
   },
   data () {
     return {
@@ -39,39 +40,69 @@ export default {
     }
   },
   props: {
-    index: Number
-  },
-  computed: {
-    products () {
-      return this.$store.state.configActivity.config[this.index].data.products
-    },
-    name () {
-      return this.$store.state.configActivity.config[this.index].data.name
+    index: Number,
+    data: {
+      type: Object,
+      default () {
+        return {
+          name: '',
+          products: []
+        }
+      }
     }
   },
   methods: {
-    ...mapMutations(['setModuleIndex', 'toggleModal', 'editModule']),
-    showEditDialog () {
-      this.toggleModal()
+    handleButton () {
+      const operate = trim(event.target.innerText)
+      if (operate === '编辑') {
+        const self = this
+        this.$selectProducts.show({
+          addProducts (products) {
+            self.$emit('update', self.index, {
+              products: self.data.products.concat(products),
+              name: self.data.name
+            })
+            self.$selectProducts.addSelectIds(products.map(product => product.id))
+          }
+        })
+      } else {
+        this.$emit('handle', this.index, operate)
+      }
     },
     changeName (event) {
-      this.editModule(event.target.value)
-    }
-  },
-  beforeMount () {
-    this.$api.get('/store/item/get_manage_list', {
-      params: {
-        order_by: 'cdate desc',
-        page: 1,
-        page_size: 10,
-        wholesale_item_query: {keywords: '', cdateMin: '', 'cdateMax': '', 'type': 0}
+      this.$emit('update', this.index, {products: this.data.products, name: event.target.value})
+    },
+    handleProduct (productIndex, operate) {
+      if (operate === '编辑') {
+        // 弹出商品选择，但是不能多选
+        const self = this
+        this.$selectProducts.show({
+          addProducts (products) {
+            const product = products[0]
+            const data = self.data.products
+            const delProduct = data.splice(productIndex, 1, product)[0]
+            self.$emit('update', self.index, {products: data, name: self.data.name})
+            self.$selectProducts.addSelectIds([product.id])
+            self.$selectProducts.delSelectIds([delProduct.id])
+          }
+        })
+      } else if (operate === '删除') {
+        const id = this.data.products[productIndex].id
+        this.data.products.splice(productIndex, 1)
+        this.$selectProducts.delSelectIds([id])
+      } else if (operate === '左移') {
+        const targetIndex = productIndex - 1
+        const temp = this.data.products[productIndex]
+        this.data.products.splice(productIndex, 1, this.data.products[targetIndex])
+        this.data.products.splice(targetIndex, 1, temp)
+      } else if (operate === '右移') {
+        const targetIndex = productIndex + 1
+        const temp = this.data.products[productIndex]
+        this.data.products.splice(productIndex, 1, this.data.products[targetIndex])
+        this.data.products.splice(targetIndex, 1, temp)
       }
-    }).then(data => {
-      this.list = data.map(({ full_url: image, id, item_name: name, brand, tag: label, order_num: total, cdate: createAt, status_cname: status, price_real: realPrice, price: oldPrice }) => ({
-        image, id, name, brand, label, total, createAt, status, realPrice, oldPrice
-      }))
-      console.log(data)
-    })
+      this.$emit('update', this.index, {products: this.data.products, name: this.data.name})
+    }
   }
 }
 </script>

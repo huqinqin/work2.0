@@ -1,49 +1,91 @@
 <template>
   <div class="module-content">
-    <div class="operate-list" @click="setModuleIndex(index)">
+    <div class="operate-list" @click.capture="handleButton">
       <ButtonGroup vertical>
-        <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-        <Button type="primary" icon="trash-a" @click="delModule()">删除</Button>
-        <Button type="primary" icon="arrow-up-a" @click="upModule()">上移</Button>
-        <Button type="primary" icon="arrow-down-a" @click="downModule()">下移</Button>
+        <Button type="primary" icon="edit">编辑</Button>
+        <Button type="primary" icon="trash-a">删除</Button>
+        <Button type="primary" icon="arrow-up-a">上移</Button>
+        <Button type="primary" icon="arrow-down-a">下移</Button>
       </ButtonGroup>
     </div>
     <div data-v-26f98978="" id="0" class="item-level">
       <ul data-v-26f98978="" class="item-list-box">
-        <LayoutProduct v-for="(product, index) in data" :key="product.id" :product="product" :index="index"></LayoutProduct>
-        <LayoutProduct v-if="data.length === 0"></LayoutProduct>
+        <LayoutProduct v-for="(product, index) in data" :key="product.id" :product="product" :index="index" @handle="handleProduct"></LayoutProduct>
+        <LayoutProductEmpty v-if="data.length === 0"></LayoutProductEmpty>
       </ul>
     </div>
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import trim from 'lodash.trim'
 export default {
   name: 'LayoutFloorModule',
   components: {
-    LayoutProduct: () => import('@/view/components/LayoutProduct')
+    LayoutProduct: () => import('@/view/components/LayoutProduct'),
+    LayoutProductEmpty: () => import('@/view/components/LayoutProductEmpty')
   },
   data () {
     return {
       modal: false,
-      products: [],
-      list: [
-        {}
-      ]
+      products: []
     }
   },
   props: {
-    index: Number
-  },
-  computed: {
-    data () {
-      return this.$store.state.configActivity.config[this.index].data
+    index: Number,
+    data: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   methods: {
-    ...mapMutations(['delModule', 'upModule', 'downModule', 'toggleModal', 'setModuleIndex']),
-    showEditDialog () {
-      this.toggleModal()
+    handleButton () {
+      console.log(event.target.innerText)
+      const operate = trim(event.target.innerText)
+      console.log(operate)
+      if (operate === '编辑') {
+        const self = this
+        this.$selectProducts.show({
+          addProducts (products) {
+            self.$emit('update', self.index, self.data.concat(products))
+            self.$selectProducts.addSelectIds(products.map(product => product.id))
+          }
+        })
+      } else {
+        this.$emit('handle', this.index, operate)
+      }
+    },
+    handleProduct (productIndex, operate) {
+      if (operate === '编辑') {
+        // 弹出商品选择，但是不能多选
+        const self = this
+        this.$selectProducts.show({
+          addProducts (products) {
+            const product = products[0]
+            const data = self.data
+            const delProduct = data.splice(productIndex, 1, product)[0]
+            self.$emit('update', self.index, data)
+            self.$selectProducts.addSelectIds([product.id])
+            self.$selectProducts.delSelectIds([delProduct.id])
+          }
+        })
+      } else if (operate === '删除') {
+        const id = this.data[productIndex].id
+        this.data.splice(productIndex, 1)
+        this.$selectProducts.delSelectIds([id])
+      } else if (operate === '左移') {
+        const targetIndex = productIndex - 1
+        const temp = this.data[productIndex]
+        this.data.splice(productIndex, 1, this.data[targetIndex])
+        this.data.splice(targetIndex, 1, temp)
+      } else if (operate === '右移') {
+        const targetIndex = productIndex + 1
+        const temp = this.data[productIndex]
+        this.data.splice(productIndex, 1, this.data[targetIndex])
+        this.data.splice(targetIndex, 1, temp)
+      }
+      this.$emit('update', this.index, this.data)
     }
   }
 }

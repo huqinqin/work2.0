@@ -9,12 +9,12 @@
     </span>
     <div class="config-page-wrapper">
       <div class="config-page">
-        <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index"></component>
+        <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index" @handle="handleModule" @update="updateModule"></component>
       </div>
     </div>
     <Modal
       v-model="modal"
-      @on-ok="addModule({type: moduleType})"
+      @on-ok="addModule(moduleType)"
       title="新增模块">
       <Select v-model="moduleType" style="width:200px">
         <Option :value="1">Banner模块</Option>
@@ -23,53 +23,13 @@
         <Option :value="4">楼层模块</Option>
       </Select>
     </Modal>
-    <Modal
-      :value="modalTable" @on-cancel="toggleModal"
-      title="Common Modal dialog box title" width="80%" class="no-footer">
-      <i-form ref="filter" :model="filter" inline>
-        <form-item prop="image">
-          <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
-        </form-item>
-        <form-item prop="id">
-          <i-input v-model="filter.id" type="text" placeholder="商品ID" ></i-input>
-        </form-item>
-        <form-item prop="name">
-          <i-input v-model="filter.name" type="text" placeholder="商品名称" ></i-input>
-        </form-item>
-        <form-item prop="brand">
-          <i-input v-model="filter.brand" type="text" placeholder="商品品牌" ></i-input>
-        </form-item>
-        <form-item prop="label">
-          <i-input v-model="filter.label" type="text" placeholder="商品标签" ></i-input>
-        </form-item>
-        <form-item prop="total">
-          <i-input v-model="filter.total" type="text" placeholder="商品出售总数" ></i-input>
-        </form-item>
-        <form-item prop="createAt">
-          <date-picker type="datetimerange" placeholder="商品创建时间"></date-picker>
-        </form-item>
-        <form-item prop="status">
-          <i-input v-model="filter.status" type="text" placeholder="商品状态" ></i-input>
-        </form-item>
-        <form-item>
-          <i-button type="primary">查询</i-button>
-          <i-button type="primary">添加所选</i-button>
-        </form-item>
-      </i-form>
-      <i-table :columns="columns" :data="products" size="small" ref="table"></i-table>
-      <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
-        <div style="float:right;">
-          <Page :total="40" size="small" show-elevator show-sizer></Page>
-        </div>
-      </div>
-    </Modal>
   </card>
 </template>
 <script>
-import { mapMutations, mapState, mapGetters } from 'vuex'
 export default {
   name: 'ConfigPageActivity',
   components: {
+    LayoutProduct: () => import('@/view/components/LayoutProduct'),
     LayoutModuleBanner: () => import('@/view/components/LayoutModuleBanner'),
     LayoutModuleFloor: () => import('@/view/components/LayoutModuleFloor'),
     LayoutModuleProduct: () => import('@/view/components/LayoutModuleProduct'),
@@ -79,102 +39,56 @@ export default {
     return {
       modal: false,
       modules: [ 'LayoutModuleBanner', 'LayoutModuleIntro', 'LayoutModuleProduct', 'LayoutModuleFloor' ],
-      filter: {
-        image: '', id: '', name: '', brand: '', label: '', total: '', createAt: '', status: ''
-      },
-      columns: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
-        {
-          title: '商品图片',
-          key: 'image',
-          render: (h, params) => {
-            return h('div', [
-              h('img', {
-                attrs: {
-                  src: params.row.image
-                },
-                style: {
-                  width: '40px',
-                  height: '40px'
-                },
-                on: {
-                  click: () => {
-                    console.log(params)
-                  }
-                }
-              })
-            ])
-          }
-        }, {
-          title: '商品ID',
-          key: 'id'
-        }, {
-          title: '商品名称',
-          key: 'name'
-        }, {
-          title: '商品品牌',
-          key: 'brand'
-        }, {
-          title: '商品标签',
-          key: 'label'
-        }, {
-          title: '商品出售总数',
-          key: 'total'
-        }, {
-          title: '商品创建时间',
-          key: 'createAt'
-        }, {
-          title: '商品状态',
-          key: 'status'
-        }, {
-          title: '操作',
-          key: 'action',
-          width: 150,
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.editModule([params.row])
-                    this.setSelectedIds([params.row.id])
-                  }
-                }
-              }, '添加')
-            ])
-          }
-        }
-      ],
       moduleType: 1,
-      curIndex: 0
+      curIndex: 0,
+      config: []
     }
   },
-  computed: {
-    ...mapState({
-      config: state => state.configActivity.config,
-      modalTable: state => state.tableProducts.show
-    }),
-    ...mapGetters(['products'])
-  },
   methods: {
-    ...mapMutations(['addModule', 'editModule', 'toggleModal', 'setSelectedIds']),
+    addModule (type) {
+      let module = { type, data: '' }
+      switch (type) {
+        case 1:
+          break
+        case 2:
+          break
+        case 3:
+          module.data = []
+          break
+        case 4:
+          module.data = { 'name': '未命名楼层', 'products': [] }
+          break
+        default:
+          break
+      }
+      this.config.push(module)
+    },
+    handleModule (moduleIndex, operate) {
+      console.log(moduleIndex, operate)
+      if (operate === '删除') {
+        this.config.splice(moduleIndex, 1)
+      } else if (operate === '上移') {
+        const index = moduleIndex
+        if (index > 0) {
+          const temp = this.config[index]
+          this.config.splice(index, 1, this.config[index - 1])
+          this.config.splice(index - 1, 1, temp)
+        }
+      } else if (operate === '下移') {
+        const index = moduleIndex
+        if (index < this.config.length - 1) {
+          const temp = this.config[index]
+          this.config.splice(index, 1, this.config[index + 1])
+          this.config.splice(index + 1, 1, temp)
+        }
+      }
+    },
+    updateModule (moduleIndex, data) {
+      this.config[moduleIndex].data = data
+    },
     showAddModule () {
       this.modal = true
     }
-  },
-  beforeMount () {
-    this.$store.dispatch('fetchProducts')
   }
 }
 </script>

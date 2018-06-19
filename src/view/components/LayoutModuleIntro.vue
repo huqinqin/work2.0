@@ -13,18 +13,18 @@
         @on-ok="save">
         <Input v-model="value" placeholder="说明内容"></Input>
     </Modal>
-    <div class="operate-list" @click="setModuleIndex(index)">
+    <div class="operate-list" @click.capture="handleButton()">
       <ButtonGroup vertical>
-        <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-        <Button type="primary" icon="trash-a" @click="delModule()">删除</Button>
-        <Button type="primary" icon="arrow-up-a" @click="upModule()">上移</Button>
-        <Button type="primary" icon="arrow-down-a" @click="downModule()">下移</Button>
+        <Button type="primary" icon="edit">编辑</Button>
+        <Button type="primary" icon="trash-a">删除</Button>
+        <Button type="primary" icon="arrow-up-a">上移</Button>
+        <Button type="primary" icon="arrow-down-a">下移</Button>
       </ButtonGroup>
     </div>
   </div>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import trim from 'lodash.trim'
 export default {
   name: 'LayoutModuleIntro',
   data () {
@@ -34,20 +34,20 @@ export default {
     }
   },
   props: {
+    data: String,
     index: Number
   },
-  computed: {
-    data () {
-      return this.$store.state.configActivity.config[this.index].data
-    }
-  },
   methods: {
-    ...mapMutations(['delModule', 'upModule', 'downModule', 'setModuleIndex', 'editModule']),
-    showEditDialog () {
-      this.modal = true
+    handleButton () {
+      const operate = trim(event.target.innerText)
+      if (operate === '编辑') {
+        this.modal = true
+      } else {
+        this.$emit('handle', this.index, operate)
+      }
     },
     save () {
-      this.editModule(this.value)
+      this.$emit('update', this.index, this.value)
     }
   }
 }

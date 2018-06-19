@@ -1,12 +1,12 @@
 <template>
   <li class="fiveDis">
-    <div class="product" v-if="isExist">
-      <div class="operate-list" @click.capture="setProductIndex(index)">
+    <div class="product">
+      <div class="operate-list" @click.capture="handleButton">
         <ButtonGroup vertical>
-          <Button type="primary" icon="edit" @click="showEditDialog">编辑</Button>
-          <Button type="primary" icon="trash-a" @click="delProduct">删除</Button>
-          <Button type="primary" icon="arrow-left-a" @click="moveProduct(-1)">左移</Button>
-          <Button type="primary" icon="arrow-right-a" @click="moveProduct(1)">右移</Button>
+          <Button type="primary" icon="edit">编辑</Button>
+          <Button type="primary" icon="trash-a">删除</Button>
+          <Button type="primary" icon="arrow-left-a">左移</Button>
+          <Button type="primary" icon="arrow-right-a">右移</Button>
         </ButtonGroup>
       </div>
       <a :href="'/detail?t=' + new Date().getTime() +'#/info?id=' + product.id" target="_blank">
@@ -25,23 +25,14 @@
         </div>
       </a>
     </div>
-    <div class="empty-product" v-else>
-      <Icon type="ios-plus-empty" :size="200" color="#ccc"/>
-    </div>
   </li>
 </template>
 <script>
-import isEmpty from 'lodash.isempty'
-import { mapMutations, mapActions } from 'vuex'
+import trim from 'lodash.trim'
 export default {
   name: 'LayoutProduct',
   data () {
     return {
-    }
-  },
-  computed: {
-    isExist () {
-      return !isEmpty(this.product) && this.product.id !== ''
     }
   },
   props: {
@@ -60,10 +51,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['toggleModal', 'setProductIndex', 'moveProduct']),
-    ...mapActions(['delProduct']),
-    showEditDialog () {
-      this.toggleModal()
+    handleButton () {
+      const operate = trim(event.target.innerText)
+      this.$emit('handle', this.index, operate)
     }
   }
 }
@@ -77,17 +67,6 @@ export default {
   &:hover .operate-list{
     left: 0;
     display: inline;
-  }
-}
-.empty-product {
-  text-align: center;
-  height: 400px;
-  padding: 10px;
-  .ivu-icon {
-    line-height: 380px;
-    border-radius: 20px;
-    width: 100%;
-    border: 1px dotted #ccc;
   }
 }
 li {

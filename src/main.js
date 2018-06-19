@@ -11,6 +11,7 @@ import 'iview/dist/styles/iview.css'
 import '@/assets/coverage.less'
 import env from '../config/env'
 import api from '@/libs/axios.js'
+import selectProducts from '@/prototype/selectProducts.js'
 if (env === 'development') require('@/mock')
 
 Vue.use(iView)
@@ -20,6 +21,7 @@ Vue.config.productionTip = false
  */
 Vue.prototype.$config = config
 Vue.prototype.$api = api
+Vue.prototype.$selectProducts = selectProducts
 
 iView.i18n((key, value) => i18n.t(key, value))
 
