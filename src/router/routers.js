@@ -274,7 +274,6 @@ export default [
   },
   {
     path: '/wholesaler',
-    redirect: '/wholesaler/index',
     meta: {
       icon: 'lock-combination',
       title: '工程商管理'
@@ -283,13 +282,22 @@ export default [
     component: Main,
     children: [
       {
-        path: 'index',
+        path: 'wholesaler_review_list',
         meta: {
           icon: 'lock-combination',
-          title: '工程商管理'
+          title: '审核列表'
         },
-        name: 'wholesaler_index',
-        component: () => import('@/view/Wholesaler.vue')
+        name: 'wholesaler_review_list',
+        component: () => import('@/view/WholesalerReviewList.vue')
+      },
+      {
+        path: 'wholesaler_review_detail',
+        meta: {
+          icon: 'lock-combination',
+          title: '审核详情'
+        },
+        name: 'wholesaler_review_detail',
+        component: () => import('@/view/WholesalerReviewDetail.vue')
       }
     ]
   },
