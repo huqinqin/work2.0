@@ -280,13 +280,107 @@ export default [
     component: Main,
     children: [
       {
-        path: 'index',
+        path: 'shop_list',
         meta: {
           icon: 'lock-combination',
-          title: '门店管理'
+          title: '门店列表'
         },
-        name: 'shop_index',
-        component: () => import('@/view/Shop.vue')
+        name: 'shop_list',
+        component: () => import('@/view/ShopList.vue')
+      },
+      {
+        path: 'shop_add',
+        meta: {
+          icon: 'lock-combination',
+          title: '新增门店'
+        },
+        name: 'shop_add',
+        component: () => import('@/view/ShopAdd.vue')
+      },
+      {
+        path: 'shop_edit',
+        meta: {
+          icon: 'lock-combination',
+          title: '编辑门店'
+        },
+        name: 'shop_edit',
+        component: () => import('@/view/ShopEdit.vue')
+      },
+      {
+        path: 'shop_detail',
+        meta: {
+          icon: 'lock-combination',
+          title: '门店详情'
+        },
+        name: 'shop_detail',
+        component: () => import('@/view/ShopDetail.vue')
+      },
+
+      {
+        path: 'shop_reset',
+        meta: {
+          icon: 'lock-combination',
+          title: '重置密码'
+        },
+        name: 'shop_reset',
+        component: () => import('@/view/ShopResetPass.vue')
+      }
+    ]
+  },
+  {
+    path: '/personnel',
+    redirect: '/personnel/index',
+    meta: {
+      icon: 'lock-combination',
+      title: '人员管理'
+    },
+    name: 'personnel',
+    component: Main,
+    children: [
+      {
+        path: 'personnel_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '人员列表'
+        },
+        name: 'personnel_list',
+        component: () => import('@/view/PersonnelList.vue')
+      },
+      {
+        path: 'personnel_detail',
+        meta: {
+          icon: 'lock-combination',
+          title: '人员详情'
+        },
+        name: 'personnel_detail',
+        component: () => import('@/view/PersonnelDetail.vue')
+      },
+      {
+        path: 'personnel_edit',
+        meta: {
+          icon: 'lock-combination',
+          title: '编辑人员'
+        },
+        name: 'personnel_edit',
+        component: () => import('@/view/PersonnelEdit.vue')
+      },
+      {
+        path: 'personnel_add',
+        meta: {
+          icon: 'lock-combination',
+          title: '新增人员'
+        },
+        name: 'personnel_add',
+        component: () => import('@/view/PersonnelAdd.vue')
+      },
+      {
+        path: 'personnel_reset',
+        meta: {
+          icon: 'lock-combination',
+          title: '重置密码'
+        },
+        name: 'personnel_reset',
+        component: () => import('@/view/PersonnelResetPass.vue')
       }
     ]
   },
