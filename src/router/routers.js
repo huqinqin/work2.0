@@ -220,13 +220,31 @@ export default [
     component: Main,
     children: [
       {
-        path: 'index',
+        path: 'product_category',
         meta: {
           icon: 'lock-combination',
-          title: '商品管理'
+          title: '类目管理'
         },
-        name: 'product_index',
-        component: () => import('@/view/Product.vue')
+        name: 'product_category',
+        component: () => import('@/view/ProductCategory.vue')
+      },
+      {
+        path: 'product_attribute',
+        meta: {
+          icon: 'lock-combination',
+          title: '属性管理'
+        },
+        name: 'product_attribute',
+        component: () => import('@/view/ProductAttribute.vue')
+      },
+      {
+        path: 'product_size',
+        meta: {
+          icon: 'lock-combination',
+          title: '参数管理'
+        },
+        name: 'product_size',
+        component: () => import('@/view/ProductSize.vue')
       }
     ]
   },
