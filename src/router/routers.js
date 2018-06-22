@@ -318,6 +318,15 @@ export default [
         component: () => import('@/view/InstallerEdit.vue')
       },
       {
+        path: 'installer_details',
+        meta: {
+          icon: 'lock-combination',
+          title: '工程商详情'
+        },
+        name: 'installer_details',
+        component: () => import('@/view/InstallerDetails.vue')
+      },
+      {
         path: 'installer_review_list',
         meta: {
           icon: 'lock-combination',

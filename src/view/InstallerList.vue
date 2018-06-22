@@ -28,7 +28,6 @@
 
       <form-item>
         <i-button type="primary">查询</i-button>
-        <i-button type="error">删除所选</i-button>
       </form-item>
     </i-form>
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
@@ -96,7 +95,12 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({
+                      name: 'installer_details',
+                      params: {}
+                    })
+                  }
                 }
               }, '查看'),
               h('Button', {
@@ -108,7 +112,12 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({
+                      name: 'installer_edit',
+                      params: {}
+                    })
+                  }
                 }
               }, '编辑'),
               h('Button', {
