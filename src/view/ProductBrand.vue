@@ -5,14 +5,18 @@
     <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
   </form-item>
   <form-item prop="name">
-    <i-input v-model="filter.name" type="text" placeholder="属性名称" ></i-input>
+    <i-input v-model="filter.name" type="text" placeholder="品牌名称" ></i-input>
   </form-item>
-  <form-item prop="category">
-    <i-input v-model="filter.category" type="text" placeholder="商品类型" ></i-input>
+  <form-item prop="initial">
+    <i-input v-model="filter.initial" type="text" placeholder="品牌首字母" ></i-input>
   </form-item>
-  <form-item prop="options">
-    <date-picker type="date" placeholder="可选值列表"></date-picker>
+  <form-item prop="manufacturer">
+    <date-picker type="date" placeholder="品牌制造商"></date-picker>
   </form-item>
+  <form-item prop="show">
+    <i-input v-model="filter.show" type="text" placeholder="是否显示" ></i-input>
+  </form-item>
+
   <form-item>
     <i-button type="primary">查询</i-button>
     <i-button type="error">删除所选</i-button>
@@ -28,17 +32,13 @@
 </template>
 <script>
 import mixin from '@/mixins/list'
-import LayoutTags from '@/view/components/LayoutTags.vue'
 export default {
   mixins: [mixin],
-  components: {
-    LayoutTags
-  },
   data () {
     return {
-      url: '/product/attribute',
+      url: 'product/brand',
       filter: {
-        id: '', name: '', category: '', options: ''
+        id: '', name: '', initial: '', manufacturer: '', show: ''
       },
       columns: [
         {
@@ -50,21 +50,17 @@ export default {
           title: '编号',
           key: 'id'
         }, {
-          title: '属性名称',
+          title: '品牌名称',
           key: 'name'
         }, {
-          title: '商品类型',
-          key: 'category'
+          title: '品牌首字母',
+          key: 'initial'
         }, {
-          title: '可选值列表',
-          key: 'options',
-          render: (h, params) => {
-            return h(LayoutTags, {
-              props: {
-                list: params.row.options
-              }
-            })
-          }
+          title: '品牌制造商',
+          key: 'manufacturer'
+        }, {
+          title: '是否显示',
+          key: 'show'
         },
         {
           title: '操作',

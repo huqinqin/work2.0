@@ -1,18 +1,19 @@
 <template>
-  <card>
-    <Form>
-      <FormItem :label-width="100" label="属性1">
-        <Tag v-for="item in count" checkable color="blue" :key="item" :name="item" closable @on-close="handleClose2">标签{{ item + 1 }}</Tag>
-        <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAdd">
-      </FormItem>
-    </Form>
+  <div>
+    <Row>
+        <Col span="1" offset="1">属性1：</Col>
+        <Col span="8">
+          <Tag v-for="item in count" checkable color="blue" :key="item" :name="item" closable @on-close="handleClose2">标签{{ item + 1 }}</Tag>
+          <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAdd">
+        </Col>
+    </Row>
     <DragableTable
       v-model="tableData"
       :columns-list="columnsList"
       @on-start="handleOnstart1"
       @on-end="handleOnend1"
     ></DragableTable>
-  </card>
+  </div>
 </template>
 <script>
 export default {
