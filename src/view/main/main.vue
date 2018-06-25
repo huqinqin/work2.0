@@ -20,7 +20,7 @@
           <div class="tag-nav-wrapper">
             <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
           </div>
-          <Content :style="{margin: '10px'}">
+          <Content class="single-page-con" :style="{left: '200px', padding: '20px'}">
             <keep-alive :include="cacheList">
               <router-view/>
             </keep-alive>
