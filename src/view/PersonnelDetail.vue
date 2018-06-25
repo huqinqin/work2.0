@@ -50,15 +50,18 @@
       </row>
       <form-item>
         <i-button type="primary">Submit</i-button>
-        <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
+        <i-button type="ghost" style="margin-left: 8px" @click="$router.push({name:'pensernel_list'})">Cancel</i-button>
       </form-item>
     </i-form>
   </card>
 </template>
 <script>
+import mixin from '@/mixins/detail'
 export default {
+  mixins: [mixin],
   data () {
     return {
+      url: '/personnel',
       form: {
         name: '', role: '', phone: '', mobile: '', email: '', type: '', applicationDate: '', allocationDate: '', address: ''
       },

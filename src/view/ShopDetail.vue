@@ -55,15 +55,18 @@
       </row>
       <form-item>
         <i-button type="primary">Submit</i-button>
-        <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
+        <i-button type="ghost" style="margin-left: 8px" @click="$router.push({name:'shop_list'})">Cancel</i-button>
       </form-item>
     </i-form>
   </card>
 </template>
 <script>
+import mixin from '@/mixins/detail'
 export default {
+  mixins: [mixin],
   data () {
     return {
+      url: '/shop',
       form: {
         name: '', contact: '', address: '', city: '', state: '', country: '', zipcode: '', phone: '', mobile: '', status: ''
       },

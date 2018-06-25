@@ -90,7 +90,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({ path: `shop_detail/${params.row.id}` })
+                  }
                 }
               }, '查看'),
               h('Button', {
@@ -102,7 +104,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({ path: `shop_edit/${params.row.id}` })
+                  }
                 }
               }, '编辑'),
               h('Button', {
@@ -114,7 +118,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    console.log(`删除${params.row.id}`)
+                  }
                 }
               }, '删除')
             ])

@@ -298,20 +298,20 @@ export default [
         component: () => import('@/view/ShopAdd.vue')
       },
       {
-        path: 'shop_edit',
-        meta: {
-          icon: 'lock-combination',
-          title: '编辑门店'
-        },
+        path: 'shop_edit/:id',
+        // meta: {
+        //   icon: 'lock-combination',
+        //   title: '编辑门店'
+        // },
         name: 'shop_edit',
         component: () => import('@/view/ShopEdit.vue')
       },
       {
-        path: 'shop_detail',
-        meta: {
-          icon: 'lock-combination',
-          title: '门店详情'
-        },
+        path: 'shop_detail/:id',
+        // meta: {
+        //   icon: 'lock-combination',
+        //   title: '门店详情'
+        // },
         name: 'shop_detail',
         component: () => import('@/view/ShopDetail.vue')
       },
@@ -347,20 +347,20 @@ export default [
         component: () => import('@/view/PersonnelList.vue')
       },
       {
-        path: 'personnel_detail',
-        meta: {
-          icon: 'lock-combination',
-          title: '人员详情'
-        },
+        path: 'personnel_detail/:id',
+        // meta: {
+        //   icon: 'lock-combination',
+        //   title: '人员详情'
+        // },
         name: 'personnel_detail',
         component: () => import('@/view/PersonnelDetail.vue')
       },
       {
-        path: 'personnel_edit',
-        meta: {
-          icon: 'lock-combination',
-          title: '编辑人员'
-        },
+        path: 'personnel_edit/:id',
+        // meta: {
+        //   icon: 'lock-combination',
+        //   title: '编辑人员'
+        // },
         name: 'personnel_edit',
         component: () => import('@/view/PersonnelEdit.vue')
       },

@@ -26,6 +26,7 @@
       <form-item>
         <i-button type="primary">查询</i-button>
         <i-button type="error">删除所选</i-button>
+        <i-button type="primary" @click="$router.push('personnel_add')">新增人员</i-button>
       </form-item>
     </i-form>
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
@@ -90,7 +91,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({ path: `personnel_detail/${params.row.id}` })
+                  }
                 }
               }, '查看'),
               h('Button', {
@@ -102,7 +105,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({ path: `personnel_detail/${params.row.id}` })
+                  }
                 }
               }, '编辑'),
               h('Button', {
@@ -114,7 +119,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    console.log(`删除${params.row.id}`)
+                  }
                 }
               }, '删除')
             ])
