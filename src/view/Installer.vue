@@ -4,7 +4,7 @@
 </template>
 <script>
 export default {
-  name: 'Wholesaler',
+  name: 'Installer',
   data () {
     return {
     }

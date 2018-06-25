@@ -42,9 +42,10 @@
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
+  name: 'InstallerReviewList',
   data () {
     return {
-      url: '/wholesaler/review',
+      url: '/installer/review',
       filter: {
         email: '', company: '', custId: '', applyAt: '', waitTime: '', allotAt: '', reviewAt: '', status: ''
       },

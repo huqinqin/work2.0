@@ -336,31 +336,58 @@ export default [
     ]
   },
   {
-    path: '/wholesaler',
+    path: '/installer',
     meta: {
       icon: 'lock-combination',
       title: '工程商管理'
     },
-    name: 'wholesaler',
+    name: 'installer',
     component: Main,
     children: [
       {
-        path: 'wholesaler_review_list',
+        path: 'installer_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '工程商列表'
+        },
+        name: 'installerList',
+        component: () => import('@/view/InstallerList.vue')
+      },
+      {
+        path: 'installer_edit',
+        meta: {
+          icon: 'lock-combination',
+          title: '编辑资料'
+        },
+        name: 'installer_edit',
+        component: () => import('@/view/InstallerEdit.vue')
+      },
+      {
+        path: 'installer_details',
+        meta: {
+          icon: 'lock-combination',
+          title: '工程商详情'
+        },
+        name: 'installer_details',
+        component: () => import('@/view/InstallerDetails.vue')
+      },
+      {
+        path: 'installer_review_list',
         meta: {
           icon: 'lock-combination',
           title: '审核列表'
         },
-        name: 'wholesaler_review_list',
-        component: () => import('@/view/WholesalerReviewList.vue')
+        name: 'installer_review_list',
+        component: () => import('@/view/InstallerReviewList.vue')
       },
       {
-        path: 'wholesaler_review_detail',
+        path: 'installer_review_detail',
         meta: {
           icon: 'lock-combination',
           title: '审核详情'
         },
-        name: 'wholesaler_review_detail',
-        component: () => import('@/view/WholesalerReviewDetail.vue')
+        name: 'installer_review_detail',
+        component: () => import('@/view/InstallerReviewDetail.vue')
       }
     ]
   },
