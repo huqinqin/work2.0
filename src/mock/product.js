@@ -36,6 +36,15 @@ const productList = Mock.mock({
     putaway: '@boolean'
   }]
 })
+const productBrandDetail = Mock.mock({
+  'data': {
+    'id|+1': '@id',
+    name: '@name',
+    initial: '@string("upper", 1)',
+    'manufacturer': '@name',
+    'show': '@boolean'
+  }
+})
 export const getProductBrandList = req => {
   return {
     code: 200,
@@ -65,6 +74,13 @@ export const getProductTrashList = req => {
   return {
     code: 200,
     ...productTrashList,
+    msg: ''
+  }
+}
+export const getProductBrandDetail = req => {
+  return {
+    code: 200,
+    ...productBrandDetail,
     msg: ''
   }
 }

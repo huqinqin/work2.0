@@ -22,6 +22,8 @@
     <i-button type="error">删除所选</i-button>
   </form-item>
 </i-form>
+<product-modal :id="id"></product-modal>
+
 <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
@@ -34,12 +36,16 @@
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
+  components: {
+    'product-modal': () => import('./ProductBrandModal')
+  },
   data () {
     return {
       url: 'product/brand',
       filter: {
         id: '', name: '', initial: '', manufacturer: '', show: ''
       },
+      id: '',
       columns: [
         {
           type: 'selection',
@@ -78,7 +84,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.id = params.row.id
+                  }
                 }
               }, '查看'),
               h('Button', {
@@ -90,7 +98,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.id = params.row.id
+                  }
                 }
               }, '编辑'),
               h('Button', {
@@ -109,6 +119,14 @@ export default {
           }
         }
       ]
+    }
+  },
+  methods: {
+    closeModal () {
+      console.log('close')
+    },
+    submitEdit (item) {
+      this.submit()
     }
   }
 }
