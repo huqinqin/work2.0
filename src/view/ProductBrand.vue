@@ -22,6 +22,12 @@
     <i-button type="error">删除所选</i-button>
   </form-item>
 </i-form>
+<Modal
+  v-model="editModal"
+  title="Common Modal dialog box title">
+  <div slot="footer"></div>
+  <product-brand-modal :form="form" @closeModal="editModal = false"></product-brand-modal>
+</Modal>
 <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
@@ -34,12 +40,17 @@
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
+  components: {
+    'product-brand-modal': () => import('./ProductBrandModal')
+  },
   data () {
     return {
       url: 'product/brand',
       filter: {
         id: '', name: '', initial: '', manufacturer: '', show: ''
       },
+      form: null,
+      editModal: false,
       columns: [
         {
           type: 'selection',
@@ -78,19 +89,10 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
+                  click: () => {
+                    this.editModal = true
+                    this.form = params.row
+                  }
                 }
               }, '编辑'),
               h('Button', {
@@ -102,7 +104,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.deleteItem(params.row.id)
+                  }
                 }
               }, '删除')
             ])

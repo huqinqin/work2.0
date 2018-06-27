@@ -23,6 +23,15 @@ const productBrandList = Mock.mock({
     'show': '@boolean'
   }]
 })
+const productAttributeDetail = Mock.mock({
+  'data': {
+    'id|+1': '@id',
+    name: '@name',
+    initial: '@string("upper", 1)',
+    'manufacturer': '@name',
+    'show': '@boolean'
+  }
+})
 const productList = Mock.mock({
   'data|10': [{
     'id|+1': '@id',
@@ -36,10 +45,26 @@ const productList = Mock.mock({
     putaway: '@boolean'
   }]
 })
+const productBrandDetail = Mock.mock({
+  'data': {
+    'id|+1': '@id',
+    name: '@name',
+    initial: '@string("upper", 1)',
+    'manufacturer': '@name',
+    'show': '@boolean'
+  }
+})
 export const getProductBrandList = req => {
   return {
     code: 200,
     ...productBrandList,
+    msg: ''
+  }
+}
+export const getProductAttributeDetail = req => {
+  return {
+    code: 200,
+    ...productAttributeDetail,
     msg: ''
   }
 }
@@ -65,6 +90,20 @@ export const getProductTrashList = req => {
   return {
     code: 200,
     ...productTrashList,
+    msg: ''
+  }
+}
+export const getProductTrashRevert = req => {
+  return {
+    code: 200,
+    data: 'revert',
+    msg: ''
+  }
+}
+export const getProductBrandDetail = req => {
+  return {
+    code: 200,
+    ...productBrandDetail,
     msg: ''
   }
 }

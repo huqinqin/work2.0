@@ -283,11 +283,7 @@ export default [
         component: () => import('@/view/ProductTrash.vue')
       },
       {
-        path: 'product_edit',
-        meta: {
-          icon: 'lock-combination',
-          title: '商品编辑'
-        },
+        path: 'product_edit/:id?',
         name: 'product_edit',
         component: () => import('@/view/ProductEdit.vue')
       }
