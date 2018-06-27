@@ -26,7 +26,7 @@
   v-model="editModal"
   title="Common Modal dialog box title">
   <div slot="footer"></div>
-  <product-modal :form="form" @closeModal="editModal = false"></product-modal>
+  <product-brand-modal :form="form" @closeModal="editModal = false"></product-brand-modal>
 </Modal>
 <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
@@ -41,7 +41,7 @@ import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
   components: {
-    'product-modal': () => import('./ProductBrandModal')
+    'product-brand-modal': () => import('./ProductBrandModal')
   },
   data () {
     return {

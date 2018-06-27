@@ -18,6 +18,12 @@
     <i-button type="error">删除所选</i-button>
   </form-item>
 </i-form>
+<Modal
+  v-model="editModal"
+  title="Common Modal dialog box title">
+  <div slot="footer"></div>
+  <product-attribute-modal :form="form" @closeModal="editModal = false"></product-attribute-modal>
+</Modal>
 <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
@@ -32,10 +38,13 @@ import LayoutTags from '@/view/components/LayoutTags.vue'
 export default {
   mixins: [mixin],
   components: {
-    LayoutTags
+    LayoutTags,
+    'product-attribute-modal': () => import('./ProductAttributeModal')
   },
   data () {
     return {
+      editModal: false,
+      form: null,
       url: '/product/attribute',
       filter: {
         id: '', name: '', category: '', options: ''
@@ -73,6 +82,18 @@ export default {
           align: 'center',
           render: (h, params) => {
             return h('div', [
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //     click: () => {}
+              //   }
+              // }, '查看'),
               h('Button', {
                 props: {
                   type: 'primary',
@@ -82,19 +103,10 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
+                  click: () => {
+                    this.editModal = true
+                    this.form = params.row
+                  }
                 }
               }, '编辑'),
               h('Button', {
