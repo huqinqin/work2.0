@@ -1,3 +1,5 @@
+import cloneDeep from 'lodash.clonedeep'
+let default$ = {}
 export default {
   methods: {
     data () {
@@ -10,6 +12,7 @@ export default {
         id: this.id
       }).then(data => {
         this.form = data
+        default$ = cloneDeep(data)
       })
     },
     submit () {
@@ -21,6 +24,10 @@ export default {
           desc: ''
         })
       })
+    },
+    reset () {
+      this.$refs.form.resetFields()
+      this.form = cloneDeep(default$)
     }
   },
   beforeMount () {
