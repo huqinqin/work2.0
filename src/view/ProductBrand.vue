@@ -22,8 +22,12 @@
     <i-button type="error">删除所选</i-button>
   </form-item>
 </i-form>
-<product-modal :id="id"></product-modal>
-
+<Modal
+  v-model="editModal"
+  title="Common Modal dialog box title">
+  <div slot="footer"></div>
+  <product-modal :form="form" @closeModal="editModal = false"></product-modal>
+</Modal>
 <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
@@ -45,7 +49,8 @@ export default {
       filter: {
         id: '', name: '', initial: '', manufacturer: '', show: ''
       },
-      id: '',
+      form: null,
+      editModal: false,
       columns: [
         {
           type: 'selection',
@@ -75,6 +80,20 @@ export default {
           align: 'center',
           render: (h, params) => {
             return h('div', [
+              // h('Button', {
+              //   props: {
+              //     type: 'primary',
+              //     size: 'small'
+              //   },
+              //   style: {
+              //     marginRight: '5px'
+              //   },
+              //   on: {
+              //     click: () => {
+              //       this.form = params.row
+              //     }
+              //   }
+              // }, '查看'),
               h('Button', {
                 props: {
                   type: 'primary',
@@ -85,21 +104,8 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.id = params.row.id
-                  }
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.id = params.row.id
+                    this.editModal = true
+                    this.form = params.row
                   }
                 }
               }, '编辑'),
@@ -119,14 +125,6 @@ export default {
           }
         }
       ]
-    }
-  },
-  methods: {
-    closeModal () {
-      console.log('close')
-    },
-    submitEdit (item) {
-      this.submit()
     }
   }
 }

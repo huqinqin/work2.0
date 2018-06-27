@@ -1,12 +1,12 @@
 export default {
   props: {
-    id: {
+    form: {
+      type: Object,
       default: null
     }
   },
   data () {
     return {
-      editModal: false
     }
   },
   methods: {
@@ -27,15 +27,12 @@ export default {
       }).then(data => {
         console.log('submit success')
       })
+    },
+    closeModal () {
+      this.$emit('closeModal')
     }
   },
   beforeMount () {
-    this.query()
-  },
-  watch: {
-    id (newId) {
-      this.editModal = true
-      this.query()
-    }
+    // this.query()
   }
 }
