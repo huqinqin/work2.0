@@ -103,12 +103,29 @@ export default {
   },
   methods: {
     productRevert (id) {
-      this.$api.get(`${this.url}/revert`, {
-        params: {
-          id: id
+      this.$Modal.confirm({
+        title: 'Title',
+        content: '<p>Revert confirm?</p>',
+        loading: true,
+        onCancel: () => {
+          this.$Notice.info({
+            title: 'Revert cancel',
+            desc: ''
+          })
+        },
+        onOk: () => {
+          this.$api.get(`${this.url}/revert`, {
+            params: {
+              id: id
+            }
+          }).then(() => {
+            this.$Modal.remove()
+            this.$Notice.success({
+              title: 'Revert success',
+              desc: ''
+            })
+          })
         }
-      }).then(data => {
-        console.log(data)
       })
     }
   }

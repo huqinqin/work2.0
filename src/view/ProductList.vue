@@ -102,19 +102,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push(`product_edit/${params.row.id}`)
+                  }
                 }
               }, '编辑'),
               h('Button', {
@@ -126,7 +116,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.deleteItem(params.row.id)
+                  }
                 }
               }, '删除')
             ])

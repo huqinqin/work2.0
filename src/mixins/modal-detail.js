@@ -25,10 +25,18 @@ export default {
           form: this.form
         }
       }).then(data => {
-        console.log('submit success')
+        this.$Notice.success({
+          title: 'Edit success',
+          desc: ''
+        })
+        this.$emit('closeModal')
       })
     },
     closeModal () {
+      this.$Notice.success({
+        title: 'Edit cancel',
+        desc: ''
+      })
       this.$emit('closeModal')
     }
   },

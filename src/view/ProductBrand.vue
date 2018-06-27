@@ -80,20 +80,6 @@ export default {
           align: 'center',
           render: (h, params) => {
             return h('div', [
-              // h('Button', {
-              //   props: {
-              //     type: 'primary',
-              //     size: 'small'
-              //   },
-              //   style: {
-              //     marginRight: '5px'
-              //   },
-              //   on: {
-              //     click: () => {
-              //       this.form = params.row
-              //     }
-              //   }
-              // }, '查看'),
               h('Button', {
                 props: {
                   type: 'primary',
@@ -118,7 +104,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.deleteItem(params.row.id)
+                  }
                 }
               }, '删除')
             ])
