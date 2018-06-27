@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 import { login, logout, getUserInfo } from './login'
 
 import { getInstallerList, getInstallerReviewList } from './installer'
-import { getProductAttributeList, getProductBrandList, getProductAttributeDetail, getProductList, getProductBrandDetail, getProductTrashList } from './product'
+import { getProductAttributeList, getProductBrandList, getProductAttributeDetail, getProductList, getProductBrandDetail, getProductTrashList, getProductTrashRevert } from './product'
 import { getShopList, getShopDetail, shopEdit } from './shop'
 import { getPersonnelList, getPersonnelDetail } from './personnel'
 
@@ -17,7 +17,8 @@ Mock.mock(/\/product\/attribute\/list/, 'get', getProductAttributeList)
 Mock.mock(/\/product\/attribute\/detail/, 'get', getProductAttributeDetail)
 Mock.mock(/\/product\/brand\/detail/, 'get', getProductBrandDetail)
 Mock.mock(/\/product\/brand\/list/, 'get', getProductBrandList)
-Mock.mock(/\/product\/trash/, 'get', getProductTrashList)
+Mock.mock(/\/product\/trash\/list/, 'get', getProductTrashList)
+Mock.mock(/\/product\/trash\/revert/, 'get', getProductTrashRevert)
 Mock.mock(/\/product/, 'get', getProductList)
 Mock.mock(/\/shop\/list/, 'get', getShopList)
 Mock.mock(/\/shop\/detail/, 'get', getShopDetail)

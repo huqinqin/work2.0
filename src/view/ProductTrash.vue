@@ -90,37 +90,26 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.productRevert(params.row.id)
+                  }
                 }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
-                }
-              }, '删除')
+              }, '还原')
             ])
           }
         }
       ]
+    }
+  },
+  methods: {
+    productRevert (id) {
+      this.$api.get(`${this.url}/revert`, {
+        params: {
+          id: id
+        }
+      }).then(data => {
+        console.log(data)
+      })
     }
   }
 }

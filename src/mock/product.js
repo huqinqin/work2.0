@@ -93,6 +93,13 @@ export const getProductTrashList = req => {
     msg: ''
   }
 }
+export const getProductTrashRevert = req => {
+  return {
+    code: 200,
+    data: 'revert',
+    msg: ''
+  }
+}
 export const getProductBrandDetail = req => {
   return {
     code: 200,
