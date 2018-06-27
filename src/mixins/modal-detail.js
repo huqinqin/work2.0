@@ -5,25 +5,10 @@ export default {
       default: null
     }
   },
-  data () {
-    return {
-    }
-  },
   methods: {
-    query () {
-      this.$api.get(`${this.url}/detail`, {
-        params: {
-          id: this.id
-        }
-      }).then(data => {
-        this.form = data
-      })
-    },
     submit () {
-      this.$api.get(`${this.url}/edit`, {
-        params: {
-          form: this.form
-        }
+      this.$api.post(`${this.url}/save`, {
+        ...this.form
       }).then(data => {
         this.$Notice.success({
           title: 'Edit success',
@@ -39,8 +24,5 @@ export default {
       })
       this.$emit('closeModal')
     }
-  },
-  beforeMount () {
-    // this.query()
   }
 }

@@ -121,7 +121,6 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }]
-
       }
     }
   }
