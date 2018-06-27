@@ -371,27 +371,5 @@ export default {
     .ivu-card {
       margin-bottom: 15px;
     }
-    .baseDataTable {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #e9eaec;
-      color: #495060;
-      font-size: 12px;
-      background-color: #fff;
-      td {
-        min-width: 0;
-        width: 40%;
-        height: 48px;
-        padding-left: 18px;
-        box-sizing: border-box;
-        text-align: left;
-        text-overflow: ellipsis;
-        vertical-align: middle;
-      }
-      .speTd {
-        width: 10%;
-        background-color: #f8f8f9;
-      }
-    }
   }
 </style>
