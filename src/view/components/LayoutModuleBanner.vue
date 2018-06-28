@@ -1,8 +1,7 @@
 <template>
   <div class="module-content">
-    <p class="link">活动链接：<span v-if="data.link">{{data.link}}</span><span v-else style="color:#a3a3a3;">请编辑</span></p>
     <div class="banner" v-if="isExist">
-      <img :src="data.image" alt="">
+      <img :src="data" alt="">
     </div>
     <div class="empty-column" v-else>
       <p>Upload one picture please.</p>
@@ -12,7 +11,6 @@
       v-model="modal"
       @on-ok="save"
       title="配置图片栏目">
-      <Input v-model="data.link" placeholder="Enter promotion url" style="width: 300px"></Input>
       <Upload
         multiple
         type="drag"
@@ -44,12 +42,12 @@ export default {
     }
   },
   props: {
-    data: Object,
+    data: String,
     index: Number
   },
   computed: {
     isExist () {
-      return this.data.image !== ''
+      return this.data !== ''
     }
   },
   methods: {
@@ -62,7 +60,7 @@ export default {
       }
     },
     onSuccess (data) {
-      this.data.image = data.data.url.replace('http:', 'https:')
+      this.data = data.data.url.replace('http:', 'https:')
     },
     save () {
       this.$emit('update', this.index, this.data)
@@ -74,14 +72,6 @@ export default {
 .module-content
 .banner img{
   width: 100%;
-}
-.link{
-  line-height: 36px;
-  font-size: 18px;
-}
-.ivu-modal .ivu-input{
-  width: 100%;
-  margin-bottom: 24px;
 }
 .empty-column p{
   line-height: 64px;

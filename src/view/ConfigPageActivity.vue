@@ -1,6 +1,6 @@
 <template>
   <card>
-    <p slot="title">配置</p>
+    <p slot="title">活动名称：<Input placeholder="请输入活动名称" v-model="name"></Input></p>
     <span slot="extra" class="new-config">
       <a href="#" slot="extra" @click.prevent="showAddModule">
           <Icon type="ios-plus-empty"></Icon>
@@ -42,6 +42,7 @@ export default {
   },
   data () {
     return {
+      name: '',
       modal: false,
       moduletype: ['banner', 'desc', 'product', 'floor'],
       modules: [ 'LayoutModuleBanner', 'LayoutModuleIntro', 'LayoutModuleProduct', 'LayoutModuleFloor' ],
@@ -55,7 +56,6 @@ export default {
       let module = { type, data: '' }
       switch (type) {
         case 'banner':
-          module.data = { 'image': '', 'link': '' }
           break
         case 'desc':
           break
@@ -98,7 +98,8 @@ export default {
     },
     saveConfig () {
       this.$api.get(`${this.url}/detail`, {
-
+        name: this.name,
+        config: JSON.stringify(this.config)
       })
     }
   }
@@ -119,6 +120,13 @@ export default {
 }
 </style>
 <style lang="less">
+  .ivu-card-head p{
+     width: auto;
+     height: auto;
+    .ivu-input-wrapper{
+      width:auto;
+    }
+  }
 .empty-column {
   text-align: center;
   height: 380px;

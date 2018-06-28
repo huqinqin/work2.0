@@ -51,7 +51,7 @@ export default [
         component: () => import('@/view/ConfigPageHome.vue')
       },
       {
-        path: 'activity',
+        path: 'activity/:name?',
         name: 'config-page-activity',
         meta: {
           icon: 'lock-combination',
