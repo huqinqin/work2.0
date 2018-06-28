@@ -18,8 +18,8 @@
   </form-item>
 
   <form-item>
-    <i-button type="primary">查询</i-button>
-    <i-button type="error">删除所选</i-button>
+    <i-button type="primary" @click="query">查询</i-button>
+    <i-button type="error" @click="removeSelections">删除所选</i-button>
   </form-item>
 </i-form>
 <Modal
@@ -28,7 +28,7 @@
   <div slot="footer"></div>
   <product-brand-modal :form="form" @closeModal="editModal = false"></product-brand-modal>
 </Modal>
-<i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
+<i-table :columns="columns" :data="list" size="small" ref="table" @on-selection-change="changeSelection"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
     <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
