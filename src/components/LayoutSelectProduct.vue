@@ -199,7 +199,10 @@ export default {
           cdate: createAt,
           status_cname: status,
           price_real: realPrice,
-          price: oldPrice
+          price: oldPrice,
+          sale_rule: saleRule,
+          discount_type: discountType,
+          discount
         }) => ({
           image,
           id,
@@ -210,7 +213,10 @@ export default {
           createAt,
           status,
           realPrice,
-          oldPrice
+          oldPrice,
+          saleRule,
+          discountType,
+          discount
         }))
       })
     }
