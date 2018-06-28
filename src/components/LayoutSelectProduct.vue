@@ -189,8 +189,28 @@ export default {
           wholesale_item_query: { keywords: '', cdateMin: '', 'cdateMax': '', 'type': 0 }
         }
       }).then(data => {
-        this.list = data.map(({ full_url: image, id, item_name: name, brand, tag: label, order_num: total, cdate: createAt, status_cname: status, price_real: realPrice, price: oldPrice }) => ({
-          image, id, name, brand, label, total, createAt, status, realPrice, oldPrice
+        this.list = data.map(({
+          full_url: image,
+          id,
+          item_name: name,
+          brand,
+          tag: label,
+          order_num: total,
+          cdate: createAt,
+          status_cname: status,
+          price_real: realPrice,
+          price: oldPrice
+        }) => ({
+          image,
+          id,
+          name,
+          brand,
+          label,
+          total,
+          createAt,
+          status,
+          realPrice,
+          oldPrice
         }))
       })
     }

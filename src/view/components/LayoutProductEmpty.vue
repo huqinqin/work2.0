@@ -15,7 +15,7 @@ export default {
 <style lang="less" scoped>
 .empty-product {
   text-align: center;
-  width: 290px;
+  width: 280px;
   height: 400px;
   padding: 10px;
   .ivu-icon {

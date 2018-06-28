@@ -26,7 +26,8 @@ module.exports = {
   baseUrl: BASE_URL,
   devServer: {
     proxy: {
-      '/gateway': { target: baseURL }
+      '/gateway': { target: baseURL },
+      '/cgi': { target: baseURL }
     }
   },
   // tweak internal webpack configuration.

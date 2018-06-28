@@ -1,15 +1,20 @@
 <template>
   <card>
     <p slot="title">配置</p>
-    <span slot="extra">
+    <span slot="extra" class="new-config">
       <a href="#" slot="extra" @click.prevent="showAddModule">
           <Icon type="ios-plus-empty"></Icon>
           新增模块
       </a>
     </span>
+    <span slot="extra">
+      <Button type="primary" href="#" slot="extra" @click.prevent="saveConfig">
+          保存
+      </Button>
+    </span>
     <div class="config-page-wrapper">
       <div class="config-page">
-        <component v-for="(item, index) in config" :is="modules[item.type - 1]" :key="index" :data="item.data" :index="index" @handle="handleModule" @update="updateModule"></component>
+        <component v-for="(item, index) in config" :is="modules[moduletype.indexOf(item.type)]" :key="index" :data="item.data" :index="index" @handle="handleModule" @update="updateModule"></component>
       </div>
     </div>
     <Modal
@@ -17,10 +22,10 @@
       @on-ok="addModule(moduleType)"
       title="新增模块">
       <Select v-model="moduleType" style="width:200px">
-        <Option :value="1">Banner模块</Option>
-        <Option :value="2">说明模块</Option>
-        <Option :value="3">商品模块</Option>
-        <Option :value="4">楼层模块</Option>
+        <Option value="banner">Banner模块</Option>
+        <Option value="desc">说明模块</Option>
+        <Option value="product">商品模块</Option>
+        <Option value="floor">楼层模块</Option>
       </Select>
     </Modal>
   </card>
@@ -38,6 +43,7 @@ export default {
   data () {
     return {
       modal: false,
+      moduletype: ['banner', 'desc', 'product', 'floor'],
       modules: [ 'LayoutModuleBanner', 'LayoutModuleIntro', 'LayoutModuleProduct', 'LayoutModuleFloor' ],
       moduleType: 1,
       curIndex: 0,
@@ -48,14 +54,15 @@ export default {
     addModule (type) {
       let module = { type, data: '' }
       switch (type) {
-        case 1:
+        case 'banner':
+          module.data = { 'image': '', 'link': '' }
           break
-        case 2:
+        case 'desc':
           break
-        case 3:
+        case 'product':
           module.data = []
           break
-        case 4:
+        case 'floor':
           module.data = { 'name': '未命名楼层', 'products': [] }
           break
         default:
@@ -88,6 +95,11 @@ export default {
     },
     showAddModule () {
       this.modal = true
+    },
+    saveConfig () {
+      this.$api.get(`${this.url}/detail`, {
+
+      })
     }
   }
 }
@@ -113,6 +125,9 @@ export default {
   width: 100%;
   border: 1px dotted #ccc;
   position: relative;
+}
+.new-config{
+  margin-right: 24px;
 }
 .module-content{
   position: relative;
