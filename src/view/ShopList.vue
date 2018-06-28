@@ -24,7 +24,7 @@
       </form-item>
 
       <form-item>
-        <i-button type="primary">查询</i-button>
+        <i-button type="primary" @click="query">查询</i-button>
         <i-button type="error">删除所选</i-button>
       </form-item>
     </i-form>
