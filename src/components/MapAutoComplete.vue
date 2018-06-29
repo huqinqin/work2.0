@@ -1,36 +1,36 @@
 <template>
-  <Form :model="myInstanceAddress" :label-width="80">
+  <Form :model="myInstanceAddress" :label-width="80" :rules="ruleInline">
   <!-- <input id="addressInput" class="ivu-input" type="text" /> -->
     <Row>
       <Col span="24">
-        <FormItem label="地址">
-          <input id="addressInput" class="ivu-input" type="text" />
+        <FormItem label="地址" prop="address">
+          <input id="addressInput" class="ivu-input" type="text"  required/>
           <!-- <Input id="addressInput" placeholder="Enter something..."></Input> -->
         </FormItem>
       </Col>
       <Col span="24">
-        <FormItem label="街道">
+        <FormItem label="街道" prop="street">
           <Input v-model="myInstanceAddress.address" placeholder="输入街道"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="城市">
+        <FormItem label="城市" prop="city">
           <Input v-model="myInstanceAddress.city" placeholder="输入城市"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="洲">
+        <FormItem label="洲" prop="state">
           <Input v-model="myInstanceAddress.state" placeholder="输入洲"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="邮编">
+        <FormItem label="邮编" prop="zip">
           <Input v-model="myInstanceAddress.zipcode" placeholder="输入邮编"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="城市">
-          <Input v-model="myInstanceAddress.country" placeholder="输入城市"></Input>
+        <FormItem label="国家" prop="country">
+          <Input v-model="myInstanceAddress.country" placeholder="输入国家"></Input>
         </FormItem>
       </Col>
     </Row>
@@ -59,7 +59,27 @@ export default {
         country: null
       },
       googleAutoCompleteInput: 'addressInput',
-      url: null
+      url: null,
+      ruleInline: {
+        address: [
+          { required: true, message: 'required filed', trigger: 'blur' }
+        ],
+        street: [
+          { required: true, message: 'required filed', trigger: 'blur' }
+        ],
+        city: [
+          { required: true, message: 'required filed', trigger: 'blur' }
+        ],
+        state: [
+          { required: true, message: 'required filed', trigger: 'blur' }
+        ],
+        zip: [
+          { required: true, message: 'required filed', trigger: 'blur' }
+        ],
+        country: [
+          { required: true, message: 'required filed', trigger: 'blur' }
+        ]
+      }
     }
   },
   methods: {
@@ -119,5 +139,5 @@ export default {
   }
 }
 </script>
-<style lang="css" scoped>
+<style lang="less">
 </style>
