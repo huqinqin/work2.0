@@ -1,6 +1,6 @@
 <template>
   <card>
-    <p slot="title">活动名称：<Input placeholder="请输入活动名称" v-model="name"></Input></p>
+    <p slot="title">活动名称：<Input placeholder="请输入活动名称" v-model="name"></Input> <span class="note">(活动链接： https://ltsmall.com/promo#/{{name}} )</span></p>
     <span slot="extra" class="new-config">
       <a href="#" slot="extra" @click.prevent="showAddModule">
           <Icon type="ios-plus-empty"></Icon>
@@ -52,6 +52,7 @@ export default {
     }
   },
   methods: {
+
     addModule (type) {
       let module = { type, data: '' }
       switch (type) {
@@ -125,6 +126,9 @@ export default {
      height: auto;
     .ivu-input-wrapper{
       width:auto;
+    }
+    .note{
+      color:#585858;
     }
   }
 .empty-column {
