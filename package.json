@@ -22,6 +22,7 @@
     "iview": "^2.14.0-rc.1",
     "iview-area": "^1.5.17",
     "js-cookie": "^2.2.0",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.isempty": "^4.4.0",
     "lodash.trim": "^4.5.1",
     "md5": "^2.2.1",

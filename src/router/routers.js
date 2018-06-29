@@ -283,11 +283,7 @@ export default [
         component: () => import('@/view/ProductTrash.vue')
       },
       {
-        path: 'product_edit',
-        meta: {
-          icon: 'lock-combination',
-          title: '商品编辑'
-        },
+        path: 'product_edit/:id?',
         name: 'product_edit',
         component: () => import('@/view/ProductEdit.vue')
       }
@@ -340,14 +336,15 @@ export default [
           title: '新增门店'
         },
         name: 'shop_add',
-        component: () => import('@/view/ShopAdd.vue')
+        component: () => import('@/view/ShopEdit.vue')
       },
       {
         path: 'shop_edit/:id',
-        // meta: {
-        //   icon: 'lock-combination',
-        //   title: '编辑门店'
-        // },
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '编辑门店'
+        },
         name: 'shop_edit',
         component: () => import('@/view/ShopEdit.vue')
       },

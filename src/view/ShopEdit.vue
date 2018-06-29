@@ -1,6 +1,6 @@
 <template>
   <card>
-    <i-form :model="form" label-position="top" :rules="rules">
+    <i-form :model="form" label-position="top" :rules="rules" ref="form">
       <row :gutter="16">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="门店名称" prop="name">
@@ -55,13 +55,13 @@
       </row>
       <form-item>
         <i-button type="primary" @click="submit">Submit</i-button>
-        <i-button type="ghost" style="margin-left: 8px" @click="$router.push({name:'shop_list'})">Cancel</i-button>
+        <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>
   </card>
 </template>
 <script>
-import mixin from '@/mixins/detail'
+import mixin from '@/mixins/edit'
 export default {
   mixins: [mixin],
   data () {
@@ -121,7 +121,6 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }]
-
       }
     }
   }
