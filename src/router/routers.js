@@ -486,6 +486,27 @@ export default [
     ]
   },
   {
+    path: '/login1',
+    meta: {
+      icon: 'lock-combination',
+      title: '登陆'
+    },
+    redirect: '/index',
+    name: 'login1',
+    component: Main,
+    children: [
+      {
+        path: 'index',
+        meta: {
+          icon: 'lock-combination',
+          title: '登陆'
+        },
+        name: 'login2',
+        component: () => import('@/view/login1.vue')
+      }
+    ]
+  },
+  {
     path: '/401',
     name: 'error_401',
     component: () => import('@/view/error-page/401.vue')
