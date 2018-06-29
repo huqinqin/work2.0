@@ -14,7 +14,7 @@
     </span>
     <div class="config-page-wrapper">
       <div class="config-page">
-        <component v-for="(item, index) in config" :is="modules[moduletype.indexOf(item.type)]" :key="index" :data="item.data" :index="index" @handle="handleModule" @update="updateModule"></component>
+        <component v-for="(item, index) in config" :is="getComponentName(item.type)" :key="index" :data="item.data" :index="index" @handle="handleModule" @update="updateModule"></component>
       </div>
     </div>
     <Modal
@@ -31,6 +31,50 @@
   </card>
 </template>
 <script>
+const modules = {
+  modules: [{
+    type: 'banner',
+    name: 'LayoutModuleBanner',
+    default () {
+      return ''
+    }
+  }, {
+    type: 'desc',
+    name: 'LayoutModuleIntro',
+    default () {
+      return ''
+    }
+  }, {
+    type: 'product',
+    name: 'LayoutModuleProduct',
+    default () {
+      return []
+    }
+  }, {
+    type: 'floor',
+    name: 'LayoutModuleFloor',
+    default () {
+      return { 'name': '未命名楼层', 'products': [] }
+    }
+  }],
+  addModule (module) {
+    this.modules.push(module)
+  },
+  getModuleData (type) {
+    for (const module of this.modules) {
+      if (module.type === type) {
+        return module.default()
+      }
+    }
+  },
+  getModuleName (type) {
+    for (const module of this.modules) {
+      if (module.type === type) {
+        return module.name
+      }
+    }
+  }
+}
 export default {
   name: 'ConfigPageActivity',
   components: {
@@ -44,8 +88,6 @@ export default {
     return {
       name: '',
       modal: false,
-      moduletype: ['banner', 'desc', 'product', 'floor'],
-      modules: [ 'LayoutModuleBanner', 'LayoutModuleIntro', 'LayoutModuleProduct', 'LayoutModuleFloor' ],
       moduleType: 1,
       curIndex: 0,
       config: []
@@ -53,22 +95,10 @@ export default {
   },
   methods: {
     addModule (type) {
-      let module = { type, data: '' }
-      switch (type) {
-        case 'banner':
-          break
-        case 'desc':
-          break
-        case 'product':
-          module.data = []
-          break
-        case 'floor':
-          module.data = { 'name': '未命名楼层', 'products': [] }
-          break
-        default:
-          break
-      }
-      this.config.push(module)
+      this.config.push({type, data: modules.getModuleData(type)})
+    },
+    getComponentName (type) {
+      return modules.getModuleName(type)
     },
     handleModule (moduleIndex, operate) {
       console.log(moduleIndex, operate)
