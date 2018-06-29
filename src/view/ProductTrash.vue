@@ -1,7 +1,7 @@
 <template>
   <card>
     <i-form ref="filter" :model="filter" inline>
-  <form-item prop="id">
+      <form-item prop="id">
     <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
   </form-item>
   <form-item prop="name">

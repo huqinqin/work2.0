@@ -1,9 +1,11 @@
 <template>
   <div class="module-content">
     <div class="banner" v-if="isExist">
-      <img src="http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/0f5e1e17b77ae628c7e5ddba129cc87e.png" alt="">
+      <img :src="data" alt="">
     </div>
     <div class="empty-column" v-else>
+      <p>Upload one picture please.</p>
+      <p><Icon type="ios-plus-outline" size="64px" @click="modal = true"></Icon></p>
     </div>
     <Modal
       v-model="modal"
@@ -13,7 +15,7 @@
         multiple
         type="drag"
         :on-success="onSuccess"
-        action="//jsonplaceholder.typicode.com/posts/">
+        action="/cgi/upload/file/misc/image">
         <div style="padding: 20px 0">
             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
             <p>Click or drag files here to upload</p>
@@ -57,18 +59,26 @@ export default {
         this.$emit('handle', this.index, operate)
       }
     },
-    onSuccess () {
-      this.$emit('update', this.index, 'test')
+    onSuccess (data) {
+      this.data = data.data.url.replace('http:', 'https:')
     },
     save () {
-      this.$emit('update', this.index, 'test')
+      this.$emit('update', this.index, this.data)
     }
   }
 }
 </script>
-<style lang="css" scoped>
+<style lang="less" scoped>
 .module-content
 .banner img{
   width: 100%;
+}
+.empty-column p{
+  line-height: 64px;
+  font-size: 24px;
+  .ivu-icon{
+    font-size: 64px;
+    cursor: pointer;
+  }
 }
 </style>

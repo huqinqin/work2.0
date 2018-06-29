@@ -8,18 +8,18 @@
         <Button type="primary" icon="arrow-down-a">下移</Button>
       </ButtonGroup>
     </div>
-    <div data-v-26f98978="" id="0" class="item-level">
-      <a data-v-26f98978="">
-        <div data-v-26f98978="" class="item-list-title">
-          <div data-v-26f98978="" class="i">
-            <span data-v-26f98978="" class="border"></span>
-            <span data-v-26f98978="">
+    <div id="0" class="item-level">
+      <a>
+        <div class="item-list-title">
+          <div class="i">
+            <span class="border"></span>
+            <span>
               <Input :value="data.name" placeholder="Enter name..." @on-change="changeName" style="width: 300px"></Input>
             </span>
           </div>
         </div>
       </a>
-      <ul data-v-26f98978="" class="item-list-box">
+      <ul class="item-list-box">
         <LayoutProduct v-for="(product, index) in data.products" :key="product.id" :product="product" :index="index" @handle="handleProduct"></LayoutProduct>
         <LayoutProductEmpty v-if="data.products.length === 0"></LayoutProductEmpty>
       </ul>

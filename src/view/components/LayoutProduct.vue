@@ -83,7 +83,7 @@ li:hover {
 }
 li {
   transition: all ease 0.2s;
-  width: 290px;
+  width: 280px;
   overflow: hidden;
   /*margin-top: 36px;*/
   border: 1px solid #f2f2f2;
