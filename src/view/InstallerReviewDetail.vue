@@ -37,6 +37,7 @@
   </Form>
 </template>
 <script>
+import $S from 'scriptjs'
 export default {
   name: 'InstallerReviewDetail',
   data () {
@@ -93,13 +94,14 @@ export default {
     }
   },
   mounted () {
-    // get DOM input element where users will start typing addresses
-    var inputElement = document.getElementById('addressInput')
-    // create new google maps object
-    this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
-
-    // add event listener to trigger method getAddressComponents when user select an address
-    this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
+    $S('https://maps.googleapis.com/maps/api/js?key=AIzaSyDabyPaD0P3qprjRU5K41iLIG0oiMUa0fg&libraries=places', () => {
+      // get DOM input element where users will start typing addresses
+      var inputElement = document.getElementById('addressInput')
+      // create new google maps object
+      this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
+      // add event listener to trigger method getAddressComponents when user select an address
+      this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
+    })
   }
 }
 </script>
