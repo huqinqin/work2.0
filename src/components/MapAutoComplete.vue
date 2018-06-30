@@ -37,10 +37,12 @@
   </Form>
 </template>
 <script>
+import AddressAutocomplete from 'google-address-autocomplete'
 export default {
   name: 'WholesalerReviewDetail',
   data () {
     return {
+      autoComplete: null,
       googleAddress: {
         street_number: null,
         street_name: null,
@@ -129,13 +131,33 @@ export default {
     }
   },
   mounted () {
+    this.autoComplete = new AddressAutocomplete('#addressInput', results => {
+      const addressObject = results
+      console.log(addressObject)
+      // This is what the results object looks like
+      // const results = {
+      //   cityName: 'Birmingham',
+      //   country: 'United States',
+      //   countryAbbr: 'US',
+      //   formattedAddress: '123 Shades Crest Rd, Birmingham, AL 35226, USA',
+      //   state: 'Alabama',
+      //   stateAbbr: 'AL',
+      //   streetName: 'Shades Crest Road',
+      //   streetNumber: '123',
+      //   zipCode: '35226',
+      //   coordinates: {
+      //     lat: -123.45678,
+      //     lng: 98.76543
+      //   }
+      // }
+    })
     // get DOM input element where users will start typing addresses
-    var inputElement = document.getElementById(this.googleAutoCompleteInput)
+    // var inputElement = document.getElementById(this.googleAutoCompleteInput)
     // create new google maps object
-    this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
+    // this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
 
     // add event listener to trigger method getAddressComponents when user select an address
-    this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
+    // this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
   }
 }
 </script>
