@@ -14,7 +14,10 @@
           <div class="i">
             <span class="border"></span>
             <span>
-              <Input :value="data.name" placeholder="Enter name..." @on-change="changeName" style="width: 300px"></Input>
+              <Input :value="data.name" placeholder="Enter name..." @on-change="changeName" style="width: 246px"></Input>
+            </span>
+            <span>
+              跳转链接：<Input :value="data.link" placeholder="Enter link..." @on-change="changeLink" style="width: 420px"></Input>
             </span>
           </div>
         </div>
@@ -70,7 +73,10 @@ export default {
       }
     },
     changeName (event) {
-      this.$emit('update', this.index, {products: this.data.products, name: event.target.value})
+      this.$emit('update', this.index, {products: this.data.products, name: event.target.value, link: this.data.link})
+    },
+    changeLink (event) {
+      this.$emit('update', this.index, {products: this.data.products, link: event.target.value, name: this.data.name})
     },
     handleProduct (productIndex, operate) {
       if (operate === '编辑') {
@@ -113,6 +119,9 @@ export default {
 </style>
 
 <style lang="less" scoped>
+.module-content{
+  position: relative;
+}
 .item-list-title {
   display: flex;
   justify-content: space-between;
@@ -129,9 +138,9 @@ export default {
       height: 14px;
       background: #3b85ff;
     }
-    span:last-child{
+    span{
       display: block;
-      margin-left: 12px;
+      margin-right: 12px;
     }
   }
 }

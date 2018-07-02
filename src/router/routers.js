@@ -51,6 +51,15 @@ export default [
         component: () => import('@/view/ConfigPageHome.vue')
       },
       {
+        path: 'activity/list',
+        name: 'config-page-activity-list',
+        meta: {
+          icon: 'lock-combination',
+          title: '活动列表'
+        },
+        component: () => import('@/view/ConfigPageActivityList.vue')
+      },
+      {
         path: 'activity/:name?',
         name: 'config-page-activity',
         meta: {

@@ -1,7 +1,7 @@
 <template>
   <div class="module-content">
     <div class="banner" v-if="isExist">
-      <img :src="data" alt="">
+      <img :src="data.img" alt="" width="1200">
     </div>
     <div class="empty-column" v-else>
       <p>Upload one picture please.</p>
@@ -11,6 +11,9 @@
       v-model="modal"
       @on-ok="save"
       title="配置图片栏目">
+      <p>跳转链接：</p>
+      <Input v-model="data.link" type="textarea" autosize :rows="1"></Input>
+      <p>上传图片：</p>
       <Upload
         multiple
         type="drag"
@@ -42,12 +45,12 @@ export default {
     }
   },
   props: {
-    data: String,
+    data: Object,
     index: Number
   },
   computed: {
     isExist () {
-      return this.data !== ''
+      return this.data.img !== ''
     }
   },
   methods: {
@@ -60,7 +63,7 @@ export default {
       }
     },
     onSuccess (data) {
-      this.data = data.data.url.replace('http:', 'https:')
+      this.data.img = data.data.url.replace('http:', 'http:')
     },
     save () {
       this.$emit('update', this.index, this.data)
