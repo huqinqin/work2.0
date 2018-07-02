@@ -25,7 +25,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'activity',
+      url: 'config/promo',
       filter: {
         name: ''
       },

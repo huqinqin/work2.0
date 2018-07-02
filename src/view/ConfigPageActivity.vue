@@ -54,7 +54,7 @@ const modules = {
     type: 'floor',
     name: 'LayoutModuleFloor',
     default () {
-      return { 'name': '未命名楼层', 'products': [] }
+      return { 'name': '未命名楼层', 'link': '', 'products': [] }
     }
   }],
   addModule (module) {
@@ -87,6 +87,7 @@ export default {
   data () {
     return {
       name: '',
+      url: 'config/promo',
       modal: false,
       moduleType: 1,
       curIndex: 0,
@@ -94,7 +95,6 @@ export default {
     }
   },
   methods: {
-
     addModule (type) {
       this.config.push({type, data: modules.getModuleData(type)})
     },
@@ -189,14 +189,5 @@ export default {
 .module-content{
   position: relative;
 }
-.module-content:hover .operate-list {
-  display: inline;
-}
-.operate-list{
-  display: none;
-  position: absolute;
-  z-index: 99;
-  top: 0;
-  right: 0;
-}
+
 </style>

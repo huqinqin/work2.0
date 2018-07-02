@@ -29,6 +29,7 @@ Mock.mock(/\/shop\/get/, 'post', getShopDetail)
 Mock.mock(/\/shop\/save/, 'post', shopEdit)
 Mock.mock(/\/personnel\/list/, 'post', getPersonnelList)
 Mock.mock(/\/personnel\/detail/, 'post', getPersonnelDetail)
-Mock.mock(/\/activity\/list/, 'post', getActivityList)
+Mock.mock(/\/config\/promo\/list/, 'post', getActivityList)
+Mock.mock(/\/activity\/del/, 'post', mockDelete)
 
 export default Mock
