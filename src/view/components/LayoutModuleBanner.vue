@@ -12,7 +12,7 @@
       @on-ok="save"
       title="配置图片栏目">
       <p>跳转链接：</p>
-      <Input v-model="data.link" type="textarea"></Input>
+      <Input v-model="data.link" type="textarea" autosize :rows="1"></Input>
       <p>上传图片：</p>
       <Upload
         multiple
