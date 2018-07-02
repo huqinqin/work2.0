@@ -1,6 +1,6 @@
 <template>
   <card>
-    <i-form :model="form" label-position="top" :rules="rules">
+    <i-form :model="form" label-position="top" :rules="rules" ref="form">
       <row :gutter="16">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="姓名" prop="name">
@@ -8,33 +8,8 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="联系人" prop="contact">
-            <i-input v-model="form.contact" type="text" placeholder="联系人" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="详细地址" prop="address">
-            <i-input v-model="form.address" type="text" placeholder="详细地址" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="城市" prop="city">
-            <i-input v-model="form.city" type="text" placeholder="城市" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="州" prop="state">
-            <i-input v-model="form.state" type="text" placeholder="州" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="国家" prop="country">
-            <i-input v-model="form.country" type="text" placeholder="国家" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="邮编" prop="zipcode">
-            <i-input v-model="form.zipcode" type="text" placeholder="邮编" ></i-input>
+          <form-item label="角色" prop="role">
+            <i-input v-model="form.role" type="text" placeholder="角色" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -48,32 +23,47 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="账号" prop="account">
-            <i-input v-model="form.account" type="text" placeholder="账号" ></i-input>
+          <form-item label="邮箱" prop="email">
+            <i-input v-model="form.email" type="text" placeholder="邮箱" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="权限" prop="role">
-            <i-input v-model="form.role" type="text" placeholder="权限" ></i-input>
+          <form-item label="行业类型" prop="type">
+            <i-input v-model="form.type" type="text" placeholder="行业类型" ></i-input>
+          </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="申请时间" prop="applicationDate">
+            <i-input v-model="form.applicationDate" type="text" placeholder="申请时间" ></i-input>
+          </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="分配时间" prop="allocationDate">
+            <i-input v-model="form.allocationDate" type="text" placeholder="分配时间" ></i-input>
+          </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="详细地址" prop="address">
+            <i-input v-model="form.address" type="text" placeholder="详细地址" ></i-input>
           </form-item>
         </i-col>
       </row>
       <form-item>
         <i-button type="primary" @click="submit">Submit</i-button>
-        <i-button type="ghost" style="margin-left: 8px" @click="$router.push({name:'pensernel_list'})">Cancel</i-button>
+        <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>
   </card>
 </template>
 <script>
-import mixin from '@/mixins/detail'
+import mixin from '@/mixins/edit'
 export default {
   mixins: [mixin],
   data () {
     return {
-      url: '/personnel',
+      url: 'personnel',
       form: {
-        name: '', contact: '', address: '', city: '', state: '', country: '', zipcode: '', phone: '', mobile: '', account: '', role: ''
+        name: '', role: '', phone: '', mobile: '', email: '', type: '', applicationDate: '', allocationDate: '', address: ''
       },
       rules: {
         name: [{
@@ -81,32 +71,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        contact: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        address: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        city: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        state: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        country: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        zipcode: [{
+        role: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
@@ -121,12 +86,27 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        account: [{
+        email: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        role: [{
+        type: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'blur'
+        }],
+        applicationDate: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'blur'
+        }],
+        allocationDate: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'blur'
+        }],
+        address: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'

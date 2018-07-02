@@ -2,6 +2,7 @@ import Mock from 'mockjs'
 const personnelList = Mock.mock({ 'data|10': [{
   'id|+1': '@id',
   name: '@name',
+  role: '@name',
   account: '@name',
   address: '@id',
   contact: '@name',
@@ -10,14 +11,18 @@ const personnelList = Mock.mock({ 'data|10': [{
 }] })
 const personnelDetail = Mock.mock({
   'data': {
+    id: '@id',
+    account: '@name',
     name: '@name',
     role: '@name',
     type: '@name',
+    contact: '@name',
     phone: '@integer(20000000,90000000)',
     mobile: '@integer(20000000,90000000)',
     email: '@email',
     address: '@region' + '@city',
     allocationDate: '@date',
+    'status|1': ['上线', '下线'],
     applicationDate: '@date'
   }
 })
