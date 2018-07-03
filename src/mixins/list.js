@@ -15,7 +15,7 @@ export default {
         page: this.page,
         ...this.filter
       }).then(data => {
-        this.list = data
+        this.list = data.list
       })
     },
     changeSelection (val) {

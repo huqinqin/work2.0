@@ -60,7 +60,7 @@ export default [
         component: () => import('@/view/ConfigPageActivityList.vue')
       },
       {
-        path: 'activity/:name?',
+        path: 'activity/:id?',
         name: 'config-page-activity',
         meta: {
           icon: 'lock-combination',

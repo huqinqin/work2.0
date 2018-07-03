@@ -82,7 +82,7 @@ const productTrashList = Mock.mock({
     image: '@image(200x100)',
     brand: '@name',
     price: '@integer(99, 1000)',
-    num: '@zip',
+    sin: '@zip',
     category: ['类目@integer(1, 10)']
   }]
 })

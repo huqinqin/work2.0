@@ -16,19 +16,19 @@
   <form-item prop="price">
     <i-input v-model="filter.price" type="text" placeholder="单价" ></i-input>
   </form-item>
-  <form-item prop="num">
-    <i-input v-model="filter.num" type="text" placeholder="编码" ></i-input>
+  <form-item prop="sin">
+    <i-input v-model="filter.sin" type="text" placeholder="编码" ></i-input>
   </form-item>
   <form-item prop="category">
     <i-input v-model="filter.category" type="text" placeholder="类目" ></i-input>
   </form-item>
 
   <form-item>
-    <i-button type="primary">查询</i-button>
-    <i-button type="error">删除所选</i-button>
+    <i-button type="primary" @click="query">查询</i-button>
+    <i-button type="error" @click="productRevertSelections">还原所选</i-button>
   </form-item>
 </i-form>
-<i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
+<i-table :columns="columns" :data="list" size="small" ref="table" @on-selection-change="changeSelection"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
     <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
@@ -44,7 +44,7 @@ export default {
     return {
       url: 'product/trash',
       filter: {
-        id: '', name: '', image: '', brand: '', price: '', num: '', category: ''
+        id: '', name: '', image: '', brand: '', price: '', sin: '', category: ''
       },
       columns: [
         {
@@ -69,7 +69,7 @@ export default {
           key: 'price'
         }, {
           title: '编码',
-          key: 'num'
+          key: 'sin'
         }, {
           title: '类目',
           key: 'category'
@@ -116,12 +116,36 @@ export default {
         onOk: () => {
           this.$api.get(`${this.url}/revert`, {
             params: {
-              id: id
+              id: [id]
             }
           }).then(() => {
             this.$Modal.remove()
             this.$Notice.success({
               title: 'Revert success',
+              desc: ''
+            })
+          })
+        }
+      })
+    },
+    productRevertSelections () {
+      this.$Modal.confirm({
+        title: 'Title',
+        content: `<p>确认还原选中的${this.selections.length}条数据？</p>`,
+        loading: true,
+        onCancel: () => {
+          this.$Notice.success({
+            title: '还原取消',
+            desc: ''
+          })
+        },
+        onOk: () => {
+          this.$api.post(`${this.url}/revert`, {
+            ids: this.selections.map(selection => selection.id)
+          }).then(() => {
+            this.$Modal.remove()
+            this.$Notice.success({
+              title: '还原成功',
               desc: ''
             })
           })
