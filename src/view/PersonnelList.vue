@@ -106,7 +106,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: `personnel_detail/${params.row.id}` })
+                    this.$router.push({ path: `personnel_edit/${params.row.id}` })
                   }
                 }
               }, '编辑'),

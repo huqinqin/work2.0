@@ -88,13 +88,15 @@ export default {
     saveConfig () {
       console.log(JSON.stringify(this.config))
       this.$api.post(`${this.url}/save`, {
-        name: this.name,
         config: JSON.stringify(this.config)
       })
     },
     query () {
-      let resp = '[{"type":"carousel","name":"LayoutModuleCarousel","data":[{"name":"1bd9720c9bc0f3f06e8d1247f4bf03b2.png","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/1bd9720c9bc0f3f06e8d1247f4bf03b2.png"},{"name":"f346bd592fa62d3c8430697f01529178.png","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/f346bd592fa62d3c8430697f01529178.png"},{"name":"5c6e539e229e99e0fcb1845ec82b4428.png","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/5c6e539e229e99e0fcb1845ec82b4428.png"},{"name":"b849a8f1be9d8e14a82f923f056cd19e.png","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/b849a8f1be9d8e14a82f923f056cd19e.png"}]},{"type":"fix","name":"LayoutModuleFixImg","data":{"left":{"link":"","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/05f784ccb606312e7affd43294108320.png","name":"05f784ccb606312e7affd43294108320.png"},"rightTop":{"link":"","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/0a8c152166ec8b1894c50c29d43b447e.jpg","name":"0a8c152166ec8b1894c50c29d43b447e.jpg"},"rightBottom":{"link":"","url":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/e8109c3aa4cc6f726ee5c29a3fdd9395.jpg","name":"e8109c3aa4cc6f726ee5c29a3fdd9395.jpg"}}}]'
-      if (resp) this.config = JSON.parse(resp)
+      this.$api.post(`${this.url}/get`, {
+        config: JSON.stringify(this.config)
+      }).then(data => {
+        if (data) this.config = JSON.parse(data)
+      })
     }
   },
   created () {
