@@ -10,6 +10,9 @@
   width: 1200px;
   padding-bottom: 64px;
 }
+.ivu-layout-content::-webkit-scrollbar {
+  display:none
+}
 .ivu-layout-sider-children {
   overflow: auto;
   &::-webkit-scrollbar {
@@ -37,4 +40,22 @@
     width: 10%;
     background-color: #f8f8f9;
   }
+}
+.details {
+  position: relative;
+  margin-bottom: 50px;
+  .ivu-card {
+    margin-bottom: 15px;
+  }
+}
+.footer-tools{
+  position: fixed;
+  bottom: 0;
+  left: 210px;
+  right: 0;
+  height: 40px;
+  line-height: 40px;
+  background-color: #ffffff;
+  text-align: right;
+  padding: 0 20px;
 }

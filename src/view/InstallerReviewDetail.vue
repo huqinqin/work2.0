@@ -1,107 +1,95 @@
 <template>
-  <Form :model="googleAddress" :label-width="80">
-  <!-- <input id="addressInput" class="ivu-input" type="text" /> -->
-    <Row>
-      <Col span="24">
-        <FormItem label="地址">
-          <input id="addressInput" class="ivu-input" v-model="googleAddress.detail" type="text" />
-          <!-- <Input id="addressInput" placeholder="Enter something..."></Input> -->
-        </FormItem>
-      </Col>
-      <Col span="24">
-        <FormItem label="街道">
-          <Input v-model="googleAddress.address" placeholder="输入街道"></Input>
-        </FormItem>
-      </Col>
-      <Col span="12">
-        <FormItem label="城市">
-          <Input v-model="googleAddress.city" placeholder="输入城市"></Input>
-        </FormItem>
-      </Col>
-      <Col span="12">
-        <FormItem label="洲">
-          <Input v-model="googleAddress.state" placeholder="输入洲"></Input>
-        </FormItem>
-      </Col>
-      <Col span="12">
-        <FormItem label="邮编">
-          <Input v-model="googleAddress.zipcode" placeholder="输入邮编"></Input>
-        </FormItem>
-      </Col>
-      <Col span="12">
-        <FormItem label="城市">
-          <Input v-model="googleAddress.country" placeholder="输入城市"></Input>
-        </FormItem>
-      </Col>
-    </Row>
-  </Form>
+<div class="details">
+  <card>
+    <p slot="title">审核列表</p>
+      <table border="1" class="baseDataTable">
+        <tr>
+          <td class="speTd">邮箱</td>
+          <td>{{form.email}}</td>
+          <td class="speTd">公司名</td>
+          <td>{{form.company}}</td>
+        </tr>
+        <tr>
+          <td class="speTd">Cust ID</td>
+          <td>{{form.custId}}</td>
+          <td class="speTd">申请时间</td>
+          <td>{{form.applyAt}}</td>
+        </tr>
+        <tr>
+          <td class="speTd">未处理时间</td>
+          <td>{{form.waitTime}}</td>
+          <td class="speTd">分配时间</td>
+          <td>{{form.allotAt}}</td>
+        </tr>
+        <tr>
+          <td class="speTd">审核时间</td>
+          <td>{{form.reviewAt}}</td>
+          <td class="speTd">状态</td>
+          <td>{{form.status}}</td>
+        </tr>
+      </table>
+  </card>
+  <card>
+    <p slot="title">分销证信息</p>
+    <img src="https://ltsb2b.oss-us-west-1.aliyuncs.com/misc/517fb939633a317caf7bb2da5fb23a70.png" alt="">
+    <MapAutoComplete></MapAutoComplete>
+    <Form label-position="top">
+      <FormItem label="有效期">
+          <RadioGroup v-model="vertical" vertical>
+              <Radio label="长期">
+                  <span>长期</span>
+              </Radio>
+              <Radio label="有效期">
+                  <span>有效期</span>
+                  <DatePicker type="daterange" :start-date="new Date(1991, 4, 14)" placement="bottom-end" placeholder="Select date" style="width: 200px"></DatePicker>
+              </Radio>
+          </RadioGroup>
+      </FormItem>
+      <FormItem label="Cust ID">
+        <Input></Input>
+      </FormItem>
+    </Form>
+  </card>
+  <card>
+    <p slot="title">审核信息</p>
+    <Form>
+      <FormItem label="选择销售">
+        <Select>
+            <Option value="beijing">New York</Option>
+            <Option value="shanghai" disabled>London</Option>
+            <Option value="shenzhen">Sydney</Option>
+        </Select>
+      </FormItem>
+      <FormItem label="审核信息">
+        <Input type="textarea" :rows="10"></Input>
+      </FormItem>
+    </Form>
+  </card>
+  <footer class="footer-tools">
+    <i-button type="primary">保存</i-button>
+  </footer>
+</div>
 </template>
 <script>
-import $S from 'scriptjs'
 export default {
   name: 'InstallerReviewDetail',
+  components: {
+    MapAutoComplete: () => import('@/components/MapAutoComplete.vue')
+  },
   data () {
     return {
-      googleAddress: {
-        detail: '',
-        address: '',
-        street_number: null,
-        street_name: null,
-        city: null,
-        state: null,
-        zipcode: null,
-        country: null,
-        url: null,
-        autocomplete: null
+      form: {
+        email: '',
+        company: '',
+        custId: '',
+        applyAt: '',
+        waitTime: '',
+        allotAt: '',
+        reviewAt: '',
+        status: ''
       },
       url: null
     }
-  },
-  methods: {
-    getAddressComponents: function () {
-      // Get the place details from the autocomplete object.
-      var place = this.googleAddress.autocomplete.getPlace()
-      // Get each component of the address from the place details
-      for (var i = 0; i < place.address_components.length; i++) {
-        var addressType = place.address_components[i].types[0]
-
-        switch (addressType) {
-          case 'street_number':
-            this.googleAddress.street_number = place.address_components[i]['short_name']
-            break
-          case 'route':
-            this.googleAddress.street_name = place.address_components[i]['short_name']
-            break
-          case 'locality':
-            this.googleAddress.city = place.address_components[i]['long_name']
-            break
-          case 'administrative_area_level_1':
-            this.googleAddress.state = place.address_components[i]['short_name']
-            break
-          case 'postal_code':
-            this.googleAddress.zipcode = place.address_components[i]['short_name']
-            break
-          case 'country':
-            this.googleAddress.country = place.address_components[i]['short_name']
-            break
-        }
-      }
-
-      this.googleAddress.url = place.url
-      this.googleAddress.address = this.googleAddress.street_number + ' ' + this.googleAddress.street_name
-      this.googleAddress.location = {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()}
-      this.googleAddress.detail = place.formatted_address
-    }
-  },
-  mounted () {
-    $S('https://maps.googleapis.com/maps/api/js?key=AIzaSyDabyPaD0P3qprjRU5K41iLIG0oiMUa0fg&libraries=places', () => {
-      // get DOM input element where users will start typing addresses
-      var inputElement = document.getElementById('addressInput')
-      // create new google maps object
-      this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
-      // add event listener to trigger method getAddressComponents when user select an address
-      this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
-    })
   }
 }
 </script>

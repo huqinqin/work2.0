@@ -1,49 +1,48 @@
 <template>
-  <Form :model="myInstanceAddress" :label-width="80" :rules="ruleInline">
-  <!-- <input id="addressInput" class="ivu-input" type="text" /> -->
+  <Form :model="googleAddress" label-position="top">
     <Row>
       <Col span="24">
-        <FormItem label="地址" prop="address">
-          <input id="addressInput" class="ivu-input" type="text"  required/>
-          <!-- <Input id="addressInput" placeholder="Enter something..."></Input> -->
+        <FormItem label="地址">
+          <input id="addressInput" class="ivu-input" v-model="googleAddress.detail" type="text" />
         </FormItem>
       </Col>
       <Col span="24">
-        <FormItem label="街道" prop="street">
-          <Input v-model="myInstanceAddress.address" placeholder="输入街道"></Input>
+        <FormItem label="街道">
+          <Input v-model="googleAddress.address" placeholder="输入街道"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="城市" prop="city">
-          <Input v-model="myInstanceAddress.city" placeholder="输入城市"></Input>
+        <FormItem label="城市">
+          <Input v-model="googleAddress.city" placeholder="输入城市"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="洲" prop="state">
-          <Input v-model="myInstanceAddress.state" placeholder="输入洲"></Input>
+        <FormItem label="洲">
+          <Input v-model="googleAddress.state" placeholder="输入洲"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="邮编" prop="zip">
-          <Input v-model="myInstanceAddress.zipcode" placeholder="输入邮编"></Input>
+        <FormItem label="邮编">
+          <Input v-model="googleAddress.zipcode" placeholder="输入邮编"></Input>
         </FormItem>
       </Col>
       <Col span="12">
-        <FormItem label="国家" prop="country">
-          <Input v-model="myInstanceAddress.country" placeholder="输入国家"></Input>
+        <FormItem label="城市">
+          <Input v-model="googleAddress.country" placeholder="输入城市"></Input>
         </FormItem>
       </Col>
     </Row>
   </Form>
 </template>
 <script>
-import AddressAutocomplete from 'google-address-autocomplete'
+import $S from 'scriptjs'
 export default {
-  name: 'WholesalerReviewDetail',
+  name: 'MapAutoComplete',
   data () {
     return {
-      autoComplete: null,
       googleAddress: {
+        detail: '',
+        address: '',
         street_number: null,
         street_name: null,
         city: null,
@@ -53,14 +52,6 @@ export default {
         url: null,
         autocomplete: null
       },
-      myInstanceAddress: {
-        address: null,
-        city: null,
-        state: null,
-        zipcode: null,
-        country: null
-      },
-      googleAutoCompleteInput: 'addressInput',
       url: null,
       ruleInline: {
         address: [
@@ -85,20 +76,9 @@ export default {
     }
   },
   methods: {
-    updateAddress: function () {
-      // assign required values to my instance property
-      this.myInstanceAddress.address = this.googleAddress.street_number + ' ' + this.googleAddress.street_name
-      this.myInstanceAddress.city = this.googleAddress.city
-      this.myInstanceAddress.state = this.googleAddress.state
-      this.myInstanceAddress.zipcode = this.googleAddress.zipcode
-      this.myInstanceAddress.country = this.googleAddress.country
-    },
     getAddressComponents: function () {
       // Get the place details from the autocomplete object.
       var place = this.googleAddress.autocomplete.getPlace()
-
-      console.log('getAddressComponents', place)
-
       // Get each component of the address from the place details
       for (var i = 0; i < place.address_components.length; i++) {
         var addressType = place.address_components[i].types[0]
@@ -126,14 +106,19 @@ export default {
       }
 
       this.googleAddress.url = place.url
-      // call instance or component method. it will be used to update its addresses properties
-      this.updateAddress()
+      this.googleAddress.address = this.googleAddress.street_number + ' ' + this.googleAddress.street_name
+      this.googleAddress.location = {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()}
+      this.googleAddress.detail = place.formatted_address
     }
   },
   mounted () {
-    this.autoComplete = new AddressAutocomplete('#addressInput', results => {
-      const addressObject = results
-      console.log(addressObject)
+    $S('https://maps.googleapis.com/maps/api/js?key=AIzaSyDabyPaD0P3qprjRU5K41iLIG0oiMUa0fg&libraries=places', () => {
+      // get DOM input element where users will start typing addresses
+      var inputElement = document.getElementById('addressInput')
+      // create new google maps object
+      this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
+      // add event listener to trigger method getAddressComponents when user select an address
+      this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
     })
   }
 }

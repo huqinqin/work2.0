@@ -456,6 +456,7 @@ export default [
       {
         path: 'installer_details',
         meta: {
+          hideInMenu: true,
           icon: 'lock-combination',
           title: '工程商详情'
         },
@@ -472,8 +473,9 @@ export default [
         component: () => import('@/view/InstallerReviewList.vue')
       },
       {
-        path: 'installer_review_detail',
+        path: 'installer_review_detail/:id',
         meta: {
+          hideInMenu: true,
           icon: 'lock-combination',
           title: '审核详情'
         },
@@ -520,6 +522,27 @@ export default [
           title: '注册'
         },
         name: 'register2',
+        component: () => import('@/view/register.vue')
+      }
+    ]
+  },
+  {
+    path: '/permission',
+    meta: {
+      icon: 'lock-combination',
+      title: '权限管理'
+    },
+    redirect: '/permission/menu',
+    name: 'permission',
+    component: Main,
+    children: [
+      {
+        path: 'menu',
+        name: 'menu',
+        meta: {
+          icon: 'lock-combination',
+          title: '菜单管理'
+        },
         component: () => import('@/view/register.vue')
       }
     ]
