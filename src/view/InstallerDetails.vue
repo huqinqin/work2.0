@@ -366,10 +366,3 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-  .details {
-    .ivu-card {
-      margin-bottom: 15px;
-    }
-  }
-</style>
