@@ -1,29 +1,34 @@
 import Mock from 'mockjs'
-const personnelList = Mock.mock({ 'data|10': [{
-  'id|+1': '@id',
-  name: '@name',
-  role: '@name',
-  account: '@name',
-  address: '@id',
-  contact: '@name',
-  phone: '@integer(20000000,90000000)',
-  'status|1': ['上线', '下线']
-}] })
+const personnelList = Mock.mock({
+  'data': {
+    'list|10': [{
+      'id|+1': '@id',
+      firstName: '@name',
+      lastName: '@name',
+      role: '@name',
+      account: '@name',
+      email: '@email',
+      phone: '@integer(20000000,90000000)',
+      store: '@name',
+      group: '@name',
+      'status|1': ['上线', '下线']
+    }]
+  }
+})
 const personnelDetail = Mock.mock({
   'data': {
-    id: '@id',
-    account: '@name',
-    name: '@name',
+    'id|+1': '@id',
+    firstName: '@name',
+    lastName: '@name',
     role: '@name',
-    type: '@name',
-    contact: '@name',
-    phone: '@integer(20000000,90000000)',
-    mobile: '@integer(20000000,90000000)',
+    account: '@name',
     email: '@email',
-    address: '@region' + '@city',
-    allocationDate: '@date',
+    phone: '@integer(20000000,90000000)',
+    store: '@name',
+    group: '@name',
     'status|1': ['上线', '下线'],
-    applicationDate: '@date'
+    address: '@region' + '@city',
+    allocationDate: '@date'
   }
 })
 const personnelEditData = Mock.mock({

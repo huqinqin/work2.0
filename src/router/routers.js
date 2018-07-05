@@ -416,13 +416,13 @@ export default [
         component: () => import('@/view/PersonnelEdit.vue')
       },
       {
-        path: 'personnel_add',
+        path: 'personnel_edit',
         meta: {
           icon: 'lock-combination',
           title: '新增人员'
         },
         name: 'personnel_add',
-        component: () => import('@/view/PersonnelAdd.vue')
+        component: () => import('@/view/PersonnelEdit.vue')
       },
       {
         path: 'personnel_reset',
