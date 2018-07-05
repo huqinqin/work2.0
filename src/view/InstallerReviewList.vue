@@ -95,7 +95,9 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+
+                  }
                 }
               }, '查看'),
               h('Button', {
@@ -107,21 +109,11 @@ export default {
                   marginRight: '5px'
                 },
                 on: {
-                  click: () => {}
+                  click: () => {
+                    this.$router.push({name: 'installer_review_detail', params: {id: params.row.id}})
+                  }
                 }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
-                }
-              }, '删除')
+              }, '审核')
             ])
           }
         }
