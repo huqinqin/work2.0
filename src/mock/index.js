@@ -10,8 +10,8 @@ import { mockDelete } from './delete'
 import { mockSave } from './save'
 // 登录相关和获取用户信息
 Mock.mock(/\/user\/login/, 'post', login)
-Mock.mock(/\/user_infos/, 'get', getUserInfo)
-Mock.mock(/\/tokens/, 'delete', logout)
+Mock.mock(/\/user\/logout/, 'post', logout)
+Mock.mock(/\/user\/infos/, 'post', getUserInfo)
 
 Mock.mock(/\/installer\/review/, 'post', getInstallerReviewList)
 Mock.mock(/\/installer\/getInstallerList/, 'post', getInstallerList)

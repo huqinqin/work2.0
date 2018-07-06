@@ -28,7 +28,11 @@ export const login = req => {
 export const getUserInfo = req => {
   return {
     code: '000000',
-    data: USER_MAP.super_admin,
+    data: {
+      account: 'Mock',
+      email: '',
+      avatar: ''
+    },
     msg: ''
   }
 }

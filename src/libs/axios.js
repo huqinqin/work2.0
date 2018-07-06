@@ -2,7 +2,7 @@ import axios from 'axios' // 注意先安装哦
 // import baseURL from '_conf/url'
 import { Message } from 'iview'
 // 设置基础url
-axios.defaults.baseURL = '/gateway'
+axios.defaults.baseURL = '/api'
 
 const errorMap = {
   100000: '系统异常',
