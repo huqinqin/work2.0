@@ -9,7 +9,7 @@ const productAttributeList = Mock.mock({
 })
 export const getProductAttributeList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...productAttributeList,
     msg: ''
   }
@@ -56,21 +56,21 @@ const productBrandDetail = Mock.mock({
 })
 export const getProductBrandList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...productBrandList,
     msg: ''
   }
 }
 export const getProductAttributeDetail = req => {
   return {
-    code: 200,
+    code: '000000',
     ...productAttributeDetail,
     msg: ''
   }
 }
 export const getProductList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...productList,
     msg: ''
   }
@@ -88,21 +88,21 @@ const productTrashList = Mock.mock({
 })
 export const getProductTrashList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...productTrashList,
     msg: ''
   }
 }
 export const getProductTrashRevert = req => {
   return {
-    code: 200,
+    code: '000000',
     data: 'revert',
     msg: ''
   }
 }
 export const getProductBrandDetail = req => {
   return {
-    code: 200,
+    code: '000000',
     ...productBrandDetail,
     msg: ''
   }

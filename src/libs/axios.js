@@ -1,7 +1,16 @@
 import axios from 'axios' // 注意先安装哦
 // import baseURL from '_conf/url'
 import { Message } from 'iview'
-axios.defaults.baseURL = '/gateway'
+// 设置基础url
+axios.defaults.baseURL = '/api'
+
+const errorMap = {
+  100000: '系统异常',
+  200000: '基础模块错误',
+  200001: '基础模块数据异常',
+  300000: '商品模块错误',
+  400000: '交易模块错误'
+}
 
 // request 拦截器
 axios.interceptors.request.use(
@@ -21,19 +30,10 @@ axios.interceptors.request.use(
 
     //  1.判断请求超时
     if (error.code === 'ECONNABORTED' && error.message.indexOf('timeout') !== -1) {
-      console.log('根据你设置的timeout/真的请求超时 判断请求现在超时了，你可以在这里加入超时的处理方案')
+      Message.error('time out')
+      // console.log('根据你设置的timeout/真的请求超时 判断请求现在超时了，你可以在这里加入超时的处理方案')
       // return service.request(originalRequest);//例如再重复请求一次
     }
-    //  2.需要重定向到错误页面
-    // const errorInfo = error.response
-    // console.log(errorInfo)
-    // if (errorInfo) {
-    // error =errorInfo.data//页面那边catch的时候就能拿到详细的错误信息,看最下边的Promise.reject
-    //   const errorStatus = errorInfo.status // 404 403 500 ... 等
-    //   router.push({
-    //     path: `/error/${errorStatus}`
-    //   })
-    // }
     return Promise.reject(error) // 在调用的那边可以拿到(catch)你想返回的错误信息
   }
 )
@@ -49,21 +49,16 @@ axios.interceptors.response.use(
       res = response.data
     }
     // 根据返回的code值来做不同的处理（和后端约定）
-    switch (res.code) {
-      case '':
-        break
-      default:
+    if (res.code === '000000') {
+      return res.data
+    } else {
+      const message = res.msg ? res.msg : errorMap[res.code]
+      Message.error(`ERROR: ${message}`)
+      return Promise.reject(res) // 返回接口返回的错误信息
     }
-    // 若不是正确的返回code，且已经登录，就抛出错误
-    // const err = new Error(data.description)
-
-    // err.data = data
-    // err.response = response
-
-    // throw err
-    return res.data || res.datalist
   },
   err => {
+    // 处理http状态码错误
     if (err && err.response) {
       switch (err.response.status) {
         case 400:

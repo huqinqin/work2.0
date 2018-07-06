@@ -4,28 +4,34 @@
     <p slot="title">审核列表</p>
       <table border="1" class="baseDataTable">
         <tr>
-          <td class="speTd">邮箱</td>
-          <td>{{form.email}}</td>
           <td class="speTd">公司名</td>
-          <td>{{form.company}}</td>
+          <td>8447466</td>
+          <td class="speTd">公司电话</td>
+          <td>Windir</td>
         </tr>
         <tr>
-          <td class="speTd">Cust ID</td>
-          <td>{{form.custId}}</td>
+          <td class="speTd">First Name</td>
+          <td>full name</td>
+          <td class="speTd">Last Name</td>
+          <td>2543222</td>
+        </tr>
+        <tr>
+          <td class="speTd">邮箱</td>
+          <td>eeeeee@</td>
+          <td class="speTd">手机</td>
+          <td>eeee</td>
+        </tr>
+        <tr>
           <td class="speTd">申请时间</td>
-          <td>{{form.applyAt}}</td>
-        </tr>
-        <tr>
-          <td class="speTd">未处理时间</td>
-          <td>{{form.waitTime}}</td>
+          <td>1984年6月22日</td>
           <td class="speTd">分配时间</td>
-          <td>{{form.allotAt}}</td>
+          <td>2017-07-24 17:25:38</td>
         </tr>
         <tr>
-          <td class="speTd">审核时间</td>
-          <td>{{form.reviewAt}}</td>
-          <td class="speTd">状态</td>
-          <td>{{form.status}}</td>
+          <td class="speTd">行业类型</td>
+          <td></td>
+          <td class="speTd">详细地址</td>
+          <td>详细地址+城市+州+ 国家， zip code</td>
         </tr>
       </table>
   </card>
