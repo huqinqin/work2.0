@@ -34,21 +34,21 @@ const shopEditData = Mock.mock({
 })
 export const getShopList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...shopList,
     msg: ''
   }
 }
 export const getShopDetail = req => {
   return {
-    code: 200,
+    code: '000000',
     ...shopDetail,
     msg: ''
   }
 }
 export const shopEdit = req => {
   return {
-    code: 200,
+    code: '000000',
     ...shopEditData,
     msg: ''
   }

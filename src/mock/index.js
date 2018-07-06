@@ -9,7 +9,7 @@ import { getActivityList } from './activity'
 import { mockDelete } from './delete'
 import { mockSave } from './save'
 // 登录相关和获取用户信息
-Mock.mock(/\/tokens/, 'post', login)
+Mock.mock(/\/user\/login/, 'post', login)
 Mock.mock(/\/user_infos/, 'get', getUserInfo)
 Mock.mock(/\/tokens/, 'delete', logout)
 

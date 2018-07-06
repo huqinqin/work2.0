@@ -19,7 +19,7 @@ export const login = req => {
   req = JSON.parse(req.body)
   console.log('req', req)
   return {
-    code: 200,
+    code: '000000',
     data: {token: USER_MAP[req.userName].token},
     msg: ''
   }
@@ -27,7 +27,7 @@ export const login = req => {
 
 export const getUserInfo = req => {
   return {
-    code: 200,
+    code: '000000',
     data: USER_MAP.super_admin,
     msg: ''
   }
@@ -35,7 +35,7 @@ export const getUserInfo = req => {
 
 export const logout = req => {
   return {
-    code: 200,
+    code: '000000',
     data: null,
     msg: ''
   }

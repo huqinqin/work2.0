@@ -6,14 +6,14 @@ const activityList = Mock.mock({
 })
 export const getActivityList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...activityList,
     msg: ''
   }
 }
 export const getActivityDetail = req => {
   return {
-    code: 200,
+    code: '000000',
     msg: ''
   }
 }
