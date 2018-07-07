@@ -1,4 +1,5 @@
 import api from '@/libs/axios.js'
+import router from '@/router'
 import md5 from 'md5'
 
 export default {
@@ -22,7 +23,9 @@ export default {
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
-      api.post('user/logout').then(() => {})
+      api.post('user/logout').then(() => {
+        router.push({name: 'login'})
+      })
     },
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {

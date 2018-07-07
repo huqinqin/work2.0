@@ -1,5 +1,5 @@
-import axios from 'axios' // 注意先安装哦
-// import baseURL from '_conf/url'
+import axios from 'axios'
+import router from '@/router';
 import { Message } from 'iview'
 // 设置基础url
 axios.defaults.baseURL = '/api'
@@ -51,6 +51,9 @@ axios.interceptors.response.use(
     // 根据返回的code值来做不同的处理（和后端约定）
     if (res.code === '000000') {
       return res.data
+    } else if (res.code === '000001') {
+      // 用户未登录处理
+      router.redirect({name: 'login'})
     } else {
       const message = res.msg ? res.msg : errorMap[res.code]
       Message.error(`ERROR: ${message}`)
