@@ -494,6 +494,45 @@ export default [
     ]
   },
   {
+    path: '/cert',
+    meta: {
+      icon: 'lock-combination',
+      title: '分销证'
+    },
+    name: 'cert',
+    component: Main,
+    children: [
+      {
+        path: 'cert_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '分销证列表'
+        },
+        name: 'certList',
+        component: () => import('@/view/CertList.vue')
+      },
+      {
+        path: 'cert_detail/:id',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '分销证详情'
+        },
+        name: 'cert_detail',
+        component: () => import('@/view/CertDetail.vue')
+      },
+      {
+        path: 'cert_review/:id',
+        meta: {
+          icon: 'lock-combination',
+          title: '分销证审核'
+        },
+        name: 'cert_review',
+        component: () => import('@/view/CertReview.vue')
+      }
+    ]
+  },
+  {
     path: '/login1',
     meta: {
       icon: 'lock-combination',
