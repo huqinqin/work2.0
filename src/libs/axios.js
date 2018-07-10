@@ -1,5 +1,5 @@
 import axios from 'axios'
-import router from '@/router';
+import router from '@/router'
 import { Message } from 'iview'
 // 设置基础url
 axios.defaults.baseURL = '/api'
