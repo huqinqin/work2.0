@@ -22,14 +22,14 @@ const installerList = Mock.mock({ 'data|10': [{
 }] })
 export const getInstallerReviewList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...installerReviewList,
     msg: ''
   }
 }
 export const getInstallerList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...installerList,
     msg: ''
   }

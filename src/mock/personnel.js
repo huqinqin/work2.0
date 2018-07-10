@@ -38,21 +38,21 @@ const personnelEditData = Mock.mock({
 })
 export const getPersonnelList = req => {
   return {
-    code: 200,
+    code: '000000',
     ...personnelList,
     msg: ''
   }
 }
 export const getPersonnelDetail = req => {
   return {
-    code: 200,
+    code: '000000',
     ...personnelDetail,
     msg: ''
   }
 }
 export const personnelEdit = req => {
   return {
-    code: 200,
+    code: '000000',
     ...personnelEditData,
     msg: ''
   }
