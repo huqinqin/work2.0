@@ -72,6 +72,10 @@ export default {
           })
         }
       })
+    },
+    addBrand () {
+      this.editModal = true
+      this.form = {}
     }
   },
   beforeMount () {
