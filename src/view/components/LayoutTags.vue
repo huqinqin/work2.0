@@ -1,7 +1,7 @@
 <template>
 <div>
   <Tag v-for="item in list" :key="item" :name="item" closable @on-close="handleClose2">{{ item}}</Tag>
-  <Input v-model="tagName" v-show="isShowInput" placeholder="标签名" @keyup.enter.native="addTag"/>
+  <Input v-model="tagName" v-show="isShowInput" placeholder="标签名" @on-blur="TagOnblur" @keyup.enter.native="addTag"  />
   <Button v-show="!isShowInput" icon="ios-plus-empty" type="dashed" size="small" @click="handleAdd">添加标签</Button>
 </div>
 </template>
@@ -33,6 +33,10 @@ export default {
     addTag () {
       this.isShowInput = false
       this.list.push(this.tagName)
+    },
+    TagOnblur () {
+      console.log('失去焦点了')
+      this.isShowInput = false
     }
   }
 }
