@@ -77,13 +77,16 @@
 </div>
 </template>
 <script>
+import mixin from '@/mixins/edit.js'
 export default {
   name: 'InstallerReviewDetail',
+  mixins: [mixin],
   components: {
     MapAutoComplete: () => import('@/components/MapAutoComplete.vue')
   },
   data () {
     return {
+      url: '/store',
       form: {
         email: '',
         company: '',
@@ -93,8 +96,7 @@ export default {
         allotAt: '',
         reviewAt: '',
         status: ''
-      },
-      url: null
+      }
     }
   }
 }

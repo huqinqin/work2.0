@@ -1,7 +1,7 @@
 import Mock from 'mockjs'
 import { login, logout, getUserInfo } from './login'
 
-import { getInstallerList, getInstallerReviewList } from './installer'
+import { getInstallerList, getInstallerReviewList, getInstallerAccountList } from './installer'
 import { getProductAttributeList, getProductBrandList, getProductAttributeDetail, getProductList, getProductBrandDetail, getProductTrashList, getProductTrashRevert } from './product'
 import { getShopList, getShopDetail, shopEdit } from './shop'
 import { getPersonnelList, getPersonnelDetail } from './personnel'
@@ -12,7 +12,7 @@ import { mockSave } from './save'
 Mock.mock(/\/user\/login/, 'post', login)
 Mock.mock(/\/user\/logout/, 'post', logout)
 Mock.mock(/\/user\/infos/, 'post', getUserInfo)
-
+Mock.mock(/\/installer\/account\/list/, 'post', getInstallerAccountList)
 Mock.mock(/\/installer\/review/, 'post', getInstallerReviewList)
 Mock.mock(/\/installer\/getInstallerList/, 'post', getInstallerList)
 Mock.mock(/\/product\/attribute\/list/, 'post', getProductAttributeList)

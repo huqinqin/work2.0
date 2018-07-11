@@ -45,7 +45,7 @@ export default {
   name: 'InstallerReviewList',
   data () {
     return {
-      url: '/installer/review',
+      url: '/store',
       filter: {
         email: '', company: '', custId: '', applyAt: '', waitTime: '', allotAt: '', reviewAt: '', status: ''
       },
