@@ -25,7 +25,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'config/promo',
+      url: 'base/resource/promo',
       filter: {
         name: ''
       },
@@ -64,7 +64,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: `/config-page/activity/${params.row.name}` })
+                    this.$router.push({ path: `/config-page/activity/${params.row.id}` })
                   }
                 }
               }, '编辑')

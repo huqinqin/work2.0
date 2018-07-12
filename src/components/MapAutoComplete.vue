@@ -38,6 +38,9 @@
 import $S from 'scriptjs'
 export default {
   name: 'MapAutoComplete',
+  props: {
+    value: Object
+  },
   data () {
     return {
       googleAddress: {
