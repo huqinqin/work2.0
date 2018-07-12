@@ -6,26 +6,49 @@ const certList = Mock.mock({
       url: '@image(200x100)',
       'number': '@integer(20000000,90000000)',
       company: '@name',
-      custId: '@integer(20000000,90000000)',
-      address: '@region' + '@province' + '@city',
-      uploadAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
-      validTime: '@datetime("MM-dd-yyyy HH:mm:ss")',
-      reviewAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
+      detail: '@region' + '@province' + '@city',
+      custId: '@integer(20000,90000)',
+      uploadAt: '@date',
+      validTime: '@date',
+      reviewAt: '@date',
       'status|1': ['已通过', '已拒绝', '待审核']
     }]
   }
 })
 const certDetail = Mock.mock({
   'data': {
+    id: '@integer(20000,90000)',
     url: '@image(200x100)',
     'number': '@integer(20000000,90000000)',
     company: '@name',
-    custId: '@integer(20000000,90000000)',
-    address: '@region' + '@province' + '@city',
+    address: {
+      detail: '@region' + '@province' + '@city',
+      city: '@city',
+      state: '@state',
+      zip: '@zipcode',
+      country: '@country',
+      street: '@region'
+    },
     uploadAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
     validTime: '@datetime("MM-dd-yyyy HH:mm:ss")',
     reviewAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
-    'status|1': ['已通过', '已拒绝', '待审核']
+    'status|1': ['已通过', '已拒绝', '待审核'],
+    cust: {
+      company: '@name',
+      fisrtName: '@fisrt',
+      lastName: '@last',
+      phone: '@integer(20000000,90000000)',
+      mobile: '@integer(20000000,90000000)',
+      email: '@email',
+      detail: '@region' + '@province' + '@city',
+      custId: '@integer(20000,90000)',
+      industry: '@name',
+      allotAt: '@date',
+      appleAt: '@date',
+      saler: '@first',
+      store: '@last',
+      source: '@clast'
+    }
   }
 })
 const personnelEditData = Mock.mock({

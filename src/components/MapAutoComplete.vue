@@ -1,36 +1,36 @@
 <template>
   <Form :model="googleAddress" label-position="top">
     <Row>
-      <Col span="24">
+      <i-col span="24">
         <FormItem label="地址">
           <input id="addressInput" class="ivu-input" v-model="googleAddress.detail" type="text" />
         </FormItem>
-      </Col>
-      <Col span="24">
+      </i-col>
+      <i-col span="24">
         <FormItem label="街道">
-          <Input v-model="googleAddress.address" placeholder="输入街道"></Input>
+          <Input v-model="googleAddress.street" placeholder="输入街道"></Input>
         </FormItem>
-      </Col>
-      <Col span="12">
+      </i-col>
+      <i-col span="12">
         <FormItem label="城市">
           <Input v-model="googleAddress.city" placeholder="输入城市"></Input>
         </FormItem>
-      </Col>
-      <Col span="12">
-        <FormItem label="洲">
+      </i-col>
+      <i-col span="12">
+        <FormItem label="州">
           <Input v-model="googleAddress.state" placeholder="输入洲"></Input>
         </FormItem>
-      </Col>
-      <Col span="12">
+      </i-col>
+      <i-col span="12">
         <FormItem label="邮编">
-          <Input v-model="googleAddress.zipcode" placeholder="输入邮编"></Input>
+          <Input v-model="googleAddress.zip" placeholder="输入邮编"></Input>
         </FormItem>
-      </Col>
-      <Col span="12">
+      </i-col>
+      <i-col span="12">
         <FormItem label="城市">
           <Input v-model="googleAddress.country" placeholder="输入城市"></Input>
         </FormItem>
-      </Col>
+      </i-col>
     </Row>
   </Form>
 </template>
@@ -39,22 +39,26 @@ import $S from 'scriptjs'
 export default {
   name: 'MapAutoComplete',
   props: {
-    value: Object
+    value: {
+      type: Object,
+      default () {
+        return {
+          detail: '',
+          street: '',
+          street_number: null,
+          street_name: null,
+          city: null,
+          state: null,
+          zip: null,
+          country: null,
+          url: null,
+          autocomplete: null
+        }
+      }
+    }
   },
   data () {
     return {
-      googleAddress: {
-        detail: '',
-        address: '',
-        street_number: null,
-        street_name: null,
-        city: null,
-        state: null,
-        zipcode: null,
-        country: null,
-        url: null,
-        autocomplete: null
-      },
       url: null,
       ruleInline: {
         address: [
@@ -76,6 +80,11 @@ export default {
           { required: true, message: 'required filed', trigger: 'blur' }
         ]
       }
+    }
+  },
+  computed: {
+    googleAddress () {
+      return this.value
     }
   },
   methods: {
