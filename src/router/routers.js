@@ -512,7 +512,7 @@ export default [
         component: () => import('@/view/CertList.vue')
       },
       {
-        path: 'cert_detail/:id',
+        path: 'cert_detail/:id/:custid',
         meta: {
           hideInMenu: true,
           icon: 'lock-combination',
@@ -522,7 +522,7 @@ export default [
         component: () => import('@/view/CertDetail.vue')
       },
       {
-        path: 'cert_review/:id',
+        path: 'cert_review/:id/:custid',
         meta: {
           icon: 'lock-combination',
           title: '分销证审核'

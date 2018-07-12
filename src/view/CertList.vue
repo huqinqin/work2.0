@@ -19,8 +19,8 @@
       <form-item prop="uploadAt">
         <i-input v-model="filter.uploadAt" type="text" placeholder="上传时间" ></i-input>
       </form-item>
-      <form-item prop="validate">
-        <i-input v-model="filter.validate" type="text" placeholder="有效期至" ></i-input>
+      <form-item prop="validTime">
+        <i-input v-model="filter.validTime" type="text" placeholder="有效期至" ></i-input>
       </form-item>
       <form-item prop="reviewAt">
         <i-input v-model="filter.reviewAt" type="text" placeholder="最近审核时间" ></i-input>
@@ -50,7 +50,7 @@ export default {
     return {
       url: 'cert',
       filter: {
-        url: '', number: '', company: '', custId: '', address: '', uploadAt: '', validate: '', reviewAt: '', status: ''
+        url: '', number: '', company: '', custId: '', address: '', uploadAt: '', validTime: '', reviewAt: '', status: ''
       },
       columns: [
         {
@@ -78,7 +78,7 @@ export default {
           key: 'uploadAt'
         }, {
           title: '有效期至',
-          key: 'validate'
+          key: 'validTime'
         }, {
           title: '最近审核时间',
           key: 'reviewAt'
@@ -103,7 +103,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({path: 'cert_review/' + params.row.id})
+                    this.$router.push({path: 'cert_review/' + params.row.id + '/' + params.row.custId})
                   }
                 }
               }, '审核'),
@@ -117,7 +117,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({path: 'cert_detail/' + params.row.id})
+                    this.$router.push({path: 'cert_detail/' + params.row.id + '/' + params.row.custId})
                   }
                 }
               }, '查看')

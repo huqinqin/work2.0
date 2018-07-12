@@ -9,7 +9,7 @@ const certList = Mock.mock({
       custId: '@integer(20000000,90000000)',
       address: '@region' + '@province' + '@city',
       uploadAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
-      validate: '@datetime("MM-dd-yyyy HH:mm:ss")',
+      validTime: '@datetime("MM-dd-yyyy HH:mm:ss")',
       reviewAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
       'status|1': ['已通过', '已拒绝', '待审核']
     }]
@@ -23,7 +23,7 @@ const certDetail = Mock.mock({
     custId: '@integer(20000000,90000000)',
     address: '@region' + '@province' + '@city',
     uploadAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
-    validate: '@datetime("MM-dd-yyyy HH:mm:ss")',
+    validTime: '@datetime("MM-dd-yyyy HH:mm:ss")',
     reviewAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
     'status|1': ['已通过', '已拒绝', '待审核']
   }
