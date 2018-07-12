@@ -188,8 +188,10 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.delmod = true
-                      this.account = params.row.account
+                      this.$Modal.warning({
+                        title: '修改密码',
+                        content: '是否修改' + params.row.account + '的密码'
+                      })
                     }
                   }
                 },
