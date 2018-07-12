@@ -1,21 +1,21 @@
 <template>
   <div class="details">
     <Row :gutter="16">
-      <Col span="12">
+      <i-col span="12">
         <Card>
           <p slot="title">类目结构</p>
           <Tree :data="data" :render="renderContent"></Tree>
         </Card>
-      </Col>
-      <Col span="12">
+      </i-col>
+      <i-col span="12">
         <Card>
           <p slot="title">类目预览</p>
           <Form :model="curCategory" :label-width="80">
             <FormItem label="上级类目">
-              <Input v-model="curCategory.parent" placeholder="输入上级类目"></Input>
+              <Input v-model="curCategory.parent" placeholder="上级类目" readonly="readonly" />
             </FormItem>
             <FormItem label="类目名称">
-              <Input v-model="curCategory.name" placeholder="输入类目名称"></Input>
+              <Input v-model="curCategory.name" placeholder="输入类目名称"/>
             </FormItem>
             <FormItem label="">
               <Upload
@@ -29,17 +29,17 @@
               </Upload>
             </FormItem>
             <FormItem>
-              <Button type="primary">保存</Button>
-              <Button type="primary">编辑属性</Button>
-              <Button type="primary">编辑参数</Button>
+              <Button type="primary" @click="saveCategory">保存</Button>
+              <Button type="primary" @click="editProperties">编辑属性</Button>
+              <Button type="primary" @click="editParameters">编辑参数</Button>
               <Button type="error">删除</Button>
             </FormItem>
           </Form>
         </Card>
-      </Col>
-      <Col :span="24">
+      </i-col>
+      <i-col :span="24" v-show="isShowlist">
         <ProductAttribute></ProductAttribute>
-      </Col>
+      </i-col>
     </Row>
   </div>
 </template>
@@ -56,6 +56,12 @@ export default {
         parent: ''
       },
       activeItem: '',
+      stagingDate: {
+        parent: '',
+        children: '',
+        title: ''
+      },
+      isShowlist: false,
       data: [
         {
           id: '1',
@@ -151,7 +157,7 @@ export default {
         <span class={{'tree-item': true}} onClick={() => { this.check(root, node, data) }}>
           <span class={{active: this.activeItem === data.id}}>{data.title}</span>
           <span class={{ 'operate-btns': true }}>
-            <i-button class={{ 'operate-btn': true }} icon="ios-plus-empty" type="ghost" size="small" onClick={() => { this.append(data) }}></i-button>
+            <i-button class={{ 'operate-btn': true }} icon="ios-plus-empty" type="ghost" size="small" onClick={() => { this.append(event, data) }}></i-button>
             <i-button class={{ 'operate-btn': true }} icon="ios-minus-empty" type="ghost" size="small" onClick={() => { this.remove(root, node, data) } }></i-button>
           </span>
         </span>
@@ -160,21 +166,61 @@ export default {
     check (root, node, data) {
       this.activeItem = data.id
       console.log(root, node, data)
+      let parentTil = ''
+      for (let index = 0; index < root.length; index++) {
+        const element = root[index].nodeKey
+        const parent = root[index].parent
+        console.log('root item', element)
+        if (element === data.nodeKey) {
+          for (let k = 0; k < root.length; k++) {
+            const parentnode = root[k].nodeKey
+            if (parent === parentnode) {
+              parentTil = root[k].node.title
+            }
+          }
+        }
+      }
+      this.curCategory.parent = parentTil
+      this.curCategory.name = data.title
+      this.stagingDate.parent = data
+      this.stagingDate.title = data.title
     },
-    append (data) {
+    append (event, data) {
+      console.log('添加', data)
+      event.cancelBubble = true
+      event.stopPropagation()
       const children = data.children || []
-      children.push({
-        title: 'appended node',
-        expand: true
-      })
-      this.$set(data, 'children', children)
+      this.curCategory.parent = data.title
+      this.curCategory.name = data.title + '的子类目'
+      this.stagingDate.parent = data
+      this.stagingDate.children = children
     },
     remove (root, node, data) {
       const parentKey = root.find(el => el === node).parent
       const parent = root.find(el => el.nodeKey === parentKey).node
       const index = parent.children.indexOf(data)
       parent.children.splice(index, 1)
+    },
+    saveCategory () {
+      if (this.stagingDate.title === '') {
+        let children = this.stagingDate.children
+        children.push({
+          title: this.curCategory.name,
+          expand: true
+        })
+        this.$set(this.stagingDate.parent, 'children', children)
+      } else {
+        console.log('check', this.stagingDate.parent, this.stagingDate.title)
+        this.$set(this.stagingDate.parent, 'title', this.curCategory.name)
+      }
+    },
+    editProperties () {
+      this.isShowlist = true
+    },
+    editParameters () {
+      this.isShowlist = true
     }
+
   }
 }
 </script>
