@@ -19,7 +19,7 @@
         </i-col>
         <i-col :span="24">
           <form-item label="可选值列表" prop="options">
-            <date-picker type="date" placeholder="可选值列表"></date-picker>
+            <LayoutTags type="date" placeholder="可选值列表"></LayoutTags>
           </form-item>
         </i-col>
       </row>
@@ -33,9 +33,13 @@
 
 <script>
 import mixin from '@/mixins/modal-detail'
+import LayoutTags from '@/view/components/LayoutTags.vue'
 export default {
   mixins: [mixin],
   name: 'product-attribute-modal',
+  components: {
+    LayoutTags
+  },
   data () {
     return {
       url: 'product/attribute',

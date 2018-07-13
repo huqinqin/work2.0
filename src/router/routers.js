@@ -60,7 +60,7 @@ export default [
         component: () => import('@/view/ConfigPageActivityList.vue')
       },
       {
-        path: 'activity/:name?',
+        path: 'activity/:id?',
         name: 'config-page-activity',
         meta: {
           icon: 'lock-combination',
@@ -416,13 +416,13 @@ export default [
         component: () => import('@/view/PersonnelEdit.vue')
       },
       {
-        path: 'personnel_add',
+        path: 'personnel_edit',
         meta: {
           icon: 'lock-combination',
           title: '新增人员'
         },
         name: 'personnel_add',
-        component: () => import('@/view/PersonnelAdd.vue')
+        component: () => import('@/view/PersonnelEdit.vue')
       },
       {
         path: 'personnel_reset',
@@ -499,6 +499,45 @@ export default [
         },
         name: 'installer_review_detail',
         component: () => import('@/view/InstallerReviewDetail.vue')
+      }
+    ]
+  },
+  {
+    path: '/cert',
+    meta: {
+      icon: 'lock-combination',
+      title: '分销证'
+    },
+    name: 'cert',
+    component: Main,
+    children: [
+      {
+        path: 'cert_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '分销证列表'
+        },
+        name: 'certList',
+        component: () => import('@/view/CertList.vue')
+      },
+      {
+        path: 'cert_detail/:id',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '分销证详情'
+        },
+        name: 'cert_detail',
+        component: () => import('@/view/CertDetail.vue')
+      },
+      {
+        path: 'cert_review/:id',
+        meta: {
+          icon: 'lock-combination',
+          title: '分销证审核'
+        },
+        name: 'cert_review',
+        component: () => import('@/view/CertReview.vue')
       }
     ]
   },

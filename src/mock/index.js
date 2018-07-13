@@ -5,7 +5,8 @@ import { getInstallerList, getInstallerReviewList, getInstallerAccountList } fro
 import { getProductAttributeList, getProductBrandList, getProductAttributeDetail, getProductList, getProductBrandDetail, getProductTrashList, getProductTrashRevert } from './product'
 import { getShopList, getShopDetail, shopEdit } from './shop'
 import { getPersonnelList, getPersonnelDetail } from './personnel'
-import { getActivityList } from './activity'
+import { getCertList, getCertDetail } from './cert'
+// import { getActivityList } from './activity'
 import { mockDelete } from './delete'
 import { mockSave } from './save'
 // 登录相关和获取用户信息
@@ -30,7 +31,10 @@ Mock.mock(/\/shop\/save/, 'post', shopEdit)
 Mock.mock(/\/personnel\/list/, 'post', getPersonnelList)
 Mock.mock(/\/personnel\/get/, 'post', getPersonnelDetail)
 Mock.mock(/\/personnel\/save/, 'post', mockSave)
-Mock.mock(/\/config\/promo\/list/, 'post', getActivityList)
+// Mock.mock(/\/config\/promo\/list/, 'post', getActivityList)
+Mock.mock(/\/activity\/del/, 'post', mockDelete)
+Mock.mock(/\/cert\/list/, 'post', getCertList)
+Mock.mock(/\/cert\/get/, 'post', getCertDetail)
 Mock.mock(/\/activity\/del/, 'post', mockDelete)
 
 export default Mock
