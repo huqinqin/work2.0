@@ -5,39 +5,39 @@
       <table border="1" class="baseDataTable">
         <tr>
           <td class="speTd">公司名</td>
-          <td>{{custForm.company}}</td>
+          <td>{{form.cust.company}}</td>
           <td class="speTd">姓名</td>
-          <td>{{custForm.userFirstName}} {{custForm.userLastName}}</td>
+          <td>{{form.cust.firstName}} {{form.cust.lastName}}</td>
         </tr>
         <tr>
           <td class="speTd">公司电话</td>
-          <td>{{custForm.phone}}</td>
+          <td>{{form.cust.phone}}</td>
           <td class="speTd">手机</td>
-          <td>{{custForm.mobile}}</td>
+          <td>{{form.cust.mobile}}</td>
         </tr>
         <tr>
           <td class="speTd">邮箱</td>
-          <td>{{custForm.email}}</td>
+          <td>{{form.cust.email}}</td>
           <td class="speTd">行业类型</td>
-          <td>{{custForm.industry}}</td>
+          <td>{{form.cust.industry}}</td>
         </tr>
         <tr>
           <td class="speTd">申请时间</td>
-          <td>{{custForm.appleAt}}</td>
+          <td>{{form.cust.appleAt}}</td>
           <td class="speTd">分配时间</td>
-          <td>{{custForm.allotAt}}</td>
+          <td>{{form.cust.allotAt}}</td>
         </tr>
         <tr>
           <td class="speTd">详细地址</td>
-          <td>{{custForm.address}}</td>
+          <td>{{form.cust.detail}}</td>
           <td class="speTd">来源</td>
-          <td>{{custForm.address}}</td>
+          <td>{{form.cust.source}}</td>
         </tr>
         <tr>
           <td class="speTd">门店/销售</td>
-          <td>{{custForm.store}}{{custForm.saler}}</td>
+          <td>{{form.cust.store}}{{form.cust.sales}}</td>
           <td class="speTd">Cust id</td>
-          <td>{{custForm.custId}}</td>
+          <td>{{form.cust.custId}}</td>
         </tr>
       </table>
     </card>
@@ -56,23 +56,23 @@
         </tr>
         <tr>
           <td class="speTd">地址</td>
-          <td colspan="3">{{form.detail}}</td>
+          <td colspan="3">{{form.address.detail}}</td>
         </tr>
         <tr>
           <td class="speTd">街道</td>
-          <td colspan="3">{{form.addr}}</td>
+          <td colspan="3">{{form.address.street}}</td>
         </tr>
         <tr>
           <td class="speTd">城市</td>
-          <td>{{form.city}}</td>
+          <td>{{form.address.city}}</td>
           <td class="speTd">州</td>
-          <td>{{form.state}}</td>
+          <td>{{form.address.state}}</td>
         </tr>
         <tr>
           <td class="speTd">邮编</td>
-          <td>{{form.zip}}</td>
+          <td>{{form.address.zip}}</td>
           <td class="speTd">国家</td>
-          <td>{{form.country}}</td>
+          <td>{{form.address.country}}</td>
         </tr>
       </table>
       <h2>审核记录</h2>
@@ -103,7 +103,10 @@
         </tr>
       </table>
       <Row class="buttons">
-        <i-col span="24">
+        <i-col span="12">
+          <Button @click="invalid">失效</Button>
+        </i-col>
+        <i-col span="12">
           <router-link to="/cert/cert_list"><Button>返回</Button></router-link>
         </i-col>
       </Row>
@@ -122,21 +125,20 @@ export default {
   data () {
     return {
       url: 'cert',
-      form: {},
-      custForm: {}
+      form: {}
     }
   },
   methods: {
-    getCust () {
-      this.$api.post(`${this.url}/get`, {
-        id: this.$route.params.custid
+    invalid () {
+      this.$api.post(`${this.url}/invalid`, {
+        id: this.$route.params.id
       }).then(resp => {
-        this.custForm = resp.data
+        this.$Notice.success({
+          title: 'Handle success',
+          desc: ''
+        })
       })
     }
-  },
-  beforeMount () {
-    this.getCust()
   }
 }
 </script>

@@ -1,9 +1,6 @@
 <template>
   <card>
     <i-form ref="filter" :model="filter" inline>
-      <form-item prop="url">
-        <i-input v-model="filter.url" type="text" placeholder="分销证" ></i-input>
-      </form-item>
       <form-item prop="number">
         <i-input v-model="filter.number" type="text" placeholder="分销证号" ></i-input>
       </form-item>
@@ -14,7 +11,7 @@
         <i-input v-model="filter.custId" type="text" placeholder="Cust ID" ></i-input>
       </form-item>
       <form-item prop="address">
-        <i-input v-model="filter.address" type="text" placeholder="分销证地址" ></i-input>
+        <i-input v-model="filter.detail" type="text" placeholder="分销证地址" ></i-input>
       </form-item>
       <form-item prop="uploadAt">
         <i-input v-model="filter.uploadAt" type="text" placeholder="上传时间" ></i-input>
@@ -50,7 +47,7 @@ export default {
     return {
       url: 'cert',
       filter: {
-        url: '', number: '', company: '', custId: '', address: '', uploadAt: '', validTime: '', reviewAt: '', status: ''
+        url: '', number: '', company: '', custId: '', detail: '', uploadAt: '', validTime: '', reviewAt: '', status: ''
       },
       columns: [
         {
@@ -60,7 +57,14 @@ export default {
         },
         {
           title: '分销证',
-          key: 'url'
+          key: 'url',
+          width: 150,
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <img src={ params.row.url } width="150"/>
+            )
+          }
         }, {
           title: '分销证号',
           key: 'number'
@@ -72,7 +76,7 @@ export default {
           key: 'custId'
         }, {
           title: '分销证地址',
-          key: 'address'
+          key: 'detail'
         }, {
           title: '上传时间',
           key: 'uploadAt'
@@ -103,7 +107,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({path: 'cert_review/' + params.row.id + '/' + params.row.custId})
+                    this.$router.push({ path: 'cert_review/' + params.row.id })
                   }
                 }
               }, '审核'),
@@ -117,7 +121,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({path: 'cert_detail/' + params.row.id + '/' + params.row.custId})
+                    this.$router.push({ path: 'cert_detail/' + params.row.id })
                   }
                 }
               }, '查看')

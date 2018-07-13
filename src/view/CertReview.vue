@@ -4,39 +4,39 @@
       <table border="1" class="baseDataTable">
         <tr>
           <td class="speTd">公司名</td>
-          <td>8447466</td>
+          <td>{{form.cust.company}}</td>
           <td class="speTd">姓名</td>
-          <td>full name</td>
+          <td>{{form.cust.fisrtName}}{{form.cust.lastName}}</td>
         </tr>
         <tr>
           <td class="speTd">公司电话</td>
-          <td>Windir</td>
+          <td>{{form.cust.phone}}</td>
           <td class="speTd">手机</td>
-          <td>2543222</td>
+          <td>{{form.cust.mobile}}</td>
         </tr>
         <tr>
           <td class="speTd">邮箱</td>
-          <td>eeeeee@</td>
+          <td>{{form.cust.email}}</td>
           <td class="speTd">行业类型</td>
-          <td>eeee</td>
+          <td>{{form.cust.industry}}</td>
         </tr>
         <tr>
           <td class="speTd">申请时间</td>
-          <td>1984年6月22日</td>
+          <td>{{form.cust.appleAt}}</td>
           <td class="speTd">分配时间</td>
-          <td>2017-07-24 17:25:38</td>
+          <td>{{form.cust.allotAt}}</td>
         </tr>
         <tr>
           <td class="speTd">详细地址</td>
-          <td>详细地址+城市+州+ 国家， zip code</td>
+          <td>{{form.cust.detail}}</td>
           <td class="speTd">来源</td>
-          <td>app端</td>
+          <td>{{form.cust.source}}</td>
         </tr>
         <tr>
           <td class="speTd">门店/销售</td>
-          <td></td>
+          <td>{{form.cust.store}}{{form.cust.sales}}</td>
           <td class="speTd">Cust id</td>
-          <td></td>
+          <td>{{form.cust.custId}}</td>
         </tr>
       </table>
     </card>
@@ -65,7 +65,7 @@
           </i-col>
         </Row>
       </Form>
-      <MapAutoComplete v-model="form"></MapAutoComplete>
+      <MapAutoComplete v-model="form.address"></MapAutoComplete>
       <table border="1" class="remark-table baseDataTable">
         <tr>
           <th>编号</th>
@@ -115,26 +115,14 @@ export default {
   data () {
     return {
       url: 'cert',
-      form: {},
-      custForm: {}
+      form: {}
     }
   },
   methods: {
     review (status) {
       console.log('review')
-    },
-    getCust () {
-      this.$api.post(`${this.url}/get`, {
-        id: this.$route.params.custid
-      }).then(resp => {
-        this.custForm = resp.data
-      })
     }
-  },
-  beforeMount () {
-    this.getCust()
   }
-
 }
 </script>
 
