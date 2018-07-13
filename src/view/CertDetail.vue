@@ -132,11 +132,12 @@ export default {
     invalid () {
       this.$api.post(`${this.url}/invalid`, {
         id: this.$route.params.id
-      }).then(resp => {
+      }).then(() => {
         this.$Notice.success({
-          title: 'Handle success',
+          title: '操作成功',
           desc: ''
         })
+        this.$router.push({name: 'cert_list'})
       })
     }
   }

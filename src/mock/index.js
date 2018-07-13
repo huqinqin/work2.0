@@ -35,6 +35,9 @@ Mock.mock(/\/personnel\/save/, 'post', mockSave)
 Mock.mock(/\/activity\/del/, 'post', mockDelete)
 Mock.mock(/\/cert\/list/, 'post', getCertList)
 Mock.mock(/\/cert\/get/, 'post', getCertDetail)
+Mock.mock(/\/cert\/invalid/, 'post', mockSave)
+Mock.mock(/\/cert\/refuse/, 'post', mockSave)
+Mock.mock(/\/cert\/pass/, 'post', mockSave)
 Mock.mock(/\/activity\/del/, 'post', mockDelete)
 
 export default Mock
