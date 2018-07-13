@@ -41,7 +41,7 @@
     <MapAutoComplete></MapAutoComplete>
     <Form label-position="top">
       <FormItem label="有效期">
-          <RadioGroup v-model="vertical" vertical>
+          <RadioGroup vertical>
               <Radio label="长期">
                   <span>长期</span>
               </Radio>
@@ -67,11 +67,14 @@
         </Select>
       </FormItem>
       <FormItem label="审核信息">
-        <Input type="textarea" :rows="10"></Input>
+        <Input type="textarea" :rows="10" v-model="review.content"></Input>
       </FormItem>
     </Form>
   </card>
   <footer class="footer-tools">
+    <i-button type="primary" @click="pass">通过</i-button>
+    <i-button type="primary" @click="refuse">打回</i-button>
+    <i-button type="primary">分配</i-button>
     <i-button type="primary">保存</i-button>
   </footer>
 </div>
@@ -96,8 +99,29 @@ export default {
         allotAt: '',
         reviewAt: '',
         status: ''
+      },
+      storeCert: {
+        address: {}
+      },
+      review: {
+        content: ''
       }
     }
+  },
+  methods: {
+    pass () {
+      this.$api.post('store/refuseStore', {id: this.form.id, content: this.review.content}).then(data => {
+
+      })
+    },
+    refuse () {
+      this.$api.post('store/refuseStore', {id: this.form.id, content: this.review.content}).then(data => {
+
+      })
+    }
+  },
+  beforeMount () {
+    console.log(this.$route)
   }
 }
 </script>
