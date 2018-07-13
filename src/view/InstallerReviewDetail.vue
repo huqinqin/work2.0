@@ -5,43 +5,43 @@
       <table border="1" class="baseDataTable">
         <tr>
           <td class="speTd">公司名</td>
-          <td>8447466</td>
+          <td>{{form.storeName}}</td>
           <td class="speTd">公司电话</td>
-          <td>Windir</td>
+          <td>{{form.phone}}</td>
         </tr>
         <tr>
           <td class="speTd">First Name</td>
-          <td>full name</td>
+          <td>{{form.userFirstName}}</td>
           <td class="speTd">Last Name</td>
-          <td>2543222</td>
+          <td>{{form.userLastName}}</td>
         </tr>
         <tr>
           <td class="speTd">邮箱</td>
-          <td>eeeeee@</td>
+          <td>{{form.email}}</td>
           <td class="speTd">手机</td>
-          <td>eeee</td>
+          <td>{{form.phone}}</td>
         </tr>
         <tr>
           <td class="speTd">申请时间</td>
-          <td>1984年6月22日</td>
+          <td>{{form.appleAt}}</td>
           <td class="speTd">分配时间</td>
-          <td>2017-07-24 17:25:38</td>
+          <td>{{form.allotAt}}</td>
         </tr>
         <tr>
           <td class="speTd">行业类型</td>
-          <td></td>
+          <td>{{form.industry}}</td>
           <td class="speTd">详细地址</td>
-          <td>详细地址+城市+州+ 国家， zip code</td>
+          <td>{{form.address}}</td>
         </tr>
       </table>
   </card>
   <card>
     <p slot="title">分销证信息</p>
     <img src="https://ltsb2b.oss-us-west-1.aliyuncs.com/misc/517fb939633a317caf7bb2da5fb23a70.png" alt="">
-    <MapAutoComplete></MapAutoComplete>
+    <MapAutoComplete v-model="form.certAddress"></MapAutoComplete>
     <Form label-position="top">
       <FormItem label="有效期">
-          <RadioGroup v-model="vertical" vertical>
+          <RadioGroup vertical>
               <Radio label="长期">
                   <span>长期</span>
               </Radio>
@@ -52,7 +52,7 @@
           </RadioGroup>
       </FormItem>
       <FormItem label="Cust ID">
-        <Input></Input>
+        <Input v-model="form.custId"></Input>
       </FormItem>
     </Form>
   </card>
@@ -60,19 +60,20 @@
     <p slot="title">审核信息</p>
     <Form>
       <FormItem label="选择销售">
-        <Select>
+        <Select v-model="form.custId">
             <Option value="beijing">New York</Option>
             <Option value="shanghai" disabled>London</Option>
             <Option value="shenzhen">Sydney</Option>
         </Select>
       </FormItem>
       <FormItem label="审核信息">
-        <Input type="textarea" :rows="10"></Input>
+        <Input type="textarea" :rows="10" v-model="form.message"></Input>
       </FormItem>
     </Form>
   </card>
   <footer class="footer-tools">
-    <i-button type="primary">保存</i-button>
+    <i-button type="primary" @click="pass">通过</i-button>
+    <i-button type="primary" @click="refuse">打回</i-button>
   </footer>
 </div>
 </template>
@@ -84,18 +85,57 @@ export default {
   },
   data () {
     return {
+      url: '/store',
       form: {
+        id: '',
+        storeName: '',
+        userFirstName: '',
+        userLastName: '',
+        phone: '',
         email: '',
-        company: '',
-        custId: '',
-        applyAt: '',
-        waitTime: '',
+        appleAt: '',
         allotAt: '',
-        reviewAt: '',
-        status: ''
-      },
-      url: null
+        industry: '',
+        address: '',
+        storeCertImgUrl: '',
+        certAddress: '',
+        certIsLong: '',
+        certIndate: '',
+        custId: '',
+        saler: '',
+        message: ''
+      }
     }
+  },
+  methods: {
+    pass () {
+      this.$api.post('store/passStore', {
+        id: this.form.id,
+        code: this.form.custId,
+        storeCert: {
+          imgUrl: this.form.storeCertImgUrl,
+          address: this.form.certAddress,
+          ext: {}
+        },
+        masterSaleId: '',
+        content: this.form.message
+      }).then(data => {
+        this.$Message.success('成功通过审核')
+        this.$router.push({name: 'installer_review_list'})
+      })
+    },
+    refuse () {
+      this.$api.post('store/refuseStore', {id: this.form.id, content: this.form.message}).then(data => {
+        this.$Message.error('已拒绝')
+        this.$router.push({name: 'installer_review_list'})
+      })
+    }
+  },
+  beforeMount () {
+    this.$api.post('store/get', { registerId: this.$route.id }).then(data => {
+      this.form = data
+    })
+    console.log(this.$route)
   }
 }
 </script>

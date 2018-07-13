@@ -454,6 +454,15 @@ export default [
         component: () => import('@/view/InstallerList.vue')
       },
       {
+        path: 'installer_account_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '账号列表'
+        },
+        name: 'installerAccountList',
+        component: () => import('@/view/InstallerAccountList.vue')
+      },
+      {
         path: 'installer_edit',
         meta: {
           icon: 'lock-combination',
