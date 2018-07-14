@@ -114,6 +114,7 @@ export default {
         code: this.form.custId,
         storeCert: {
           imgUrl: this.form.storeCertImgUrl,
+          code: this.form.custId,
           address: this.form.certAddress,
           ext: {}
         },
@@ -132,7 +133,7 @@ export default {
     }
   },
   beforeMount () {
-    this.$api.post('store/get', { registerId: this.$route.id }).then(data => {
+    this.$api.post('store/get', { id: this.$route.params.id }).then(data => {
       this.form = data
     })
     console.log(this.$route)
