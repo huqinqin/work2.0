@@ -499,25 +499,14 @@ export default [
         },
         name: 'installer_review_detail',
         component: () => import('@/view/InstallerReviewDetail.vue')
-      }
-    ]
-  },
-  {
-    path: '/cert',
-    meta: {
-      icon: 'lock-combination',
-      title: '分销证'
-    },
-    name: 'cert',
-    component: Main,
-    children: [
+      },
       {
         path: 'cert_list',
         meta: {
           icon: 'lock-combination',
           title: '分销证列表'
         },
-        name: 'certList',
+        name: 'cert_list',
         component: () => import('@/view/CertList.vue')
       },
       {
@@ -533,6 +522,7 @@ export default [
       {
         path: 'cert_review/:id',
         meta: {
+          hideInMenu: true,
           icon: 'lock-combination',
           title: '分销证审核'
         },

@@ -94,10 +94,10 @@
       </table>
       <Row class="buttons">
         <i-col span="12">
-        <Button @click="review(1)">通过</Button>
+        <Button @click="pass">通过</Button>
         </i-col>
         <i-col span="12">
-        <Button @click="review(2)">打回</Button>
+        <Button @click="refuse">打回</Button>
         </i-col>
       </Row>
     </card>
@@ -119,8 +119,27 @@ export default {
     }
   },
   methods: {
-    review (status) {
-      console.log('review')
+    refuse () {
+      this.$api.post(`${this.url}/refuse`, {
+        id: this.$route.params.id
+      }).then(() => {
+        this.$Notice.success({
+          title: '操作成功',
+          desc: ''
+        })
+        this.$router.push({name: 'cert_list'})
+      })
+    },
+    pass () {
+      this.$api.post(`${this.url}/pass`, {
+        id: this.$route.params.id
+      }).then(() => {
+        this.$Notice.success({
+          title: '操作成功',
+          desc: ''
+        })
+        this.$router.push({name: 'cert_list'})
+      })
     }
   }
 }
