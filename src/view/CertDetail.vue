@@ -5,39 +5,39 @@
       <table border="1" class="baseDataTable">
         <tr>
           <td class="speTd">公司名</td>
-          <td>{{form.cust.company}}</td>
+          <td>{{form.store.name}}</td>
           <td class="speTd">姓名</td>
-          <td>{{form.cust.firstName}} {{form.cust.lastName}}</td>
+          <td>{{form.store.contact[0].firstName}} {{form.store.contact[0].lastName}}</td>
         </tr>
         <tr>
           <td class="speTd">公司电话</td>
-          <td>{{form.cust.phone}}</td>
+          <td>{{form.store.contact[0].phone}}</td>
           <td class="speTd">手机</td>
-          <td>{{form.cust.mobile}}</td>
+          <td>{{form.store.contact[0].phone}}</td>
         </tr>
         <tr>
           <td class="speTd">邮箱</td>
-          <td>{{form.cust.email}}</td>
+          <td>{{form.store.contact[0].email}}</td>
           <td class="speTd">行业类型</td>
-          <td>{{form.cust.industry}}</td>
+          <td>{{form.store.ext.industry}}</td>
         </tr>
         <tr>
           <td class="speTd">申请时间</td>
-          <td>{{form.cust.appleAt}}</td>
+          <td>{{form.store.ext.submitDate}}</td>
           <td class="speTd">分配时间</td>
-          <td>{{form.cust.allotAt}}</td>
+          <td>{{form.store.ext.assignDate}}</td>
         </tr>
         <tr>
           <td class="speTd">详细地址</td>
-          <td>{{form.cust.detail}}</td>
+          <td>{{form.address.detail}}</td>
           <td class="speTd">来源</td>
-          <td>{{form.cust.source}}</td>
+          <td>{{form.source}}</td>
         </tr>
         <tr>
           <td class="speTd">门店/销售</td>
-          <td>{{form.cust.store}}{{form.cust.sales}}</td>
+          <td>{{form.store.store}}{{form.store.sales}}</td>
           <td class="speTd">Cust id</td>
-          <td>{{form.cust.custId}}</td>
+          <td>{{form.store.code}}</td>
         </tr>
       </table>
     </card>
@@ -48,7 +48,7 @@
           <td class="speTd">分销证号</td>
           <td>{{form.number}}</td>
           <td class="speTd">公司名</td>
-          <td>{{form.company}}</td>
+          <td>{{form.address.company}}</td>
         </tr>
         <tr>
           <td class="speTd">有效期</td>
@@ -83,23 +83,11 @@
           <th>审核时间</th>
           <th>审核内容</th>
         </tr>
-        <tr>
-          <td>1</td>
-          <td>name</td>
-          <td>MM-dd-yyyy hh:mm:ss</td>
-          <td>remark</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>name</td>
-          <td>MM-dd-yyyy hh:mm:ss</td>
-          <td>remark</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>name</td>
-          <td>MM-dd-yyyy hh:mm:ss</td>
-          <td>remark</td>
+        <tr v-for="(record, index) in form.reviewRecords" :key="record.cdate">
+          <td>{{index + 1}}</td>
+          <td>{{record.userName}}</td>
+          <td>{{new Date(record.cdate)}}</td>
+          <td>{{record.content}}</td>
         </tr>
       </table>
       <Row class="buttons">
@@ -107,7 +95,7 @@
           <Button @click="invalid">失效</Button>
         </i-col>
         <i-col span="12">
-          <router-link to="/cert/cert_list"><Button>返回</Button></router-link>
+          <router-link to="/installer/cert_list"><Button>返回</Button></router-link>
         </i-col>
       </Row>
     </card>
@@ -124,7 +112,7 @@ export default {
   },
   data () {
     return {
-      url: 'cert',
+      url: 'store/cert',
       form: {}
     }
   },

@@ -45,9 +45,9 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'cert',
+      url: 'store/cert',
       filter: {
-        url: '', number: '', company: '', custId: '', detail: '', uploadAt: '', validTime: '', reviewAt: '', status: ''
+        imgUrl: '', number: '', company: '', custId: '', detail: '', uploadAt: '', validTime: '', reviewAt: '', status: ''
       },
       columns: [
         {
@@ -57,35 +57,77 @@ export default {
         },
         {
           title: '分销证',
-          key: 'url',
+          key: 'imgUrl',
           width: 150,
           align: 'center',
           render: (h, params) => {
             return (
-              <img src={ params.row.url } width="150"/>
+              <img src={ params.row.imgUrl } height="100"/>
             )
           }
         }, {
           title: '分销证号',
-          key: 'number'
+          key: 'number',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.number}</span>
+            )
+          }
         }, {
           title: '公司名',
-          key: 'company'
+          key: 'company',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.address.company}</span>
+            )
+          }
         }, {
           title: 'Cust ID',
-          key: 'custId'
+          key: 'custId',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.store.code}</span>
+            )
+          }
         }, {
           title: '分销证地址',
-          key: 'detail'
+          key: 'detail',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.address.detail}</span>
+            )
+          }
         }, {
           title: '上传时间',
-          key: 'uploadAt'
+          key: 'uploadAt',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.ext.submitDate}</span>
+            )
+          }
         }, {
           title: '有效期至',
-          key: 'validTime'
+          key: 'validTime',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.ext.expiryDate}</span>
+            )
+          }
         }, {
           title: '最近审核时间',
-          key: 'reviewAt'
+          key: 'reviewAt',
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <span>{params.row.ext.reviewDate}</span>
+            )
+          }
         }, {
           title: '状态',
           key: 'status'
@@ -96,36 +138,55 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({ path: 'cert_review/' + params.row.id })
+            if (params.row.status === 'submitted') {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.$router.push({ path: 'cert_review/' + params.row.id })
+                    }
                   }
-                }
-              }, '审核'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({ path: 'cert_detail/' + params.row.id })
+                }, '审核'),
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.$router.push({ path: 'cert_detail/' + params.row.id })
+                    }
                   }
-                }
-              }, '查看')
-            ])
+                }, '查看')
+              ])
+            } else {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.$router.push({ path: 'cert_detail/' + params.row.id })
+                    }
+                  }
+                }, '查看')
+              ])
+            }
           }
         }
       ]
