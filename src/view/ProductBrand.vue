@@ -32,7 +32,7 @@
 <i-table :columns="columns" :data="list" size="small" ref="table" @on-selection-change="changeSelection"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
   <div style="float:right;">
-    <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
+    <Page @on-change="changePage" @on-page-size-change="changeSize" :total="total" size="small" show-elevator show-sizer></Page>
   </div>
 </div>
   </card>
@@ -66,7 +66,7 @@ export default {
           key: 'name'
         }, {
           title: '品牌首字母',
-          key: 'initial'
+          key: 'shortName'
         }, {
           title: '品牌制造商',
           key: 'manufacturer'
