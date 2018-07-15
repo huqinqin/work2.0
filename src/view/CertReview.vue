@@ -2,7 +2,7 @@
   <div>
     <card class="installer">
       <h2>工程商信息</h2>
-      <table border="1" class="baseDataTable">
+      <table border="1" class="baseDataTable" v-if="form.store">
         <tr>
           <td class="speTd">公司名</td>
           <td>{{form.store.name}}</td>
@@ -42,7 +42,7 @@
       </table>
     </card>
     <card class="cert">
-      <Form :model="form" label-position="top">
+      <Form :model="form" label-position="top" v-if="form.address">
         <Row>
           <i-col span="24" class="img">
             <img :src="form.imgUrl" alt="">

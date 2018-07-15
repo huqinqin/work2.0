@@ -2,7 +2,7 @@
   <div>
     <card class="installer">
       <h2>工程商信息</h2>
-      <table border="1" class="baseDataTable">
+      <table border="1" class="baseDataTable" v-if="form.store">
         <tr>
           <td class="speTd">公司名</td>
           <td>{{form.store.name}}</td>
@@ -43,7 +43,7 @@
     </card>
     <card class="cert">
       <h2>分销证信息</h2>
-      <table border="1" class="baseDataTable address-table">
+      <table border="1" class="baseDataTable address-table" v-if="form.address">
         <tr>
           <td class="speTd">分销证号</td>
           <td>{{form.number}}</td>
