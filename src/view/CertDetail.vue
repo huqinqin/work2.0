@@ -43,6 +43,7 @@
     </card>
     <card class="cert">
       <h2>分销证信息</h2>
+      <img :src="form.imgUrl" alt="分销证照片" height="500">
       <table border="1" class="baseDataTable address-table" v-if="form.address">
         <tr>
           <td class="speTd">分销证号</td>

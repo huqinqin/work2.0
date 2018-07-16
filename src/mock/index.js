@@ -5,11 +5,12 @@ import { mapMock, mockSave, mockDelete } from './utils'
 import login from './login'
 import personnel from './personnel'
 import product from './product'
+import cert from './cert'
 
 import { getInstallerList, getInstallerReviewList, getInstallerAccountList, getInstallerDetail } from './installer'
 // import { getProductAttributeList, getProductBrandList, getProductAttributeDetail, getProductList, getProductBrandDetail, getProductTrashList, getProductTrashRevert } from './product'
 import { getShopList, getShopDetail, shopEdit } from './shop'
-import { getCertList, getCertDetail } from './cert'
+// import { getCertList, getCertDetail } from './cert'
 // import { getActivityList } from './activity'
 
 const options = Mock.mock({
@@ -24,6 +25,7 @@ const options = Mock.mock({
 mapMock('/personnel', personnel)
 mapMock('/user', login)
 mapMock('/product', product)
+mapMock('/cert', cert)
 
 Mock.mock(/\/common\/getCodeTable/, 'post', req => {
   const data = JSON.parse(req.body)
@@ -54,8 +56,8 @@ Mock.mock(/\/shop\/get/, 'post', getShopDetail)
 Mock.mock(/\/shop\/save/, 'post', shopEdit)
 // Mock.mock(/\/config\/promo\/list/, 'post', getActivityList)
 Mock.mock(/\/activity\/del/, 'post', mockDelete)
-Mock.mock(/\/cert\/list/, 'post', getCertList)
-Mock.mock(/\/cert\/get/, 'post', getCertDetail)
+// Mock.mock(/\/cert\/list/, 'post', getCertList)
+// Mock.mock(/\/cert\/get/, 'post', getCertDetail)
 Mock.mock(/\/cert\/invalid/, 'post', mockSave)
 Mock.mock(/\/cert\/refuse/, 'post', mockSave)
 Mock.mock(/\/cert\/pass/, 'post', mockSave)
