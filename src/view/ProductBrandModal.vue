@@ -2,9 +2,9 @@
   <card>
     <i-form v-if="form" :model="form" label-position="top" :rules="rules">
       <row :gutter="16">
-        <i-col :span="24">
-          <form-item label="编号" prop="id">
-            <i-input v-model="form.id" type="text" placeholder="编号" ></i-input>
+        <i-col :span="24" v-if="form.id">
+          <form-item label="" prop="id">
+            <span>编号：{{form.id}}</span>
           </form-item>
         </i-col>
         <i-col :span="24">
@@ -13,20 +13,20 @@
           </form-item>
         </i-col>
         <i-col :span="24">
-          <form-item label="品牌首字母" prop="initial">
-            <i-input v-model="form.initial" type="text" placeholder="品牌首字母" ></i-input>
+          <form-item label="品牌首字母" prop="shortName">
+            <i-input v-model="form.shortName" type="text" placeholder="品牌首字母" ></i-input>
           </form-item>
         </i-col>
-        <i-col :span="24">
-          <form-item label="品牌制造商" prop="manufacturer">
-            <i-input v-model="form.manufacturer" type="text" placeholder="品牌制造商" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :span="24">
-          <form-item label="是否显示" prop="show">
-            <i-switch v-model="form.show"></i-switch>
-          </form-item>
-        </i-col>
+        <!--<i-col :span="24">-->
+          <!--<form-item label="品牌制造商" prop="manufacturer">-->
+            <!--<i-input v-model="form.manufacturer" type="text" placeholder="品牌制造商" ></i-input>-->
+          <!--</form-item>-->
+        <!--</i-col>-->
+        <!--<i-col :span="24">-->
+          <!--<form-item label="是否显示" prop="show">-->
+            <!--<i-switch v-model="form.show"></i-switch>-->
+          <!--</form-item>-->
+        <!--</i-col>-->
       </row>
       <form-item>
         <i-button type="primary" @click="submit">Submit</i-button>
@@ -55,7 +55,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        initial: [{
+        shortName: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'

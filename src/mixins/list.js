@@ -16,6 +16,7 @@ export default {
         ...this.filter
       }).then(data => {
         this.list = data.list
+        this.total = data.total
       })
     },
     changeSelection (val) {
@@ -23,6 +24,10 @@ export default {
     },
     changePage (page) {
       this.page = page
+      this.query()
+    },
+    changeSize (rows) {
+      this.rows = rows
       this.query()
     },
     deleteItem (id) {

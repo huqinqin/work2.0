@@ -7,13 +7,6 @@ export default {
   },
   methods: {
     submit () {
-      if (this.form) {
-        this.$Notice.warning({
-          title: '数据不完整',
-          desc: ''
-        })
-        return
-      }
       this.$api.post(`${this.url}/save`, {
         ...this.form
       }).then(data => {
@@ -25,7 +18,7 @@ export default {
       })
     },
     closeModal () {
-      this.$Notice.success({
+      this.$Notice.info({
         title: 'Edit cancel',
         desc: ''
       })
