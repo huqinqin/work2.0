@@ -10,7 +10,7 @@ export default {
   },
   methods: {
     query () {
-      this.$api.post(`${this.url}/list`, {
+      this.$axios.post(`${this.url}/list`, {
         rows: this.rows,
         page: this.page,
         ...this.filter
@@ -42,7 +42,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$api.post(`${this.url}/del`, {
+          this.$axios.post(`${this.url}/del`, {
             ids: [id]
           }).then(() => {
             this.$Modal.remove()
@@ -66,7 +66,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$api.post(`${this.url}/del`, {
+          this.$axios.post(`${this.url}/del`, {
             ids: this.selections.map(selection => selection.id)
           }).then(() => {
             this.$Modal.remove()

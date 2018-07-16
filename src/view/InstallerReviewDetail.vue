@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     pass () {
-      this.$api.post('store/passStore', {
+      this.$axios.post('store/passStore', {
         id: this.form.id,
         code: this.form.custId,
         storeCert: {
@@ -126,14 +126,14 @@ export default {
       })
     },
     refuse () {
-      this.$api.post('store/refuseStore', {id: this.form.id, content: this.form.message}).then(data => {
+      this.$axios.post('store/refuseStore', {id: this.form.id, content: this.form.message}).then(data => {
         this.$Message.error('已拒绝')
         this.$router.push({name: 'installer_review_list'})
       })
     }
   },
   beforeMount () {
-    this.$api.post('store/get', { id: this.$route.params.id }).then(data => {
+    this.$axios.post('store/get', { id: this.$route.params.id }).then(data => {
       this.form = data
     })
     console.log(this.$route)

@@ -26,7 +26,7 @@ export default {
     }
   },
   beforeMount () {
-    this.$api
+    this.$axios
       .post('common/getCodeTable', {
         type: this.type,
         source: 'lts'

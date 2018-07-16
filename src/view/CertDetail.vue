@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     invalid () {
-      this.$api.post(`${this.url}/invalid`, {
+      this.$axios.post(`${this.url}/invalid`, {
         id: this.$route.params.id
       }).then(() => {
         this.$Notice.success({

@@ -7,7 +7,7 @@ export default {
   },
   methods: {
     submit () {
-      this.$api.post(`${this.url}/save`, {
+      this.$axios.post(`${this.url}/save`, {
         ...this.form
       }).then(data => {
         this.$Notice.success({

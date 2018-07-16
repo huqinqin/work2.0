@@ -8,7 +8,7 @@ export default {
       }
     },
     query () {
-      this.$api.post(`${this.url}/get`, {
+      this.$axios.post(`${this.url}/get`, {
         id: this.id
       }).then(data => {
         this.form = data
@@ -16,7 +16,7 @@ export default {
       })
     },
     submit () {
-      this.$api.post(`${this.url}/save`, {
+      this.$axios.post(`${this.url}/save`, {
         ...this.form
       }).then(data => {
         this.$Notice.success({

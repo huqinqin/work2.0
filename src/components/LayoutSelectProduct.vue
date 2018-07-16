@@ -181,7 +181,7 @@ export default {
       this.query()
     },
     query () {
-      this.$api.get('/store/item/get_manage_list', {
+      this.$axios.get('/store/item/get_manage_list', {
         params: {
           order_by: 'cdate desc',
           page: this.curPage,

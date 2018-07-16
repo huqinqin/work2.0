@@ -1,37 +1,57 @@
 <template>
   <Form :model="googleAddress" label-position="top">
-    <Row>
-      <i-col span="24">
-        <FormItem label="地址">
-          <input id="addressInput" class="ivu-input" v-model="googleAddress.detail" type="text" />
-        </FormItem>
+    <row>
+      <i-col :span="12" v-if="googleAddress.hasOwnProperty('receiver')">
+        <form-item label="收货人" prop="receiver">
+          <i-input v-model="googleAddress.receiver" placeholder="输入收货人"></i-input>
+        </form-item>
       </i-col>
-      <i-col span="24">
-        <FormItem label="街道">
-          <Input v-model="googleAddress.street" placeholder="输入街道"></Input>
-        </FormItem>
+      <i-col :span="24" v-if="googleAddress.hasOwnProperty('telnum')">
+        <form-item label="联系电话" prop="telnum">
+          <i-input v-model="googleAddress.telnum" placeholder="输入联系电话"></i-input>
+        </form-item>
       </i-col>
-      <i-col span="12">
-        <FormItem label="城市">
-          <Input v-model="googleAddress.city" placeholder="输入城市"></Input>
-        </FormItem>
+      <i-col :span="24">
+        <form-item label="地址" prop="detail">
+          <input id="addressel-input" class="ivu-input" v-model="googleAddress.detail" type="text" />
+        </form-item>
       </i-col>
-      <i-col span="12">
-        <FormItem label="州">
-          <Input v-model="googleAddress.state" placeholder="输入洲"></Input>
-        </FormItem>
+      <i-col :span="24">
+        <form-item label="街道" prop="street">
+          <i-input v-model="googleAddress.street" placeholder="输入街道"></i-input>
+        </form-item>
       </i-col>
-      <i-col span="12">
-        <FormItem label="邮编">
-          <Input v-model="googleAddress.zip" placeholder="输入邮编"></Input>
-        </FormItem>
+      <i-col :span="12">
+        <form-item label="城市" prop="city">
+          <i-input v-model="googleAddress.city" placeholder="输入城市"></i-input>
+        </form-item>
       </i-col>
-      <i-col span="12">
-        <FormItem label="城市">
-          <Input v-model="googleAddress.country" placeholder="输入城市"></Input>
-        </FormItem>
+      <i-col :span="12">
+        <form-item label="州" prop="state">
+          <i-input v-model="googleAddress.state" placeholder="输入州"></i-input>
+        </form-item>
       </i-col>
-    </Row>
+      <i-col :span="12">
+        <form-item label="邮编" prop="zip">
+          <i-input v-model="googleAddress.zip" placeholder="输入邮编"></i-input>
+        </form-item>
+      </i-col>
+      <i-col :span="12">
+        <form-item label="国家" prop="country">
+          <i-input v-model="googleAddress.country" placeholder="输入国家"></i-input>
+        </form-item>
+      </i-col>
+      <i-col :span="24" v-if="googleAddress.hasOwnProperty('company')">
+        <form-item label="公司" prop="company">
+          <i-input v-model="googleAddress.company" placeholder="输入公司"></i-input>
+        </form-item>
+      </i-col>
+      <i-col :span="24" v-if="googleAddress.hasOwnProperty('isDefault')">
+        <form-item label="">
+          <i-checkbox v-model="googleAddress.isDefault">设为默认地址</i-checkbox>
+        </form-item>
+      </i-col>
+    </row>
   </Form>
 </template>
 <script>
@@ -39,10 +59,11 @@ import $S from 'scriptjs'
 export default {
   name: 'MapAutoComplete',
   props: {
-    value: {
+    googleAddress: {
       type: Object,
       default () {
         return {
+          company: '',
           detail: '',
           street: '',
           street_number: null,
@@ -52,55 +73,46 @@ export default {
           zip: null,
           country: null,
           url: null,
-          autocomplete: null
+          lat: '', // 纬度
+          lng: '' // 经度
         }
       }
     }
   },
   data () {
     return {
+      autocomplete: null,
       url: null,
-      ruleInline: {
-        address: [
-          { required: true, message: 'required filed', trigger: 'blur' }
-        ],
-        street: [
-          { required: true, message: 'required filed', trigger: 'blur' }
-        ],
-        city: [
-          { required: true, message: 'required filed', trigger: 'blur' }
-        ],
-        state: [
-          { required: true, message: 'required filed', trigger: 'blur' }
-        ],
-        zip: [
-          { required: true, message: 'required filed', trigger: 'blur' }
-        ],
-        country: [
-          { required: true, message: 'required filed', trigger: 'blur' }
-        ]
+      addressRules: {
+        company: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        receiver: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        telnum: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        detail: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        street: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        city: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        state: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        country: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+        zip: [{ required: true, message: '请输入内容', trigger: 'blur' }]
       }
-    }
-  },
-  computed: {
-    googleAddress () {
-      return this.value
     }
   },
   methods: {
     getAddressComponents: function () {
-      // Get the place details from the autocomplete object.
-      var place = this.googleAddress.autocomplete.getPlace()
-      // Get each component of the address from the place details
+      // Get the place addrs from the autocomplete object.
+      var place = this.autocomplete.getPlace()
+      // console.log("place", JSON.stringify(place, null, 2));
+      // Get each component of the address from the place addrs
       for (var i = 0; i < place.address_components.length; i++) {
         var addressType = place.address_components[i].types[0]
 
         switch (addressType) {
           case 'street_number':
-            this.googleAddress.street_number = place.address_components[i]['short_name']
+            this.googleAddress.street_number =
+              place.address_components[i]['short_name']
             break
           case 'route':
-            this.googleAddress.street_name = place.address_components[i]['short_name']
+            this.googleAddress.street_name =
+              place.address_components[i]['short_name']
             break
           case 'locality':
             this.googleAddress.city = place.address_components[i]['long_name']
@@ -109,29 +121,41 @@ export default {
             this.googleAddress.state = place.address_components[i]['short_name']
             break
           case 'postal_code':
-            this.googleAddress.zipcode = place.address_components[i]['short_name']
+            this.googleAddress.zip = place.address_components[i]['short_name']
             break
           case 'country':
-            this.googleAddress.country = place.address_components[i]['short_name']
+            this.googleAddress.country =
+              place.address_components[i]['short_name']
             break
         }
       }
 
       this.googleAddress.url = place.url
-      this.googleAddress.address = this.googleAddress.street_number + ' ' + this.googleAddress.street_name
-      this.googleAddress.location = {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()}
+      this.googleAddress.street =
+        this.googleAddress.street_number + ' ' + this.googleAddress.street_name
+      this.googleAddress.lat = place.geometry.location.lat()
+      this.googleAddress.lng = place.geometry.location.lng()
       this.googleAddress.detail = place.formatted_address
     }
   },
   mounted () {
-    $S('https://maps.googleapis.com/maps/api/js?key=AIzaSyDabyPaD0P3qprjRU5K41iLIG0oiMUa0fg&libraries=places', () => {
-      // get DOM input element where users will start typing addresses
-      var inputElement = document.getElementById('addressInput')
-      // create new google maps object
-      this.googleAddress.autocomplete = new window.google.maps.places.Autocomplete(inputElement, {types: ['geocode']})
-      // add event listener to trigger method getAddressComponents when user select an address
-      this.googleAddress.autocomplete.addListener('place_changed', this.getAddressComponents)
-    })
+    $S(
+      'https://maps.googleapis.com/maps/api/js?key=AIzaSyDabyPaD0P3qprjRU5K41iLIG0oiMUa0fg&libraries=places',
+      () => {
+        // get DOM input element where users will start typing addresses
+        var inputElement = document.getElementById('addressel-input')
+        // create new google maps object
+        this.autocomplete = new window.google.maps.places.Autocomplete(
+          inputElement,
+          { types: ['geocode'] }
+        )
+        // add event listener to trigger method getAddressComponents when user select an address
+        this.autocomplete.addListener(
+          'place_changed',
+          this.getAddressComponents
+        )
+      }
+    )
   }
 }
 </script>

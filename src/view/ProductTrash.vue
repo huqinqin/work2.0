@@ -114,7 +114,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$api.get(`${this.url}/revert`, {
+          this.$axios.get(`${this.url}/revert`, {
             params: {
               id: [id]
             }
@@ -140,7 +140,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$api.post(`${this.url}/revert`, {
+          this.$axios.post(`${this.url}/revert`, {
             ids: this.selections.map(selection => selection.id)
           }).then(() => {
             this.$Modal.remove()

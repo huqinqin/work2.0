@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     refuse () {
-      this.$api.post(`${this.url}/refuse`, {
+      this.$axios.post(`${this.url}/refuse`, {
         id: this.$route.params.id
       }).then(() => {
         this.$Notice.success({
@@ -120,7 +120,7 @@ export default {
       })
     },
     pass () {
-      this.$api.post(`${this.url}/pass`, {
+      this.$axios.post(`${this.url}/pass`, {
         id: this.$route.params.id
       }).then(() => {
         this.$Notice.success({

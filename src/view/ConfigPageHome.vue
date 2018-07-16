@@ -87,12 +87,12 @@ export default {
     },
     saveConfig () {
       console.log(JSON.stringify(this.config))
-      this.$api.post(`${this.url}/save`, {
+      this.$axios.post(`${this.url}/save`, {
         config: JSON.stringify(this.config)
       })
     },
     query () {
-      this.$api.post(`${this.url}/get`, {
+      this.$axios.post(`${this.url}/get`, {
         config: JSON.stringify(this.config)
       }).then(data => {
         if (data) this.config = JSON.parse(data)

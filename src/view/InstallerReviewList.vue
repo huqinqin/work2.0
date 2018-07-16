@@ -117,7 +117,7 @@ export default {
   },
   methods: {
     allot () {
-      this.$api.post('store/assignStore', {id: this.curId, content: this.masterStoreId}).then(data => {
+      this.$axios.post('store/assignStore', {id: this.curId, content: this.masterStoreId}).then(data => {
         this.$Message.success('已分配')
       })
     }
