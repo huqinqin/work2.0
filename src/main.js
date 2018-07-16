@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import iView from 'iview'
 import i18n from '@/locale'
+import config from '@/config'
 import 'iview/dist/styles/iview.css'
 import '@/assets/coverage.less'
 // 自动加载所有的组件
@@ -16,6 +17,7 @@ if (process.env.VUE_APP_MOCK === 'true') require('@/mock')
 
 Vue.use(iView)
 Vue.config.productionTip = false
+Vue.prototype.$config = config
 /**
  * @description 全局注册应用配置
  */
