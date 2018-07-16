@@ -1,4 +1,4 @@
-import api from '@/libs/axios.js'
+import api from '~prototype/axios.js'
 export default {
   state: {
     show: false,

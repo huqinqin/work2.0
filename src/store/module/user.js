@@ -1,4 +1,4 @@
-import api from '@/libs/axios.js'
+import axios from '~prototype/axios.js'
 import router from '@/router'
 import md5 from 'md5'
 
@@ -16,20 +16,20 @@ export default {
   actions: {
     // 登录
     handleLogin ({ commit }, {userName, password}) {
-      return api.post('/user/login', {
+      return axios.post('/user/login', {
         username: userName,
         password: md5(password)
       })
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
-      api.post('user/logout').then(() => {
+      axios.post('user/logout').then(() => {
         router.push({name: 'login'})
       })
     },
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {
-      api.post('user/infos').then(data => {
+      axios.post('user/infos').then(data => {
         console.log(data)
         commit('setUserInfo', data)
       })

@@ -247,24 +247,6 @@ export default [
         component: () => import('@/view/ProductCategory.vue')
       },
       {
-        path: 'product_attribute',
-        meta: {
-          icon: 'lock-combination',
-          title: '属性管理'
-        },
-        name: 'product_attribute',
-        component: () => import('@/view/ProductAttribute.vue')
-      },
-      {
-        path: 'product_size',
-        meta: {
-          icon: 'lock-combination',
-          title: '参数管理'
-        },
-        name: 'product_size',
-        component: () => import('@/view/ProductSize.vue')
-      },
-      {
         path: 'product_list',
         meta: {
           icon: 'lock-combination',
