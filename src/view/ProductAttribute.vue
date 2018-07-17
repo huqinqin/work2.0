@@ -27,7 +27,7 @@
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
-        <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
+        <Page @on-change="changePage" :total="$store.category.total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
   </card>
@@ -120,33 +120,9 @@ export default {
     'product-attribute-modal': () => import('./ProductAttributeModal')
   },
   mixins: [mixin],
-  props: {
-    id: {
-      type: Number
-    },
-    SKU: {
-      type: Boolean
-    }
-  },
-  watch: {
-    id (value) {
-      if (this.SKU) {
-        this.url = '/product/category/sku'
-      } else {
-        this.url = '/product/category/props'
-      }
-      this.filter.categoryId = value
-      this.query()
-    },
-    SKU (value) {
-      console.log('SKU', value)
-      if (value) {
-        this.url = '/product/category/sku'
-      } else {
-        this.url = '/product/category/props'
-      }
-      this.filter.categoryId = this.id
-      this.query()
+  methods: {
+    query () {
+      this.$store.dispatch('getPropsByCurCateId')
     }
   }
 }

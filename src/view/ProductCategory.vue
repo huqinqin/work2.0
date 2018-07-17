@@ -33,15 +33,15 @@
             </FormItem>
             <FormItem>
               <Button type="primary" @click="saveCategory">保存</Button>
-              <Button type="primary" @click="editProperties">SKU属性</Button>
-              <Button type="primary" @click="editParameters">非SKU属性</Button>
+              <Button type="primary" @click="$store.commit('showPropsTable', true)">SKU属性</Button>
+              <Button type="primary" @click="$store.commit('showPropsTable', false)">非SKU属性</Button>
               <Button type="error">删除</Button>
             </FormItem>
           </Form>
         </Card>
       </i-col>
       <i-col :span="24" v-show="isShowlist">
-        <ProductAttribute v-bind:id="showAttrId"     v-bind:SKU="isSKU"></ProductAttribute>
+        <ProductAttribute v-bind:id="showAttrId" v-bind:SKU="isSKU"></ProductAttribute>
       </i-col>
     </Row>
   </div>
@@ -159,6 +159,7 @@ export default {
       this.stagingDate.parent = data
       this.stagingDate.title = data.title
       this.stagingDate.id = data.id
+      this.$store.commit('setCurCateId', data.id)
     },
     append (event, data) {
       console.log('添加', data)
@@ -202,30 +203,16 @@ export default {
           level: this.curCategory.level
         }
       }
-      console.log('save ', dataSave)
-      this.$api.post(`${this.url}/save`, dataSave).then(data => {
+      this.$axios.post(`${this.url}/save`, dataSave).then(data => {
         // this.data[0].children = data
       })
     },
-    editProperties () {
-      this.isShowlist = true
-      this.isSKU = true
-      console.log(this.isSKU)
-      this.showAttrId = this.stagingDate.id
-    },
-    editParameters () {
-      this.isShowlist = true
-      this.isSKU = false
-      console.log(this.isSKU)
-      this.showAttrId = this.stagingDate.id
-    },
     LoadCurCategory () {
-      this.$api.post(`${this.url}/list`, {
+      this.$axios.post(`${this.url}/list`, {
       }).then(data => {
         this.data[0].children = data
       })
     }
-
   },
   beforeMount () {
     this.LoadCurCategory()
