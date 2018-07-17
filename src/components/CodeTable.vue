@@ -1,17 +1,28 @@
 <template>
-  <Select v-model="model1" style="width:200px">
-      <Option v-for="item in list" :value="item.value" :key="item.value">{{ item.label }}</Option>
-  </Select>
+  <i-select v-model="option">
+      <i-option v-for="item in options" :value="item.key" :key="item.key" :label="item.value"></i-option>
+  </i-select>
 </template>
 <script>
 export default {
   name: 'CodeTable',
   props: {
+    value: String,
     type: String
   },
   data () {
     return {
       options: []
+    }
+  },
+  computed: {
+    option: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        this.$emit('input', value)
+      }
     }
   },
   beforeMount () {

@@ -10,12 +10,13 @@ export default {
   },
   methods: {
     query () {
-      this.$api.post(`${this.url}/list`, {
+      this.$axios.post(`${this.url}/list`, {
         rows: this.rows,
         page: this.page,
         ...this.filter
       }).then(data => {
         this.list = data.list
+        this.total = data.total
       })
     },
     changeSelection (val) {
@@ -23,6 +24,10 @@ export default {
     },
     changePage (page) {
       this.page = page
+      this.query()
+    },
+    changeSize (rows) {
+      this.rows = rows
       this.query()
     },
     deleteItem (id) {
@@ -37,7 +42,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$api.post(`${this.url}/del`, {
+          this.$axios.post(`${this.url}/del`, {
             ids: [id]
           }).then(() => {
             this.$Modal.remove()
@@ -61,7 +66,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$api.post(`${this.url}/del`, {
+          this.$axios.post(`${this.url}/del`, {
             ids: this.selections.map(selection => selection.id)
           }).then(() => {
             this.$Modal.remove()

@@ -9,18 +9,20 @@ import i18n from '@/locale'
 import config from '@/config'
 import 'iview/dist/styles/iview.css'
 import '@/assets/coverage.less'
-import api from '@/libs/axios.js'
-import selectProducts from '@/prototype/selectProducts.js'
+// 自动加载所有的组件
+import './components'
+// 加载编写的插件
+import plugin from './plugin'
 if (process.env.VUE_APP_MOCK === 'true') require('@/mock')
 
 Vue.use(iView)
 Vue.config.productionTip = false
+Vue.prototype.$config = config
 /**
  * @description 全局注册应用配置
  */
-Vue.prototype.$config = config
-Vue.prototype.$api = api
-Vue.prototype.$selectProducts = selectProducts
+
+Vue.use(plugin)
 
 iView.i18n((key, value) => i18n.t(key, value))
 

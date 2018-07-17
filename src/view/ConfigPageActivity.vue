@@ -130,20 +130,20 @@ export default {
     saveConfig () {
       console.log(JSON.stringify(this.config))
       if (this.id) {
-        this.$api.post(`${this.url}/save`, {
+        this.$axios.post(`${this.url}/save`, {
           id: this.id,
           name: this.name,
           config: JSON.stringify(this.config)
         })
       } else {
-        this.$api.post(`${this.url}/save`, {
+        this.$axios.post(`${this.url}/save`, {
           name: this.name,
           config: JSON.stringify(this.config)
         })
       }
     },
     query () {
-      this.$api.post(`${this.url}/get`, {
+      this.$axios.post(`${this.url}/get`, {
         id: this.id
       }).then(data => {
         this.config = JSON.parse(data)

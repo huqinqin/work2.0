@@ -1,4 +1,4 @@
-import api from '@/libs/axios.js'
+import axios from '~prototype/axios.js'
 export default {
   state: {
     show: false,
@@ -24,7 +24,7 @@ export default {
   },
   actions: {
     fetchProducts ({commit}, filter) {
-      api.get('/store/item/get_manage_list', {
+      axios.get('/store/item/get_manage_list', {
         params: {
           order_by: 'cdate desc',
           page: 1,

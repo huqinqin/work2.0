@@ -1,50 +1,51 @@
 <template>
   <div>
     <card class="installer">
-      <table border="1" class="baseDataTable">
+      <h2>工程商信息</h2>
+      <table border="1" class="baseDataTable" v-if="form.store">
         <tr>
           <td class="speTd">公司名</td>
-          <td>{{form.cust.company}}</td>
+          <td>{{form.store.name}}</td>
           <td class="speTd">姓名</td>
-          <td>{{form.cust.fisrtName}}{{form.cust.lastName}}</td>
+          <td>{{form.store.contact[0].firstName}} {{form.store.contact[0].lastName}}</td>
         </tr>
         <tr>
           <td class="speTd">公司电话</td>
-          <td>{{form.cust.phone}}</td>
+          <td>{{form.store.contact[0].phone}}</td>
           <td class="speTd">手机</td>
-          <td>{{form.cust.mobile}}</td>
+          <td>{{form.store.contact[0].phone}}</td>
         </tr>
         <tr>
           <td class="speTd">邮箱</td>
-          <td>{{form.cust.email}}</td>
+          <td>{{form.store.contact[0].email}}</td>
           <td class="speTd">行业类型</td>
-          <td>{{form.cust.industry}}</td>
+          <td>{{form.store.ext.industry}}</td>
         </tr>
         <tr>
           <td class="speTd">申请时间</td>
-          <td>{{form.cust.appleAt}}</td>
+          <td>{{form.store.ext.submitDate}}</td>
           <td class="speTd">分配时间</td>
-          <td>{{form.cust.allotAt}}</td>
+          <td>{{form.store.ext.assignDate}}</td>
         </tr>
         <tr>
           <td class="speTd">详细地址</td>
-          <td>{{form.cust.detail}}</td>
+          <td>{{form.address.detail}}</td>
           <td class="speTd">来源</td>
-          <td>{{form.cust.source}}</td>
+          <td>{{form.source}}</td>
         </tr>
         <tr>
           <td class="speTd">门店/销售</td>
-          <td>{{form.cust.store}}{{form.cust.sales}}</td>
+          <td>{{form.store.store}}{{form.store.sales}}</td>
           <td class="speTd">Cust id</td>
-          <td>{{form.cust.custId}}</td>
+          <td>{{form.store.code}}</td>
         </tr>
       </table>
     </card>
     <card class="cert">
-      <Form :model="form" label-position="top">
+      <Form :model="form" label-position="top" v-if="form.address">
         <Row>
           <i-col span="24" class="img">
-            <img :src="form.url" alt="">
+            <img :src="form.imgUrl" alt="">
           </i-col>
         </Row>
         <Row>
@@ -73,31 +74,19 @@
           <th>审核时间</th>
           <th>审核内容</th>
         </tr>
-        <tr>
-          <td>1</td>
-          <td>name</td>
-          <td>MM-dd-yyyy hh:mm:ss</td>
-          <td>remark</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>name</td>
-          <td>MM-dd-yyyy hh:mm:ss</td>
-          <td>remark</td>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>name</td>
-          <td>MM-dd-yyyy hh:mm:ss</td>
-          <td>remark</td>
+        <tr v-for="(record, index) in form.reviewRecords" :key="record.cdate">
+          <td>{{index + 1}}</td>
+          <td>{{record.userName}}</td>
+          <td>{{new Date(record.cdate)}}</td>
+          <td>{{record.content}}</td>
         </tr>
       </table>
       <Row class="buttons">
         <i-col span="12">
-        <Button @click="review(1)">通过</Button>
+        <Button @click="pass">通过</Button>
         </i-col>
         <i-col span="12">
-        <Button @click="review(2)">打回</Button>
+        <Button @click="refuse">打回</Button>
         </i-col>
       </Row>
     </card>
@@ -114,13 +103,32 @@ export default {
   },
   data () {
     return {
-      url: 'cert',
+      url: 'store/cert',
       form: {}
     }
   },
   methods: {
-    review (status) {
-      console.log('review')
+    refuse () {
+      this.$axios.post(`${this.url}/refuse`, {
+        id: this.$route.params.id
+      }).then(() => {
+        this.$Notice.success({
+          title: '操作成功',
+          desc: ''
+        })
+        this.$router.push({name: 'cert_list'})
+      })
+    },
+    pass () {
+      this.$axios.post(`${this.url}/pass`, {
+        id: this.$route.params.id
+      }).then(() => {
+        this.$Notice.success({
+          title: '操作成功',
+          desc: ''
+        })
+        this.$router.push({name: 'cert_list'})
+      })
     }
   }
 }

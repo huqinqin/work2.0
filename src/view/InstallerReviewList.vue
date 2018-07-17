@@ -36,6 +36,16 @@
         <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
+    <Modal
+      v-model="showAllot"
+      @on-ok="allot"
+      title="分配">
+      <i-form>
+        <form-item label="门店">
+          <CodeTable v-model="masterStoreId" type="store"></CodeTable>
+        </form-item>
+      </i-form>
+    </Modal>
   </card>
 </template>
 <script>
@@ -43,9 +53,15 @@ import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
   name: 'InstallerReviewList',
+  components: {
+    CodeTable: () => import('@/components/CodeTable')
+  },
   data () {
     return {
       url: '/store',
+      showAllot: false,
+      curId: '',
+      masterStoreId: '',
       filter: {
         email: '', company: '', custId: '', applyAt: '', waitTime: '', allotAt: '', reviewAt: '', status: ''
       },
@@ -85,39 +101,25 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-
-                  }
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({name: 'installer_review_detail', params: {id: params.row.id}})
-                  }
-                }
-              }, '审核')
-            ])
+            return (
+              <div>
+                <i-button type="primary" size="small" style={{marginRight: '5px'}} >查看</i-button>
+                <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => {
+                  this.$router.push({name: 'installer_review_detail', params: {id: params.row.id}})
+                }} >审核</i-button>
+                <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => { this.showAllot = true; this.curId = params.row.id }}>分配</i-button>
+              </div>
+            )
           }
         }
       ]
+    }
+  },
+  methods: {
+    allot () {
+      this.$axios.post('store/assignStore', {id: this.curId, content: this.masterStoreId}).then(data => {
+        this.$Message.success('已分配')
+      })
     }
   }
 }

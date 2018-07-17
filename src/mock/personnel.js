@@ -36,24 +36,28 @@ const personnelEditData = Mock.mock({
     something: 'submit'
   }
 })
-export const getPersonnelList = req => {
-  return {
-    code: '000000',
-    ...personnelList,
-    msg: ''
-  }
-}
-export const getPersonnelDetail = req => {
-  return {
-    code: '000000',
-    ...personnelDetail,
-    msg: ''
-  }
-}
-export const personnelEdit = req => {
-  return {
-    code: '000000',
-    ...personnelEditData,
-    msg: ''
+
+export default {
+  list () {
+    console.log('list')
+    return {
+      code: '000000',
+      ...personnelList,
+      msg: ''
+    }
+  },
+  save () {
+    return {
+      code: '000000',
+      ...personnelEditData,
+      msg: ''
+    }
+  },
+  get () {
+    return {
+      code: '000000',
+      ...personnelDetail,
+      msg: ''
+    }
   }
 }
