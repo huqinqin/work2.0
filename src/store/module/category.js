@@ -3,13 +3,16 @@ import axios from '~prototype/axios.js'
 export default {
   state: {
     curCateId: '',
-    curPropId: '',
+    curProp: {},
     showProps: false,
     isSku: true,
     props: [],
     total: 40
   },
   mutations: {
+    setCurProp (state, payload) {
+      state.curProp = payload
+    },
     setCurCateId (state, payload) {
       state.curCateId = payload
     },
@@ -29,7 +32,7 @@ export default {
     }
   },
   actions: {
-    getPropsByCurCateId ({commit, state}, payload) {
+    getProps ({commit, state}, payload) {
       commit('showPropsTable', payload)
       const url = payload ? 'sku' : 'props'
       return axios.post(`product/category/${url}/list`, {id: state.curCateId}).then(data => {

@@ -76,9 +76,12 @@ export default {
       }
     }
   },
-  methods: {
-    query () {
-      this.form = this.detail
+  watch: {
+    '$store.state.category.curProp': {
+      handler (value) {
+        this.form = value
+      },
+      deep: true
     }
   }
 }

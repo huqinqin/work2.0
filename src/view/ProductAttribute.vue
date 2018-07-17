@@ -1,5 +1,5 @@
 <template>
-  <card>
+  <card v-show="$store.state.category.showProps">
     <i-form ref="filter" :model="filter" inline>
       <form-item prop="id">
         <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
@@ -14,7 +14,7 @@
         <date-picker type="date" placeholder="可选值列表"></date-picker>
       </form-item>
       <form-item>
-        <i-button type="primary">查询</i-button>
+        <i-button type="primary" @click="query">查询</i-button>
         <i-button type="error">删除所选</i-button>
       </form-item>
     </i-form>
@@ -22,12 +22,12 @@
       v-model="editModal"
       title="Common Modal dialog box title">
       <div slot="footer"></div>
-      <product-attribute-modal :id="curId" @closeModal="editModal = false" @uploadList="query"></product-attribute-modal>
+      <product-attribute-modal></product-attribute-modal>
     </Modal>
-    <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
+    <i-table :columns="columns" :data="$store.state.category.props" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
-        <Page @on-change="changePage" :total="$store.category.total" size="small" show-elevator show-sizer></Page>
+        <Page @on-change="changePage" :total="$store.state.category.total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
   </card>
@@ -56,9 +56,6 @@ export default {
         }, {
           title: '属性名称',
           key: 'name'
-        }, {
-          title: '商品类型',
-          key: 'category'
         }, {
           title: '可选值列表',
           key: 'values',
@@ -92,6 +89,7 @@ export default {
                   click: () => {
                     this.editModal = true
                     this.curId = params.row
+                    this.$store.commit('setCurProp', params.row)
                   }
                 }
               }, '编辑'),
@@ -122,7 +120,7 @@ export default {
   mixins: [mixin],
   methods: {
     query () {
-      this.$store.dispatch('getPropsByCurCateId')
+      this.$store.dispatch('getProps', this.$store.state.category.isSku)
     }
   }
 }

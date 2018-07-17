@@ -1,6 +1,6 @@
 <template>
 <div>
-  <Tag v-for="item in list" :key="item" :name="item" closable @on-close="handleClose2">{{ item}}</Tag>
+  <Tag v-for="item in list" :key="item.id" :name="item.name" closable @on-close="handleClose2">{{ item.name }}</Tag>
   <Input v-model="tagName" v-show="isShowInput" placeholder="标签名" @on-blur="TagOnblur" @keyup.enter.native="addTag"  />
   <Button v-show="!isShowInput" icon="ios-plus-empty" type="dashed" size="small" @click="handleAdd">添加标签</Button>
 </div>
@@ -36,17 +36,24 @@ export default {
       console.log('点击', this.isShowInput)
       this.isShowInput = true
     },
-    handleClose2 (event, name) {
-      const index = this.list.indexOf(name)
-      this.list.splice(index, 1)
+    handleClose2 (event, item) {
+      console.log(item)
+      // const index = this.list.indexOf(name)
+      // this.list.splice(index, 1)
+      this.$axios.post(`product/category/${this.$store.state.category.isSku ? 'sku' : 'props'}/values/delete`, {
+        id: this.id,
+        categoryId: this.$store.state.category.curCateId,
+        catePropId: this.$store.state.category.curProp.id
+      })
     },
     addTag () {
       this.isShowInput = false
       this.list.push(this.tagName)
-      this.$api.post(`${this.type}`, {
+      this.$axios.post(`product/category/${this.$store.state.category.isSku ? 'sku' : 'props'}/values/save`, {
         id: this.id,
         name: this.tagName,
-        categoryId: this.categoryId
+        categoryId: this.$store.state.category.curCateId,
+        catePropId: this.$store.state.category.curProp.id
       }).then(data => {
         // this.data[0].children = data
       })

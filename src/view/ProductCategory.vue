@@ -33,15 +33,15 @@
             </FormItem>
             <FormItem>
               <Button type="primary" @click="saveCategory">保存</Button>
-              <Button type="primary" @click="$store.commit('showPropsTable', true)">SKU属性</Button>
-              <Button type="primary" @click="$store.commit('showPropsTable', false)">非SKU属性</Button>
+              <Button type="primary" @click="$store.dispatch('getProps', true)">SKU属性</Button>
+              <Button type="primary" @click="$store.dispatch('getProps', false)">非SKU属性</Button>
               <Button type="error">删除</Button>
             </FormItem>
           </Form>
         </Card>
       </i-col>
-      <i-col :span="24" v-show="isShowlist">
-        <ProductAttribute v-bind:id="showAttrId" v-bind:SKU="isSKU"></ProductAttribute>
+      <i-col :span="24">
+        <ProductAttribute></ProductAttribute>
       </i-col>
     </Row>
   </div>
