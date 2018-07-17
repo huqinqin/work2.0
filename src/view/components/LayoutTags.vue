@@ -10,7 +10,8 @@ export default {
   data () {
     return {
       isShowInput: false,
-      tagName: ''
+      tagName: '',
+      url: '/addtag'
     }
   },
   props: {
@@ -19,6 +20,15 @@ export default {
       default () {
         return []
       }
+    },
+    id: {
+      type: Number
+    },
+    type: {
+      type: String
+    },
+    categoryId: {
+      type: String
     }
   },
   methods: {
@@ -33,6 +43,13 @@ export default {
     addTag () {
       this.isShowInput = false
       this.list.push(this.tagName)
+      this.$api.post(`${this.type}`, {
+        id: this.id,
+        name: this.tagName,
+        categoryId: this.categoryId
+      }).then(data => {
+        // this.data[0].children = data
+      })
     },
     TagOnblur () {
       console.log('失去焦点了')
