@@ -72,12 +72,11 @@
 </template>
 <script>
 import mixin from '@/mixins/edit'
-
 export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'personnel',
+      url: 'user/personnel',
       form: {
         id: '',
         firstName: '',

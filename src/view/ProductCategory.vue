@@ -17,6 +17,9 @@
             <FormItem label="类目名称">
               <Input v-model="curCategory.name" placeholder="输入类目名称"/>
             </FormItem>
+            <FormItem label="类目排序">
+              <Input  v-model="curCategory.level" placeholder="输入1~99"/>
+            </FormItem>
             <FormItem label="">
               <Upload
                 multiple
@@ -30,15 +33,15 @@
             </FormItem>
             <FormItem>
               <Button type="primary" @click="saveCategory">保存</Button>
-              <Button type="primary" @click="editProperties">编辑属性</Button>
-              <Button type="primary" @click="editParameters">编辑参数</Button>
+              <Button type="primary" @click="editProperties">SKU属性</Button>
+              <Button type="primary" @click="editParameters">非SKU属性</Button>
               <Button type="error">删除</Button>
             </FormItem>
           </Form>
         </Card>
       </i-col>
       <i-col :span="24" v-show="isShowlist">
-        <ProductAttribute></ProductAttribute>
+        <ProductAttribute v-bind:id="showAttrId"     v-bind:SKU="isSKU"></ProductAttribute>
       </i-col>
     </Row>
   </div>
@@ -51,16 +54,21 @@ export default {
   },
   data () {
     return {
+      url: 'product/category',
       curCategory: {
         name: '',
-        parent: ''
+        parent: '',
+        level: ''
       },
       activeItem: '',
       stagingDate: {
         parent: '',
         children: '',
-        title: ''
+        title: '',
+        id: ''
       },
+      showAttrId: null,
+      isSKU: true,
       isShowlist: false,
       data: [
         {
@@ -101,48 +109,13 @@ export default {
                     width: '52px'
                   },
                   on: {
-                    click: () => { this.append(data) }
+                    click: () => { this.append(event, data) }
                   }
                 })
               ])
             ])
           },
-          children: [
-            {
-              id: '1-1',
-              title: '类目 1-1',
-              expand: true,
-              children: [
-                {
-                  id: '1-1-1',
-                  title: '类目 1-1-1',
-                  expand: true
-                },
-                {
-                  id: '1-1-2',
-                  title: '类目 1-1-2',
-                  expand: true
-                }
-              ]
-            },
-            {
-              id: '1-2',
-              title: '类目 1-2',
-              expand: true,
-              children: [
-                {
-                  id: '1-2-1',
-                  title: '类目 1-2-1',
-                  expand: true
-                },
-                {
-                  id: '1-2-2',
-                  title: '类目 1-2-2',
-                  expand: true
-                }
-              ]
-            }
-          ]
+          children: []
         }
       ],
       buttonProps: {
@@ -165,7 +138,7 @@ export default {
     },
     check (root, node, data) {
       this.activeItem = data.id
-      console.log(root, node, data)
+      console.log('check', data)
       let parentTil = ''
       for (let index = 0; index < root.length; index++) {
         const element = root[index].nodeKey
@@ -182,8 +155,10 @@ export default {
       }
       this.curCategory.parent = parentTil
       this.curCategory.name = data.title
+      this.curCategory.level = data.level
       this.stagingDate.parent = data
       this.stagingDate.title = data.title
+      this.stagingDate.id = data.id
     },
     append (event, data) {
       console.log('添加', data)
@@ -193,7 +168,9 @@ export default {
       this.curCategory.parent = data.title
       this.curCategory.name = data.title + '的子类目'
       this.stagingDate.parent = data
+      this.stagingDate.parentId = data.nodeKey
       this.stagingDate.children = children
+      this.stagingDate.title = ''
     },
     remove (root, node, data) {
       const parentKey = root.find(el => el === node).parent
@@ -202,6 +179,8 @@ export default {
       parent.children.splice(index, 1)
     },
     saveCategory () {
+      let dataSave = {}
+      console.log('parentId')
       if (this.stagingDate.title === '') {
         let children = this.stagingDate.children
         children.push({
@@ -209,18 +188,47 @@ export default {
           expand: true
         })
         this.$set(this.stagingDate.parent, 'children', children)
+        dataSave = {
+          parentId: this.stagingDate.parentId,
+          name: this.curCategory.name,
+          level: this.curCategory.level
+        }
       } else {
-        console.log('check', this.stagingDate.parent, this.stagingDate.title)
         this.$set(this.stagingDate.parent, 'title', this.curCategory.name)
+        dataSave = {
+          id: this.stagingDate.id,
+          parentId: this.stagingDate.parent.parentId,
+          name: this.curCategory.name,
+          level: this.curCategory.level
+        }
       }
+      console.log('save ', dataSave)
+      this.$api.post(`${this.url}/save`, dataSave).then(data => {
+        // this.data[0].children = data
+      })
     },
     editProperties () {
       this.isShowlist = true
+      this.isSKU = true
+      console.log(this.isSKU)
+      this.showAttrId = this.stagingDate.id
     },
     editParameters () {
       this.isShowlist = true
+      this.isSKU = false
+      console.log(this.isSKU)
+      this.showAttrId = this.stagingDate.id
+    },
+    LoadCurCategory () {
+      this.$api.post(`${this.url}/list`, {
+      }).then(data => {
+        this.data[0].children = data
+      })
     }
 
+  },
+  beforeMount () {
+    this.LoadCurCategory()
   }
 }
 </script>

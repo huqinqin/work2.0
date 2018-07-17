@@ -10,7 +10,7 @@
       <form-item prop="category">
         <i-input v-model="filter.category" type="text" placeholder="商品类型" ></i-input>
       </form-item>
-      <form-item prop="options">
+      <form-item prop="values">
         <date-picker type="date" placeholder="可选值列表"></date-picker>
       </form-item>
       <form-item>
@@ -22,7 +22,7 @@
       v-model="editModal"
       title="Common Modal dialog box title">
       <div slot="footer"></div>
-      <product-attribute-modal :form="form" @closeModal="editModal = false"></product-attribute-modal>
+      <product-attribute-modal :id="curId" @closeModal="editModal = false" @uploadList="query"></product-attribute-modal>
     </Modal>
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
@@ -33,22 +33,17 @@
   </card>
 </template>
 <script>
-import mixin from '@/mixins/list'
+import mixin from '@/mixins/list.js'
 import LayoutTags from '@/view/components/LayoutTags.vue'
 export default {
-  mixins: [mixin],
-  components: {
-    LayoutTags,
-    'product-attribute-modal': () => import('./ProductAttributeModal')
-  },
   data () {
     return {
       editModal: false,
-      form: null,
-      url: '/product/attribute',
+      curId: null,
       filter: {
-        id: '', name: '', category: '', options: ''
+        categoryId: ''
       },
+      url: 'product/category/props',
       columns: [
         {
           type: 'selection',
@@ -66,11 +61,14 @@ export default {
           key: 'category'
         }, {
           title: '可选值列表',
-          key: 'options',
+          key: 'values',
           render: (h, params) => {
             return h(LayoutTags, {
               props: {
-                list: params.row.options
+                list: params.row.values,
+                id: params.row.id,
+                categoryId: params.row.categoryId,
+                type: 'product/category/sku/save'
               }
             })
           }
@@ -93,7 +91,7 @@ export default {
                 on: {
                   click: () => {
                     this.editModal = true
-                    this.form = params.row
+                    this.curId = params.row
                   }
                 }
               }, '编辑'),
@@ -115,6 +113,40 @@ export default {
           }
         }
       ]
+    }
+  },
+  components: {
+    LayoutTags,
+    'product-attribute-modal': () => import('./ProductAttributeModal')
+  },
+  mixins: [mixin],
+  props: {
+    id: {
+      type: Number
+    },
+    SKU: {
+      type: Boolean
+    }
+  },
+  watch: {
+    id (value) {
+      if (this.SKU) {
+        this.url = '/product/category/sku'
+      } else {
+        this.url = '/product/category/props'
+      }
+      this.filter.categoryId = value
+      this.query()
+    },
+    SKU (value) {
+      console.log('SKU', value)
+      if (value) {
+        this.url = '/product/category/sku'
+      } else {
+        this.url = '/product/category/props'
+      }
+      this.filter.categoryId = this.id
+      this.query()
     }
   }
 }
