@@ -52,7 +52,7 @@
           </RadioGroup>
       </FormItem>
       <FormItem label="Cust ID">
-        <Input v-model="form.custId"></Input>
+        <Input v-model="form.custId"/>
       </FormItem>
     </Form>
   </card>
@@ -67,7 +67,7 @@
         </Select>
       </FormItem>
       <FormItem label="审核信息">
-        <Input type="textarea" :rows="10" v-model="form.message"></Input>
+        <Input type="textarea" :rows="10" v-model="form.message"/>
       </FormItem>
     </Form>
   </card>

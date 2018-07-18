@@ -1,16 +1,5 @@
 import Mock from 'mockjs'
-const installerReviewList = Mock.mock({ 'list|10': [{
-  'id|+1': '@id',
-  email: '@email',
-  company: '@name',
-  custId: '@id',
-  applyAt: '@date',
-  waitTime: '@date',
-  allotAt: '@date',
-  reviewAt: '@date',
-  'status|1': ['待审核', '已通过']
-}] })
-const installerList = Mock.mock({ 'data|10': [{
+const installerList = Mock.mock({ 'list|10': [{
   custId: '@id',
   account: '@id',
   companyName: '@name',
@@ -21,7 +10,7 @@ const installerList = Mock.mock({ 'data|10': [{
   'status|1': ['待审核', '已通过']
 }] })
 const installerAccountList = Mock.mock({
-  'data|10': [{
+  'list|10': [{
     id: '@id',
     account: '@name',
     email: '@email',
@@ -32,7 +21,34 @@ const installerAccountList = Mock.mock({
     shop: '@name',
     'status|1': ['激活', '冻结']
   }] })
-export const getInstallerReviewList = req => {
+
+export default {
+  getInstallerList: {
+    list () {
+      return {
+        code: '000000',
+        data: {
+          total: 50,
+          ...installerList
+        },
+        msg: ''
+      }
+    }
+  },
+  account: {
+    list () {
+      return {
+        code: '000000',
+        data: {
+          total: 50,
+          ...installerAccountList
+        },
+        msg: ''
+      }
+    }
+  }
+}
+/* export const getInstallerReviewList = req => {
   console.log('getInstallerReviewList')
   return {
     code: '000000',
@@ -56,31 +72,10 @@ export const getInstallerAccountList = req => {
     msg: ''
   }
 }
-
-const installerDetail = Mock.mock({
-  id: '@id',
-  storeName: '@name',
-  userFirstName: '@first',
-  userLastName: '@last',
-  phone: '@integer(1, 10)',
-  email: '@email',
-  appleAt: '@date',
-  allotAt: '@date',
-  industry: '@name',
-  address: '@county(true)',
-  storeCertImgUrl: '@image(200x100)',
-  certAddress: {},
-  certIsLong: '',
-  certIndate: '',
-  custId: '',
-  saler: '',
-  message: ''
-})
-
 export const getInstallerDetail = req => {
   return {
     code: '000000',
     msg: '',
     data: installerDetail
   }
-}
+} */

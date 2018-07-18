@@ -1,7 +1,7 @@
 import Mock from 'mockjs'
 
 const shopList = Mock.mock({
-  'data|10': [{
+  'list|10': [{
     'id|+1': '@id',
     name: '@name',
     account: '@name',
@@ -32,7 +32,7 @@ const shopEditData = Mock.mock({
     something: 'submit'
   }
 })
-export const getShopList = req => {
+/* export const getShopList = req => {
   return {
     code: '000000',
     ...shopList,
@@ -51,5 +51,31 @@ export const shopEdit = req => {
     code: '000000',
     ...shopEditData,
     msg: ''
+  }
+} */
+export default {
+  list () {
+    return {
+      code: '000000',
+      data: {
+        total: 50,
+        ...shopList
+      },
+      msg: ''
+    }
+  },
+  get () {
+    return {
+      code: '000000',
+      ...shopDetail,
+      msg: ''
+    }
+  },
+  sava () {
+    return {
+      code: '000000',
+      ...shopEditData,
+      msg: ''
+    }
   }
 }
