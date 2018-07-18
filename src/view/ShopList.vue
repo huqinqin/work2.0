@@ -77,7 +77,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 150,
+          width: 250,
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -122,7 +122,24 @@ export default {
                     console.log(`删除${params.row.id}`)
                   }
                 }
-              }, '删除')
+              }, '删除'),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.$Modal.warning({
+                      title: '修改密码',
+                      content: '是否修改' + params.row.id + '的密码'
+                    })
+                  }
+                }
+              }, '重置密码')
             ])
           }
         }

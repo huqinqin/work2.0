@@ -98,12 +98,14 @@ export default {
         }, {
           title: '操作',
           key: 'action',
-          width: 150,
+          width: 200,
           align: 'center',
           render: (h, params) => {
             return (
               <div>
-                <i-button type="primary" size="small" style={{marginRight: '5px'}} >查看</i-button>
+                <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => {
+                  // this.$router.push({name: 'installer_review_list'})
+                }}>查看</i-button>
                 <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => {
                   this.$router.push({name: 'installer_review_detail', params: {id: params.row.id}})
                 }} >审核</i-button>
