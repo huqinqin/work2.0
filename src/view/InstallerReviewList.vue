@@ -123,6 +123,9 @@ export default {
         this.$Message.success('已分配')
       })
     }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>

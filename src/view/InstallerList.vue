@@ -137,6 +137,9 @@ export default {
         }
       ]
     }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>
