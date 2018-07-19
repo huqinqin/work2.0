@@ -50,7 +50,6 @@ export default {
       this.isShowInput = false
       this.list.push(this.tagName)
       this.$axios.post(`product/category/${this.$store.state.category.isSku ? 'sku' : 'props'}/values/save`, {
-        id: this.id,
         name: this.tagName,
         categoryId: this.$store.state.category.curCateId,
         catePropId: this.$store.state.category.curProp.id

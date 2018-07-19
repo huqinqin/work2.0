@@ -66,6 +66,11 @@ export default {
                 id: params.row.id,
                 categoryId: params.row.categoryId,
                 type: 'product/category/sku/save'
+              },
+              on: {
+                click: () => {
+                  this.$store.commit('setCurProp', params.row)
+                }
               }
             })
           }

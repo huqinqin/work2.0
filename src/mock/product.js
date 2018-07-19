@@ -110,7 +110,72 @@ const productList = Mock.mock({
 //     msg: ''
 //   }
 // }
-
+const categories = [
+  {
+    id: '1-1',
+    title: '类目 1-1',
+    expand: true,
+    children: [
+      {
+        id: '1-1-1',
+        title: '类目 1-1-1',
+        expand: true
+      },
+      {
+        id: '1-1-2',
+        title: '类目 1-1-2',
+        expand: true
+      }
+    ]
+  },
+  {
+    id: '1-2',
+    title: '类目 1-2',
+    expand: true,
+    children: [
+      {
+        id: '1-2-1',
+        title: '类目 1-2-1',
+        expand: true
+      },
+      {
+        id: '1-2-2',
+        title: '类目 1-2-2',
+        expand: true
+      }
+    ]
+  }
+]
+const cascader = [
+  {
+    value: '1-1',
+    label: '类目 1-1',
+    children: [
+      {
+        value: '1-1-1',
+        label: '类目 1-1-1'
+      },
+      {
+        value: '1-1-2',
+        label: '类目 1-1-2'
+      }
+    ]
+  },
+  {
+    value: '1-2',
+    label: '类目 1-2',
+    children: [
+      {
+        value: '1-2-1',
+        label: '类目 1-2-1'
+      },
+      {
+        value: '1-2-2',
+        label: '类目 1-2-2'
+      }
+    ]
+  }
+]
 export default {
   list () {
     return {
@@ -129,45 +194,17 @@ export default {
     }
   },
   category: {
+    cascader () {
+      return {
+        code: '000000',
+        data: cascader,
+        msg: ''
+      }
+    },
     list () {
       return {
         code: '000000',
-        data: [
-          {
-            id: '1-1',
-            title: '类目 1-1',
-            expand: true,
-            children: [
-              {
-                id: '1-1-1',
-                title: '类目 1-1-1',
-                expand: true
-              },
-              {
-                id: '1-1-2',
-                title: '类目 1-1-2',
-                expand: true
-              }
-            ]
-          },
-          {
-            id: '1-2',
-            title: '类目 1-2',
-            expand: true,
-            children: [
-              {
-                id: '1-2-1',
-                title: '类目 1-2-1',
-                expand: true
-              },
-              {
-                id: '1-2-2',
-                title: '类目 1-2-2',
-                expand: true
-              }
-            ]
-          }
-        ],
+        data: categories,
         msg: ''
       }
     },
