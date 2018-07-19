@@ -26,7 +26,7 @@
       <form-item>
         <i-button type="primary">查询</i-button>
         <i-button type="error">删除所选</i-button>
-        <i-button type="primary" @click="$router.push('personnel_add')">新增人员</i-button>
+        <i-button type="primary" @click="$router.push('personnel_edit')">新增人员</i-button>
       </form-item>
     </i-form>
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
@@ -62,7 +62,7 @@ export default {
     return {
       delmod: false,
       account: '',
-      url: 'personnel',
+      url: 'user/personnel',
       filter: {
         id: '',
         name: '',

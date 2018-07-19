@@ -47,7 +47,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'installer/account/list',
+      url: 'installer/account',
       filter: {
         id: '', account: '', email: '', firstName: '', lastName: '', mobile: '', installer: '', shop: '', status: ''
       },
@@ -88,7 +88,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 150,
+          width: 250,
           align: 'center',
           render: (h, params) => {
             return h('div', [

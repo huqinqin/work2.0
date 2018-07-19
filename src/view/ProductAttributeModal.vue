@@ -18,7 +18,7 @@
           </form-item>
         </i-col>
         <i-col :span="24">
-          <form-item label="可选值列表" prop="options">
+          <form-item label="可选值列表" prop="values">
             <LayoutTags type="date" placeholder="可选值列表"></LayoutTags>
           </form-item>
         </i-col>
@@ -32,17 +32,21 @@
 </template>
 
 <script>
-import mixin from '@/mixins/modal-detail'
+import mixin from '@/mixins/modal-edit.js'
 import LayoutTags from '@/view/components/LayoutTags.vue'
 export default {
-  mixins: [mixin],
   name: 'product-attribute-modal',
   components: {
     LayoutTags
   },
+  mixins: [mixin],
   data () {
     return {
-      url: 'product/attribute',
+      form: {
+        name: '',
+        values: []
+      },
+      url: 'product/category/props',
       rules: {
         id: [{
           required: true,
@@ -71,10 +75,11 @@ export default {
         }]
       }
     }
+  },
+  methods: {
+    query () {
+      this.form = this.detail
+    }
   }
 }
 </script>
-
-<style scoped>
-
-</style>
