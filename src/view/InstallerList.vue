@@ -2,7 +2,7 @@
   <card>
     <i-form ref="filter" :model="filter" inline>
       <form-item prop="custId">
-        <i-input v-model="filter.customerId" type="text" placeholder="Cust ID" ></i-input>
+        <i-input v-model="filter.custId" type="text" placeholder="Cust ID" ></i-input>
       </form-item>
       <form-item prop="account">
         <i-input v-model="filter.account" type="text" placeholder="账号" ></i-input>
@@ -47,7 +47,7 @@ export default {
     return {
       url: 'installer/getInstallerList',
       filter: {
-        customerId: '', id: '', account: '', companyName: '', grade: '', historyMoney: '', orderNum: '', availableIntegral: '', status: ''
+        custId: '', id: '', account: '', companyName: '', grade: '', historyMoney: '', orderNum: '', availableIntegral: '', status: ''
       },
       columns: [
         {
@@ -82,7 +82,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 150,
+          width: 250,
           align: 'center',
           render: (h, params) => {
             return h('div', [

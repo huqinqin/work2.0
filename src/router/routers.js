@@ -350,16 +350,6 @@ export default [
         // },
         name: 'shop_detail',
         component: () => import('@/view/ShopDetail.vue')
-      },
-
-      {
-        path: 'shop_reset',
-        meta: {
-          icon: 'lock-combination',
-          title: '重置密码'
-        },
-        name: 'shop_reset',
-        component: () => import('@/view/ShopResetPass.vue')
       }
     ]
   },
@@ -408,15 +398,6 @@ export default [
         },
         name: 'personnel_add',
         component: () => import('@/view/PersonnelEdit.vue')
-      },
-      {
-        path: 'personnel_reset',
-        meta: {
-          icon: 'lock-combination',
-          title: '重置密码'
-        },
-        name: 'personnel_reset',
-        component: () => import('@/view/PersonnelResetPass.vue')
       }
     ]
   },
@@ -520,7 +501,7 @@ export default [
     path: '/login1',
     meta: {
       icon: 'lock-combination',
-      title: '登陆'
+      title: '登录'
     },
     redirect: '/index',
     name: 'login1',
@@ -530,7 +511,7 @@ export default [
         path: 'index',
         meta: {
           icon: 'lock-combination',
-          title: '登陆'
+          title: '登录'
         },
         name: 'login2',
         component: () => import('@/view/login1.vue')
