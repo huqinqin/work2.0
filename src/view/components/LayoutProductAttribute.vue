@@ -1,18 +1,23 @@
 <template>
   <div>
-    <Row>
-        <Col span="1" offset="1">属性1：</Col>
-        <Col span="8">
-          <Tag v-for="item in count" checkable color="blue" :key="item" :name="item" closable @on-close="handleClose2">标签{{ item + 1 }}</Tag>
-          <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAdd">
-        </Col>
-    </Row>
-    <DragableTable
-      v-model="tableData"
-      :columns-list="columnsList"
-      @on-start="handleOnstart1"
-      @on-end="handleOnend1"
-    ></DragableTable>
+    <i-table
+      :data="tableData"
+      :columns="columnsList"
+    ></i-table>
+    <div class="plus-btn">添加</div>
+    <Modal
+      v-model="isShowSku"
+      title="选择sku属性">
+      <i-form label-position="top">
+        <form-item label="属性">
+          <RadioGroup>
+            <Radio label="金斑蝶"></Radio>
+            <Radio label="爪哇犀牛"></Radio>
+            <Radio label="印度黑羚"></Radio>
+          </RadioGroup>
+        </form-item>
+      </i-form>
+    </Modal>
   </div>
 </template>
 <script>
@@ -23,6 +28,7 @@ export default {
   data () {
     return {
       count: [0, 1, 2],
+      isShowSku: false,
       table1: {
         hasDragged: false,
         isDragging: false,
@@ -32,45 +38,48 @@ export default {
       },
       columnsList: [
         {
-          title: '',
-          key: 'drag',
-          width: 90,
+          title: '编码',
+          key: 'sin',
           align: 'center',
-          render: (h) => {
-            return h(
-              'Icon',
-              {
-                props: {
-                  type: 'arrow-move',
-                  size: 24
-                }
-              }
+          render: this.editCellRender
+        },
+        {
+          title: '排序',
+          type: 'onum',
+          width: 120,
+          align: 'center',
+          render: this.editCellRender
+        },
+        {
+          title: '销售价格',
+          align: 'center',
+          key: 'price',
+          width: 160,
+          render: this.editCellRender
+        },
+        {
+          title: '单位重量',
+          align: 'center',
+          key: 'weight',
+          width: 160,
+          render: (h, params) => {
+            return (
+              <i-input>
+                <span slot="append">磅</span>
+              </i-input>
             )
           }
         },
         {
-          title: '序号',
-          type: 'index',
-          width: 80,
-          align: 'center'
-        },
-        {
-          title: '属性1',
-          key: 'todoItem'
-        },
-        {
-          title: '属性2',
-          key: 'remarks'
-        },
-        {
-          title: '销售价格',
-          key: 'price',
-          render: this.editCellRender
-        },
-        {
-          title: 'SKU编码',
-          key: 'sku',
-          render: this.editCellRender
+          title: '属性值',
+          align: 'center',
+          key: 'props',
+          render: (h, params) => {
+            console.log(params)
+            return (
+              <span>{params.row.props}<icon class="edit-icon" type="compose" on-click={this.showSku}></icon></span>
+            )
+          }
         },
         {
           title: '操作',
@@ -79,64 +88,67 @@ export default {
           align: 'center',
           render: (h, params) => {
             return (
-              <i-button type={this.tableData[params.index].edit ? 'success' : 'primary'} size="small" style={{marginRight: '5px'}} on-click={() => this.editCell(params.index, 'edit', !this.tableData[params.index].edit)}>{params.row.edit ? '保存' : '编辑'}</i-button>
+              <i-button type="error" size="small" on-click={() => { this.delSku(params.index) }}>删除</i-button>
             )
           }
         }
       ],
       tableData: [
         {
-          todoItem: '明天去后海玩',
+          props: ['标签1', '标签2'],
           remarks: '估计得加班',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '后天去和妹子看电影',
+          props: ['标签1', '标签2'],
           remarks: '可能没妹子',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '大后天去吃海天盛筵',
+          props: ['标签1', '标签2'],
           remarks: '没钱就不去了',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '周末去看电影',
+          props: ['标签1', '标签2'],
           remarks: '估计得加班',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '下个月准备回家看父母',
+          props: ['标签1', '标签2'],
           remarks: '估计得加班',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '该买回家的票了',
+          props: ['标签1', '标签2'],
           remarks: '可能没票了',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '过年不回家和父母视频聊天',
+          props: ['标签1', '标签2'],
           remarks: '一定要记得',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         },
         {
-          todoItem: '去车站接父母一起在北京过年',
+          props: ['标签1', '标签2'],
           remarks: 'love',
           price: 300,
-          sku: 'tr'
+          sin: 'tr'
         }
       ]
     }
   },
   methods: {
+    showSku () {
+      this.isShowSku = true
+    },
     initColumnsList () {
       this.columnsList.forEach(column => {
         if (column.key === 'edit') {
@@ -150,13 +162,9 @@ export default {
     },
     editCellRender (h, params) {
       const value = params.row[params.column.key]
-      if (params.row.edit) {
-        return (
-          <i-input on-input={(e) => this.editCell(params.index, params.column.key, e)} value={value}></i-input>
-        )
-      } else {
-        return (<span>{value}</span>)
-      }
+      return (
+        <i-input on-input={(e) => this.editCell(params.index, params.column.key, e)} value={value}></i-input>
+      )
     },
     editCell (rowIndex, key, value) {
       this.tableData[rowIndex][key] = value
@@ -164,6 +172,9 @@ export default {
         // 当点击按钮时，从新加载表格，触发表格刷新
         this.initColumnsList()
       }
+    },
+    delSku (index) {
+      this.tableData.splice(index, 1)
     },
     handleOnstart1 (from) {
       this.table1.oldIndex = from
@@ -195,17 +206,21 @@ export default {
 }
 </script>
 <style scoped>
-.btn-add{
-  width: 80px;
-  height: 24px;
-  line-height: 24px;
-  padding: 2px 7px;
-  font-size: 12px;
-  border-radius: 3px;
+.plus-btn{
+  text-align: center;
+  line-height: 40px;
   border: 1px dashed #dddee1;
+  border-top: none;
+  cursor: pointer;
 }
-.btn-add:focus{
+.plus-btn:hover{
   border: 1px dashed #57a3f3;
+  color: #57a3f3;
+  border-top: none;
   outline: none;
+}
+/deep/ .edit-icon{
+  margin-left: 8px;
+  cursor: pointer;
 }
 </style>

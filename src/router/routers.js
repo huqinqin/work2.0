@@ -276,6 +276,9 @@ export default [
       {
         path: 'product_edit/:id?',
         name: 'product_edit',
+        meta: {
+          title: '商品详情'
+        },
         component: () => import('@/view/ProductEdit.vue')
       }
     ]
