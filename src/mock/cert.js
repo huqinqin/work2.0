@@ -3,77 +3,79 @@ const certList = Mock.mock({
   'data': {
     'list|10': [{
       'id|+1': '@id',
-      url: '@image(200x100)',
+      imgUrl: '@image(200x100)',
       'number': '@integer(20000000,90000000)',
-      company: '@name',
-      detail: '@region' + '@province' + '@city',
-      custId: '@integer(20000,90000)',
-      uploadAt: '@date',
-      validTime: '@date',
-      reviewAt: '@date',
-      'status|1': ['已通过', '已拒绝', '待审核']
+      'status|1': ['enabled', 'refused', 'submitted'],
+      address: {
+        company: '@name',
+        detail: '@region' + '@province' + '@city'
+      },
+      store: {
+        code: '@integer(20000,90000)'
+      },
+      ext: {
+        submitDate: '@date',
+        expiryDate: '@date',
+        reviewDate: '@date'
+      }
     }]
   }
 })
 const certDetail = Mock.mock({
-  'data': {
-    id: '@integer(20000,90000)',
-    url: '@image(200x100)',
-    'number': '@integer(20000000,90000000)',
-    company: '@name',
+  data: {
+    'id|+1': '@id',
+    'imgUrl': '@image(200x100)',
+    'number': '@integer(200000,900000)',
+    'status|1': ['enabled', 'refused', 'submitted'],
+    source: '@last',
+    'store': {
+      contact: [{
+        fisrtName: '@first',
+        lastName: '@last',
+        phone: '@integer(2000000000,9000000000)',
+        email: '@email'
+      }],
+      ext: {
+        submitDate: '@date',
+        assignDate: '@date',
+        industry: '@name'
+      },
+      name: '@name',
+      store: '@name',
+      sales: '@name',
+      code: '@last'
+    },
     address: {
-      detail: '@region' + '@province' + '@city',
+      company: '@name',
+      detail: '@street' + '@city',
+      street: '@street',
       city: '@city',
       state: '@state',
-      zip: '@zipcode',
-      country: '@country',
-      street: '@region'
+      zip: '@zip',
+      country: '@country'
     },
-    uploadAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
-    validTime: '@datetime("MM-dd-yyyy HH:mm:ss")',
-    reviewAt: '@datetime("MM-dd-yyyy HH:mm:ss")',
-    'status|1': ['已通过', '已拒绝', '待审核'],
-    cust: {
-      company: '@name',
-      fisrtName: '@fisrt',
-      lastName: '@last',
-      phone: '@integer(20000000,90000000)',
-      mobile: '@integer(20000000,90000000)',
-      email: '@email',
-      detail: '@region' + '@province' + '@city',
-      custId: '@integer(20000,90000)',
-      industry: '@name',
-      allotAt: '@date',
-      appleAt: '@date',
-      saler: '@first',
-      store: '@last',
-      source: '@clast'
+    'reviewRecords|4': [
+      {
+        userName: '@name',
+        cdate: '@date',
+        content: '@name' + '@name' + '@name'
+      }
+    ]
+  }
+})
+export default {
+  list () {
+    return {
+      code: '000000',
+      ...certList,
+      msg: ''
     }
-  }
-})
-const personnelEditData = Mock.mock({
-  data: {
-    something: 'submit'
-  }
-})
-export const getCertList = req => {
-  return {
-    code: '000000',
-    ...certList,
-    msg: ''
-  }
-}
-export const getCertDetail = req => {
-  return {
-    code: '000000',
-    ...certDetail,
-    msg: ''
-  }
-}
-export const certEdit = req => {
-  return {
-    code: '000000',
-    ...personnelEditData,
-    msg: ''
+  },
+  get () {
+    return {
+      code: '000000',
+      ...certDetail,
+      msg: ''
+    }
   }
 }

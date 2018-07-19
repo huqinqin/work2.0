@@ -43,6 +43,9 @@
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
+  mounted () {
+    console.log(this.list)
+  },
   data () {
     return {
       url: 'store/cert',
@@ -142,7 +145,7 @@ export default {
               return h('div', [
                 h('Button', {
                   props: {
-                    type: 'primary',
+                    type: 'error',
                     size: 'small'
                   },
                   style: {
@@ -153,21 +156,7 @@ export default {
                       this.$router.push({ path: 'cert_review/' + params.row.id })
                     }
                   }
-                }, '审核'),
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.$router.push({ path: 'cert_detail/' + params.row.id })
-                    }
-                  }
-                }, '查看')
+                }, '审核')
               ])
             } else {
               return h('div', [
@@ -191,6 +180,9 @@ export default {
         }
       ]
     }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>
