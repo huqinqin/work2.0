@@ -49,11 +49,12 @@ axios.interceptors.response.use(
       res = response.data
     }
     // 根据返回的code值来做不同的处理（和后端约定）
+    console.log(res.code)
     if (res.code === '000000') {
       return res.data
     } else if (res.code === '000001') {
       // 用户未登录处理
-      router.redirect({name: 'login'})
+      router.replace({name: 'login'})
     } else {
       const message = res.msg ? res.msg : errorMap[res.code]
       Message.error(`ERROR: ${message}`)

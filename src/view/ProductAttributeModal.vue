@@ -25,7 +25,7 @@
       </row>
       <form-item>
         <i-button type="primary" @click="submit">Submit</i-button>
-        <i-button type="ghost" style="margin-left: 8px" @click="closeModal">Cancel</i-button>
+        <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
       </form-item>
     </i-form>
   </card>
@@ -76,9 +76,12 @@ export default {
       }
     }
   },
-  methods: {
-    query () {
-      this.form = this.detail
+  watch: {
+    '$store.state.category.curProp': {
+      handler (value) {
+        this.form = value
+      },
+      deep: true
     }
   }
 }
