@@ -5,7 +5,7 @@ const certList = Mock.mock({
       'id|+1': '@id',
       imgUrl: '@image(200x100)',
       'number': '@integer(20000000,90000000)',
-      'status|1': ['已通过', '已拒绝', '待审核'],
+      'status|1': ['enabled', 'refused', 'submitted'],
       address: {
         company: '@name',
         detail: '@region' + '@province' + '@city'
@@ -26,7 +26,7 @@ const certDetail = Mock.mock({
     'id|+1': '@id',
     'imgUrl': '@image(200x100)',
     'number': '@integer(200000,900000)',
-    'status|1': ['已通过', '已拒绝', '待审核'],
+    'status|1': ['enabled', 'refused', 'submitted'],
     source: '@last',
     'store': {
       contact: [{
@@ -62,34 +62,6 @@ const certDetail = Mock.mock({
       }
     ]
   }
-  // 'data': {
-  //   'id|+1': '@id',
-  //   'imgUrl': '@image(200x100)',
-  //   'number': '@integer(20000000,90000000)',
-  //   'status|1': ['已通过', '已拒绝', '待审核'],
-  //   address: {
-  //     company: '@name',
-  //     detail: '@region' + '@province' + '@city',
-  //     city: '@city',
-  //     state: '@state',
-  //     zip: '@zipcode',
-  //     country: '@country',
-  //     street: '@region'
-  //   },
-  //   store: {
-  //     code: '@integer(20000,90000)',
-  //     contact: [{
-  //       firstName: '@first',
-  //       LastName: '@last'
-  //     }]
-  //   },
-  //   ext: {
-  //     submitDate: '@date',
-  //     expiryDate: '@date',
-  //     reviewDate: '@date',
-  //     industry: '@first'
-  //   }
-  // }
 })
 export default {
   list () {
