@@ -1,48 +1,49 @@
 <template>
   <div>
-    <card class="installer">
-      <h2>工程商信息</h2>
-      <table border="1" class="baseDataTable" v-if="form.store">
-        <tr>
-          <td class="speTd">公司名</td>
-          <td>{{form.store.name}}</td>
-          <td class="speTd">姓名</td>
-          <td>{{form.store.contact[0].firstName}} {{form.store.contact[0].lastName}}</td>
-        </tr>
-        <tr>
-          <td class="speTd">公司电话</td>
-          <td>{{form.store.contact[0].phone}}</td>
-          <td class="speTd">手机</td>
-          <td>{{form.store.contact[0].phone}}</td>
-        </tr>
-        <tr>
-          <td class="speTd">邮箱</td>
-          <td>{{form.store.contact[0].email}}</td>
-          <td class="speTd">行业类型</td>
-          <td>{{form.store.ext.industry}}</td>
-        </tr>
-        <tr>
-          <td class="speTd">申请时间</td>
-          <td>{{form.store.ext.submitDate}}</td>
-          <td class="speTd">分配时间</td>
-          <td>{{form.store.ext.assignDate}}</td>
-        </tr>
-        <tr>
-          <td class="speTd">详细地址</td>
-          <td>{{form.address.detail}}</td>
-          <td class="speTd">来源</td>
-          <td>{{form.source}}</td>
-        </tr>
-        <tr>
-          <td class="speTd">门店/销售</td>
-          <td>{{form.store.store}}{{form.store.sales}}</td>
-          <td class="speTd">Cust id</td>
-          <td>{{form.store.code}}</td>
-        </tr>
-      </table>
-    </card>
-    <card class="cert">
-      <Form :model="form" label-position="top" v-if="form.address">
+    <template v-if="form">
+      <card class="installer">
+        <h2>工程商信息</h2>
+        <table border="1" class="baseDataTable">
+          <tr>
+            <td class="speTd">公司名</td>
+            <td>{{form.store.name}}</td>
+            <td class="speTd">姓名</td>
+            <td>{{form.store.contact[0].firstName}} {{form.store.contact[0].lastName}}</td>
+          </tr>
+          <tr>
+            <td class="speTd">公司电话</td>
+            <td>{{form.store.contact[0].phone}}</td>
+            <td class="speTd">手机</td>
+            <td>{{form.store.contact[0].phone}}</td>
+          </tr>
+          <tr>
+            <td class="speTd">邮箱</td>
+            <td>{{form.store.contact[0].email}}</td>
+            <td class="speTd">行业类型</td>
+            <td>{{form.store.ext.industry}}</td>
+          </tr>
+          <tr>
+            <td class="speTd">申请时间</td>
+            <td>{{form.store.ext.submitDate}}</td>
+            <td class="speTd">分配时间</td>
+            <td>{{form.store.ext.assignDate}}</td>
+          </tr>
+          <tr>
+            <td class="speTd">详细地址</td>
+            <td>{{form.address.detail}}</td>
+            <td class="speTd">来源</td>
+            <td>{{form.source}}</td>
+          </tr>
+          <tr>
+            <td class="speTd">门店/销售</td>
+            <td>{{form.store.store}}{{form.store.sales}}</td>
+            <td class="speTd">Cust id</td>
+            <td>{{form.store.code}}</td>
+          </tr>
+        </table>
+      </card>
+      <card class="cert">
+      <Form :model="form" label-position="top">
         <Row>
           <i-col span="24" class="img">
             <img :src="form.imgUrl" alt="">
@@ -90,6 +91,7 @@
         </i-col>
       </Row>
     </card>
+    </template>
   </div>
 </template>
 
@@ -104,7 +106,7 @@ export default {
   data () {
     return {
       url: 'store/cert',
-      form: {}
+      form: null
     }
   },
   methods: {

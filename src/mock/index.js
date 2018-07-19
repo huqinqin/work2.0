@@ -5,13 +5,13 @@ import { mapMock, mockSave, mockDelete } from './utils'
 import login from './login'
 import personnel from './personnel'
 import product from './product'
+import cert from './cert'
 import shop from './shop'
 import installer from './installer'
 import store from './store'
 
 // import { getInstallerList, getInstallerReviewList, getInstallerAccountList, getInstallerDetail } from './installer'
 // import { getProductAttributeList, getProductBrandList, getProductAttributeDetail, getProductList, getProductBrandDetail, getProductTrashList, getProductTrashRevert } from './product'
-// import { getShopList, getShopDetail, shopEdit } from './shop'
 // import { getCertList, getCertDetail } from './cert'
 // import { getActivityList } from './activity'
 
@@ -27,6 +27,7 @@ const options = Mock.mock({
 mapMock('/personnel', personnel)
 mapMock('/user', login)
 mapMock('/product', product)
+mapMock('/cert', cert)
 mapMock('/shop', shop)
 mapMock('/installer', installer)
 mapMock('/store', store)
