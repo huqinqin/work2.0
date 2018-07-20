@@ -20,6 +20,7 @@ module.exports = {
   },
   chainWebpack: config => {
     config.resolve.alias
+      .set('~libs', resolve('src/plugin/libs'))
       .set('~prototype', resolve('src/plugin/prototype'))
       .set('_c', resolve('src/components'))
   }
