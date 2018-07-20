@@ -66,7 +66,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: '/shop',
+      url: '/store',
       form: {
         name: '', contact: '', address: '', city: '', state: '', country: '', zipcode: '', phone: '', mobile: '', status: ''
       },

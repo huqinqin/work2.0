@@ -75,7 +75,8 @@ export default [
     redirect: '/allocation/index',
     meta: {
       icon: 'lock-combination',
-      title: '调度管理'
+      title: '调度管理',
+      hideInMenu: true
     },
     name: 'allocation',
     component: Main,
@@ -97,7 +98,8 @@ export default [
     redirect: '/income/index',
     meta: {
       icon: 'lock-combination',
-      title: '应收管理'
+      title: '应收管理',
+      hideInMenu: true
     },
     name: 'income',
     component: Main,
@@ -118,7 +120,8 @@ export default [
     redirect: '/inventory/index',
     meta: {
       icon: 'lock-combination',
-      title: '库存管理'
+      title: '库存管理',
+      hideInMenu: true
     },
     name: 'inventory',
     component: Main,
@@ -139,7 +142,8 @@ export default [
     redirect: '/operation/index',
     meta: {
       icon: 'lock-combination',
-      title: '操作中心'
+      title: '操作中心',
+      hideInMenu: true
     },
     name: 'operation',
     component: Main,
@@ -160,7 +164,8 @@ export default [
     redirect: '/order/index',
     meta: {
       icon: 'lock-combination',
-      title: '订单管理'
+      title: '订单管理',
+      hideInMenu: true
     },
     name: 'order',
     component: Main,
@@ -181,7 +186,8 @@ export default [
     redirect: '/pay/index',
     meta: {
       icon: 'lock-combination',
-      title: '应付管理'
+      title: '应付管理',
+      hideInMenu: true
     },
     name: 'pay',
     component: Main,
@@ -202,7 +208,8 @@ export default [
     redirect: '/procurement/index',
     meta: {
       icon: 'lock-combination',
-      title: '采购管理'
+      title: '采购管理',
+      hideInMenu: true
     },
     name: 'procurement',
     component: Main,
@@ -223,7 +230,8 @@ export default [
     redirect: '/product/index',
     meta: {
       icon: 'lock-combination',
-      title: '商品管理'
+      title: '商品管理',
+      hideInMenu: true
     },
     name: 'product',
     component: Main,
@@ -288,7 +296,8 @@ export default [
     redirect: '/report/index',
     meta: {
       icon: 'lock-combination',
-      title: '数据报表'
+      title: '数据报表',
+      hideInMenu: true
     },
     name: 'report',
     component: Main,
@@ -498,52 +507,11 @@ export default [
     ]
   },
   {
-    path: '/login1',
-    meta: {
-      icon: 'lock-combination',
-      title: '登录'
-    },
-    redirect: '/index',
-    name: 'login1',
-    component: Main,
-    children: [
-      {
-        path: 'index',
-        meta: {
-          icon: 'lock-combination',
-          title: '登录'
-        },
-        name: 'login2',
-        component: () => import('@/view/login1.vue')
-      }
-    ]
-  },
-  {
-    path: '/register',
-    meta: {
-      icon: 'lock-combination',
-      title: '注册'
-    },
-    redirect: '/index',
-    name: 'register1',
-    component: Main,
-    children: [
-      {
-        path: 'index',
-        meta: {
-          icon: 'lock-combination',
-          title: '注册'
-        },
-        name: 'register2',
-        component: () => import('@/view/register.vue')
-      }
-    ]
-  },
-  {
     path: '/permission',
     meta: {
       icon: 'lock-combination',
-      title: '权限管理'
+      title: '权限管理',
+      hideInMenu: true
     },
     redirect: '/permission/menu',
     name: 'permission',

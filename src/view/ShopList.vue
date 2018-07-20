@@ -42,7 +42,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: '/shop',
+      url: '/store',
       filter: {
         id: '', name: '', account: '', address: '', contact: '', phone: '', status: ''
       },
