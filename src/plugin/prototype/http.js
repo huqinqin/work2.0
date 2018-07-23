@@ -5,13 +5,20 @@
  * save[Name] => 保存信息，传id为编辑保存，更新数据，不传为新增数据
  * del[Name] => 删除信息，传ids，对象数组列表
  */
+import md5 from 'md5'
 import axios from '~libs/axios'
 export default {
+  Login (params) {
+    return axios.post('base/user/login', {
+      username: params.userName,
+      password: md5(params.password)
+    })
+  },
   getShop (params) {
     return axios.post('base/store/getStore', params)
   },
   saveShop (params) {
-    return axios.post('base/store/save', params)
+    return axios.post('base/store/saveOrUpdate', params)
   },
   fetchShop (params) {
     return axios.post('base/store/listStore', params)

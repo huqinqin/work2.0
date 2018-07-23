@@ -22,7 +22,6 @@
       <form-item prop="status">
         <i-input v-model="filter.status" type="text" placeholder="状态" ></i-input>
       </form-item>
-
       <form-item>
         <i-button type="primary" @click="query">查询</i-button>
       </form-item>

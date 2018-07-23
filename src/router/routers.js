@@ -440,15 +440,6 @@ export default [
         component: () => import('@/view/InstallerAccountList.vue')
       },
       {
-        path: 'installer_edit',
-        meta: {
-          icon: 'lock-combination',
-          title: '编辑资料'
-        },
-        name: 'installer_edit',
-        component: () => import('@/view/InstallerEdit.vue')
-      },
-      {
         path: 'installer_details',
         meta: {
           hideInMenu: true,

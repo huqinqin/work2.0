@@ -4,7 +4,7 @@
       <row :gutter="16">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="门店名称" prop="name">
-            <i-input v-model="form.name" type="text" placeholder="门店名称" ></i-input>
+            <i-input v-model="form.storeName" type="text" placeholder="门店名称" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -15,29 +15,28 @@
       </row>
       <row>
         <i-col :span="24">
-          <MapAutoComplete v-model="form.certAddress"></MapAutoComplete>
+          <MapAutoComplete :googleAddress="form.address"></MapAutoComplete>
         </i-col>
       </row>
-      <row>
+      <row v-for="(contact, index) in form.contact" :key="index">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="first name" prop="contact">
-            <i-input v-model="form.contact" type="text" placeholder="联系人" ></i-input>
+            <i-input v-model="contact.firstName" type="text" placeholder="联系人" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="last name" prop="contact">
-            <i-input v-model="form.contact" type="text" placeholder="联系人" ></i-input>
+            <i-input v-model="contact.lastName" type="text" placeholder="联系人" ></i-input>
           </form-item>
         </i-col>
-
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="手机" prop="mobile">
-            <i-input v-model="form.mobile" type="text" placeholder="手机" ></i-input>
+            <i-input v-model="contact.mobile" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="email" prop="mobile">
-            <i-input v-model="form.mobile" type="text" placeholder="手机" ></i-input>
+            <i-input v-model="contact.email" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -59,7 +58,20 @@ export default {
     return {
       url: 'Shop',
       form: {
-        name: '', contact: '', address: '', city: '', state: '', country: '', zipcode: '', phone: '', mobile: '', status: ''
+        storeName: '',
+        phone: '',
+        contact: [{firstName: '', lastName: '', mobile: '', email: ''}],
+        address: {
+          detail: '',
+          country: '',
+          state: '',
+          city: '',
+          street: '',
+          zip: '',
+          company: '',
+          lat: 0,
+          lng: 0
+        }
       },
       rules: {
         name: [{
