@@ -13,9 +13,8 @@ module.exports = {
   baseUrl: BASE_URL,
   devServer: {
     proxy: {
-      '/api': {
-        target: TRAGET_URL,
-        pathRewrite: { '^/api': '' }
+      '/work/base': {
+        target: TRAGET_URL
       }
     }
   },
