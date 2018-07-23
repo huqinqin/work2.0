@@ -8,49 +8,40 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="联系人" prop="contact">
-            <i-input v-model="form.contact" type="text" placeholder="联系人" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="详细地址" prop="address">
-            <i-input v-model="form.address" type="text" placeholder="详细地址" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="城市" prop="city">
-            <i-input v-model="form.city" type="text" placeholder="城市" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="州" prop="state">
-            <i-input v-model="form.state" type="text" placeholder="州" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="国家" prop="country">
-            <i-input v-model="form.country" type="text" placeholder="国家" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="邮编" prop="zipcode">
-            <i-input v-model="form.zipcode" type="text" placeholder="邮编" ></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="公司电话" prop="phone">
             <i-input v-model="form.phone" type="text" placeholder="公司电话" ></i-input>
           </form-item>
         </i-col>
+      </row>
+      <row>
+        <i-col :span="24">
+          <MapAutoComplete v-model="form.certAddress"></MapAutoComplete>
+        </i-col>
+      </row>
+      <row>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="first name" prop="contact">
+            <i-input v-model="form.contact" type="text" placeholder="联系人" ></i-input>
+          </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="last name" prop="contact">
+            <i-input v-model="form.contact" type="text" placeholder="联系人" ></i-input>
+          </form-item>
+        </i-col>
+
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="手机" prop="mobile">
             <i-input v-model="form.mobile" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="状态" prop="status">
-            <i-input v-model="form.status" type="text" placeholder="状态" ></i-input>
+          <form-item label="email" prop="mobile">
+            <i-input v-model="form.mobile" type="text" placeholder="手机" ></i-input>
           </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <i-button>新增联系人</i-button>
         </i-col>
       </row>
       <form-item>
@@ -66,7 +57,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: '/store',
+      url: 'Shop',
       form: {
         name: '', contact: '', address: '', city: '', state: '', country: '', zipcode: '', phone: '', mobile: '', status: ''
       },

@@ -25,7 +25,6 @@
 
       <form-item>
         <i-button type="primary" @click="query">查询</i-button>
-        <i-button type="error">删除所选</i-button>
       </form-item>
     </i-form>
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
@@ -42,7 +41,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: '/store',
+      url: 'Shop',
       filter: {
         id: '', name: '', account: '', address: '', contact: '', phone: '', status: ''
       },
@@ -70,9 +69,6 @@ export default {
         }, {
           title: '联系方式',
           key: 'phone'
-        }, {
-          title: '状态',
-          key: 'status'
         },
         {
           title: '操作',
@@ -91,7 +87,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: `shop_detail/${params.row.id}` })
+                    this.$router.push({ name: 'shop_detail', params: {id: params.row.id} })
                   }
                 }
               }, '查看'),
@@ -105,41 +101,10 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.$router.push({ path: `shop_edit/${params.row.id}` })
+                    this.$router.push({ name: 'shop_edit', params: {id: params.row.id} })
                   }
                 }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    console.log(`删除${params.row.id}`)
-                  }
-                }
-              }, '删除'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$Modal.warning({
-                      title: '修改密码',
-                      content: '是否修改' + params.row.id + '的密码'
-                    })
-                  }
-                }
-              }, '重置密码')
+              }, '编辑')
             ])
           }
         }

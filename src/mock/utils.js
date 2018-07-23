@@ -7,7 +7,11 @@ export const mapMock = (rootUrl, mockObj) => {
       if (typeof curOj === 'object') {
         mapMock(curUrl, curOj)
       } else if (typeof curOj === 'function') {
-        Mock.mock(new RegExp(curUrl), 'post', curOj)
+        Mock.mock(new RegExp(curUrl), 'post', (req) => {
+          const data = JSON.parse(req.body)
+          console.log(curUrl, data)
+          return curOj(req)
+        })
       }
     })
   } else {

@@ -1,4 +1,4 @@
-import axios from '~prototype/axios.js'
+import http from '~prototype/http.js'
 export default {
   state: {
     show: false,
@@ -24,7 +24,7 @@ export default {
   },
   actions: {
     fetchProducts ({commit}, filter) {
-      axios.get('/store/item/get_manage_list', {
+      http.get('/store/item/get_manage_list', {
         params: {
           order_by: 'cdate desc',
           page: 1,

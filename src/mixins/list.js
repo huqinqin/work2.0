@@ -10,7 +10,7 @@ export default {
   },
   methods: {
     query () {
-      this.$axios.post(`${this.url}/list`, {
+      this.$http[ 'fetch' + this.url ]({
         rows: this.rows,
         page: this.page,
         ...this.filter
@@ -42,7 +42,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$axios.post(`${this.url}/del`, {
+          this.$http['del' + this.url]({
             ids: [id]
           }).then(() => {
             this.$Modal.remove()
@@ -66,7 +66,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$axios.post(`${this.url}/del`, {
+          this.$http['del' + this.url]({
             ids: this.selections.map(selection => selection.id)
           }).then(() => {
             this.$Modal.remove()

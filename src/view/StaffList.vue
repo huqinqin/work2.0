@@ -35,23 +35,6 @@
         <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
-    <Modal v-model="delmod" width="560" title="重置密码">
-     <i-form :model="form" label-position="left" :rules="rules" >
-      <row :gutter="16">
-          <form-item label="账号" prop="account">
-            <i-input v-model="form.account" type="text" :placeholder="account" ></i-input>
-          </form-item>
-          <form-item label="密码" prop="password">
-            <i-input v-model="form.password" type="text" placeholder="密码" ></i-input>
-          </form-item>
-      </row>
-      <form-item>
-        <i-button type="primary">提交</i-button>
-        <i-button type="ghost" style="margin-left: 8px" v-on:click="del()">取消</i-button>
-      </form-item>
-    </i-form>
-    <div slot="footer"></div>
-    </Modal>
   </card>
 </template>
 <script>
@@ -62,7 +45,7 @@ export default {
     return {
       delmod: false,
       account: '',
-      url: 'user/personnel',
+      url: 'Staff',
       filter: {
         id: '',
         name: '',
@@ -134,7 +117,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.$router.push({ path: `personnel_detail/${params.row.id}` })
+                      this.$router.push({ path: `detail/${params.row.id}` })
                     }
                   }
                 },
@@ -152,7 +135,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.$router.push({ path: `personnel_edit/${params.row.id}` })
+                      this.$router.push({ path: `edit/${params.row.id}` })
                     }
                   }
                 },
@@ -189,54 +172,22 @@ export default {
                   on: {
                     click: () => {
                       this.$Modal.warning({
-                        title: '修改密码',
-                        content: '是否修改' + params.row.account + '的密码'
+                        title: '重置密码',
+                        content: '是否重置' + params.row.account + '的密码'
                       })
                     }
                   }
                 },
-                '修改密码'
+                '重置密码'
               )
             ])
           }
         }
-      ],
-      form: {
-        account: '',
-        password: '',
-        confirmPassword: ''
-      },
-      rules: {
-        account: [
-          {
-            required: true,
-            message: 'The input cannot be empty',
-            trigger: 'blur'
-          }
-        ],
-        password: [
-          {
-            required: true,
-            message: 'The input cannot be empty',
-            trigger: 'blur'
-          }
-        ],
-        confirmPassword: [
-          {
-            required: true,
-            message: 'The input cannot be empty',
-            trigger: 'blur'
-          }
-        ]
-      }
+      ]
     }
   },
-  methods: {
-    del () {
-      setTimeout(() => {
-        this.delmod = false
-      }, 100)
-    }
+  beforeMount () {
+    this.query()
   }
 }
 </script>

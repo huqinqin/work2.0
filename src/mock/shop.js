@@ -32,27 +32,6 @@ const shopEditData = Mock.mock({
     something: 'submit'
   }
 })
-/* export const getShopList = req => {
-  return {
-    code: '000000',
-    ...shopList,
-    msg: ''
-  }
-}
-export const getShopDetail = req => {
-  return {
-    code: '000000',
-    ...shopDetail,
-    msg: ''
-  }
-}
-export const shopEdit = req => {
-  return {
-    code: '000000',
-    ...shopEditData,
-    msg: ''
-  }
-} */
 export default {
   list () {
     return {

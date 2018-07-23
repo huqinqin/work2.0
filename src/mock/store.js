@@ -89,7 +89,39 @@ const certDetail = Mock.mock({
     }
   }
 })
+const shopList = Mock.mock({
+  'list|10': [{
+    'id|+1': '@id',
+    name: '@name',
+    account: '@name',
+    address: '@id',
+    contact: '@name',
+    phone: '@integer(20000000,90000000)'
+  }]
+})
 export default {
+  listStore () {
+    return {
+      code: '000000',
+      data: {
+        total: 50,
+        ...shopList
+      },
+      msg: ''
+    }
+  },
+  getStore (req) {
+    return {
+      code: '000000',
+      data: {}
+    }
+  },
+  saveStore () {
+    return {
+      code: '000000',
+      data: {}
+    }
+  },
   list () {
     return {
       code: '000000',

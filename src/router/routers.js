@@ -230,8 +230,7 @@ export default [
     redirect: '/product/index',
     meta: {
       icon: 'lock-combination',
-      title: '商品管理',
-      hideInMenu: true
+      title: '商品管理'
     },
     name: 'product',
     component: Main,
@@ -315,7 +314,7 @@ export default [
   },
   {
     path: '/shop',
-    redirect: '/shop/index',
+    redirect: '/shop/list',
     meta: {
       icon: 'lock-combination',
       title: '门店管理'
@@ -324,7 +323,7 @@ export default [
     component: Main,
     children: [
       {
-        path: 'shop_list',
+        path: 'list',
         meta: {
           icon: 'lock-combination',
           title: '门店列表'
@@ -333,7 +332,7 @@ export default [
         component: () => import('@/view/ShopList.vue')
       },
       {
-        path: 'shop_add',
+        path: 'add',
         meta: {
           icon: 'lock-combination',
           title: '新增门店'
@@ -342,7 +341,7 @@ export default [
         component: () => import('@/view/ShopEdit.vue')
       },
       {
-        path: 'shop_edit/:id',
+        path: 'edit/:id',
         meta: {
           hideInMenu: true,
           icon: 'lock-combination',
@@ -352,61 +351,64 @@ export default [
         component: () => import('@/view/ShopEdit.vue')
       },
       {
-        path: 'shop_detail/:id',
-        // meta: {
-        //   icon: 'lock-combination',
-        //   title: '门店详情'
-        // },
+        path: 'detail/:id',
+        meta: {
+          icon: 'lock-combination',
+          hideInMenu: true,
+          title: '门店详情'
+        },
         name: 'shop_detail',
         component: () => import('@/view/ShopDetail.vue')
       }
     ]
   },
   {
-    path: '/personnel',
-    redirect: '/personnel/index',
+    path: '/staff',
+    redirect: '/staff/index',
     meta: {
       icon: 'lock-combination',
       title: '人员管理'
     },
-    name: 'personnel',
+    name: 'staff',
     component: Main,
     children: [
       {
-        path: 'personnel_list',
+        path: 'list',
         meta: {
           icon: 'lock-combination',
           title: '人员列表'
         },
-        name: 'personnel_list',
-        component: () => import('@/view/PersonnelList.vue')
+        name: 'staff_list',
+        component: () => import('@/view/StaffList.vue')
       },
       {
-        path: 'personnel_detail/:id',
-        // meta: {
-        //   icon: 'lock-combination',
-        //   title: '人员详情'
-        // },
-        name: 'personnel_detail',
-        component: () => import('@/view/PersonnelDetail.vue')
+        path: 'detail/:id',
+        meta: {
+          icon: 'lock-combination',
+          hideInMenu: true,
+          title: '人员详情'
+        },
+        name: 'staff_detail',
+        component: () => import('@/view/StaffDetail.vue')
       },
       {
-        path: 'personnel_edit/:id',
-        // meta: {
-        //   icon: 'lock-combination',
-        //   title: '编辑人员'
-        // },
-        name: 'personnel_edit',
-        component: () => import('@/view/PersonnelEdit.vue')
+        path: 'edit/:id',
+        meta: {
+          icon: 'lock-combination',
+          hideInMenu: true,
+          title: '编辑人员'
+        },
+        name: 'staff_edit',
+        component: () => import('@/view/StaffEdit.vue')
       },
       {
-        path: 'personnel_edit',
+        path: 'edit',
         meta: {
           icon: 'lock-combination',
           title: '新增人员'
         },
-        name: 'personnel_add',
-        component: () => import('@/view/PersonnelEdit.vue')
+        name: 'staff_add',
+        component: () => import('@/view/StaffEdit.vue')
       }
     ]
   },

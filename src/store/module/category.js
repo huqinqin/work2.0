@@ -1,4 +1,4 @@
-import axios from '~prototype/axios.js'
+import http from '~prototype/http.js'
 
 export default {
   state: {
@@ -35,7 +35,7 @@ export default {
     getProps ({commit, state}, payload) {
       commit('showPropsTable', payload)
       const url = payload ? 'sku' : 'props'
-      return axios.post(`product/category/${url}/list`, {id: state.curCateId}).then(data => {
+      return http.post(`product/category/${url}/list`, {id: state.curCateId}).then(data => {
         commit('setProps', data)
       })
     }

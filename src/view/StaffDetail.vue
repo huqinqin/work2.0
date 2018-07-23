@@ -72,7 +72,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'personnel',
+      url: 'Staff',
       form: {
         id: '',
         firstName: '',

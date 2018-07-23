@@ -8,7 +8,8 @@ export default {
       }
     },
     query () {
-      this.$axios.post(`${this.url}/get`, {
+      console.log(this.url)
+      this.$http['get' + this.url]({
         id: this.id
       }).then(data => {
         this.form = data
@@ -16,7 +17,7 @@ export default {
       })
     },
     submit () {
-      this.$axios.post(`${this.url}/save`, {
+      this.$http['save' + this.url]({
         ...this.form
       }).then(data => {
         this.$Notice.success({
@@ -31,7 +32,9 @@ export default {
     }
   },
   beforeMount () {
+    console.log('edit')
     if (this.$route.params.id) {
+      console.log('query')
       this.id = this.$route.params.id
       this.query()
     }

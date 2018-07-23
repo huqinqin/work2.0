@@ -8,15 +8,39 @@
 import axios from '~libs/axios'
 export default {
   getShop (params) {
-    return axios.post('', params)
+    return axios.post('store/getStore', params)
   },
   saveShop (params) {
-    return axios.post('', params)
+    return axios.post('store/save', params)
   },
   fetchShop (params) {
-    return axios.post('', params)
+    return axios.post('store/listStore', params)
   },
   delShop (ids) {
     return axios.post('', ids)
+  },
+  getStaff (params) {
+    return axios.post('personnel/get', params)
+  },
+  fetchStaff (params) {
+    return axios.post('personnel/list', params)
+  },
+  saveStaff (params) {
+    return axios.post('personnel/save', params)
+  },
+  getInstaller (params) {
+    return axios.post('', params)
+  },
+  getReview (params) {
+    return axios.post('store/getInstallerRegister', params)
+  },
+  fetchReview (params) {
+    return axios.post('store/listInstallerRegister', params)
+  },
+  passReview (params) {
+    return axios.post('store/passInstaller', params)
+  },
+  refuseReview (params) {
+    return axios.post('store/refuseInstaller', params)
   }
 }
