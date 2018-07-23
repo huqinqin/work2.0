@@ -1,14 +1,39 @@
 <template>
-  <Cascader :data="data" v-model="checked" change-on-select @input="onInput" @on-change="onChange"></Cascader>
+  <Cascader :data="data" :value="checked" change-on-select @input="onInput" @on-change="onChange"></Cascader>
 </template>
 <script>
 export default {
   name: 'BaseCategory',
-  props: ['id'],
+  props: ['value'],
   data () {
     return {
-      data: [],
-      checked: []
+      data: []
+    }
+  },
+  computed: {
+    checked () {
+      let checked = []
+      this.data.forEach(t1 => {
+        if (t1.value === this.value) {
+          checked = [t1.value]
+          return true
+        } else if (t1.children) {
+          t1.children.forEach(t2 => {
+            if (t2.value === this.value) {
+              checked = [t1.value, t2.value]
+              return true
+            } else if (t2.children) {
+              t2.children.forEach(t3 => {
+                if (t3.value === this.value) {
+                  checked = [t1.value, t2.value, t3.value]
+                  return true
+                }
+              })
+            }
+          })
+        }
+      })
+      return checked
     }
   },
   methods: {
@@ -20,7 +45,7 @@ export default {
     }
   },
   beforeMount () {
-    this.$axios.post('product/category/listCateogry').then(data => {
+    this.$http.fetchCategories().then(data => {
       this.data = data
     })
   }

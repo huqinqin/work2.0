@@ -12,13 +12,13 @@
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
         <form-item label="商品品牌" prop="brandId">
           <i-select v-model="form.brandId">
-            <i-option v-for="item in brand" :value="item.id" :key="item.id">{{item.name}}</i-option>
+            <i-option v-for="item in brand" :value="item.key" :key="item.key">{{item.value}}</i-option>
           </i-select>
         </form-item>
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
         <form-item label="类目" prop="cateId">
-          <BaseCategory :id="form.cateId" @on-change="getProps"></BaseCategory>
+          <BaseCategory v-model="form.cateId" @on-change="getProps"></BaseCategory>
         </form-item>
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -40,7 +40,7 @@
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
         <form-item label="是否上架" prop="status">
-            <i-switch v-model="form.status"></i-switch>
+            <i-switch v-model="status"></i-switch>
         </form-item>
       </i-col>
       <i-col :lg="12" :md="24" :sm="24" :xs="24">
@@ -111,7 +111,7 @@
       </i-col>
       <i-col :span="24">
         <form-item label="商品详情">
-          <vue-html5-editor :content="content" :height="500" ref="content"></vue-html5-editor>
+          <!--<base-editor :content="content" :height="500" ref="content"></base-editor>-->
         </form-item>
       </i-col>
     </row>
@@ -128,7 +128,8 @@ export default {
     LayoutProductAttribute: () => import('@/view/components/LayoutProductAttribute.vue'),
     BaseUploadProductImgs: () => import('@/view/components/BaseUploadProductImgs.vue'),
     BaseCategory: () => import('@/view/components/BaseCategory.vue'),
-    BaseTags: () => import('@/view/components/BaseTags.vue')
+    BaseTags: () => import('@/view/components/BaseTags.vue'),
+    BaseEditor: () => import('@/view/components/BaseEditor.vue')
   },
   data () {
     return {
@@ -142,8 +143,9 @@ export default {
       skuProps: [],
       spuProps: [],
       imgUrls: [],
+      status: false,
       form: {
-        cateId: 12,
+        cateId: 3,
         title: '',
         detail: '12345678',
         brandId: '',
@@ -158,10 +160,10 @@ export default {
         ],
         props: [
           {
-            name: 'Christopher Martinez',
-            value: '属性2',
+            name: 'name',
+            value: 'someting',
             canSearch: true,
-            canSee: true
+            cansee: true
           }
         ],
         skus: [
@@ -181,7 +183,7 @@ export default {
         cateId: [{
           required: true,
           message: 'The input cannot be empty',
-          trigger: 'change'
+          trigger: 'blur'
         }],
         title: [{
           required: true,
@@ -243,8 +245,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }]
-      },
-      url: '/product/item'
+      }
     }
   },
   methods: {
@@ -294,8 +295,8 @@ export default {
       this.form.imgUrls = this.imgUrls.map(t => {
         return t.url
       })
-      console.log(this.form)
-      this.$axios.post(`${this.url}/save`, {
+      this.form.status = this.status ? 'onsale' : 'enabled'
+      this.$http.saveProduct({
         ...this.form
       }).then(data => {
         this.$Modal.remove()
@@ -320,12 +321,12 @@ export default {
       if (cate.length) {
         this.spuProps = []
         this.form.cateId = cate[cate.length - 1]
-        this.$axios.post(`/product/category/sku/list`, {
-          categoryId: this.form.cateId
+        this.$http.fetchSkuProps({
+          id: this.form.cateId
         }).then(data => {
           this.skuProps = data.list.map(t => Object.assign({}, t, {checked: ''}))
         })
-        this.$axios.post(`/product/category/props/list`, {
+        this.$http.fetchSpuProps({
           id: this.form.cateId
         }).then(data => {
           data.list.forEach((t, index) => {
@@ -346,10 +347,11 @@ export default {
       }
     },
     getBrand () {
-      this.$axios.post('/product/brand/list').then(data => {
-        this.brand = data.list.map(t => {
-          return {id: t.id, name: t.name}
-        })
+      this.$http.fetchCodeTable({
+        type: 'brand',
+        source: 'lts'
+      }).then(data => {
+        this.brand = data
       })
     },
     getDetail () {

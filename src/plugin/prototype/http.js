@@ -8,39 +8,60 @@
 import axios from '~libs/axios'
 export default {
   getShop (params) {
-    return axios.post('store/getStore', params)
+    return axios.post('base/store/getStore', params)
   },
   saveShop (params) {
-    return axios.post('store/save', params)
+    return axios.post('base/store/save', params)
   },
   fetchShop (params) {
-    return axios.post('store/listStore', params)
+    return axios.post('base/store/listStore', params)
   },
   delShop (ids) {
     return axios.post('', ids)
   },
   getStaff (params) {
-    return axios.post('personnel/get', params)
+    return axios.post('base/personnel/get', params)
   },
   fetchStaff (params) {
-    return axios.post('personnel/list', params)
+    return axios.post('base/personnel/list', params)
   },
   saveStaff (params) {
-    return axios.post('personnel/save', params)
+    return axios.post('base/personnel/save', params)
   },
   getInstaller (params) {
     return axios.post('', params)
   },
   getReview (params) {
-    return axios.post('store/getInstallerRegister', params)
+    return axios.post('base/store/getInstallerRegister', params)
   },
   fetchReview (params) {
-    return axios.post('store/listInstallerRegister', params)
+    return axios.post('base/store/listInstallerRegister', params)
   },
   passReview (params) {
-    return axios.post('store/passInstaller', params)
+    return axios.post('base/store/passInstaller', params)
   },
   refuseReview (params) {
-    return axios.post('store/refuseInstaller', params)
+    return axios.post('base/store/refuseInstaller', params)
+  },
+  fetchCategories () {
+    return axios.post('/base/product/category/listCategory')
+  },
+  saveProduct (params) {
+    return axios.post('product/item/save', params)
+  },
+  fetchProduct (params) {
+    return axios.post('product/item/list', params)
+  },
+  delProduct (params) {
+    return axios.post('product/item/del', params)
+  },
+  fetchCodeTable (params) {
+    return axios.post('/base/common/getCodeTable', params)
+  },
+  fetchSkuProps (params) {
+    return axios.post('/base/product/category/listSkuProp', params)
+  },
+  fetchSpuProps (params) {
+    return axios.post('/base/product/category/listProp', params)
   }
 }

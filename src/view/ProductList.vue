@@ -48,7 +48,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'product',
+      url: 'Product',
       filter: {
         id: '', name: '', image: '', brand: '', price: '', num: '', label: '', sale: '', putaway: ''
       },

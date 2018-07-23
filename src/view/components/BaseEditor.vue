@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import Vue from 'vue/dist/vue.js'
+import Vue from 'vue'
 const opotion = {
   language: 'zh-cn',
   icons: {
