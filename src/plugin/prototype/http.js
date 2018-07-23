@@ -56,6 +56,12 @@ export default {
   saveProduct (params) {
     return axios.post('product/item/save', params)
   },
+  getProduct (params) {
+    return axios.post('product/item/get', params)
+  },
+  diabledProduct (params) {
+    return axios.post('product/item/disabled', params)
+  },
   fetchProduct (params) {
     return axios.post('product/item/list', params)
   },

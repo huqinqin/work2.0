@@ -2,13 +2,6 @@
   <card>
   <i-form :model="form" label-position="top" :rules="rules">
     <row :gutter="16">
-      <i-col>
-        <form-item label="商品名称" prop="title">
-          <i-input v-model="form.title" type="text" placeholder="商品名称" ></i-input>
-        </form-item>
-      </i-col>
-    </row>
-    <row :gutter="16">
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
         <form-item label="商品品牌" prop="brandId">
           <i-select v-model="form.brandId">
@@ -18,7 +11,7 @@
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
         <form-item label="类目" prop="cateId">
-          <BaseCategory v-model="form.cateId" @on-change="getProps"></BaseCategory>
+          <BaseCategory v-model="form.cateId" @input="getProps"></BaseCategory>
         </form-item>
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -34,8 +27,8 @@
         </form-item>
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
-        <form-item label="商品价格" prop="price">
-          <i-input v-model="form.price" type="text" placeholder="商品价格" ></i-input>
+        <form-item label="商品名称" prop="title">
+          <i-input v-model="form.title" type="text" placeholder="商品名称" ></i-input>
         </form-item>
       </i-col>
       <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -58,13 +51,13 @@
       <i-col :span="24">
         <form-item label="商品属性">
           <i-form label-position="left">
-            <form-item v-for="item in spuProps" :key="item.name" :label="item.name + ': '">
+            <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
               <RadioGroup v-model="item.value" @on-change="checkSpu">
-                <Radio v-for="(value, index) in item.values" :label="value" :key="index"></Radio>
+                <Radio v-for="(value, spuIndex) in item.values" :label="value" :key="spuIndex"></Radio>
               </RadioGroup>
-              <i-button type="error" size="small" style="marginLeft: 8px">删除</i-button>
-              <Checkbox style="marginLeft: 8px;" v-model="item.canSearch">是否可搜索</Checkbox >
-              <Checkbox v-model="item.canSee">是否可视</Checkbox >
+              <i-button type="error" size="small" style="marginLeft: 8px" @click="delProp(index)">删除</i-button>
+              <Checkbox style="marginLeft: 8px;" v-model="item.canSearch" @on-change="checkSpu">是否可搜索</Checkbox >
+              <Checkbox v-model="item.canSee" @on-change="checkSpu">是否可视</Checkbox >
             </form-item>
           </i-form>
           <div>添加属性</div>
@@ -145,7 +138,7 @@ export default {
       imgUrls: [],
       status: false,
       form: {
-        cateId: 3,
+        cateId: '',
         title: '',
         detail: '12345678',
         brandId: '',
@@ -153,19 +146,11 @@ export default {
         onum: '',
         status: '',
         keyword: [],
-        price: '',
         imgUrls: [
           'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar',
           'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
         ],
-        props: [
-          {
-            name: 'name',
-            value: 'someting',
-            canSearch: true,
-            cansee: true
-          }
-        ],
+        props: [],
         skus: [
           {
             props: [],
@@ -306,8 +291,24 @@ export default {
         })
       })
     },
-    checkSpu (value, key) {
-      console.log(value, key)
+    checkSpu () {
+      this.form.props = []
+      this.spuProps.forEach(t => {
+        if (t.value) {
+          this.form.props.push({
+            name: t.name,
+            value: t.value,
+            canSee: t.canSee,
+            canSearch: t.canSearch
+          })
+        }
+      })
+    },
+    delProp (index) {
+      this.spuProps[index].value = ''
+      this.spuProps[index].canSee = false
+      this.spuProps[index].canSearch = false
+      this.checkSpu()
     },
     handleAddTag () {
       if (this.tag === '') return false
@@ -317,10 +318,9 @@ export default {
     handleCloseTag (index) {
       this.form.keyword.splice(index, 1)
     },
-    getProps (cate) {
-      if (cate.length) {
+    getProps () {
+      if (this.form.cateId) {
         this.spuProps = []
-        this.form.cateId = cate[cate.length - 1]
         this.$http.fetchSkuProps({
           id: this.form.cateId
         }).then(data => {
@@ -338,7 +338,9 @@ export default {
             this.form.props.forEach(v => {
               this.spuProps.forEach(t => {
                 if (t.name === v.name) {
-                  t = Object.assign({}, t, v)
+                  t.value = v.value
+                  t.canSee = v.canSee
+                  t.canSearch = v.canSearch
                 }
               })
             })
@@ -355,15 +357,12 @@ export default {
       })
     },
     getDetail () {
-      this.imgUrls = this.form.imgUrls.map((url, index) => {
-        return {
-          name: index,
-          url: url,
-          status: 'finished'
-        }
+      this.$http.getProduct({
+        id: this.$route.params.id
+      }).then(data => {
+        this.form = data
+        // this.getProps()
       })
-      console.log(this.imgUrls)
-      console.log('get detail')
     }
   },
   mounted () {
@@ -371,7 +370,14 @@ export default {
   },
   created () {
     this.getBrand()
-    this.getDetail()
+    this.imgUrls = this.form.imgUrls.map((url, index) => {
+      return {
+        name: index,
+        url: url,
+        status: 'finished'
+      }
+    })
+    if (this.$route.params.id) this.getDetail()
   }
 }
 </script>

@@ -63,13 +63,18 @@ export default {
           key: 'id'
         }, {
           title: '商品名称',
-          key: 'name'
+          key: 'title'
         }, {
           title: '商品图片',
-          key: 'image'
+          key: 'image',
+          render: (h, params) => {
+            return (
+              <img src={params.row.imgUrls[0]} alt="商品主图" />
+            )
+          }
         }, {
           title: '商品品牌',
-          key: 'brand'
+          key: 'brandId'
         }, {
           title: '单价',
           key: 'price'
@@ -84,7 +89,7 @@ export default {
           key: 'sale'
         }, {
           title: '是否上架',
-          key: 'putaway'
+          key: 'status'
         },
         {
           title: '操作',
@@ -117,7 +122,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.deleteItem(params.row.id)
+                    this.disableItem(params.row.id)
                   }
                 }
               }, '删除')
@@ -125,6 +130,16 @@ export default {
           }
         }
       ]
+    }
+  },
+  methods: {
+    disableItem (id) {
+      this.$http.diabledProduct({id: id}).then(() => {
+        this.$Notice.success({
+          title: '删除成功',
+          desc: ''
+        })
+      })
     }
   },
   beforeMount () {
