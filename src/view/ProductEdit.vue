@@ -104,6 +104,13 @@
       </i-col>
       <i-col :span="24">
         <form-item label="商品详情">
+          <quill-editor v-model="form.detail"
+                        ref="myQuillEditor"
+                        :options="editorOption"
+                        @blur="onEditorBlur($event)"
+                        @focus="onEditorFocus($event)"
+                        @ready="onEditorReady($event)">
+          </quill-editor>
           <!--<base-editor :content="content" :height="500" ref="content"></base-editor>-->
         </form-item>
       </i-col>
@@ -116,13 +123,18 @@
 </card>
 </template>
 <script>
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+import { quillEditor } from 'vue-quill-editor'
 export default {
   components: {
     LayoutProductAttribute: () => import('@/view/components/LayoutProductAttribute.vue'),
     BaseUploadProductImgs: () => import('@/view/components/BaseUploadProductImgs.vue'),
     BaseCategory: () => import('@/view/components/BaseCategory.vue'),
     BaseTags: () => import('@/view/components/BaseTags.vue'),
-    BaseEditor: () => import('@/view/components/BaseEditor.vue')
+    quillEditor
   },
   data () {
     return {
@@ -230,10 +242,15 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }]
-      }
+      },
+      editorOption: {}
     }
   },
   methods: {
+    // 富文本编辑相关
+    onEditorBlur (event) { console.log(event) },
+    onEditorFocus (event) { console.log(event) },
+    onEditorReady (event) { console.log(event) },
     // 图片上传相关
     handleDefault (index) {
       let defaultItem = this.uploadList[index]
@@ -448,5 +465,8 @@ export default {
   }
   .demo-upload-list.default .default{
     cursor: default;
+  }
+  /deep/ .ql-container{
+    min-height: 640px;
   }
 </style>

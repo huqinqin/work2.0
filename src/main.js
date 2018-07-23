@@ -12,13 +12,11 @@ import '@/assets/coverage.less'
 // 自动加载所有的组件
 import './components'
 // 加载编写的插件
-import VueHtml5Editor from 'vue-html5-editor'
 
 import plugin from './plugin'
 if (process.env.VUE_APP_MOCK === 'true') require('@/mock')
 
 Vue.use(iView)
-Vue.use(VueHtml5Editor, {})
 Vue.config.productionTip = false
 Vue.prototype.$config = config
 /**
