@@ -27,7 +27,7 @@
   v-model="editModal"
   title="Common Modal dialog box title">
   <div slot="footer"></div>
-  <product-brand-modal :form="form" @closeModal="editModal = false"></product-brand-modal>
+  <product-brand-modal :id="curId" @update="updateBrand"></product-brand-modal>
 </Modal>
 <i-table :columns="columns" :data="list" size="small" ref="table" @on-selection-change="changeSelection"></i-table>
 <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
@@ -46,7 +46,7 @@ export default {
   },
   data () {
     return {
-      url: 'product/brand',
+      url: 'Brand',
       filter: {
         id: '', name: '', initial: '', manufacturer: '', show: ''
       },
@@ -62,17 +62,14 @@ export default {
           title: '编号',
           key: 'id'
         }, {
+          title: '排序',
+          key: 'onum'
+        }, {
           title: '品牌名称',
           key: 'name'
         }, {
           title: '品牌首字母',
           key: 'shortName'
-        }, {
-          title: '品牌制造商',
-          key: 'manufacturer'
-        }, {
-          title: '是否显示',
-          key: 'show'
         },
         {
           title: '操作',
@@ -92,7 +89,7 @@ export default {
                 on: {
                   click: () => {
                     this.editModal = true
-                    this.form = params.row
+                    this.curId = params.row.id
                   }
                 }
               }, '编辑'),
@@ -115,6 +112,19 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    updateBrand () {
+      this.editModal = false
+      this.query()
+    },
+    addBrand () {
+      this.curId = ''
+      this.editModal = true
+    }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>

@@ -22,10 +22,9 @@
       <form-item prop="status">
         <i-input v-model="filter.status" type="text" placeholder="状态" ></i-input>
       </form-item>
-
       <form-item>
-        <i-button type="primary">查询</i-button>
-        <i-button type="error">删除所选</i-button>
+        <i-button type="primary" @click="query">查询</i-button>
+        <i-button type="error" @click="removeSelections">删除所选</i-button>
         <i-button type="primary" @click="$router.push('personnel_edit')">新增人员</i-button>
       </form-item>
     </i-form>
@@ -67,15 +66,16 @@ export default {
         },
         {
           title: '姓名',
-          key: 'name'
+          key: 'name',
+          render: (h, params) => {
+            return (
+              <span>{params.row.firstName + ' ' + params.row.lastName }</span>
+            )
+          }
         },
         {
           title: '账号',
           key: 'account'
-        },
-        {
-          title: '地址',
-          key: 'address'
         },
         {
           title: '角色',
@@ -83,15 +83,14 @@ export default {
         },
         {
           title: '联系方式',
-          key: 'phone'
+          key: 'mobile'
         },
         {
           title: '状态',
           key: 'status',
           render: (h, params) => {
-            console.log('params', params)
             return (
-              <i-switch value={params.row.status === '上线'} size="large">
+              <i-switch value={params.row.status === 'enabled'} size="large">
                 <span slot="open">激活</span>
                 <span slot="close">冻结</span>
               </i-switch>
@@ -153,7 +152,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      console.log(`删除${params.row.id}`)
+                      this.deleteItem(params.row.id)
                     }
                   }
                 },
@@ -171,9 +170,18 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.$Modal.warning({
+                      const self = this
+                      this.$Modal.confirm({
                         title: '重置密码',
-                        content: '是否重置' + params.row.account + '的密码'
+                        content: '是否重置' + params.row.account + '的密码',
+                        onOk () {
+                          self.$http.resetStaffPw(params.row.id).then(() => {
+                            self.$Notice.success({
+                              title: '重置密码成功！',
+                              desc: ''
+                            })
+                          })
+                        }
                       })
                     }
                   }

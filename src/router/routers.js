@@ -33,6 +33,193 @@ export default [
     ]
   },
   {
+    path: '/shop',
+    redirect: '/shop/list',
+    meta: {
+      icon: 'lock-combination',
+      title: '门店管理'
+    },
+    name: 'shop',
+    component: Main,
+    children: [
+      {
+        path: 'list',
+        meta: {
+          icon: 'lock-combination',
+          title: '门店列表'
+        },
+        name: 'shop_list',
+        component: () => import('@/view/ShopList.vue')
+      },
+      {
+        path: 'add',
+        meta: {
+          icon: 'lock-combination',
+          title: '新增门店'
+        },
+        name: 'shop_add',
+        component: () => import('@/view/ShopEdit.vue')
+      },
+      {
+        path: 'edit/:id',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '编辑门店'
+        },
+        name: 'shop_edit',
+        component: () => import('@/view/ShopEdit.vue')
+      },
+      {
+        path: 'detail/:id',
+        meta: {
+          icon: 'lock-combination',
+          hideInMenu: true,
+          title: '门店详情'
+        },
+        name: 'shop_detail',
+        component: () => import('@/view/ShopDetail.vue')
+      }
+    ]
+  },
+  {
+    path: '/staff',
+    redirect: '/staff/index',
+    meta: {
+      icon: 'lock-combination',
+      title: '人员管理'
+    },
+    name: 'staff',
+    component: Main,
+    children: [
+      {
+        path: 'list',
+        meta: {
+          icon: 'lock-combination',
+          title: '人员列表'
+        },
+        name: 'staff_list',
+        component: () => import('@/view/StaffList.vue')
+      },
+      {
+        path: 'detail/:id',
+        meta: {
+          icon: 'lock-combination',
+          hideInMenu: true,
+          title: '人员详情'
+        },
+        name: 'staff_detail',
+        component: () => import('@/view/StaffDetail.vue')
+      },
+      {
+        path: 'edit/:id',
+        meta: {
+          icon: 'lock-combination',
+          hideInMenu: true,
+          title: '编辑人员'
+        },
+        name: 'staff_edit',
+        component: () => import('@/view/StaffEdit.vue')
+      },
+      {
+        path: 'edit',
+        meta: {
+          icon: 'lock-combination',
+          title: '新增人员'
+        },
+        name: 'staff_add',
+        component: () => import('@/view/StaffEdit.vue')
+      }
+    ]
+  },
+  {
+    path: '/installer',
+    meta: {
+      icon: 'lock-combination',
+      title: '工程商管理'
+    },
+    name: 'installer',
+    component: Main,
+    children: [
+      {
+        path: 'installer_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '工程商列表'
+        },
+        name: 'installerList',
+        component: () => import('@/view/InstallerList.vue')
+      },
+      {
+        path: 'installer_account_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '账号列表'
+        },
+        name: 'installerAccountList',
+        component: () => import('@/view/InstallerAccountList.vue')
+      },
+      {
+        path: 'installer_details',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '工程商详情'
+        },
+        name: 'installer_details',
+        component: () => import('@/view/InstallerDetails.vue')
+      },
+      {
+        path: 'installer_review_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '审核列表'
+        },
+        name: 'installer_review_list',
+        component: () => import('@/view/InstallerReviewList.vue')
+      },
+      {
+        path: 'installer_review_detail/:id',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '审核详情'
+        },
+        name: 'installer_review_detail',
+        component: () => import('@/view/InstallerReviewDetail.vue')
+      },
+      {
+        path: 'cert_list',
+        meta: {
+          icon: 'lock-combination',
+          title: '分销证列表'
+        },
+        name: 'cert_list',
+        component: () => import('@/view/CertList.vue')
+      },
+      {
+        path: 'cert_detail/:id',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '分销证详情'
+        },
+        name: 'cert_detail',
+        component: () => import('@/view/CertDetail.vue')
+      },
+      {
+        path: 'cert_review/:id',
+        meta: {
+          hideInMenu: true,
+          icon: 'lock-combination',
+          title: '分销证审核'
+        },
+        name: 'cert_review',
+        component: () => import('@/view/CertReview.vue')
+      }
+    ]
+  },
+  {
     path: '/config-page',
     meta: {
       icon: 'lock-combination',
@@ -309,193 +496,6 @@ export default [
         },
         name: 'report_index',
         component: () => import('@/view/Report.vue')
-      }
-    ]
-  },
-  {
-    path: '/shop',
-    redirect: '/shop/list',
-    meta: {
-      icon: 'lock-combination',
-      title: '门店管理'
-    },
-    name: 'shop',
-    component: Main,
-    children: [
-      {
-        path: 'list',
-        meta: {
-          icon: 'lock-combination',
-          title: '门店列表'
-        },
-        name: 'shop_list',
-        component: () => import('@/view/ShopList.vue')
-      },
-      {
-        path: 'add',
-        meta: {
-          icon: 'lock-combination',
-          title: '新增门店'
-        },
-        name: 'shop_add',
-        component: () => import('@/view/ShopEdit.vue')
-      },
-      {
-        path: 'edit/:id',
-        meta: {
-          hideInMenu: true,
-          icon: 'lock-combination',
-          title: '编辑门店'
-        },
-        name: 'shop_edit',
-        component: () => import('@/view/ShopEdit.vue')
-      },
-      {
-        path: 'detail/:id',
-        meta: {
-          icon: 'lock-combination',
-          hideInMenu: true,
-          title: '门店详情'
-        },
-        name: 'shop_detail',
-        component: () => import('@/view/ShopDetail.vue')
-      }
-    ]
-  },
-  {
-    path: '/staff',
-    redirect: '/staff/index',
-    meta: {
-      icon: 'lock-combination',
-      title: '人员管理'
-    },
-    name: 'staff',
-    component: Main,
-    children: [
-      {
-        path: 'list',
-        meta: {
-          icon: 'lock-combination',
-          title: '人员列表'
-        },
-        name: 'staff_list',
-        component: () => import('@/view/StaffList.vue')
-      },
-      {
-        path: 'detail/:id',
-        meta: {
-          icon: 'lock-combination',
-          hideInMenu: true,
-          title: '人员详情'
-        },
-        name: 'staff_detail',
-        component: () => import('@/view/StaffDetail.vue')
-      },
-      {
-        path: 'edit/:id',
-        meta: {
-          icon: 'lock-combination',
-          hideInMenu: true,
-          title: '编辑人员'
-        },
-        name: 'staff_edit',
-        component: () => import('@/view/StaffEdit.vue')
-      },
-      {
-        path: 'edit',
-        meta: {
-          icon: 'lock-combination',
-          title: '新增人员'
-        },
-        name: 'staff_add',
-        component: () => import('@/view/StaffEdit.vue')
-      }
-    ]
-  },
-  {
-    path: '/installer',
-    meta: {
-      icon: 'lock-combination',
-      title: '工程商管理'
-    },
-    name: 'installer',
-    component: Main,
-    children: [
-      {
-        path: 'installer_list',
-        meta: {
-          icon: 'lock-combination',
-          title: '工程商列表'
-        },
-        name: 'installerList',
-        component: () => import('@/view/InstallerList.vue')
-      },
-      {
-        path: 'installer_account_list',
-        meta: {
-          icon: 'lock-combination',
-          title: '账号列表'
-        },
-        name: 'installerAccountList',
-        component: () => import('@/view/InstallerAccountList.vue')
-      },
-      {
-        path: 'installer_details',
-        meta: {
-          hideInMenu: true,
-          icon: 'lock-combination',
-          title: '工程商详情'
-        },
-        name: 'installer_details',
-        component: () => import('@/view/InstallerDetails.vue')
-      },
-      {
-        path: 'installer_review_list',
-        meta: {
-          icon: 'lock-combination',
-          title: '审核列表'
-        },
-        name: 'installer_review_list',
-        component: () => import('@/view/InstallerReviewList.vue')
-      },
-      {
-        path: 'installer_review_detail/:id',
-        meta: {
-          hideInMenu: true,
-          icon: 'lock-combination',
-          title: '审核详情'
-        },
-        name: 'installer_review_detail',
-        component: () => import('@/view/InstallerReviewDetail.vue')
-      },
-      {
-        path: 'cert_list',
-        meta: {
-          icon: 'lock-combination',
-          title: '分销证列表'
-        },
-        name: 'cert_list',
-        component: () => import('@/view/CertList.vue')
-      },
-      {
-        path: 'cert_detail/:id',
-        meta: {
-          hideInMenu: true,
-          icon: 'lock-combination',
-          title: '分销证详情'
-        },
-        name: 'cert_detail',
-        component: () => import('@/view/CertDetail.vue')
-      },
-      {
-        path: 'cert_review/:id',
-        meta: {
-          hideInMenu: true,
-          icon: 'lock-combination',
-          title: '分销证审核'
-        },
-        name: 'cert_review',
-        component: () => import('@/view/CertReview.vue')
       }
     ]
   },

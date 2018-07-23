@@ -27,13 +27,19 @@ export default {
     return axios.post('', ids)
   },
   getStaff (params) {
-    return axios.post('personnel/get', params)
+    return axios.post('user/personnel/get', params)
   },
   fetchStaff (params) {
-    return axios.post('personnel/list', params)
+    return axios.post('user/personnel/list', params)
   },
   saveStaff (params) {
-    return axios.post('personnel/save', params)
+    return axios.post('user/personnel/save', params)
+  },
+  delStaff (ids) {
+    return axios.post('user/delUsers', ids)
+  },
+  resetStaffPw (id) {
+    return axios.post('user/reset', {id})
   },
   getInstaller (params) {
     return axios.post('', params)
@@ -49,5 +55,17 @@ export default {
   },
   refuseReview (params) {
     return axios.post('store/refuseInstaller', params)
+  },
+  getBrand (params) {
+    return axios.post('product/brand/getBrandDetail', params)
+  },
+  fetchBrand (params) {
+    return axios.post('product/brand/listBrand', params)
+  },
+  delBrand (ids) {
+    return axios.post('product/brand/brandDelete', ids)
+  },
+  saveBrand (params) {
+    return axios.post('product/brand/saveOrUpdate', params)
   }
 }

@@ -3,11 +3,6 @@
     <i-form :model="form" label-position="top" :rules="rules" ref="form">
       <row :gutter="16">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="编号" prop="id">
-            <i-input v-model="form.id" type="text" placeholder="编号"></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="名" prop="firstName">
             <i-input v-model="form.firstName" type="text" placeholder="名"></i-input>
           </form-item>
@@ -28,8 +23,8 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="公司电话" prop="phone">
-            <i-input v-model="form.phone" type="text" placeholder="公司电话"></i-input>
+          <form-item label="公司电话" prop="mobile">
+            <i-input v-model="form.mobile" type="text" placeholder="公司电话"></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -49,17 +44,10 @@
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="状态" prop="status">
-            <i-input v-model="form.status" type="text" placeholder="状态"></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="地址" prop="address">
-            <i-input v-model="form.address" type="text" placeholder="地址"></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="创建时间" prop="allocationDate">
-            <i-input v-model="form.allocationDate" type="text" placeholder="创建时间"></i-input>
+            <i-switch :value="form.status === 'enabled'" size="large">
+              <span slot="open">激活</span>
+              <span slot="close">冻结</span>
+            </i-switch>
           </form-item>
         </i-col>
       </row>
@@ -83,11 +71,11 @@ export default {
         lastName: '',
         account: '',
         email: '',
-        phone: '',
+        mobile: '',
         store: '',
         role: '',
         group: '',
-        status: '',
+        status: 'enabled',
         address: '',
         allocationDate: ''
       },
@@ -117,7 +105,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        phone: [{
+        mobile: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'

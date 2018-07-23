@@ -32,8 +32,8 @@ export default {
     },
     deleteItem (id) {
       this.$Modal.confirm({
-        title: 'Title',
-        content: '<p>确认删除？</p>',
+        title: '删除操作',
+        content: `<p>确认删除id为${id}的数据？</p>`,
         loading: true,
         onCancel: () => {
           this.$Notice.success({
@@ -45,6 +45,7 @@ export default {
           this.$http['del' + this.url]({
             ids: [id]
           }).then(() => {
+            this.query()
             this.$Modal.remove()
             this.$Notice.success({
               title: '删除成功',
@@ -69,6 +70,7 @@ export default {
           this.$http['del' + this.url]({
             ids: this.selections.map(selection => selection.id)
           }).then(() => {
+            this.query()
             this.$Modal.remove()
             this.$Notice.success({
               title: '删除成功',
