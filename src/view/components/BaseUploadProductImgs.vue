@@ -1,21 +1,21 @@
 <template>
   <div>
-    <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
-        <template v-if="item.status === 'finished'">
-            <img :src="item.url">
-            <div class="demo-upload-list-cover">
-                <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
-                <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
-            </div>
-        </template>
-        <template v-else>
-            <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-        </template>
+    <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index" :class="{'default': index === 0}">
+      <template v-if="item.status === 'finished'">
+        <img :src="item.url">
+        <div class="demo-upload-list-cover">
+          <Icon type="ios-eye-outline" @click="handleView(item.name)"></Icon>
+          <div class="default" @click="handleDefault(index)">设为默认</div>
+          <div class="delete" @click="handleRemove(item.name)">删除</div>
+        </div>
+      </template>
+      <template v-else>
+        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+      </template>
     </div>
     <Upload
         ref="upload"
         :show-upload-list="false"
-        :default-file-list="defaultList"
         :on-success="handleSuccess"
         :format="['jpg','jpeg','png']"
         :max-size="2048"
@@ -25,9 +25,9 @@
         multiple
         type="drag"
         action="//jsonplaceholder.typicode.com/posts/"
-        style="display: inline-block;width:58px;">
-        <div style="width: 58px;height:58px;line-height: 58px;">
-            <Icon type="camera" size="20"></Icon>
+        style="display: inline-block;width:256px; height: 256px;">
+        <div style="width: 256px;height:256px;line-height: 256px;">
+            <Icon type="camera" size="48"></Icon>
         </div>
     </Upload>
     <Modal title="View Image" v-model="visible">
@@ -37,35 +37,50 @@
 </template>
 <script>
 export default {
+  props: ['value'],
   data () {
     return {
-      defaultList: [
-        {
-          'name': 'a42bdcc1178e62b4694c830f028db5c0',
-          'url': 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'
-        },
-        {
-          'name': 'bc7521e033abdd1e92222d733590f104',
-          'url': 'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
-        }
-      ],
       imgName: '',
-      visible: false,
-      uploadList: []
+      visible: false
+    }
+  },
+  computed: {
+    uploadList: {
+      get: function () {
+        return this.value.map(t => Object.assign({}, t, {status: 'finished'}))
+      },
+      set: function (newValue) {
+        return newValue
+      }
+    }
+  },
+  watch: {
+    uploadList: {
+      handler: function (newO, oldO) {
+        this.$emit('input', this.uploadList)
+      },
+      deep: true
     }
   },
   methods: {
+    handleDefault (index) {
+      let defaultItem = this.uploadList[index]
+      this.uploadList.splice(index, 1)
+      this.uploadList.unshift(defaultItem)
+    },
     handleView (name) {
       this.imgName = name
       this.visible = true
     },
     handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+      const fileList = this.uploadList
+      this.uploadList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
       file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
       file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+      file.status = 'finished'
+      this.uploadList.push(file)
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -94,13 +109,13 @@ export default {
   }
 }
 </script>
-<style lang="css">
+<style lang="less" scoped>
     .demo-upload-list{
         display: inline-block;
-        width: 60px;
-        height: 60px;
+        width: 256px;
+        height: 256px;
         text-align: center;
-        line-height: 60px;
+        line-height: 256px;
         border: 1px solid transparent;
         border-radius: 4px;
         overflow: hidden;
@@ -121,14 +136,31 @@ export default {
         left: 0;
         right: 0;
         background: rgba(0,0,0,.6);
+        color: #fff;
     }
     .demo-upload-list:hover .demo-upload-list-cover{
         display: block;
     }
     .demo-upload-list-cover i{
-        color: #fff;
-        font-size: 20px;
+        font-size: 56px;
         cursor: pointer;
         margin: 0 2px;
+    }
+    .demo-upload-list-cover div{
+      width: 50%;
+      font-size: 16px;
+      position: absolute;
+      bottom: 0;
+      line-height: 48px;
+      cursor: pointer;
+    }
+    .demo-upload-list-cover .default{
+      left:0;
+    }
+    .demo-upload-list-cover .delete{
+      right:0;
+    }
+    .demo-upload-list.default .default{
+      cursor: default;
     }
 </style>
