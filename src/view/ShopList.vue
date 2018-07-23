@@ -57,17 +57,31 @@ export default {
           title: '门店',
           key: 'name'
         }, {
-          title: '账号',
-          key: 'account'
-        }, {
           title: '地址',
           key: 'address'
         }, {
           title: '联系人',
-          key: 'contact'
-        }, {
-          title: '联系方式',
-          key: 'phone'
+          key: 'contact',
+          render: (h, params) => {
+            const more = []
+            params.row.contact.forEach(item => {
+              more.push(
+                <div>
+                  <icon type="person"></icon><strong>{item.firstName}{item.lastName}</strong><br/>
+                  <icon type="ios-telephone"></icon><strong>{item.phone}</strong>
+                </div>
+              )
+            })
+            return (
+              <poptip trigger="hover" placement="right" width="300">
+                <icon type="person"></icon><strong>{params.row.contact[0].firstName}{params.row.contact[0].lastName}</strong><br/>
+                <icon type="ios-telephone"></icon><strong>{params.row.contact[0].phone}</strong>
+                <div slot="content">
+                  {more}
+                </div>
+              </poptip>
+            )
+          }
         },
         {
           title: '操作',
