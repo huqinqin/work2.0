@@ -1,13 +1,14 @@
 <template>
-  <Cascader :data="data" :value="value" change-on-select @input="onInput" @on-change="onChange"></Cascader>
+  <Cascader :data="data" v-model="checked" change-on-select @input="onInput" @on-change="onChange"></Cascader>
 </template>
 <script>
 export default {
   name: 'BaseCategory',
-  props: ['value'],
+  props: ['id'],
   data () {
     return {
-      data: []
+      data: [],
+      checked: []
     }
   },
   methods: {
@@ -19,7 +20,7 @@ export default {
     }
   },
   beforeMount () {
-    this.$axios.post('product/category/cascader').then(data => {
+    this.$axios.post('product/category/listCateogry').then(data => {
       this.data = data
     })
   }

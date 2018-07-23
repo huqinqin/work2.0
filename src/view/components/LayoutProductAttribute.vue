@@ -4,16 +4,16 @@
       :data="tableData"
       :columns="columnsList"
     ></i-table>
-    <div class="plus-btn">添加</div>
+    <div class="plus-btn" @click="addRow">添加</div>
     <Modal
       v-model="isShowSku"
+      @on-ok="checkProps"
+      @on-cancel="cancelChecked"
       title="选择sku属性">
-      <i-form label-position="top">
-        <form-item label="属性">
-          <RadioGroup>
-            <Radio label="金斑蝶"></Radio>
-            <Radio label="爪哇犀牛"></Radio>
-            <Radio label="印度黑羚"></Radio>
+      <i-form label-position="top" ref="propForm">
+        <form-item v-for="item in sku" :key="item.id" :label="item.name">
+          <RadioGroup v-model="item.checked">
+            <Radio v-for="prop in item.values" :label="prop.name" :key="prop.id"></Radio>
           </RadioGroup>
         </form-item>
       </i-form>
@@ -25,9 +25,9 @@ export default {
   components: {
     DragableTable: () => import('@/components/DragableTable.vue')
   },
+  props: ['value', 'skuProps', 'spuProps'],
   data () {
     return {
-      count: [0, 1, 2],
       isShowSku: false,
       table1: {
         hasDragged: false,
@@ -36,6 +36,7 @@ export default {
         newIndex: 0,
         draggingRecord: []
       },
+      checkedProps: {},
       columnsList: [
         {
           title: '编码',
@@ -45,7 +46,7 @@ export default {
         },
         {
           title: '排序',
-          type: 'onum',
+          key: 'onum',
           width: 120,
           align: 'center',
           render: this.editCellRender
@@ -62,22 +63,20 @@ export default {
           align: 'center',
           key: 'weight',
           width: 160,
-          render: (h, params) => {
-            return (
-              <i-input>
-                <span slot="append">磅</span>
-              </i-input>
-            )
-          }
+          render: this.editCellRender
         },
         {
           title: '属性值',
           align: 'center',
           key: 'props',
           render: (h, params) => {
-            console.log(params)
             return (
-              <span>{params.row.props}<icon class="edit-icon" type="compose" on-click={this.showSku}></icon></span>
+              <span>
+                {params.row.props.map(t => {
+                  return <span>{t[Object.keys(t)[0]]}</span>
+                })}
+                <icon class="edit-icon" type="compose" on-click={ () => { this.showSku(params) }}></icon>
+              </span>
             )
           }
         },
@@ -92,62 +91,65 @@ export default {
             )
           }
         }
-      ],
-      tableData: [
-        {
-          props: ['标签1', '标签2'],
-          remarks: '估计得加班',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: '可能没妹子',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: '没钱就不去了',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: '估计得加班',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: '估计得加班',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: '可能没票了',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: '一定要记得',
-          price: 300,
-          sin: 'tr'
-        },
-        {
-          props: ['标签1', '标签2'],
-          remarks: 'love',
-          price: 300,
-          sin: 'tr'
-        }
       ]
     }
   },
+  computed: {
+    tableData () {
+      return this.value
+    },
+    sku () {
+      return this.skuProps
+    }
+  },
   methods: {
-    showSku () {
-      this.isShowSku = true
+    checkProps () {
+      this.tableData[this.checkedIndex].props = []
+      this.sku.forEach(t => {
+        if (t.checked) {
+          this.tableData[this.checkedIndex].props.push({
+            [t.name]: t.checked
+          })
+        }
+        t.checked = ''
+      })
+      this.$emit('input', this.tableData)
+    },
+    cancelChecked () {},
+    showSku (params) {
+      if (this.sku.length) {
+        this.sku.forEach(t => {
+          params.row.props.forEach(t => {
+            if (Object.keys(t)[0] === t.name) {
+              t.checked = t[Object.keys(t)[0]]
+            }
+          })
+        })
+        this.checkedIndex = params.index
+        this.isShowSku = true
+      } else {
+        this.$Modal.info({
+          title: 'Info',
+          content: '<p>请先选择类目</p>',
+          loading: true,
+          onOk: () => {
+            this.$Modal.remove()
+          }
+        })
+        return false
+      }
+    },
+    addRow () {
+      this.tableData.push({
+        props: [],
+        onum: '',
+        price: '',
+        sin: '',
+        unit: 'pc',
+        spec: '1',
+        size: '',
+        weight: ''
+      })
     },
     initColumnsList () {
       this.columnsList.forEach(column => {
@@ -168,12 +170,23 @@ export default {
     },
     editCell (rowIndex, key, value) {
       this.tableData[rowIndex][key] = value
-      if (key === 'edit') {
-        // 当点击按钮时，从新加载表格，触发表格刷新
-        this.initColumnsList()
-      }
+      // if (key === 'edit') {
+      // 当点击按钮时，从新加载表格，触发表格刷新
+      // this.initColumnsList()
+      // }
     },
     delSku (index) {
+      if (this.tableData.length === 1) {
+        this.$Modal.info({
+          title: 'Info',
+          content: '<p>至少一条SKU属性</p>',
+          loading: true,
+          onOk: () => {
+            this.$Modal.remove()
+          }
+        })
+        return false
+      }
       this.tableData.splice(index, 1)
     },
     handleOnstart1 (from) {
@@ -199,10 +212,10 @@ export default {
       const index = this.count.indexOf(name)
       this.count.splice(index, 1)
     }
-  },
-  beforeMount () {
-    this.tableData.forEach(item => { item.edit = false })
   }
+  // beforeMount () {
+  //   this.tableData.forEach(item => { item.edit = false })
+  // }
 }
 </script>
 <style scoped>

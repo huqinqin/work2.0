@@ -1,27 +1,29 @@
 <template>
   <span>
-    <Tag v-for="item in count" checkable color="blue" :key="item" :name="item" closable @on-close="handleClose2">标签{{ item + 1 }}</Tag>
-    <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAdd">
+    <Tag v-for="(item, index) in count"  fade color="blue" :key="item" :name="item" closable @on-close="handleClose(index)">{{ item  }}</Tag>
+    <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAdd" v-model="tag">
   </span>
 </template>
 <script>
 export default {
   name: 'BaseTags',
+  props: ['value'],
   data () {
     return {
-      count: [0, 1, 2]
+      tag: ''
+    }
+  },
+  computed: {
+    count () {
+      return this.value
     }
   },
   methods: {
     handleAdd () {
-      if (this.count.length) {
-        this.count.push(this.count[this.count.length - 1] + 1)
-      } else {
-        this.count.push(0)
-      }
+      this.count.push(this.tag)
+      this.tag = ''
     },
-    handleClose2 (event, name) {
-      const index = this.count.indexOf(name)
+    handleClose (index) {
       this.count.splice(index, 1)
     }
   }
