@@ -1,5 +1,5 @@
 <template>
-  <card v-show="$store.state.category.showProps">
+  <card v-show="showPropTable">
     <i-form ref="filter" :model="filter" inline>
       <form-item prop="id">
         <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
@@ -24,17 +24,19 @@
       <div slot="footer"></div>
       <product-attribute-modal></product-attribute-modal>
     </Modal>
-    <i-table :columns="columns" :data="$store.state.category.props" size="small" ref="table"></i-table>
+    <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
-        <Page @on-change="changePage" :total="$store.state.category.total" size="small" show-elevator show-sizer></Page>
+        <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
   </card>
 </template>
 <script>
+import { createNamespacedHelpers, mapGetters } from 'vuex'
 import mixin from '@/mixins/list.js'
 import LayoutTags from '@/view/components/LayoutTags.vue'
+const { mapState } = createNamespacedHelpers('category')
 export default {
   data () {
     return {
@@ -43,7 +45,6 @@ export default {
       filter: {
         categoryId: ''
       },
-      url: 'product/category/props',
       columns: [
         {
           type: 'selection',
@@ -118,15 +119,20 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapState(['isSku', 'showPropTable']),
+    ...mapGetters(['curCategoryId']),
+    url () {
+      return this.isSku ? 'Props' : 'Sku'
+    }
+  },
+  watch: {
+
+  },
   components: {
     LayoutTags,
     'product-attribute-modal': () => import('./ProductAttributeModal')
   },
-  mixins: [mixin],
-  methods: {
-    query () {
-      this.$store.dispatch('getProps', this.$store.state.category.isSku)
-    }
-  }
+  mixins: [mixin]
 }
 </script>

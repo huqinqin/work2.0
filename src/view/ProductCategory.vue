@@ -4,7 +4,7 @@
       <i-col span="12">
         <Card>
           <p slot="title">类目结构</p>
-          <Tree :data="data" :render="renderContent"></Tree>
+          <Tree :data="treeData" :render="renderContent"></Tree>
         </Card>
       </i-col>
       <i-col span="12">
@@ -12,13 +12,13 @@
           <p slot="title">类目预览</p>
           <Form :model="curCategory" :label-width="80">
             <FormItem label="上级类目">
-              <Input v-model="curCategory.parent" placeholder="上级类目" readonly="readonly" />
+              <Input v-model="curCategory.parentName" placeholder="上级类目" readonly="readonly" />
             </FormItem>
             <FormItem label="类目名称">
               <Input v-model="curCategory.name" placeholder="输入类目名称"/>
             </FormItem>
             <FormItem label="类目排序">
-              <Input  v-model="curCategory.level" placeholder="输入1~99"/>
+              <Input  v-model="curCategory.onum" placeholder="输入1~99"/>
             </FormItem>
             <FormItem label="">
               <Upload
@@ -33,8 +33,10 @@
             </FormItem>
             <FormItem>
               <Button type="primary" @click="saveCategory">保存</Button>
-              <Button type="primary" @click="$store.dispatch('getProps', true)">SKU属性</Button>
-              <Button type="primary" @click="$store.dispatch('getProps', false)">非SKU属性</Button>
+              <template v-if="curCategoryId">
+                <Button type="primary" @click="showPropTable(true)">SKU属性</Button>
+                <Button type="primary" @click="showPropTable(false)">非SKU属性</Button>
+              </template>
               <Button type="error">删除</Button>
             </FormItem>
           </Form>
@@ -47,6 +49,7 @@
   </div>
 </template>
 <script>
+import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'ProductCategory',
   components: {
@@ -54,81 +57,41 @@ export default {
   },
   data () {
     return {
-      url: 'product/category',
-      curCategory: {
-        name: '',
-        parent: '',
-        level: ''
-      },
-      activeItem: '',
-      stagingDate: {
-        parent: '',
-        children: '',
-        title: '',
-        id: ''
-      },
-      showAttrId: null,
-      isSKU: true,
-      isShowlist: false,
-      data: [
+    }
+  },
+  computed: {
+    ...mapState('category/', ['categories', 'curCategory']),
+    ...mapGetters('category/', ['curCategoryId']),
+    treeData () {
+      return [
         {
-          id: '1',
-          title: '商品目录 1',
+          id: '0',
+          title: '商品类目',
           expand: true,
           render: (h, { root, node, data }) => {
-            return h('span', {
-              style: {
-                display: 'inline-block',
-                width: '100%'
-              }
-            }, [
-              h('span', [
-                h('Icon', {
-                  props: {
-                    type: 'ios-folder-outline'
-                  },
-                  style: {
-                    marginRight: '8px'
-                  }
-                }),
-                h('span', data.title)
-              ]),
-              h('span', {
-                style: {
-                  display: 'inline-block',
-                  float: 'right',
-                  marginRight: '32px'
-                }
-              }, [
-                h('Button', {
-                  props: Object.assign({}, this.buttonProps, {
-                    icon: 'ios-plus-empty',
-                    type: 'primary'
-                  }),
-                  style: {
-                    width: '52px'
-                  },
-                  on: {
-                    click: () => { this.append(event, data) }
-                  }
-                })
-              ])
-            ])
+            return (
+              <span style={{display: 'inline-block', width: '100%'}}>
+                <span>
+                  <icon type="ios-folder-outline" style={{marginRight: '8px'}}></icon><span>{data.title}</span>
+                </span>
+                <span style={{ display: 'inline-block', float: 'right', marginRight: '32px' }}>
+                  <i-button icon="ios-plus-empty" size="small" type="primary" style={{width: '52px'}}></i-button>
+                </span>
+              </span>
+            )
           },
-          children: []
+          children: this.categories
         }
-      ],
-      buttonProps: {
-        type: 'ghost',
-        size: 'small'
-      }
+      ]
     }
   },
   methods: {
+    ...mapActions('category/', ['fetchCategory', 'getCategory', 'fetchPropByIsSku']),
+    ...mapMutations('category/', ['addCategory', 'setIsSku', 'setShowPropTable']),
     renderContent (h, { root, node, data }) {
       return (
         <span class={{'tree-item': true}} onClick={() => { this.check(root, node, data) }}>
-          <span class={{active: this.activeItem === data.id}}>{data.title}</span>
+          <span class={{active: this.curCategoryId === data.id}}>{data.title}</span>
           <span class={{ 'operate-btns': true }}>
             <i-button class={{ 'operate-btn': true }} icon="ios-plus-empty" type="ghost" size="small" onClick={() => { this.append(event, data) }}></i-button>
             <i-button class={{ 'operate-btn': true }} icon="ios-minus-empty" type="ghost" size="small" onClick={() => { this.remove(root, node, data) } }></i-button>
@@ -137,85 +100,64 @@ export default {
       )
     },
     check (root, node, data) {
-      this.activeItem = data.id
-      console.log('check', data)
-      let parentTil = ''
-      for (let index = 0; index < root.length; index++) {
-        const element = root[index].nodeKey
-        const parent = root[index].parent
-        console.log('root item', element)
-        if (element === data.nodeKey) {
-          for (let k = 0; k < root.length; k++) {
-            const parentnode = root[k].nodeKey
-            if (parent === parentnode) {
-              parentTil = root[k].node.title
-            }
-          }
-        }
-      }
-      this.curCategory.parent = parentTil
-      this.curCategory.name = data.title
-      this.curCategory.level = data.level
-      this.stagingDate.parent = data
-      this.stagingDate.title = data.title
-      this.stagingDate.id = data.id
-      this.$store.commit('setCurCateId', data.id)
+      this.getCategory(data.id)
     },
     append (event, data) {
-      console.log('添加', data)
-      event.cancelBubble = true
+      console.log(data)
       event.stopPropagation()
-      const children = data.children || []
-      this.curCategory.parent = data.title
-      this.curCategory.name = data.title + '的子类目'
-      this.stagingDate.parent = data
-      this.stagingDate.parentId = data.nodeKey
-      this.stagingDate.children = children
-      this.stagingDate.title = ''
+      this.addCategory({id: data.id, name: data.title})
+      // console.log('添加', data)
+      // event.cancelBubble = true
+      // event.stopPropagation()
+      // const children = data.children || []
+      // this.curCategory.parent = data.title
+      // this.curCategory.name = data.title + '的子类目'
+      // this.stagingDate.parent = data
+      // this.stagingDate.parentId = data.nodeKey
+      // this.stagingDate.children = children
+      // this.stagingDate.title = ''
     },
     remove (root, node, data) {
-      const parentKey = root.find(el => el === node).parent
-      const parent = root.find(el => el.nodeKey === parentKey).node
-      const index = parent.children.indexOf(data)
-      parent.children.splice(index, 1)
+      // const parentKey = root.find(el => el === node).parent
+      // const parent = root.find(el => el.nodeKey === parentKey).node
+      // const index = parent.children.indexOf(data)
+      // parent.children.splice(index, 1)
     },
     saveCategory () {
-      let dataSave = {}
-      console.log('parentId')
-      if (this.stagingDate.title === '') {
-        let children = this.stagingDate.children
-        children.push({
-          title: this.curCategory.name,
-          expand: true
-        })
-        this.$set(this.stagingDate.parent, 'children', children)
-        dataSave = {
-          parentId: this.stagingDate.parentId,
-          name: this.curCategory.name,
-          level: this.curCategory.level
-        }
-      } else {
-        this.$set(this.stagingDate.parent, 'title', this.curCategory.name)
-        dataSave = {
-          id: this.stagingDate.id,
-          parentId: this.stagingDate.parent.parentId,
-          name: this.curCategory.name,
-          level: this.curCategory.level
-        }
-      }
-      this.$axios.post(`${this.url}/save`, dataSave).then(data => {
-        // this.data[0].children = data
-      })
+      // let dataSave = {}
+      // console.log('parentId')
+      // if (this.stagingDate.title === '') {
+      //   let children = this.stagingDate.children
+      //   children.push({
+      //     title: this.curCategory.name,
+      //     expand: true
+      //   })
+      //   this.$set(this.stagingDate.parent, 'children', children)
+      //   dataSave = {
+      //     parentId: this.stagingDate.parentId,
+      //     name: this.curCategory.name,
+      //     level: this.curCategory.level
+      //   }
+      // } else {
+      //   this.$set(this.stagingDate.parent, 'title', this.curCategory.name)
+      //   dataSave = {
+      //     id: this.stagingDate.id,
+      //     parentId: this.stagingDate.parent.parentId,
+      //     name: this.curCategory.name,
+      //     level: this.curCategory.level
+      //   }
+      // }
+      // this.$axios.post(`${this.url}/save`, dataSave).then(data => {
+      //   // this.data[0].children = data
+      // })
     },
-    LoadCurCategory () {
-      this.$axios.post(`${this.url}/list`, {
-      }).then(data => {
-        this.data[0].children = data
-      })
+    showPropTable (isSku) {
+      this.setIsSku(isSku)
+      this.setShowPropTable(true)
     }
   },
   beforeMount () {
-    this.LoadCurCategory()
+    this.fetchCategory()
   }
 }
 </script>

@@ -115,15 +115,13 @@ export default {
   },
   data () {
     return {
-      url: 'store/cert',
+      url: 'Cert',
       form: null
     }
   },
   methods: {
     invalid () {
-      this.$axios.post(`${this.url}/invalid`, {
-        id: this.$route.params.id
-      }).then(() => {
+      this.$http.invalidCert(this.$route.params.id).then(() => {
         this.$Notice.success({
           title: '操作成功',
           desc: ''

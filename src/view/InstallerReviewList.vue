@@ -58,7 +58,7 @@ export default {
   },
   data () {
     return {
-      url: '/store',
+      url: 'Review',
       showAllot: false,
       curId: '',
       masterStoreId: '',

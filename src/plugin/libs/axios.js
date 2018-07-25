@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '@/router'
 import { Message } from 'iview'
 // 设置基础url
-axios.defaults.baseURL = '/work/base'
+axios.defaults.baseURL = '/work'
 
 const errorMap = {
   100000: '系统异常',
