@@ -12,7 +12,6 @@ const productAttributeList = Mock.mock({
     }]
   }
 })
-
 const productBrandList = Mock.mock({
   data: {
     'list|10': [{
@@ -24,128 +23,21 @@ const productBrandList = Mock.mock({
     }]
   }
 })
-// const productAttributeDetail = Mock.mock({
-//   'data': {
-//     'id|+1': '@id',
-//     name: '@name',
-//     initial: '@string("upper", 1)',
-//     'manufacturer': '@name',
-//     'show': '@boolean'
-//   }
-// })
 const productList = Mock.mock({
   'data': {
     'list|10': [{
       'id|+1': '@id',
-      name: '@name',
-      image: '@image(200x100)',
-      brand: '@brand',
-      price: '@price',
+      title: '@name',
+      'imgUrls|3': ['@image(200x100)'],
+      brandName: '@first',
+      price: '@integer(100, 350)',
       num: '@zip',
-      label: ['标签@integer(1, 10)'],
+      'keyword|2-5': ['标签@integer(1, 10)'],
       sale: '@integer(60, 100)',
-      putaway: '@boolean'
+      'status|1': ['onsale', 'unabled']
     }]
   }
 })
-// const productBrandDetail = Mock.mock({
-//   'data': {
-//     'id|+1': '@id',
-//     name: '@name',
-//     initial: '@string("upper", 1)',
-//     'manufacturer': '@name',
-//     'show': '@boolean'
-//   }
-// })
-// export const getProductBrandList = req => {
-//   return {
-//     code: '000000',
-//     ...productBrandList,
-//     msg: ''
-//   }
-// }
-// export const getProductAttributeDetail = req => {
-//   return {
-//     code: '000000',
-//     ...productAttributeDetail,
-//     msg: ''
-//   }
-// }
-// export const getProductList = req => {
-//   return {
-//     code: '000000',
-//     ...productList,
-//     msg: ''
-//   }
-// }
-// const productTrashList = Mock.mock({
-//   'data|10': [{
-//     'id|+1': '@id',
-//     name: '@name',
-//     image: '@image(200x100)',
-//     brand: '@name',
-//     price: '@integer(99, 1000)',
-//     sin: '@zip',
-//     category: ['类目@integer(1, 10)']
-//   }]
-// })
-// export const getProductTrashList = req => {
-//   return {
-//     code: '000000',
-//     ...productTrashList,
-//     msg: ''
-//   }
-// }
-// export const getProductTrashRevert = req => {
-//   return {
-//     code: '000000',
-//     data: 'revert',
-//     msg: ''
-//   }
-// }
-// export const getProductBrandDetail = req => {
-//   return {
-//     code: '000000',
-//     ...productBrandDetail,
-//     msg: ''
-//   }
-// }
-const categories = [
-  {
-    id: '1-1',
-    title: '类目 1-1',
-    expand: true,
-    children: [
-      {
-        id: '1-1-1',
-        title: '类目 1-1-1',
-        expand: true
-      },
-      {
-        id: '1-1-2',
-        title: '类目 1-1-2',
-        expand: true
-      }
-    ]
-  },
-  {
-    id: '1-2',
-    title: '类目 1-2',
-    expand: true,
-    children: [
-      {
-        id: '1-2-1',
-        title: '类目 1-2-1',
-        expand: true
-      },
-      {
-        id: '1-2-2',
-        title: '类目 1-2-2',
-        expand: true
-      }
-    ]
-  }
-]
 const cascader = [
   {
     value: '1-1',
@@ -177,11 +69,13 @@ const cascader = [
   }
 ]
 export default {
-  list () {
-    return {
-      code: '000000',
-      ...productList,
-      msg: ''
+  item: {
+    list () {
+      return {
+        code: '000000',
+        ...productList,
+        msg: ''
+      }
     }
   },
   brand: {
@@ -220,26 +114,22 @@ export default {
     listCategory () {
       return {
         code: '000000',
-        data: categories,
+        data: cascader,
         msg: ''
       }
     },
-    props: {
-      list () {
-        return {
-          code: '000000',
-          ...productAttributeList,
-          msg: ''
-        }
+    listProp () {
+      return {
+        code: '000000',
+        ...productAttributeList,
+        msg: ''
       }
     },
-    sku: {
-      list () {
-        return {
-          code: '000000',
-          ...productAttributeList,
-          msg: ''
-        }
+    listSkuProp () {
+      return {
+        code: '000000',
+        ...productAttributeList,
+        msg: ''
       }
     }
   }

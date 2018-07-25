@@ -73,7 +73,7 @@ export default {
             return (
               <span>
                 {params.row.props.map(t => {
-                  return <span>{t[Object.keys(t)[0]]}</span>
+                  return <span>{t.value}</span>
                 })}
                 <icon class="edit-icon" type="compose" on-click={ () => { this.showSku(params) }}></icon>
               </span>
@@ -108,7 +108,8 @@ export default {
       this.sku.forEach(t => {
         if (t.checked) {
           this.tableData[this.checkedIndex].props.push({
-            [t.name]: t.checked
+            name: t.name,
+            value: t.checked
           })
         }
         t.checked = ''
@@ -119,9 +120,9 @@ export default {
     showSku (params) {
       if (this.sku.length) {
         this.sku.forEach(t => {
-          params.row.props.forEach(t => {
-            if (Object.keys(t)[0] === t.name) {
-              t.checked = t[Object.keys(t)[0]]
+          params.row.props.forEach(v => {
+            if (t.name === v.name) {
+              t.checked = v.value
             }
           })
         })
@@ -213,9 +214,6 @@ export default {
       this.count.splice(index, 1)
     }
   }
-  // beforeMount () {
-  //   this.tableData.forEach(item => { item.edit = false })
-  // }
 }
 </script>
 <style scoped>
