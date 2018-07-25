@@ -27,13 +27,19 @@ export default {
     return axios.post('', ids)
   },
   getStaff (params) {
-    return axios.post('base/personnel/get', params)
+    return axios.post('user/personnel/get', params)
   },
   fetchStaff (params) {
-    return axios.post('base/personnel/list', params)
+    return axios.post('user/personnel/list', params)
   },
   saveStaff (params) {
-    return axios.post('base/personnel/save', params)
+    return axios.post('user/personnel/save', params)
+  },
+  delStaff (ids) {
+    return axios.post('user/delUsers', ids)
+  },
+  resetStaffPw (id) {
+    return axios.post('user/reset', {id})
   },
   getInstaller (params) {
     return axios.post('', params)
@@ -79,5 +85,56 @@ export default {
   },
   fetchSpuProps (params) {
     return axios.post('/base/product/category/listProp', params)
+  },
+  getBrand (params) {
+    return axios.post('product/brand/getBrandDetail', params)
+  },
+  fetchBrand (params) {
+    return axios.post('product/brand/listBrand', params)
+  },
+  delBrand (ids) {
+    return axios.post('product/brand/brandDelete', ids)
+  },
+  saveBrand (params) {
+    return axios.post('product/brand/saveOrUpdate', params)
+  },
+  getCategory (id) {
+    return axios.post('product/category/get', {id})
+  },
+  delCategory (ids) {
+    return axios.post('product/category/delete', {ids})
+  },
+  saveCategory (params) {
+    return axios.post('product/category/saveOrUpdate', params)
+  },
+  fetchProp (id) {
+    return axios.post('product/category/listProp', {id})
+  },
+  saveProp (params) {
+    return axios.post('product/category/addProps', params)
+  },
+  delProp (ids) {
+    return axios.post('product/category/deleteProps', {ids})
+  },
+  addPropValue (params) {
+    return axios.post('product/category/addPropsTag', params)
+  },
+  delPropValue (params) {
+    return axios.post('product/category/deletePropsTag', params)
+  },
+  fetchSku (categoryId) {
+    return axios.post('product/category/listSkuProp', { categoryId })
+  },
+  saveSku (params) {
+    return axios.post('product/category/addSkuProps', params)
+  },
+  delSku (ids) {
+    return axios.post('product/category/deleteSkuProps', {ids})
+  },
+  addSkuValue (params) {
+    return axios.post('product/category/addSkuPropsTag', params)
+  },
+  delSkuValue (params) {
+    return axios.post('product/category/deleteSkuPropsTag', params)
   }
 }

@@ -4,30 +4,30 @@
     <table border="1" class="baseDataTable">
       <tr>
         <td class="speTd">门店名</td>
-        <td>{{form.name}}</td>
+        <td>{{form.storeName}}</td>
         <td class="speTd">门店电话</td>
         <td>{{form.phone}}</td>
       </tr>
       <tr>
         <td class="speTd">详细地址</td>
-        <td>{{form.address}}</td>
+        <td>{{form.address.detail}}</td>
         <td class="speTd">邮编</td>
-        <td>{{form.zip}}</td>
+        <td>{{form.address.zip}}</td>
       </tr>
     </table>
     <p>联系人</p>
-    <table border="1" class="baseDataTable">
+    <table border="1" class="baseDataTable" v-for="(contact, index) in form.contact" :key="index">
       <tr>
         <td class="speTd">First Name</td>
-        <td>{{form.userFirstName}}</td>
+        <td>{{contact.firstName}}</td>
         <td class="speTd">Last Name</td>
-        <td>{{form.userLastName}}</td>
+        <td>{{contact.lastName}}</td>
       </tr>
       <tr>
         <td class="speTd">邮箱</td>
-        <td>{{form.email}}</td>
+        <td>{{contact.email}}</td>
         <td class="speTd">手机</td>
-        <td>{{form.phone}}</td>
+        <td>{{contact.phone}}</td>
       </tr>
     </table>
   </card>
@@ -38,7 +38,7 @@ export default {
     return {
       url: '/shop',
       form: {
-        name: '', contact: '', address: '', city: '', state: '', country: '', zip: '', phone: '', mobile: '', status: ''
+        storeName: '', contact: [], address: {}, phone: ''
       }
     }
   },

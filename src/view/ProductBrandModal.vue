@@ -2,11 +2,7 @@
   <card>
     <i-form v-if="form" :model="form" label-position="top" :rules="rules">
       <row :gutter="16">
-        <i-col :span="24" v-if="form.id">
-          <form-item label="" prop="id">
-            <span>编号：{{form.id}}</span>
-          </form-item>
-        </i-col>
+        <p style="padding-left: 12px;margin-bottom: 20px;" v-if="id">编号：{{form.id}}</p>
         <i-col :span="24">
           <form-item label="品牌名称" prop="name">
             <i-input v-model="form.name" type="text" placeholder="品牌名称" ></i-input>
@@ -17,16 +13,6 @@
             <i-input v-model="form.shortName" type="text" placeholder="品牌首字母" ></i-input>
           </form-item>
         </i-col>
-        <!--<i-col :span="24">-->
-          <!--<form-item label="品牌制造商" prop="manufacturer">-->
-            <!--<i-input v-model="form.manufacturer" type="text" placeholder="品牌制造商" ></i-input>-->
-          <!--</form-item>-->
-        <!--</i-col>-->
-        <!--<i-col :span="24">-->
-          <!--<form-item label="是否显示" prop="show">-->
-            <!--<i-switch v-model="form.show"></i-switch>-->
-          <!--</form-item>-->
-        <!--</i-col>-->
       </row>
       <form-item>
         <i-button type="primary" @click="submit">Submit</i-button>
@@ -37,13 +23,12 @@
 </template>
 
 <script>
-import mixin from '@/mixins/modal-detail'
 export default {
-  mixins: [mixin],
   name: 'product-brand-modal',
+  props: ['id'],
   data () {
     return {
-      url: 'product/brand',
+      form: {},
       rules: {
         id: [{
           required: true,
@@ -71,6 +56,28 @@ export default {
           trigger: 'blur'
         }]
       }
+    }
+  },
+  watch: {
+    id (id) {
+      if (id) {
+        this.$http.getBrand({id}).then(data => {
+          this.form = data
+        })
+      }
+    }
+  },
+  methods: {
+    submit () {
+      this.$http.saveBrand({
+        ...this.form
+      }).then(data => {
+        this.$emit('update')
+        this.$Notice.success({
+          title: 'Edit success',
+          desc: ''
+        })
+      })
     }
   }
 }

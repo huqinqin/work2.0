@@ -2,65 +2,46 @@
   <card>
     <p slot="title">人员列表</p>
     <table border="1" class="baseDataTable">
-
       <tr>
-
         <td class="speTd">编号</td>
         <td>{{form.id}}</td>
-
         <td class="speTd">名</td>
         <td>{{form.firstName}}</td>
-
       </tr>
-
       <tr>
-
         <td class="speTd">姓</td>
         <td>{{form.lastName}}</td>
-
         <td class="speTd">账号</td>
         <td>{{form.account}}</td>
-
       </tr>
-
       <tr>
 
         <td class="speTd">邮箱</td>
         <td>{{form.email}}</td>
 
         <td class="speTd">公司电话</td>
-        <td>{{form.phone}}</td>
+        <td>{{form.mobile}}</td>
 
       </tr>
 
       <tr>
 
         <td class="speTd">门店</td>
-        <td>{{form.store}}</td>
-
-        <td class="speTd">角色</td>
-        <td>{{form.role}}</td>
-
-      </tr>
-
-      <tr>
-
+        <td>{{form.storeName}}</td>
         <td class="speTd">部门</td>
-        <td>{{form.group}}</td>
-
-        <td class="speTd">状态</td>
-        <td>{{form.status}}</td>
-
+        <td>{{form.groupName}}</td>
       </tr>
 
       <tr>
+        <td class="speTd">角色</td>
+        <td>{{form.roleName}}</td>
+        <td class="speTd">状态</td>
+        <td>{{form.status === 'enabled' ? '活跃' : '冻结'}}</td>
+      </tr>
 
-        <td class="speTd">地址</td>
-        <td>{{form.address}}</td>
-
+      <tr>
         <td class="speTd">创建时间</td>
         <td>{{form.allocationDate}}</td>
-
       </tr>
 
     </table>

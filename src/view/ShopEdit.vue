@@ -39,8 +39,10 @@
             <i-input v-model="contact.email" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <i-button>新增联系人</i-button>
+      </row>
+      <row>
+         <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <i-button @click="addContact">新增联系人</i-button>
         </i-col>
       </row>
       <form-item>
@@ -125,6 +127,11 @@ export default {
           trigger: 'blur'
         }]
       }
+    }
+  },
+  methods: {
+    addContact () {
+      this.form.contact.push({firstName: '', lastName: '', mobile: '', email: ''})
     }
   }
 }
