@@ -136,5 +136,8 @@ export default {
   },
   delSkuValue (params) {
     return axios.post('product/category/deleteSkuPropsTag', params)
+  },
+  getPolicy () {
+    return axios.post('/base/common/getPolicy')
   }
 }

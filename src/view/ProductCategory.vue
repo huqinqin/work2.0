@@ -24,7 +24,10 @@
               <Upload
                 multiple
                 type="drag"
-                action="//jsonplaceholder.typicode.com/posts/">
+                :before-upload="beforeLoad"
+                :on-success="loadSuccess"
+                :data="Object.assign(formUp, formData)"
+                action="//chen0711.oss-cn-hangzhou.aliyuncs.com">
                 <div style="padding: 20px 0">
                     <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
                     <p>Click or drag files here to upload</p>
@@ -54,6 +57,20 @@ export default {
   },
   data () {
     return {
+      formUp: {
+        policy: '',
+        OSSAccessKeyId: '',
+        signature: '',
+        preKey: '',
+        dir: '',
+        host: '',
+        success_action_status: 200
+      },
+      formData: {
+        name: '',
+        key: '',
+        Filename: ''
+      },
       url: 'product/category',
       curCategory: {
         name: '',
@@ -121,10 +138,34 @@ export default {
       buttonProps: {
         type: 'ghost',
         size: 'small'
-      }
+      },
+      img: ''
     }
   },
+  created () {
+    this.getPolicy()
+  },
   methods: {
+    getPolicy () {
+      this.$http.getPolicy().then(data => {
+        this.formUp.policy = data.policy
+        this.formUp.OSSAccessKeyId = data.accessid
+        this.formUp.signature = data.signature
+        this.formUp.preKey = data.dir
+        this.formUp.dir = data.dir
+        this.formUp.host = data.host
+      })
+    },
+    beforeLoad (file) {
+      this.formData.name = file.name
+      this.formData.key = this.form.preKey + '/' + file.name
+      this.formData.Filename = file.name
+    },
+    loadSuccess (response, file) {
+      this.img = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      console.log(this.img)
+      console.log(file)
+    },
     renderContent (h, { root, node, data }) {
       return (
         <span class={{'tree-item': true}} onClick={() => { this.check(root, node, data) }}>
@@ -208,8 +249,7 @@ export default {
       })
     },
     LoadCurCategory () {
-      this.$axios.post(`${this.url}/list`, {
-      }).then(data => {
+      this.$http.fetchCategories().then(data => {
         this.data[0].children = data
       })
     }
