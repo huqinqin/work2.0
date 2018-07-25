@@ -67,5 +67,47 @@ export default {
   },
   saveBrand (params) {
     return axios.post('product/brand/saveOrUpdate', params)
+  },
+  fetchCategory () {
+    return axios.post('product/category/listCategory')
+  },
+  getCategory (id) {
+    return axios.post('product/category/get', {id})
+  },
+  delCategory (ids) {
+    return axios.post('product/category/delete', {ids})
+  },
+  saveCategory (params) {
+    return axios.post('product/category/saveOrUpdate', params)
+  },
+  fetchProp (id) {
+    return axios.post('product/category/listProp', {id})
+  },
+  saveProp (params) {
+    return axios.post('product/category/addProps', params)
+  },
+  delProp (ids) {
+    return axios.post('product/category/deleteProps', {ids})
+  },
+  addPropValue (params) {
+    return axios.post('product/category/addPropsTag', params)
+  },
+  delPropValue (params) {
+    return axios.post('product/category/deletePropsTag', params)
+  },
+  fetchSku (categoryId) {
+    return axios.post('product/category/listSkuProp', { categoryId })
+  },
+  saveSku (params) {
+    return axios.post('product/category/addSkuProps', params)
+  },
+  delSku (ids) {
+    return axios.post('product/category/deleteSkuProps', {ids})
+  },
+  addSkuValue (params) {
+    return axios.post('product/category/addSkuPropsTag', params)
+  },
+  delSkuValue (params) {
+    return axios.post('product/category/deleteSkuPropsTag', params)
   }
 }
