@@ -48,7 +48,7 @@ export default {
   },
   data () {
     return {
-      url: 'store/cert',
+      url: 'Cert',
       filter: {
         imgUrl: '', number: '', company: '', custId: '', detail: '', uploadAt: '', validTime: '', reviewAt: '', status: ''
       },

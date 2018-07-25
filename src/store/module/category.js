@@ -1,43 +1,66 @@
 import http from '~prototype/http.js'
 
 export default {
+  namespaced: true,
   state: {
-    curCateId: '',
-    curProp: {},
-    showProps: false,
-    isSku: true,
+    categories: [],
+    curCategory: {
+      'parentId': 0,
+      'name': '',
+      'parentName': '',
+      'imgUrl': '',
+      'onum': 99
+    },
+    showPropTable: false,
     props: [],
-    total: 40
+    propsTotal: 0,
+    curProp: {},
+    isSku: false
   },
   mutations: {
-    setCurProp (state, payload) {
+    setCategories (state, payload) {
+      state.categories = payload
+    },
+    checkCategory (state, payload) {
+      state.curCategory = payload
+    },
+    addCategory (state, {id, name}) {
+      state.curCategory = {
+        'parentId': id,
+        'name': '',
+        'parentName': name,
+        'imgUrl': '',
+        'onum': 99
+      }
+    },
+    setProps (state, payload) {
+      state.props = payload
+    },
+    setCurProps (state, payload) {
       state.curProp = payload
     },
-    setCurCateId (state, payload) {
-      state.curCateId = payload
+    setShowPropTable (state, payload) {
+      state.showPropTable = payload
     },
-    setCurPropId (state, payload) {
-      state.curPropId = payload
-    },
-    setShowProps (state, payload) {
-      state.showProps = payload
-    },
-    showPropsTable (state, payload) {
+    setIsSku (state, payload) {
       state.isSku = payload
-      state.showProps = true
-    },
-    setProps (state, data) {
-      state.props = data.list
-      state.total = data.total
     }
   },
   actions: {
-    getProps ({commit, state}, payload) {
-      commit('showPropsTable', payload)
-      const url = payload ? 'sku' : 'props'
-      return http.post(`product/category/${url}/list`, {id: state.curCateId}).then(data => {
-        commit('setProps', data)
+    fetchCategory ({commit}) {
+      return http.fetchCategory().then(data => {
+        commit('setCategories', data)
       })
+    },
+    getCategory ({commit}, id) {
+      return http.getCategory(id).then(data => {
+        commit('checkCategory', data)
+      })
+    }
+  },
+  getters: {
+    curCategoryId (state) {
+      return state.curCategory.id
     }
   }
 }

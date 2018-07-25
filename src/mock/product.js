@@ -88,6 +88,22 @@ export default {
     }
   },
   category: {
+    get (req) {
+      const data = JSON.parse(req.body)
+      console.log(data)
+      return {
+        code: '000000',
+        data: {
+          'id': data.id,
+          'parentId': 0,
+          'name': '类目1',
+          'parentName': '类目1',
+          'imgUrl': 'null',
+          'onum': 99
+        },
+        msg: ''
+      }
+    },
     cascader () {
       return {
         code: '000000',

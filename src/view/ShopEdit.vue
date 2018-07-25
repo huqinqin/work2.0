@@ -8,6 +8,11 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="门店编码" prop="name">
+            <i-input v-model="form.storeCode" type="text" placeholder="门店编码" ></i-input>
+          </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="公司电话" prop="phone">
             <i-input v-model="form.phone" type="text" placeholder="公司电话" ></i-input>
           </form-item>
@@ -61,6 +66,7 @@ export default {
       url: 'Shop',
       form: {
         storeName: '',
+        storeCode: '',
         phone: '',
         contact: [{firstName: '', lastName: '', mobile: '', email: ''}],
         address: {
