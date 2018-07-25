@@ -65,6 +65,9 @@ export default {
   fetchProduct (params) {
     return axios.post('product/item/list', params)
   },
+  updateProduct (params) {
+    return axios.post('product/item/update', params)
+  },
   delProduct (params) {
     return axios.post('product/item/del', params)
   },

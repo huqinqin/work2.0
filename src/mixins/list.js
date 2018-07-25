@@ -15,6 +15,7 @@ export default {
         page: this.page,
         ...this.filter
       }).then(data => {
+        console.log(data)
         this.list = data.list
         this.total = data.total
       })

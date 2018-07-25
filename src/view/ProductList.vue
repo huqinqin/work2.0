@@ -5,13 +5,13 @@
     <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
   </form-item>
   <form-item prop="name">
-    <i-input v-model="filter.name" type="text" placeholder="商品名称" ></i-input>
+    <i-input v-model="filter.title" type="text" placeholder="商品名称" ></i-input>
   </form-item>
   <form-item prop="image">
     <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
   </form-item>
   <form-item prop="brand">
-    <i-input v-model="filter.brand" type="text" placeholder="商品品牌" ></i-input>
+    <i-input v-model="filter.brandName" type="text" placeholder="商品品牌" ></i-input>
   </form-item>
   <form-item prop="price">
     <i-input v-model="filter.price" type="text" placeholder="单价" ></i-input>
@@ -20,13 +20,13 @@
     <i-input v-model="filter.num" type="text" placeholder="编码" ></i-input>
   </form-item>
   <form-item prop="label">
-    <i-input v-model="filter.label" type="text" placeholder="标签" ></i-input>
+    <i-input v-model="filter.keyword" type="text" placeholder="标签" ></i-input>
   </form-item>
   <form-item prop="sale">
     <i-input v-model="filter.sale" type="text" placeholder="销量" ></i-input>
   </form-item>
   <form-item prop="putaway">
-    <i-input v-model="filter.putaway" type="text" placeholder="是否上架" ></i-input>
+    <i-input v-model="filter.status" type="text" placeholder="是否上架" ></i-input>
   </form-item>
 
   <form-item>
@@ -69,12 +69,12 @@ export default {
           key: 'image',
           render: (h, params) => {
             return (
-              <img src={params.row.imgUrls[0]} alt="商品主图" />
+              <img src={params.row.imgUrls[0]} alt="商品主图" height="100"/>
             )
           }
         }, {
           title: '商品品牌',
-          key: 'brandId'
+          key: 'brandName'
         }, {
           title: '单价',
           key: 'price'
@@ -83,13 +83,31 @@ export default {
           key: 'num'
         }, {
           title: '标签',
-          key: 'label'
+          key: 'keyword',
+          render: (h, params) => {
+            return (
+              <div>
+                {
+                  params.row.keyword.map(t => {
+                    return (
+                      <i-tag color="blue" fade name={t} />
+                    )
+                  })
+                }
+              </div>
+            )
+          }
         }, {
           title: '销量',
           key: 'sale'
         }, {
           title: '是否上架',
-          key: 'status'
+          key: 'status',
+          render: (h, params) => {
+            return (
+              <i-switch value={params.row.status} true-value="onsale" false-value="unabled" on-on-change={(e) => this.changeStatus(params.row.id, e)} />
+            )
+          }
         },
         {
           title: '操作',
@@ -133,6 +151,17 @@ export default {
     }
   },
   methods: {
+    changeStatus (id, status) {
+      this.$http.updateProduct({
+        id: id,
+        status: status
+      }).then(() => {
+        this.$Notice.success({
+          title: '操作成功',
+          desc: ''
+        })
+      })
+    },
     disableItem (id) {
       this.$http.diabledProduct({id: id}).then(() => {
         this.$Notice.success({
