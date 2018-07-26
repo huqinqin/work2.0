@@ -17,18 +17,13 @@ export default {
       })
     },
     submit () {
-      let validArr = this.$refs.address ? [this.$refs.address.valid(), this.$refs.form.validate()] : [this.$refs.form.validate()]
-      Promise.all(validArr).then(data => {
-        if (data.every(valid => { return valid })) {
-          this.$http['save' + this.url]({
-            ...this.form
-          }).then(data => {
-            this.$Notice.success({
-              title: 'Edit success',
-              desc: ''
-            })
-          })
-        }
+      this.$http['save' + this.url]({
+        ...this.form
+      }).then(data => {
+        this.$Notice.success({
+          title: 'Edit success',
+          desc: ''
+        })
       })
     },
     reset () {

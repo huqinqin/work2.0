@@ -51,7 +51,7 @@
         </i-col>
       </row>
       <form-item>
-        <i-button type="primary" @click="submit">Submit</i-button>
+        <i-button type="primary" @click="validForm">Submit</i-button>
         <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>
@@ -142,6 +142,13 @@ export default {
     }
   },
   methods: {
+    validForm () {
+      Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
+        if (data.every(valid => { return valid })) {
+          this.submit()
+        }
+      })
+    },
     addContact () {
       this.form.contact.push({firstName: '', lastName: '', mobile: '', email: ''})
     }
