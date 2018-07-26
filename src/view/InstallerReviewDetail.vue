@@ -38,9 +38,9 @@
   <card>
     <p slot="title">分销证信息</p>
     <img src="https://ltsb2b.oss-us-west-1.aliyuncs.com/misc/517fb939633a317caf7bb2da5fb23a70.png" alt="">
-    <MapAutoComplete v-model="form.certAddress"></MapAutoComplete>
-    <Form label-position="top">
-      <FormItem label="有效期">
+    <MapAutoComplete :googleAddress="form.certAddress" ref="address"></MapAutoComplete>
+    <Form label-position="top" ref="certInfo" :rules="rules">
+      <FormItem label="有效期" prop="">
           <RadioGroup vertical>
               <Radio label="长期">
                   <span>长期</span>
@@ -51,22 +51,22 @@
               </Radio>
           </RadioGroup>
       </FormItem>
-      <FormItem label="Cust ID">
+      <FormItem label="Cust ID" prop="custId">
         <Input v-model="form.custId"/>
       </FormItem>
     </Form>
   </card>
   <card>
     <p slot="title">审核信息</p>
-    <Form>
-      <FormItem label="选择销售">
-        <Select v-model="form.custId">
+    <Form ref="reviewInfo" :rules="rules">
+      <FormItem label="选择销售" prop="masterSaleId">
+        <Select v-model="form.masterSaleId">
             <Option value="beijing">New York</Option>
             <Option value="shanghai" disabled>London</Option>
             <Option value="shenzhen">Sydney</Option>
         </Select>
       </FormItem>
-      <FormItem label="审核信息">
+      <FormItem label="审核信息" prop="message">
         <Input type="textarea" :rows="10" v-model="form.message"/>
       </FormItem>
     </Form>
@@ -103,37 +103,52 @@ export default {
         certIndate: '',
         custId: '',
         saler: '',
-        message: ''
+        message: '',
+        masterSaleId: ''
+      },
+      rules: {
+        custId: [{required: true, message: 'The input cannot be empty', trigger: 'blur'}],
+        masterSaleId: [{required: true, message: 'The input cannot be empty', trigger: 'blur'}],
+        message: [{required: true, message: 'The input cannot be empty', trigger: 'blur'}]
       }
     }
   },
   methods: {
     pass () {
-      this.$axios.post('store/passStore', {
-        id: this.form.id,
-        code: this.form.custId,
-        storeCert: {
-          imgUrl: this.form.storeCertImgUrl,
-          code: this.form.custId,
-          address: this.form.certAddress,
-          ext: {}
-        },
-        masterSaleId: '',
-        content: this.form.message
-      }).then(data => {
-        this.$Message.success('成功通过审核')
-        this.$router.push({name: 'installer_review_list'})
+      // Promise.all([this.$refs.address.valid(), this.$refs.certInfo.validate(), this.$refs.reviewInfo.validate()]).then(data => {
+      Promise.all([this.$refs.address.valid()]).then(data => {
+        if (data.every(valid => { return valid })) {
+          this.$http.passReview({
+            id: this.form.id,
+            code: this.form.custId,
+            storeCert: {
+              imgUrl: this.form.storeCertImgUrl,
+              code: this.form.custId,
+              address: this.form.certAddress,
+              ext: {}
+            },
+            masterSaleId: this.form.masterSaleId,
+            content: this.form.message
+          }).then(data => {
+            this.$Message.success('成功通过审核')
+            this.$router.push({name: 'installer_review_list'})
+          })
+        }
       })
     },
     refuse () {
-      this.$axios.post('store/refuseStore', {id: this.form.id, content: this.form.message}).then(data => {
-        this.$Message.error('已拒绝')
-        this.$router.push({name: 'installer_review_list'})
+      this.$refs.reviewInfo.validate(valid => {
+        if (valid) {
+          this.$http.refuseReview({id: this.form.id, content: this.form.message}).then(data => {
+            this.$Message.error('已拒绝')
+            this.$router.push({name: 'installer_review_list'})
+          })
+        }
       })
     }
   },
   beforeMount () {
-    this.$axios.post('store/get', { id: this.$route.params.id }).then(data => {
+    this.$http.getReview({ id: this.$route.params.id }).then(data => {
       this.form = data
     })
     console.log(this.$route)

@@ -13,9 +13,6 @@
       <form-item prop="address">
         <date-picker type="date" placeholder="地址"></date-picker>
       </form-item>
-      <form-item prop="contact">
-        <i-input v-model="filter.contact" type="text" placeholder="联系人" ></i-input>
-      </form-item>
       <form-item prop="phone">
         <i-input v-model="filter.phone" type="text" placeholder="联系方式" ></i-input>
       </form-item>
@@ -42,7 +39,7 @@ export default {
     return {
       url: 'Shop',
       filter: {
-        id: '', name: '', account: '', address: '', contact: '', phone: '', status: ''
+        id: '', name: '', account: '', address: '', phone: '', status: ''
       },
       columns: [
         {

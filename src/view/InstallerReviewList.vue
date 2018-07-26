@@ -104,9 +104,6 @@ export default {
             return (
               <div>
                 <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => {
-                  // this.$router.push({name: 'installer_review_list'})
-                }}>查看</i-button>
-                <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => {
                   this.$router.push({name: 'installer_review_detail', params: {id: params.row.id}})
                 }} >审核</i-button>
                 <i-button type="primary" size="small" style={{marginRight: '5px'}} onClick={() => { this.showAllot = true; this.curId = params.row.id }}>分配</i-button>
@@ -119,7 +116,7 @@ export default {
   },
   methods: {
     allot () {
-      this.$axios.post('store/assignStore', {id: this.curId, content: this.masterStoreId}).then(data => {
+      this.$http.assignStore({id: this.curId, content: this.masterStoreId}).then(data => {
         this.$Message.success('已分配')
       })
     }

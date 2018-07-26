@@ -3,12 +3,12 @@
     <i-form :model="form" label-position="top" :rules="rules" ref="form">
       <row :gutter="16">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="门店名称" prop="name">
+          <form-item label="门店名称" prop="storeName">
             <i-input v-model="form.storeName" type="text" placeholder="门店名称" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="门店编码" prop="name">
+          <form-item label="门店编码" prop="storeCode">
             <i-input v-model="form.storeCode" type="text" placeholder="门店编码" ></i-input>
           </form-item>
         </i-col>
@@ -20,28 +20,28 @@
       </row>
       <row>
         <i-col :span="24">
-          <MapAutoComplete :googleAddress="form.address"></MapAutoComplete>
+          <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
         </i-col>
       </row>
       <row v-for="(contact, index) in form.contact" :key="index">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="first name" prop="contact">
+          <form-item label="first name" :prop="'contact.' + index + '.firstName'" :rules="rule">
             <i-input v-model="contact.firstName" type="text" placeholder="联系人" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="last name" prop="contact">
+          <form-item label="last name" :prop="'contact.' + index + '.lastName'" :rules="rule">
             <i-input v-model="contact.lastName" type="text" placeholder="联系人" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="手机" prop="mobile">
+          <form-item label="手机" :prop="'contact.' + index + '.mobile'" :rules="rule">
             <i-input v-model="contact.mobile" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="email" prop="mobile">
-            <i-input v-model="contact.email" type="text" placeholder="手机" ></i-input>
+          <form-item label="邮箱" :prop="'contact.' + index + '.email'" :rules="rule">
+            <i-input v-model="contact.email" type="text" placeholder="邮箱" ></i-input>
           </form-item>
         </i-col>
       </row>
@@ -51,7 +51,7 @@
         </i-col>
       </row>
       <form-item>
-        <i-button type="primary" @click="submit">Submit</i-button>
+        <i-button type="primary" @click="validForm">Submit</i-button>
         <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>
@@ -81,8 +81,14 @@ export default {
           lng: 0
         }
       },
+      rule: {required: true, message: 'The input cannot be empty', trigger: 'blur'},
       rules: {
-        name: [{
+        storeName: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'blur'
+        }],
+        storeCode: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
@@ -136,6 +142,13 @@ export default {
     }
   },
   methods: {
+    validForm () {
+      Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
+        if (data.every(valid => { return valid })) {
+          this.submit()
+        }
+      })
+    },
     addContact () {
       this.form.contact.push({firstName: '', lastName: '', mobile: '', email: ''})
     }

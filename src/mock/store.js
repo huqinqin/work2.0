@@ -24,10 +24,18 @@ const installerDetail = Mock.mock({
   industry: '@name',
   address: '@county(true)',
   storeCertImgUrl: '@image(200x100)',
-  certAddress: {},
+  certAddress: {
+    company: '@first',
+    detail: '@city',
+    street: '@city',
+    city: '@city',
+    state: '@state',
+    zip: '@zip',
+    country: '@country'
+  },
   certIsLong: '',
   certIndate: '',
-  custId: '',
+  custId: '@integer(20000000000000,90000000000000)',
   saler: '',
   message: ''
 })
@@ -95,9 +103,32 @@ const shopList = Mock.mock({
     name: '@name',
     account: '@name',
     address: '@id',
-    contact: '@name',
+    'contact|2': [{
+      firstName: '@first',
+      lastName: '@last',
+      email: '@email',
+      phone: '@integer(20000000,90000000)'
+    }],
     phone: '@integer(20000000,90000000)'
   }]
+})
+const shopDetail = Mock.mock({
+  'data': {
+    'id|+1': '@id',
+    storeName: '@name',
+    account: '@name',
+    address: {
+      detail: '@city',
+      zip: '@zip'
+    },
+    'contact|2': [{
+      firstName: '@first',
+      lastName: '@last',
+      email: '@email',
+      phone: '@integer(20000000,90000000)'
+    }],
+    phone: '@integer(20000000,90000000)'
+  }
 })
 export default {
   listStore () {
@@ -113,7 +144,7 @@ export default {
   getStore (req) {
     return {
       code: '000000',
-      data: {}
+      ...shopDetail
     }
   },
   saveStore () {
@@ -132,7 +163,7 @@ export default {
       msg: ''
     }
   },
-  get () {
+  getInstallerRegister () {
     return {
       code: '000000',
       data: {

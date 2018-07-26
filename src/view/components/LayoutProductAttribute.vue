@@ -166,13 +166,13 @@ export default {
     editCellRender (h, params) {
       const value = params.row[params.column.key]
       return (
-        <i-input on-input={(e) => this.editCell(params.index, params.column.key, e)} value={value}></i-input>
+        <i-input on-on-blur={(e) => this.editCell(params.index, params.column.key, e)} value={value}></i-input>
       )
     },
-    editCell (rowIndex, key, value) {
-      this.tableData[rowIndex][key] = value
+    editCell (rowIndex, key, event) {
+      this.tableData[rowIndex][key] = event.target.value
       // if (key === 'edit') {
-      // 当点击按钮时，从新加载表格，触发表格刷新
+      // 当点击按钮时，重新加载表格，触发表格刷新
       // this.initColumnsList()
       // }
     },

@@ -52,7 +52,7 @@
         </i-col>
       </row>
       <form-item>
-        <i-button type="primary" @click="submit">Submit</i-button>
+        <i-button type="primary" @click="validForm">Submit</i-button>
         <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>
@@ -141,6 +141,13 @@ export default {
           trigger: 'blur'
         }]
       }
+    }
+  },
+  methods: {
+    validForm () {
+      this.$refs.form.validate(valid => {
+        if (valid) this.submit()
+      })
     }
   }
 }

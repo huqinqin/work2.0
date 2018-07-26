@@ -1,6 +1,6 @@
 <template>
   <card>
-    <i-form v-if="form" :model="form" label-position="top" :rules="rules">
+    <i-form v-if="form" :model="form" label-position="top" :rules="rules" ref="form">
       <row :gutter="16">
         <p style="padding-left: 12px;margin-bottom: 20px;" v-if="id">编号：{{form.id}}</p>
         <i-col :span="24">
@@ -68,15 +68,22 @@ export default {
     }
   },
   methods: {
+    closeModal () {
+      this.$emit('update')
+    },
     submit () {
-      this.$http.saveBrand({
-        ...this.form
-      }).then(data => {
-        this.$emit('update')
-        this.$Notice.success({
-          title: 'Edit success',
-          desc: ''
-        })
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.$http.saveBrand({
+            ...this.form
+          }).then(data => {
+            this.$emit('update')
+            this.$Notice.success({
+              title: 'Edit success',
+              desc: ''
+            })
+          })
+        }
       })
     }
   }

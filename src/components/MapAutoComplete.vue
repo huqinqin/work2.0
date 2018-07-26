@@ -1,5 +1,5 @@
 <template>
-  <Form :model="googleAddress" label-position="top">
+  <Form :model="googleAddress" label-position="top" ref="form" :rules="rules">
     <row>
       <i-col :span="12" v-if="googleAddress.hasOwnProperty('receiver')">
         <form-item label="收货人" prop="receiver">
@@ -83,7 +83,7 @@ export default {
     return {
       autocomplete: null,
       url: null,
-      addressRules: {
+      rules: {
         company: [{ required: true, message: '请输入内容', trigger: 'blur' }],
         receiver: [{ required: true, message: '请输入内容', trigger: 'blur' }],
         telnum: [{ required: true, message: '请输入内容', trigger: 'blur' }],
@@ -97,6 +97,12 @@ export default {
     }
   },
   methods: {
+    valid () {
+      return this.$refs.form.validate()
+    },
+    clearValid () {
+      this.$refs.form.resetFields()
+    },
     getAddressComponents: function () {
       // Get the place addrs from the autocomplete object.
       var place = this.autocomplete.getPlace()
@@ -136,6 +142,7 @@ export default {
       this.googleAddress.lat = place.geometry.location.lat()
       this.googleAddress.lng = place.geometry.location.lng()
       this.googleAddress.detail = place.formatted_address
+      this.$refs.form.validate()
     }
   },
   mounted () {

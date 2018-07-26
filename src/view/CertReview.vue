@@ -43,7 +43,7 @@
         </table>
       </card>
       <card class="cert">
-      <Form :model="form" label-position="top">
+      <Form :model="form" label-position="top" ref="form" :rules="rules">
         <Row>
           <i-col span="24" class="img">
             <img :src="form.imgUrl" alt="">
@@ -51,12 +51,12 @@
         </Row>
         <Row>
           <i-col span="12">
-            <FormItem label="分销证号">
+            <FormItem label="分销证号" prop="number">
               <Input v-model="form.number" type="text" />
             </FormItem>
           </i-col>
           <i-col span="12">
-            <FormItem label="公司名">
+            <FormItem label="公司名" prop="company">
               <Input v-model="form.company" type="text" />
             </FormItem>
           </i-col>
@@ -67,7 +67,7 @@
           </i-col>
         </Row>
       </Form>
-      <MapAutoComplete v-model="form.address"></MapAutoComplete>
+      <MapAutoComplete v-model="form.address" ref="address"></MapAutoComplete>
       <table border="1" class="remark-table baseDataTable">
         <tr>
           <th>编号</th>
@@ -105,13 +105,17 @@ export default {
   },
   data () {
     return {
-      url: 'store/cert',
-      form: null
+      url: 'Cert',
+      form: null,
+      rules: {
+        number: [{required: true, message: 'The input cannot be empty', trigger: 'blur'}],
+        company: [{required: true, message: 'The input cannot be empty', trigger: 'blur'}]
+      }
     }
   },
   methods: {
     refuse () {
-      this.$axios.post(`${this.url}/refuse`, {
+      this.$http.refuseCert({
         id: this.$route.params.id
       }).then(() => {
         this.$Notice.success({
@@ -122,14 +126,16 @@ export default {
       })
     },
     pass () {
-      this.$axios.post(`${this.url}/pass`, {
-        id: this.$route.params.id
-      }).then(() => {
-        this.$Notice.success({
-          title: '操作成功',
-          desc: ''
-        })
-        this.$router.push({name: 'cert_list'})
+      this.$refs.address.valid().then(valid => {
+        if (valid) {
+          this.$http.passCert({id: this.$route.params.id}).then(() => {
+            this.$Notice.success({
+              title: '操作成功',
+              desc: ''
+            })
+            this.$router.push({name: 'cert_list'})
+          })
+        }
       })
     }
   }

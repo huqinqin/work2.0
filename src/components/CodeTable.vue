@@ -26,11 +26,10 @@ export default {
     }
   },
   beforeMount () {
-    this.$axios
-      .post('common/getCodeTable', {
-        type: this.type,
-        source: 'lts'
-      })
+    this.$http.fetchCodeTable({
+      type: this.type,
+      source: 'lts'
+    })
       .then(list => {
         this.options = list
       })
