@@ -44,6 +44,9 @@ export default {
   getInstaller (params) {
     return axios.post('', params)
   },
+  assignStore (params) {
+    return axios.post('base/store/assignStore', params)
+  },
   getReview (params) {
     return axios.post('base/store/getInstallerRegister', params)
   },
@@ -149,7 +152,13 @@ export default {
   getCert (params) {
     return axios.post('base/store/cert/get', params)
   },
-  invalidCert (id) {
-    return axios.post('base/store/cert/invalid', {id})
+  invalidCert (params) {
+    return axios.post('base/store/cert/invalid', {params})
+  },
+  refuseCert (params) {
+    return axios.post('base/store/cert/refuse', {params})
+  },
+  passCert (params) {
+    return axios.post('base/store/cert/pass', {params})
   }
 }

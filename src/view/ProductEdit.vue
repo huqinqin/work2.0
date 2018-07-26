@@ -1,6 +1,6 @@
 <template>
   <card>
-    <i-form :model="form" label-position="top" :rules="rules">
+    <i-form :model="form" label-position="top" :rules="rules" ref="form">
       <row :gutter="16">
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="商品品牌" prop="brandId">
@@ -47,13 +47,13 @@
           </form-item>
         </i-col>
         <i-col :span="24" style="height: auto;">
-          <form-item label="商品sku">
+          <form-item label="商品sku" prop="skus" class="ivu-form-item-required">
             <LayoutProductAttribute v-model="form.skus" :skuProps="skuProps"
                                     :spuProps="spuProps"></LayoutProductAttribute>
           </form-item>
         </i-col>
         <i-col :span="24">
-          <form-item label="商品属性">
+          <form-item label="商品属性" prop="props" class="ivu-form-item-required">
             <i-form label-position="left">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
                 <RadioGroup v-model="item.value" @on-change="checkSpu">
@@ -70,7 +70,7 @@
           </form-item>
         </i-col>
         <i-col :span="24">
-          <form-item label="商品图片">
+          <form-item label="商品图片" prop="imgUrls" class="ivu-form-item-required">
             <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index"
                  :class="{'default': index === 0}">
               <template v-if="item.status === 'finished'">
@@ -110,7 +110,7 @@
           </form-item>
         </i-col>
         <i-col :span="24">
-          <form-item label="商品详情">
+          <form-item label="商品详情" prop="detail">
             <quill-editor v-model="form.detail"
                           ref="myQuillEditor"
                           :options="editorOption"
@@ -182,6 +182,27 @@ export default {
     quillEditor
   },
   data () {
+    const validateSku = (rule, value, callback) => {
+      value.forEach(t => {
+        console.log(t.sin)
+        console.log(t.onum)
+        console.log(t.price)
+        console.log(t.weight)
+        console.log(t.props.length)
+        if ((t.sin === '') || (t.onum === '') || (t.price === '') || (t.weight === '') || ((t.props.length === 0))) {
+          callback(new Error('Something is empty'))
+          return false
+        }
+      })
+      callback()
+    }
+    const validateArr = (rule, value, callback) => {
+      if (value.length === 0) {
+        callback(new Error('The input cannot be empty'))
+      } else {
+        callback()
+      }
+    }
     return {
       formUp: {
         policy: '',
@@ -249,6 +270,11 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
+        onum: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'blur'
+        }],
         kind: [{
           required: true,
           message: 'The input cannot be empty',
@@ -259,7 +285,15 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
+        imgUrls: [{ validator: validateArr, trigger: 'change' }],
+        skus: [{ validator: validateSku, trigger: 'blur' }],
+        props: [{ validator: validateArr, trigger: 'change' }],
         brandId: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'change'
+        }],
+        detail: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'change'
@@ -437,14 +471,18 @@ export default {
         return t.url
       })
       this.form.status = this.status ? 'onsale' : 'enabled'
-      this.$http.saveProduct({
-        ...this.form
-      }).then(data => {
-        this.$Modal.remove()
-        this.$Notice.success({
-          title: '保存成功',
-          desc: ''
-        })
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.$http.saveProduct({
+            ...this.form
+          }).then(data => {
+            this.$Modal.remove()
+            this.$Notice.success({
+              title: '保存成功',
+              desc: ''
+            })
+          })
+        }
       })
     },
     checkSpu () {

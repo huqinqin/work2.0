@@ -8,7 +8,7 @@ const personnelList = Mock.mock({
       role: '@name',
       account: '@name',
       email: '@email',
-      phone: '@integer(20000000,90000000)',
+      mobile: '@integer(20000000,90000000)',
       store: '@name',
       group: '@name',
       'status|1': ['上线', '下线']
@@ -23,7 +23,10 @@ const personnelDetail = Mock.mock({
     role: '@name',
     account: '@name',
     email: '@email',
-    phone: '@integer(20000000,90000000)',
+    storeName: '@name',
+    groupName: '@name',
+    roleName: '@name',
+    mobile: '@integer(20000000,90000000)',
     store: '@name',
     group: '@name',
     'status|1': ['上线', '下线'],
@@ -39,7 +42,6 @@ const personnelEditData = Mock.mock({
 
 export default {
   list () {
-    console.log('list')
     return {
       code: '000000',
       ...personnelList,

@@ -51,6 +51,7 @@ export default {
         id: '', name: '', initial: '', manufacturer: '', show: ''
       },
       form: null,
+      curId: '',
       editModal: false,
       columns: [
         {
