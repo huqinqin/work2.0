@@ -14,6 +14,7 @@ export default {
     showPropTable: false,
     props: [],
     propsTotal: 0,
+    curPropIndex: 0,
     curProp: {},
     isSku: false
   },
@@ -34,9 +35,13 @@ export default {
       }
     },
     setProps (state, payload) {
-      state.props = payload
+      state.props = payload.list
+      state.propsTotal = payload.total
     },
-    setCurProps (state, payload) {
+    setCurPropIndex (state, payload) {
+      state.curPropIndex = payload
+    },
+    setCurProp (state, payload) {
       state.curProp = payload
     },
     setShowPropTable (state, payload) {
@@ -47,6 +52,11 @@ export default {
     }
   },
   actions: {
+    fetchProp ({commit, state, getters}) {
+      return http[`fetch${getters.url}`](getters.curCategoryId).then(data => {
+        commit('setProps', data)
+      })
+    },
     fetchCategory ({commit}) {
       return http.fetchCategory().then(data => {
         commit('setCategories', data)
@@ -56,11 +66,27 @@ export default {
       return http.getCategory(id).then(data => {
         commit('checkCategory', data)
       })
+    },
+    delValue ({commit, getters}, id) {
+      return http[`del${getters.url}Value`](getters.curCategoryId, getters.curPropId, id).then(() => {
+        // commit()
+      })
+    },
+    addValue ({ commit, getters }, name) {
+      this.$http[`add${getters.url}Value`](this.curCategoryId, getters.curPropId, name).then(() => {
+        // this.query()
+      })
     }
   },
   getters: {
     curCategoryId (state) {
       return state.curCategory.id
+    },
+    url (state) {
+      return state.isSku ? 'Sku' : 'Prop'
+    },
+    curPropId (state) {
+      return state.curProp.id
     }
   }
 }

@@ -1,20 +1,20 @@
 <template>
   <card>
-    <i-form :model="form" label-position="top" :rules="rules">
+    <i-form :model="curProp" label-position="top" :rules="rules">
       <row :gutter="16">
         <i-col :span="24">
           <form-item label="编号" prop="id">
-            <i-input v-model="form.id" type="text" placeholder="编号" ></i-input>
+            <i-input v-model="curProp.id" type="text" placeholder="编号" ></i-input>
           </form-item>
         </i-col>
         <i-col :span="24">
           <form-item label="属性名称" prop="name">
-            <i-input v-model="form.name" type="text" placeholder="属性名称" ></i-input>
+            <i-input v-model="curProp.name" type="text" placeholder="属性名称" ></i-input>
           </form-item>
         </i-col>
         <i-col :span="24">
           <form-item label="商品类型" prop="category">
-            <i-input v-model="form.category" type="text" placeholder="商品类型" ></i-input>
+            <i-input v-model="curProp.category" type="text" placeholder="商品类型" ></i-input>
           </form-item>
         </i-col>
         <i-col :span="24">
@@ -32,8 +32,10 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex'
 import mixin from '@/mixins/modal-edit.js'
 import LayoutTags from '@/view/components/LayoutTags.vue'
+const { mapState } = createNamespacedHelpers('category')
 export default {
   name: 'product-attribute-modal',
   components: {
@@ -76,13 +78,8 @@ export default {
       }
     }
   },
-  watch: {
-    '$store.state.category.curProp': {
-      handler (value) {
-        this.form = value
-      },
-      deep: true
-    }
+  computed: {
+    ...mapState(['curProp'])
   }
 }
 </script>

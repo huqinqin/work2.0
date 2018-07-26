@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 const productAttributeList = Mock.mock({
   data: {
     'list|10': [{
-      'id|+1': '@id',
+      'id|+1': '@integer(1, 10)',
       name: '@name',
       category: '@name',
       'values|3-6': [{
@@ -40,34 +40,64 @@ const productList = Mock.mock({
 })
 const cascader = [
   {
-    value: '1-1',
-    label: '类目 1-1',
+    id: '1-1',
+    title: '类目 1-1',
     children: [
       {
-        value: '1-1-1',
-        label: '类目 1-1-1'
+        id: '1-1-1',
+        title: '类目 1-1-1'
       },
       {
-        value: '1-1-2',
-        label: '类目 1-1-2'
+        id: '1-1-2',
+        title: '类目 1-1-2'
       }
     ]
   },
   {
-    value: '1-2',
-    label: '类目 1-2',
+    id: '1-2',
+    title: '类目 1-2',
     children: [
       {
-        value: '1-2-1',
-        label: '类目 1-2-1'
+        id: '1-2-1',
+        title: '类目 1-2-1'
       },
       {
-        value: '1-2-2',
-        label: '类目 1-2-2'
+        id: '1-2-2',
+        title: '类目 1-2-2'
       }
     ]
   }
 ]
+// const cascader = [
+//   {
+//     value: '1-1',
+//     label: '类目 1-1',
+//     children: [
+//       {
+//         value: '1-1-1',
+//         label: '类目 1-1-1'
+//       },
+//       {
+//         value: '1-1-2',
+//         label: '类目 1-1-2'
+//       }
+//     ]
+//   },
+//   {
+//     value: '1-2',
+//     label: '类目 1-2',
+//     children: [
+//       {
+//         value: '1-2-1',
+//         label: '类目 1-2-1'
+//       },
+//       {
+//         value: '1-2-2',
+//         label: '类目 1-2-2'
+//       }
+//     ]
+//   }
+// ]
 export default {
   item: {
     list () {

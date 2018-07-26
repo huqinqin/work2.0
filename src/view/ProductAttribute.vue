@@ -24,22 +24,25 @@
       <div slot="footer"></div>
       <product-attribute-modal></product-attribute-modal>
     </Modal>
-    <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
+    <i-table :columns="columns" :data="props" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
-        <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
+        <Page @on-change="changePage" :total="propsTotal" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
   </card>
 </template>
 <script>
-import { createNamespacedHelpers, mapGetters } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
 import mixin from '@/mixins/list.js'
 import LayoutTags from '@/view/components/LayoutTags.vue'
-const { mapState } = createNamespacedHelpers('category')
+const { mapState, mapGetters, mapActions, mapMutations } = createNamespacedHelpers('category')
 export default {
   data () {
     return {
+      selections: [],
+      rows: 10,
+      page: 1,
       editModal: false,
       curId: null,
       filter: {
@@ -61,19 +64,15 @@ export default {
           title: '可选值列表',
           key: 'values',
           render: (h, params) => {
-            return h(LayoutTags, {
-              props: {
-                list: params.row.values,
-                id: params.row.id,
-                categoryId: params.row.categoryId,
-                type: 'product/category/sku/save'
-              },
-              on: {
-                click: () => {
-                  this.$store.commit('setCurProp', params.row)
-                }
-              }
+            const tags = params.row.values.map(value => {
+              return <tag key={value.id} name={value.name} closable on-on-close={() => { this.delValueTag(value.id, params.row) }}>{value.name }</tag>
             })
+            return (
+              <div on-click={() => {}}>
+                {tags}
+                <input type="text" class="btn-add" placeholder="添加" on-keydown={(e) => this.addValueTag(event.keyCode, e.target.value, params.row)}/>
+              </div>
+            )
           }
         },
         {
@@ -120,19 +119,90 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isSku', 'showPropTable']),
-    ...mapGetters(['curCategoryId']),
-    url () {
-      return this.isSku ? 'Props' : 'Sku'
-    }
-  },
-  watch: {
-
+    ...mapState(['isSku', 'showPropTable', 'props', 'propsTotal']),
+    ...mapGetters(['curCategoryId', 'url'])
   },
   components: {
     LayoutTags,
     'product-attribute-modal': () => import('./ProductAttributeModal')
   },
-  mixins: [mixin]
+  mixins: [mixin],
+  methods: {
+    ...mapMutations(['setCurProp']),
+    ...mapActions(['fetchProp', 'delValue', 'addValue']),
+    delValueTag (id, prop) {
+      this.setCurProp(prop)
+      this.delValue(id)
+    },
+    addValueTag (keyCode, name, prop) {
+      if (keyCode === 13) {
+        this.setCurProp(prop)
+        this.addValue(name)
+      }
+    },
+    query () {
+      this.fetchProp()
+    },
+    changeSelection (val) {
+      this.selections = val
+    },
+    changePage (page) {
+      this.page = page
+      this.query()
+    },
+    changeSize (rows) {
+      this.rows = rows
+      this.query()
+    },
+    deleteItem (id) {
+      this.$Modal.confirm({
+        title: '删除操作',
+        content: `<p>确认删除id为${id}的数据？</p>`,
+        loading: true,
+        onCancel: () => {
+          this.$Notice.success({
+            title: '删除取消',
+            desc: ''
+          })
+        },
+        onOk: () => {
+          this.$http['del' + this.url]([id], this.curCategoryId).then(() => {
+            this.query()
+            this.$Modal.remove()
+            this.$Notice.success({
+              title: '删除成功',
+              desc: ''
+            })
+          })
+        }
+      })
+    },
+    removeSelections () {
+      this.$Modal.confirm({
+        title: 'Title',
+        content: `<p>确认删除选中的${this.selections.length}条数据？</p>`,
+        loading: true,
+        onCancel: () => {
+          this.$Notice.success({
+            title: '删除取消',
+            desc: ''
+          })
+        },
+        onOk: () => {
+          this.$http['del' + this.url](
+            this.selections.map(selection => selection.id),
+            this.curCategoryId
+          ).then(() => {
+            this.query()
+            this.$Modal.remove()
+            this.$Notice.success({
+              title: '删除成功',
+              desc: ''
+            })
+          })
+        }
+      })
+    }
+  }
 }
 </script>
