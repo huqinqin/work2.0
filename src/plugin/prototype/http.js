@@ -153,12 +153,27 @@ export default {
     return axios.post('base/store/cert/get', params)
   },
   invalidCert (params) {
-    return axios.post('base/store/cert/invalid', {params})
+    return axios.post('base/store/cert/invalid', params)
   },
   refuseCert (params) {
-    return axios.post('base/store/cert/refuse', {params})
+    return axios.post('base/store/cert/refuse', params)
   },
   passCert (params) {
-    return axios.post('base/store/cert/pass', {params})
+    return axios.post('base/store/cert/pass', params)
+  },
+  savePromo (params) {
+    return axios.post('/base/setting/promo/save', params)
+  },
+  fetchPromo (params) {
+    return axios.post('/base/setting/promo/list', params)
+  },
+  getPromo (params) {
+    return axios.post('/base/setting/promo/get', params)
+  },
+  getHome () {
+    return axios.post('/base/setting/getHome')
+  },
+  saveHome (params) {
+    return axios.post('/base/setting/home/save', params)
   }
 }

@@ -62,7 +62,7 @@ export default [
     children: [
       { path: 'home', name: 'config-page-home', meta: { icon: 'lock-combination', title: '配置首页' }, component: () => import('@/view/ConfigPageHome.vue') },
       { path: 'activity/list', name: 'config-page-activity-list', meta: { icon: 'lock-combination', title: '活动列表' }, component: () => import('@/view/ConfigPageActivityList.vue') },
-      { path: 'activity/:id?', name: 'config-page-activity', meta: { icon: 'lock-combination', title: '配置活动' }, component: () => import('@/view/ConfigPageActivity.vue') }
+      { path: 'activity/:name?', name: 'config-page-activity', meta: { icon: 'lock-combination', title: '配置活动' }, component: () => import('@/view/ConfigPageActivity.vue') }
     ]
   },
   {
