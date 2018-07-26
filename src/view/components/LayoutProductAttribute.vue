@@ -54,7 +54,7 @@ export default {
         {
           title: '销售价格',
           align: 'center',
-          key: 'price',
+          key: 'baseprice',
           width: 160,
           render: this.editCellRender
         },
@@ -144,7 +144,7 @@ export default {
       this.tableData.push({
         props: [],
         onum: '',
-        price: '',
+        baseprice: '',
         sin: '',
         unit: 'pc',
         spec: '1',
