@@ -125,6 +125,10 @@
               :on-success="loadSuccess"
               :on-error="loadError"
               :data="Object.assign(formUp, formData)"
+              :format="['jpg','jpeg','png']"
+              :max-size="2048"
+              :on-format-error="handleFormatError"
+              :on-exceeded-size="handleMaxSize"
               action="//chen0711.oss-cn-hangzhou.aliyuncs.com">
               <div style="padding: 20px 0">
                 <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>

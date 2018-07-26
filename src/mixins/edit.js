@@ -17,26 +17,33 @@ export default {
       })
     },
     submit () {
-      this.$http['save' + this.url]({
-        ...this.form
-      }).then(data => {
-        this.$Notice.success({
-          title: 'Edit success',
-          desc: ''
-        })
+      let validArr = this.$refs.address ? [this.$refs.address.valid(), this.$refs.form.validate()] : [this.$refs.form.validate()]
+      Promise.all(validArr).then(data => {
+        if (data.every(valid => { return valid })) {
+          this.$http['save' + this.url]({
+            ...this.form
+          }).then(data => {
+            this.$Notice.success({
+              title: 'Edit success',
+              desc: ''
+            })
+          })
+        }
       })
     },
     reset () {
       this.$refs.form.resetFields()
+      this.$refs.address.clearValid()
       this.form = cloneDeep(default$)
     }
   },
   beforeMount () {
     console.log('edit')
     if (this.$route.params.id) {
-      console.log('query')
       this.id = this.$route.params.id
       this.query()
+    } else {
+      default$ = cloneDeep(this.form)
     }
   }
 }
