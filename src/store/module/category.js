@@ -16,6 +16,7 @@ export default {
     propsTotal: 0,
     curPropIndex: 0,
     curProp: {},
+    showPropModal: false,
     isSku: false
   },
   mutations: {
@@ -46,6 +47,9 @@ export default {
     },
     setShowPropTable (state, payload) {
       state.showPropTable = payload
+    },
+    setShowPropModal (state, payload) {
+      state.showPropModal = payload
     },
     setIsSku (state, payload) {
       state.isSku = payload
