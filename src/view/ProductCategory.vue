@@ -86,7 +86,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('category/', ['fetchCategory', 'getCategory', 'fetchPropByIsSku']),
+    ...mapActions('category/', ['fetchCategory', 'getCategory', 'fetchProp']),
     ...mapMutations('category/', ['addCategory', 'setIsSku', 'setShowPropTable']),
     renderContent (h, { root, node, data }) {
       return (
@@ -154,6 +154,7 @@ export default {
     showPropTable (isSku) {
       this.setIsSku(isSku)
       this.setShowPropTable(true)
+      this.fetchProp()
     }
   },
   beforeMount () {

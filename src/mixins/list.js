@@ -43,9 +43,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$http['del' + this.url]({
-            ids: [id]
-          }).then(() => {
+          this.$http['del' + this.url]([id]).then(() => {
             this.query()
             this.$Modal.remove()
             this.$Notice.success({
@@ -68,9 +66,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$http['del' + this.url]({
-            ids: this.selections.map(selection => selection.id)
-          }).then(() => {
+          this.$http['del' + this.url](this.selections.map(selection => selection.id)).then(() => {
             this.query()
             this.$Modal.remove()
             this.$Notice.success({

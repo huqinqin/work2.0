@@ -6,3 +6,4 @@
 
 PC端移动端商城需要与后台保持一致，按模块编写组件，根据后台数据组合成页面。
 
+scp -r D:/Code/b2b-console/dist root@47.89.251.79:/www/b2b-console

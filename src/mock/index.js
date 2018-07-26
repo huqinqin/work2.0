@@ -21,7 +21,7 @@ const options = Mock.mock({
 
 mapMock('/personnel', personnel)
 mapMock('/user', login)
-mapMock('/product', product)
+mapMock('/item', product)
 mapMock('/cert', cert)
 mapMock('/shop', shop)
 mapMock('/installer', installer)
