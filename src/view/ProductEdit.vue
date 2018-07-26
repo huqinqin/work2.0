@@ -250,7 +250,7 @@ export default {
           {
             props: [],
             onum: '',
-            price: '',
+            basePrice: '',
             sin: '',
             unit: 'pc',
             spec: '1',
