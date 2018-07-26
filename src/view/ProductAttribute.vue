@@ -18,12 +18,7 @@
         <i-button type="error">删除所选</i-button>
       </form-item>
     </i-form>
-    <Modal
-      v-model="editModal"
-      title="Common Modal dialog box title">
-      <div slot="footer"></div>
-      <product-attribute-modal></product-attribute-modal>
-    </Modal>
+    <product-attribute-modal></product-attribute-modal>
     <i-table :columns="columns" :data="props" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
@@ -81,38 +76,12 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.editModal = true
-                    this.curId = params.row
-                    this.$store.commit('setCurProp', params.row)
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.deleteItem(params.row.id)
-                  }
-                }
-              }, '删除')
-            ])
+            return (
+              <div>
+                <i-button type="primary" size="small" style={{marginRight: '5px'}} on-click={() => { this.showModal(params.row) }}>编辑</i-button>
+                <i-button type="error" size="small" style={{marginRight: '5px'}} on-click={() => { this.deleteItem(params.row.id) }}>删除</i-button>
+              </div>
+            )
           }
         }
       ]
@@ -128,8 +97,12 @@ export default {
   },
   mixins: [mixin],
   methods: {
-    ...mapMutations(['setCurProp']),
+    ...mapMutations(['setCurProp', 'setShowPropModal']),
     ...mapActions(['fetchProp', 'delValue', 'addValue']),
+    showModal (prop) {
+      this.setCurProp(prop)
+      this.setShowPropModal(true)
+    },
     delValueTag (id, prop) {
       this.setCurProp(prop)
       this.delValue(id)

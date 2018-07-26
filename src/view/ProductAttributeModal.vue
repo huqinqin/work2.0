@@ -1,4 +1,8 @@
 <template>
+<Modal
+  :value="showPropModal"
+  title="属性详情">
+  <div slot="footer"></div>
   <card>
     <i-form :model="curProp" label-position="top" :rules="rules">
       <row :gutter="16">
@@ -29,13 +33,14 @@
       </form-item>
     </i-form>
   </card>
+</Modal>
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
 import mixin from '@/mixins/modal-edit.js'
 import LayoutTags from '@/view/components/LayoutTags.vue'
-const { mapState } = createNamespacedHelpers('category')
+const { mapState, mapMutations, mapActions } = createNamespacedHelpers('category')
 export default {
   name: 'product-attribute-modal',
   components: {
@@ -44,11 +49,6 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      form: {
-        name: '',
-        values: []
-      },
-      url: 'product/category/props',
       rules: {
         id: [{
           required: true,
@@ -79,7 +79,17 @@ export default {
     }
   },
   computed: {
-    ...mapState(['curProp'])
+    ...mapState(['curProp', 'isSku', 'showPropModal'])
+  },
+  methods: {
+    ...mapMutations(['setShowPropModal']),
+    ...mapActions(['fetchProp']),
+    submit () {
+      this.$http.saveProp(this.curProp).then(data => {
+        this.fetchProp()
+        this.setShowPropModal(false)
+      })
+    }
   }
 }
 </script>
