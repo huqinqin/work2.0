@@ -10,15 +10,15 @@
         </ButtonGroup>
       </div>
       <a :href="'/detail?t=' + new Date().getTime() +'#/info?id=' + product.id" target="_blank">
-        <div class="img" :style="{backgroundImage : 'url(' + product.image + '!item_middle)'}"></div>
-        <p :title="product.title" class="name">{{product.name}}</p>
+        <div class="img" :style="{backgroundImage : 'url(' + product.imgUrls[0] + '!item_middle)'}"></div>
+        <p :title="product.title" class="name">{{product.title}}</p>
         <div class="item-price">
           <p class="price">
             <span class="realPrice">
-              <span>{{ product.realPrice | formatPrice}}</span>
+              <span>{{ product.skus[0].basePrice | formatPrice}}</span>
             </span>
             <span class="oldPrice">
-              <span>{{ product.oldPrice | formatPrice}}</span>
+              <span>{{ product.skus[0].basePrice | formatPrice}}</span>
             </span>
           </p>
           <button class="iconfont icon-gouwuche2 add-to-cart"></button>

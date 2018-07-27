@@ -59,9 +59,6 @@ export default {
   refuseReview (params) {
     return axios.post('base/store/refuseInstaller', params)
   },
-  fetchCategories () {
-    return axios.post('/base/product/category/listCategory')
-  },
   saveProduct (params) {
     return axios.post('product/item/save', params)
   },
@@ -75,7 +72,7 @@ export default {
     return axios.post('product/item/list', params)
   },
   updateProduct (params) {
-    return axios.post('product/item/update', params)
+    return axios.post('product/item/setStatus', params)
   },
   delProduct (params) {
     return axios.post('product/item/del', params)
@@ -84,10 +81,10 @@ export default {
     return axios.post('/base/common/getCodeTable', params)
   },
   fetchSkuProps (params) {
-    return axios.post('/base/product/category/listSkuProp', params)
+    return axios.post('/item/category/listSkuProp', params)
   },
   fetchSpuProps (params) {
-    return axios.post('/base/product/category/listProp', params)
+    return axios.post('/item/category/listProp', params)
   },
   getBrand (params) {
     return axios.post('item/brand/getBrandDetail', params)

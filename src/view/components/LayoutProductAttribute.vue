@@ -54,7 +54,7 @@ export default {
         {
           title: '销售价格',
           align: 'center',
-          key: 'baseprice',
+          key: 'basePrice',
           width: 160,
           render: this.editCellRender
         },
@@ -107,9 +107,15 @@ export default {
       this.tableData[this.checkedIndex].props = []
       this.sku.forEach(t => {
         if (t.checked) {
-          this.tableData[this.checkedIndex].props.push({
-            name: t.name,
-            value: t.checked
+          t.values.forEach(p => {
+            if (p.name === t.checked) {
+              this.tableData[this.checkedIndex].props.push({
+                name: t.name,
+                value: t.checked,
+                nameId: p.catePropId,
+                valueId: p.id
+              })
+            }
           })
         }
         t.checked = ''

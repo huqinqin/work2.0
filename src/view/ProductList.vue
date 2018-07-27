@@ -88,9 +88,9 @@ export default {
             return (
               <div>
                 {
-                  params.row.keyword.map(t => {
+                  params.row.keyword && params.row.keyword.map(t => {
                     return (
-                      <i-tag color="blue" fade name={t} />
+                      <span color="blue" fade name={t} ></span>
                     )
                   })
                 }
@@ -105,7 +105,7 @@ export default {
           key: 'status',
           render: (h, params) => {
             return (
-              <i-switch value={params.row.status} true-value="onsale" false-value="unabled" on-on-change={(e) => this.changeStatus(params.row.id, e)} />
+              <i-switch value={params.row.status} true-value="onsale" false-value="enabled" on-on-change={(e) => this.changeStatus(params.row.id, e)} />
             )
           }
         },
@@ -129,21 +129,7 @@ export default {
                     this.$router.push(`product_edit/${params.row.id}`)
                   }
                 }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.disableItem(params.row.id)
-                  }
-                }
-              }, '删除')
+              }, '编辑')
             ])
           }
         }
