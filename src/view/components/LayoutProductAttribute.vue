@@ -4,20 +4,6 @@
       :data="tableData"
       :columns="columnsList"
     ></i-table>
-    <div class="plus-btn" @click="addRow">添加</div>
-    <Modal
-      v-model="isShowSku"
-      @on-ok="checkProps"
-      @on-cancel="cancelChecked"
-      title="选择sku属性">
-      <i-form label-position="top" ref="propForm">
-        <form-item v-for="item in sku" :key="item.id" :label="item.name">
-          <RadioGroup v-model="item.checked">
-            <Radio v-for="prop in item.values" :label="prop.name" :key="prop.id"></Radio>
-          </RadioGroup>
-        </form-item>
-      </i-form>
-    </Modal>
   </div>
 </template>
 <script>
@@ -25,10 +11,9 @@ export default {
   components: {
     DragableTable: () => import('@/components/DragableTable.vue')
   },
-  props: ['value', 'skuProps', 'spuProps'],
+  props: ['value'],
   data () {
     return {
-      isShowSku: false,
       table1: {
         hasDragged: false,
         isDragging: false,
@@ -54,7 +39,7 @@ export default {
         {
           title: '销售价格',
           align: 'center',
-          key: 'price',
+          key: 'basePrice',
           width: 160,
           render: this.editCellRender
         },
@@ -73,21 +58,9 @@ export default {
             return (
               <span>
                 {params.row.props.map(t => {
-                  return <span>{t.value}</span>
+                  return <span>{t.name}|</span>
                 })}
-                <icon class="edit-icon" type="compose" on-click={ () => { this.showSku(params) }}></icon>
               </span>
-            )
-          }
-        },
-        {
-          title: '操作',
-          key: 'edit',
-          width: 150,
-          align: 'center',
-          render: (h, params) => {
-            return (
-              <i-button type="error" size="small" on-click={() => { this.delSku(params.index) }}>删除</i-button>
             )
           }
         }
@@ -97,61 +70,9 @@ export default {
   computed: {
     tableData () {
       return this.value
-    },
-    sku () {
-      return this.skuProps
     }
   },
   methods: {
-    checkProps () {
-      this.tableData[this.checkedIndex].props = []
-      this.sku.forEach(t => {
-        if (t.checked) {
-          this.tableData[this.checkedIndex].props.push({
-            name: t.name,
-            value: t.checked
-          })
-        }
-        t.checked = ''
-      })
-      this.$emit('input', this.tableData)
-    },
-    cancelChecked () {},
-    showSku (params) {
-      if (this.sku.length) {
-        this.sku.forEach(t => {
-          params.row.props.forEach(v => {
-            if (t.name === v.name) {
-              t.checked = v.value
-            }
-          })
-        })
-        this.checkedIndex = params.index
-        this.isShowSku = true
-      } else {
-        this.$Modal.info({
-          title: 'Info',
-          content: '<p>请先选择类目</p>',
-          loading: true,
-          onOk: () => {
-            this.$Modal.remove()
-          }
-        })
-        return false
-      }
-    },
-    addRow () {
-      this.tableData.push({
-        props: [],
-        onum: '',
-        price: '',
-        sin: '',
-        unit: 'pc',
-        spec: '1',
-        size: '',
-        weight: ''
-      })
-    },
     initColumnsList () {
       this.columnsList.forEach(column => {
         if (column.key === 'edit') {
@@ -171,24 +92,11 @@ export default {
     },
     editCell (rowIndex, key, event) {
       this.tableData[rowIndex][key] = event.target.value
+      this.$emit('input', this.tableData)
       // if (key === 'edit') {
       // 当点击按钮时，重新加载表格，触发表格刷新
       // this.initColumnsList()
       // }
-    },
-    delSku (index) {
-      if (this.tableData.length === 1) {
-        this.$Modal.info({
-          title: 'Info',
-          content: '<p>至少一条SKU属性</p>',
-          loading: true,
-          onOk: () => {
-            this.$Modal.remove()
-          }
-        })
-        return false
-      }
-      this.tableData.splice(index, 1)
     },
     handleOnstart1 (from) {
       this.table1.oldIndex = from

@@ -10,7 +10,7 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="类目" prop="cateId">
+          <form-item label="类目" prop="cateId" class="ivu-form-item-required">
             <BaseCategory v-model="form.cateId" @input="getProps"></BaseCategory>
           </form-item>
         </i-col>
@@ -22,7 +22,7 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="商品排序" prop="onum">
+          <form-item label="商品排序" prop="onum" class="ivu-form-item-required">
             <i-input v-model="form.onum" type="text" placeholder="商品排序"></i-input>
           </form-item>
         </i-col>
@@ -33,13 +33,12 @@
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="是否上架" prop="status">
-            <i-switch v-model="status"></i-switch>
+            <i-switch v-model="form.status" true-value="onsale" false-value="enabled" />
           </form-item>
         </i-col>
         <i-col :lg="12" :md="24" :sm="24" :xs="24">
           <form-item label="商品关键词" prop="keyword">
-            <!--<BaseTags v-model="form.keyword"></BaseTags>-->
-            <Tag v-for="(item, index) in form.keyword" fade color="blue" :key="item" :name="item" closable
+            <Tag v-for="(item, index) in form.keyword" fade color="blue" :key="index" :name="item" closable
                  @on-close="handleCloseTag(index)">{{ item }}
             </Tag>
             <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAddTag" @blur="handleAddTag"
@@ -48,19 +47,30 @@
         </i-col>
         <i-col :span="24" style="height: auto;">
           <form-item label="商品sku" prop="skus" class="ivu-form-item-required">
-            <LayoutProductAttribute v-model="form.skus" :skuProps="skuProps"
-                                    :spuProps="spuProps"></LayoutProductAttribute>
+            <i-button type="primary" @click="showSku">选择属性</i-button>
+            <Modal
+              v-model="isShowSku"
+              @on-ok="checkProps"
+              @on-cancel="cancelChecked"
+              title="选择sku属性">
+              <i-form label-position="top" ref="propForm">
+                <form-item v-for="(item, index) in skuProps" :key="item.id" :label="item.name">
+                  <CheckboxGroup v-model="item.checked">
+                    <Checkbox v-for="prop in item.values" :label="prop.id" :key="prop.id">{{prop.name}}</Checkbox>
+                  </CheckboxGroup><i-button type="error" size="small" @clicl="deleteSku(index)">删除</i-button>
+                </form-item>
+              </i-form>
+            </Modal>
+            <LayoutProductAttribute v-model="form.skus"></LayoutProductAttribute>
           </form-item>
         </i-col>
         <i-col :span="24">
           <form-item label="商品属性" prop="props" class="ivu-form-item-required">
-            <i-form label-position="left">
+            <i-form label-position="left" class="prop-form">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
                 <RadioGroup v-model="item.value" @on-change="checkSpu">
                   <Radio v-for="(value, spuIndex) in item.values" :label="value" :key="spuIndex"></Radio>
                 </RadioGroup>
-                <!--<input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAddSpu(index)" @blur="handleAddSpu(index)"-->
-                       <!--v-model="spu">-->
                 <i-button type="primary" size="small" style="marginLeft: 8px" @click="addProp(index)">新增</i-button>
                 <i-button type="error" size="small" style="marginLeft: 8px" @click="delProp(index)">删除</i-button>
                 <Checkbox style="marginLeft: 8px;" v-model="item.canSearch" @on-change="checkSpu">是否可搜索</Checkbox>
@@ -95,9 +105,10 @@
               :on-format-error="handleFormatError"
               :on-exceeded-size="handleMaxSize"
               :before-upload="handleBeforeUpload"
+              :data="Object.assign(formUp, formData)"
               multiple
               type="drag"
-              action="//jsonplaceholder.typicode.com/posts/"
+              action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
               style="display: inline-block;width:256px; height: 256px;">
               <div style="width: 256px;height:256px;line-height: 256px;">
                 <Icon type="camera" size="48"></Icon>
@@ -184,11 +195,6 @@ export default {
   data () {
     const validateSku = (rule, value, callback) => {
       value.forEach(t => {
-        console.log(t.sin)
-        console.log(t.onum)
-        console.log(t.price)
-        console.log(t.weight)
-        console.log(t.props.length)
         if ((t.sin === '') || (t.onum === '') || (t.price === '') || (t.weight === '') || ((t.props.length === 0))) {
           callback(new Error('Something is empty'))
           return false
@@ -197,13 +203,28 @@ export default {
       callback()
     }
     const validateArr = (rule, value, callback) => {
-      if (value.length === 0) {
-        callback(new Error('The input cannot be empty'))
-      } else {
+      if (value.length) {
         callback()
+      } else {
+        callback(new Error('The input cannot be empty'))
+      }
+    }
+    const validateVal = (rule, value, callback) => {
+      if (value) {
+        callback()
+      } else {
+        callback(new Error('The input cannot be empty'))
+      }
+    }
+    const validateOnum = (rule, value, callback) => {
+      if (value) {
+        callback()
+      } else {
+        callback(new Error('The input cannot be empty'))
       }
     }
     return {
+      isShowSku: false,
       formUp: {
         policy: '',
         OSSAccessKeyId: '',
@@ -211,6 +232,7 @@ export default {
         preKey: '',
         dir: '',
         host: '',
+        expire: '',
         success_action_status: 200
       },
       formData: {
@@ -230,64 +252,38 @@ export default {
       skuProps: [],
       spuProps: [],
       imgUrls: [],
-      status: false,
       form: {
         cateId: '',
         title: '',
-        detail: '12345678',
+        detail: '',
         brandId: '',
         kind: '',
         onum: '',
         status: '',
         keyword: [],
-        // imgUrls: [
-        //   'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar',
-        //   'https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar'
-        // ],
         imgUrls: [],
-        props: [],
-        skus: [
-          {
-            props: [],
-            onum: '',
-            price: '',
-            sin: '',
-            unit: 'pc',
-            spec: '1',
-            size: '',
-            weight: ''
-          }
-        ]
+        props: {
+          skuProps: [],
+          props: []
+        },
+        skus: []
       },
       rules: {
-        cateId: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
         title: [{
           required: true,
           message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        onum: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
+          trigger: 'blur, change'
         }],
         kind: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        subhead: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
         imgUrls: [{ validator: validateArr, trigger: 'change' }],
+        onum: [{ validator: validateOnum, trigger: 'change' }],
         skus: [{ validator: validateSku, trigger: 'blur' }],
         props: [{ validator: validateArr, trigger: 'change' }],
+        cateId: [{ validator: validateVal, trigger: 'change' }],
         brandId: [{
           required: true,
           message: 'The input cannot be empty',
@@ -298,27 +294,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'change'
         }],
-        num: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
         price: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        linePrice: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        unit: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        weight: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
@@ -327,16 +303,6 @@ export default {
           required: true,
           message: 'The input cannot be empty',
           trigger: 'change'
-        }],
-        detailTitle: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
-        }],
-        detailDescription: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'blur'
         }]
       },
       editorOption: {
@@ -360,6 +326,90 @@ export default {
     }
   },
   methods: {
+    // 选择sku属性
+    showSku () {
+      if (this.form.cateId) {
+        this.isShowSku = true
+      } else {
+        this.$Modal.info({
+          title: 'Info',
+          content: '<p>请先选择类目</p>',
+          loading: true,
+          onOk: () => {
+            this.$Modal.remove()
+          }
+        })
+      }
+    },
+    checkProps () {
+      this.form.props.skuProps = []
+      this.skuProps.forEach(sku => {
+        if (sku.checked.length) {
+          let values = []
+          sku.values.forEach(t => {
+            if (sku.checked.indexOf(t.id) !== -1) values.push({id: t.id, name: t.name})
+          })
+          this.form.props.skuProps.push({name: sku.name, id: sku.id, values: values})
+        }
+      })
+      let skuArr = this.form.props.skuProps.map(t => {
+        return t.values.map(v => {
+          return {id: v.id, name: v.name}
+        })
+      })
+      if (skuArr.length === 0) {
+        this.$Modal.info({
+          title: 'Info',
+          content: '<p>请先选择类目</p>',
+          loading: true,
+          onOk: () => {
+            this.$Modal.remove()
+          }
+        })
+      }
+      this.form.skus = this.descartes(skuArr).map(t => {
+        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: ''}
+      })
+    },
+    descartes (skuArr) {
+      if (skuArr.length === 0) {
+        return []
+      } else if (skuArr.length === 1) {
+        return skuArr[0].map(v => {
+          return [v]
+        })
+      } else {
+        return [].reduce.call(skuArr, (col, set) => {
+          let res = []
+          col.forEach(c => {
+            set.forEach(s => {
+              let t = [].concat(Array.isArray(c) ? c : [c])
+              t.push(s)
+              res.push(t)
+            })
+          })
+          return res
+        })
+      }
+    },
+    cancelChecked () {
+      console.log('cancel')
+    },
+    deleteSku (index) {
+      this.skuProps[index].checked = []
+    },
+    // 上传图片
+    getPolicy () {
+      this.$http.getPolicy().then(data => {
+        this.formUp.policy = data.policy
+        this.formUp.OSSAccessKeyId = data.accessid
+        this.formUp.signature = data.signature
+        this.formUp.dir = data.dir
+        this.formUp.host = data.host
+        this.formUp.preKey = data.dir
+        this.formUp.expire = data.expire
+      })
+    },
     // 富文本编辑相关
     onEditorBlur (event) {
       console.log(event)
@@ -398,8 +448,7 @@ export default {
       this.uploadList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+      file.url = this.formData.host + '/' + this.formData.dir + '/' + file.name
       file.status = 'finished'
       this.uploadList.push(file)
     },
@@ -415,7 +464,8 @@ export default {
         desc: 'File  ' + file.name + ' is too large, no more than 2M.'
       })
     },
-    handleBeforeUpload () {
+    handleBeforeUpload (file) {
+      this.beforeLoad(file)
       const check = this.uploadList.length < 5
       if (!check) {
         this.$Notice.warning({
@@ -467,10 +517,6 @@ export default {
       })
     },
     submit () {
-      this.form.imgUrls = this.imgUrls.map(t => {
-        return t.url
-      })
-      this.form.status = this.status ? 'onsale' : 'enabled'
       this.$refs.form.validate(valid => {
         if (valid) {
           this.$http.saveProduct({
@@ -518,7 +564,7 @@ export default {
         this.$http.fetchSkuProps({
           id: this.form.cateId
         }).then(data => {
-          this.skuProps = data.list.map(t => Object.assign({}, t, {checked: ''}))
+          this.skuProps = data.list.map(t => Object.assign({}, t, {checked: []}))
         })
         this.$http.fetchSpuProps({
           id: this.form.cateId
@@ -529,7 +575,7 @@ export default {
               values.push(v.name)
             })
             this.spuProps.push({name: t.name, canSee: false, canSearch: false, values: values, value: ''})
-            this.form.props.forEach(v => {
+            this.form.props.props.forEach(v => {
               this.spuProps.forEach(t => {
                 if (t.name === v.name) {
                   t.value = v.value
@@ -554,23 +600,20 @@ export default {
       this.$http.getProduct({
         id: this.$route.params.id
       }).then(data => {
+        this.uploadList = data.imgUrls.map((url, index) => {
+          return {
+            name: index,
+            url: url,
+            status: 'finished'
+          }
+        })
         this.form = data
-        // this.getProps()
       })
     }
   },
-  mounted () {
-    this.uploadList = this.$refs.upload.fileList
-  },
   created () {
+    this.getPolicy()
     this.getBrand()
-    this.imgUrls = this.form.imgUrls.map((url, index) => {
-      return {
-        name: index,
-        url: url,
-        status: 'finished'
-      }
-    })
     if (this.$route.params.id) this.getDetail()
   }
 }
@@ -660,5 +703,11 @@ export default {
   .edit-upload{
     visibility: hidden;
     height: 0;
+  }
+  /deep/ .prop-form label.ivu-form-item-label::before{
+    content: '';
+  }
+  /deep/ .ivu-checkbox-group{
+    display: inline-block;
   }
 </style>

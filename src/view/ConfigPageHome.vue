@@ -29,7 +29,8 @@ export default {
   },
   data () {
     return {
-      url: 'config/home',
+      url: 'Home',
+      id: '',
       carousel: [],
       fixImg: [],
       floor: [],
@@ -86,16 +87,21 @@ export default {
       }
     },
     saveConfig () {
-      console.log(JSON.stringify(this.config))
-      this.$axios.post(`${this.url}/save`, {
-        config: JSON.stringify(this.config)
+      this.config.forEach(arr => {
+        if (arr.type === 'floor') {
+          arr.data.product.map(t => {
+            return t.id
+          })
+        }
+      })
+      this.$http.saveHome({
+        content: this.config
       })
     },
     query () {
-      this.$axios.post(`${this.url}/get`, {
-        config: JSON.stringify(this.config)
-      }).then(data => {
-        if (data) this.config = JSON.parse(data)
+      this.$http.getHome().then(data => {
+        this.config = data.content
+        this.id = data.id
       })
     }
   },

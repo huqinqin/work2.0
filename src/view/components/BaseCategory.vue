@@ -1,5 +1,5 @@
 <template>
-  <Cascader :data="data" :value="checked" change-on-select @input="onInput"></Cascader>
+  <Cascader :data="data" v-model="checked" change-on-select @on-change="onInput"></Cascader>
 </template>
 <script>
 export default {
@@ -11,31 +11,26 @@ export default {
     }
   },
   computed: {
-    checked () {
-      let checked = []
-      if (this.data.length) {
-        this.data.forEach(t1 => {
-          if (t1.value === this.value) {
-            checked = [t1.value]
-            return true
-          } else if (t1.children) {
-            t1.children.forEach(t2 => {
-              if (t2.value === this.value) {
-                checked = [t1.value, t2.value]
-                return true
-              } else if (t2.children) {
-                t2.children.forEach(t3 => {
-                  if (t3.value === this.value) {
-                    checked = [t1.value, t2.value, t3.value]
-                    return true
-                  }
-                })
-              }
-            })
+    checked: {
+      get: function () {
+        const id = this.value
+        const data = this.data
+        const list = []
+        const fn = (list, data) => {
+          for (const item of data) {
+            if (item.id === id) {
+              list.push(item.id)
+              return list
+            }
+            list.push(item.id)
+            if (data.children) return fn(list, data.children)
           }
-        })
+        }
+        return fn(list, data)
+      },
+      set: function () {
+        console.log('set')
       }
-      return checked
     }
   },
   methods: {
@@ -43,8 +38,25 @@ export default {
       this.$emit('input', list[list.length - 1])
     }
   },
-  beforeMount () {
-    this.$http.fetchCategories().then(data => {
+  mounted () {
+    this.$http.fetchCategory().then(data => {
+      data.forEach(t1 => {
+        if (!t1.children) {
+          delete t1.children
+        } else {
+          t1.children.forEach(t2 => {
+            if (!t2.children) {
+              delete t2.children
+            } else {
+              t2.children.forEach(t3 => {
+                if (!t3.children) {
+                  delete t3.children
+                }
+              })
+            }
+          })
+        }
+      })
       this.data = data
     })
   }
