@@ -87,8 +87,15 @@ export default {
       }
     },
     saveConfig () {
+      this.config.forEach(arr => {
+        if (arr.type === 'floor') {
+          arr.data.product.map(t => {
+            return t.id
+          })
+        }
+      })
       this.$http.saveHome({
-        content: JSON.stringify(this.config)
+        content: this.config
       })
     },
     query () {

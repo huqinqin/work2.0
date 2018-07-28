@@ -35,7 +35,6 @@ export default {
   },
   methods: {
     onInput (list) {
-      debugger
       this.$emit('input', list[list.length - 1])
     }
   },
