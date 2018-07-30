@@ -49,6 +49,7 @@ export default {
       default () {
         return {
           name: '',
+          link: '',
           products: []
         }
       }
