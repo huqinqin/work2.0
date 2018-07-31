@@ -80,7 +80,7 @@ export default {
           key: 'price'
         }, {
           title: '编码',
-          key: 'num'
+          key: 'sin'
         }, {
           title: '标签',
           key: 'keyword',

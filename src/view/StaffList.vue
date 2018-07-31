@@ -4,23 +4,17 @@
       <form-item prop="id">
         <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
       </form-item>
-      <form-item prop="name">
-        <i-input v-model="filter.name" type="text" placeholder="姓名" ></i-input>
-      </form-item>
       <form-item prop="account">
         <i-input v-model="filter.account" type="text" placeholder="账号" ></i-input>
-      </form-item>
-      <form-item prop="address">
-        <i-input v-model="filter.address" type="text" placeholder="地址" ></i-input>
       </form-item>
       <form-item prop="role">
         <i-input v-model="filter.role" type="text" placeholder="角色" ></i-input>
       </form-item>
-      <form-item prop="phone">
-        <i-input v-model="filter.phone" type="text" placeholder="联系方式" ></i-input>
+      <form-item prop="mobile">
+        <i-input v-model="filter.mobile" type="text" placeholder="联系方式" ></i-input>
       </form-item>
       <form-item prop="status">
-        <i-input v-model="filter.status" type="text" placeholder="状态" ></i-input>
+        <i-select v-model="filter.status" type="text" placeholder="状态" ></i-select>
       </form-item>
       <form-item>
         <i-button type="primary" @click="query">查询</i-button>
@@ -47,11 +41,9 @@ export default {
       url: 'Staff',
       filter: {
         id: '',
-        name: '',
         account: '',
-        address: '',
         role: '',
-        phone: '',
+        mobile: '',
         status: ''
       },
       columns: [

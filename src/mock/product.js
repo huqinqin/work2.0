@@ -35,7 +35,7 @@ const productList = Mock.mock({
       }],
       brandName: '@first',
       price: '@integer(100, 350)',
-      num: '@zip',
+      sin: '@zip',
       'keyword|2-5': ['标签@integer(1, 10)'],
       sale: '@integer(60, 100)',
       'status|1': ['onsale', 'enabled']
