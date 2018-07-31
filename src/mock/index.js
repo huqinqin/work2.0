@@ -9,6 +9,7 @@ import cert from './cert'
 import shop from './shop'
 import installer from './installer'
 import store from './store'
+import order from './order'
 
 const options = Mock.mock({
   'data|9': [
@@ -25,6 +26,7 @@ mapMock('/item', product)
 mapMock('/cert', cert)
 mapMock('/shop', shop)
 mapMock('/installer', installer)
+mapMock('/order', order)
 mapMock('/store', store)
 
 Mock.mock(/\/common\/getCodeTable/, 'post', req => {
