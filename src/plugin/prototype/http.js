@@ -60,22 +60,16 @@ export default {
     return axios.post('base/store/refuseInstaller', params)
   },
   saveProduct (params) {
-    return axios.post('item/save', params)
+    return axios.post('product/item/save', params)
   },
   getProduct (params) {
-    return axios.post('item/get', params)
-  },
-  diabledProduct (params) {
-    return axios.post('item/disabled', params)
+    return axios.post('product/item/get', params)
   },
   fetchProduct (params) {
-    return axios.post('item/list', params)
+    return axios.post('product/item/list', params)
   },
   updateProduct (params) {
-    return axios.post('item/setStatus', params)
-  },
-  delProduct (params) {
-    return axios.post('item/del', params)
+    return axios.post('product/item/setStatus', params)
   },
   fetchCodeTable (params) {
     return axios.post('/base/common/getCodeTable', params)

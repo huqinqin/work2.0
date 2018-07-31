@@ -54,7 +54,7 @@ export default {
       modal: false,
       target: '',
       link: '',
-      defaultImg: 'https://ltsb2b.oss-us-west-1.aliyuncs.com/misc/d1d68fac5de3a336843a63b30e9c80f6.png'
+      defaultImg: 'http://ltsb2b.oss-us-west-1.aliyuncs.com/misc/d1d68fac5de3a336843a63b30e9c80f6.png'
     }
   },
   methods: {
