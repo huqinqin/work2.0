@@ -28,12 +28,14 @@ const productList = Mock.mock({
     'list|10': [{
       'id|+1': '@id',
       title: '@name',
-      'imgUrls|3': [{
-        url: '@image(200x100)'
+      'imgUrls|3': ['@image(200x100)'],
+      'skus|1-5': [{
+        id: '@id',
+        basePrice: '@integer(100, 1000)'
       }],
       brandName: '@first',
       price: '@integer(100, 350)',
-      num: '@zip',
+      sin: '@zip',
       'keyword|2-5': ['标签@integer(1, 10)'],
       sale: '@integer(60, 100)',
       'status|1': ['onsale', 'enabled']

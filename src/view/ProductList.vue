@@ -80,7 +80,7 @@ export default {
           key: 'price'
         }, {
           title: '编码',
-          key: 'num'
+          key: 'sin'
         }, {
           title: '标签',
           key: 'keyword',
@@ -90,7 +90,7 @@ export default {
                 {
                   params.row.keyword && params.row.keyword.map(t => {
                     return (
-                      <span color="blue" fade name={t} ></span>
+                      <span class="ivu-tag ivu-tag-blue ivu-tag-checked" color="blue">{t}</span>
                     )
                   })
                 }

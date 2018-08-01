@@ -55,7 +55,7 @@
               title="选择sku属性">
               <i-form label-position="top" ref="propForm">
                 <form-item v-for="(item, index) in skuProps" :key="item.id" :label="item.name">
-                  <CheckboxGroup v-model="item.checked">
+                  <CheckboxGroup v-model="item.checked" >
                     <Checkbox v-for="prop in item.values" :label="prop.id" :key="prop.id">{{prop.name}}</Checkbox>
                   </CheckboxGroup><i-button type="error" size="small" @clicl="deleteSku(index)">删除</i-button>
                 </form-item>
@@ -65,7 +65,7 @@
           </form-item>
         </i-col>
         <i-col :span="24">
-          <form-item label="商品属性" prop="props" class="ivu-form-item-required">
+          <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
             <i-form label-position="left" class="prop-form">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
                 <RadioGroup v-model="item.value" @on-change="checkSpu">
@@ -81,6 +81,10 @@
         </i-col>
         <i-col :span="24">
           <form-item label="商品图片" prop="imgUrls" class="ivu-form-item-required">
+            <!--<div>-->
+              <!--<i-button @click="upload" type="primary">选择图片</i-button>-->
+              <!--<i-button @click="upload">上传图片</i-button>-->
+            <!--</div>-->
             <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index"
                  :class="{'default': index === 0}">
               <template v-if="item.status === 'finished'">
@@ -97,14 +101,14 @@
             </div>
             <Upload
               ref="upload"
-              :show-upload-list="false"
+              :show-upload-list="true"
               :default-file-list="imgUrls"
               :on-success="handleSuccess"
               :format="['jpg','jpeg','png']"
               :max-size="2048"
               :on-format-error="handleFormatError"
               :on-exceeded-size="handleMaxSize"
-              :before-upload="handleBeforeUpload"
+              :before-upload="beforeLoad"
               :data="Object.assign(formUp, formData)"
               multiple
               type="drag"
@@ -261,11 +265,13 @@ export default {
         onum: '',
         status: '',
         keyword: [],
-        imgUrls: [],
-        props: {
-          skuProps: [],
-          props: []
-        },
+        imgUrls: ['xxx.com'],
+        itemProps: [
+          {
+            skuProps: [],
+            props: []
+          }
+        ],
         skus: []
       },
       rules: {
@@ -282,7 +288,7 @@ export default {
         imgUrls: [{ validator: validateArr, trigger: 'change' }],
         onum: [{ validator: validateOnum, trigger: 'change' }],
         skus: [{ validator: validateSku, trigger: 'blur' }],
-        props: [{ validator: validateArr, trigger: 'change' }],
+        'itemProps[0].props': [{ validator: validateArr, trigger: 'change' }],
         cateId: [{ validator: validateVal, trigger: 'change' }],
         brandId: [{
           required: true,
@@ -322,7 +328,8 @@ export default {
             }
           }
         }
-      }
+      },
+      filelist: []
     }
   },
   methods: {
@@ -342,19 +349,19 @@ export default {
       }
     },
     checkProps () {
-      this.form.props.skuProps = []
+      this.form.itemProps[0].skuProps = []
       this.skuProps.forEach(sku => {
         if (sku.checked.length) {
           let values = []
           sku.values.forEach(t => {
-            if (sku.checked.indexOf(t.id) !== -1) values.push({id: t.id, name: t.name})
+            if (sku.checked.indexOf(t.id) !== -1) values.push({valueId: t.id, value: t.name})
           })
-          this.form.props.skuProps.push({name: sku.name, id: sku.id, values: values})
+          this.form.itemProps[0].skuProps.push({name: sku.name, nameId: sku.id, values: values})
         }
       })
-      let skuArr = this.form.props.skuProps.map(t => {
+      let skuArr = this.form.itemProps[0].skuProps.map(t => {
         return t.values.map(v => {
-          return {id: v.id, name: v.name}
+          return {id: v.valueId, name: v.value}
         })
       })
       if (skuArr.length === 0) {
@@ -423,8 +430,14 @@ export default {
     beforeLoad (file) {
       console.log('file', file)
       this.formData.name = file.name
-      this.formData.key = this.form.preKey + '/' + file.name
+      this.formData.key = this.formUp.preKey + '/' + file.name
       this.formData.Filename = file.name
+      this.filelist.push(file)
+      return false
+    },
+    upload () {
+      console.log(this.filelist)
+      console.log(this.$refs.upload.post)
     },
     loadSuccess (response, file) {
       this.img = this.formData.host + '/' + this.formData.dir + '/' + file.name
@@ -465,17 +478,6 @@ export default {
         desc: 'File  ' + file.name + ' is too large, no more than 2M.'
       })
     },
-    handleBeforeUpload (file) {
-      this.beforeLoad(file)
-      const check = this.uploadList.length < 5
-      if (!check) {
-        this.$Notice.warning({
-          title: 'Up to five pictures can be uploaded.'
-        })
-      }
-      return check
-    },
-    //
     addProp (index) {
       this.$Modal.confirm({
         title: this.spuProps[index].name,
@@ -520,6 +522,7 @@ export default {
     submit () {
       this.$refs.form.validate(valid => {
         if (valid) {
+          console.log(JSON.stringify(this.form))
           this.$http.saveProduct({
             ...this.form
           }).then(data => {
@@ -533,10 +536,10 @@ export default {
       })
     },
     checkSpu () {
-      this.form.props = []
+      this.form.itemProps[0].props = []
       this.spuProps.forEach(t => {
         if (t.value) {
-          this.form.props.push({
+          this.form.itemProps[0].props.push({
             name: t.name,
             value: t.value,
             canSee: t.canSee,
@@ -576,7 +579,7 @@ export default {
               values.push(v.name)
             })
             this.spuProps.push({name: t.name, canSee: false, canSearch: false, values: values, value: ''})
-            this.form.props.props.forEach(v => {
+            this.form.itemProps[0].props.forEach(v => {
               this.spuProps.forEach(t => {
                 if (t.name === v.name) {
                   t.value = v.value
@@ -594,7 +597,9 @@ export default {
         type: 'brand',
         source: 'lts'
       }).then(data => {
-        this.brand = data
+        this.$nextTick(() => {
+          this.brand = data
+        })
       })
     },
     getDetail () {
@@ -609,6 +614,7 @@ export default {
           }
         })
         this.form = data
+        this.getProps()
       })
     }
   },
