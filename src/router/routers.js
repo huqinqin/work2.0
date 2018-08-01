@@ -169,6 +169,17 @@ export default [
       { path: 'menu', name: 'menu', meta: { icon: 'lock-combination', title: '菜单管理' }, component: () => import('@/view/register.vue') }
     ]
   },
+  {
+    path: '/crm',
+    redirect: '/crm/index',
+    meta: { icon: 'lock-combination', title: '客户关系管理' },
+    name: 'crm',
+    component: Main,
+    children: [
+      { path: 'CrmCommonPool', meta: { icon: 'lock-combination', title: '公海池' }, name: 'crm_CommonPool', component: () => import('@/view/CrmCommonPool.vue') },
+      { path: 'detail/:id', meta: { icon: 'lock-combination', hideInMenu: true, title: '人员详情' }, name: 'staff_detail', component: () => import('@/view/StaffDetail.vue') }
+    ]
+  },
   { path: '/401', name: 'error_401', component: () => import('@/view/error-page/401.vue') },
   { path: '/500', name: 'error_500', component: () => import('@/view/error-page/500.vue') },
   { path: '*', name: 'error_404', component: () => import('@/view/error-page/404.vue') }
