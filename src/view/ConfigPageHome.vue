@@ -107,7 +107,7 @@ export default {
       })
     }
   },
-  created () {
+  beforeMount () {
     this.query()
   }
 }

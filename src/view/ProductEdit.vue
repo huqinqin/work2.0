@@ -617,7 +617,7 @@ export default {
       })
     }
   },
-  created () {
+  beforeMount () {
     this.getPolicy()
     this.getBrand()
     if (this.$route.params.id) this.getDetail()

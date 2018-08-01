@@ -26,7 +26,7 @@ mapMock('/item', product)
 mapMock('/cert', cert)
 mapMock('/shop', shop)
 mapMock('/installer', installer)
-mapMock('/order', order)
+mapMock('/orderSell', order)
 mapMock('/store', store)
 
 Mock.mock(/\/common\/getCodeTable/, 'post', req => {
