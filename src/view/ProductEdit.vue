@@ -226,12 +226,12 @@ export default {
     return {
       isShowSku: false,
       formUp: {
-        policy: '',
-        OSSAccessKeyId: '',
-        signature: '',
+        policy: 'eyJleHBpcmF0aW9uIjoiMjAyMC0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
+        OSSAccessKeyId: 'LTAIdExaLJELmORj',
+        signature: 'Xc8E45q5qzV+9gPLvepFqmS0oVk=',
         preKey: '',
         dir: '',
-        host: '',
+        host: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/',
         expire: '',
         success_action_status: 200
       },
@@ -421,6 +421,7 @@ export default {
       console.log(event)
     },
     beforeLoad (file) {
+      console.log('file', file)
       this.formData.name = file.name
       this.formData.key = this.form.preKey + '/' + file.name
       this.formData.Filename = file.name

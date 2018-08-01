@@ -153,7 +153,7 @@ export default {
       data: {}
     }
   },
-  list () {
+  listInstallerRegister () {
     return {
       code: '000000',
       data: {
