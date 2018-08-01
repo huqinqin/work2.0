@@ -166,5 +166,11 @@ export default {
   },
   saveHome (params) {
     return axios.post('/base/setting/home/save', params)
+  },
+  fetchOrder (params) {
+    return axios.post('/trade/viewOrderSell/listOrderSeller', params)
+  },
+  getOrder (params) {
+    return axios.post('/trade/viewOrderSell/getOrderSellerDetail', params)
   }
 }

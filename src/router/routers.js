@@ -106,11 +106,12 @@ export default [
   {
     path: '/order',
     redirect: '/order/index',
-    meta: { icon: 'lock-combination', title: '订单管理', hideInMenu: true },
+    meta: { icon: 'lock-combination', title: '订单管理' },
     name: 'order',
     component: Main,
     children: [
-      { path: 'index', meta: { icon: 'lock-combination', title: '订单管理' }, name: 'order_index', component: () => import('@/view/Order.vue') }
+      { path: 'order_list', meta: { icon: 'lock-combination', title: '订单列表' }, name: 'order_list', component: () => import('@/view/OrderList.vue') },
+      { path: 'order_detail/:id?', meta: { icon: 'lock-combination', title: '订单详情' }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
     ]
   },
   {
