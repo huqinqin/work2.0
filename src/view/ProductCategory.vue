@@ -91,7 +91,7 @@ export default {
     renderContent (h, { root, node, data }) {
       return (
         <span class={{'tree-item': true}} onClick={() => { this.check(root, node, data) }}>
-          <span class={{active: this.curCategoryId === data.id}}>{data.title}</span>
+          <span class={{active: this.curCategoryId === data.value}}>{data.label}</span>
           <span class={{ 'operate-btns': true }}>
             <i-button class={{ 'operate-btn': true }} icon="ios-plus-empty" type="ghost" size="small" onClick={() => { this.append(event, data) }}></i-button>
             <i-button class={{ 'operate-btn': true }} icon="ios-minus-empty" type="ghost" size="small" onClick={() => { this.remove(root, node, data) } }></i-button>
@@ -100,22 +100,12 @@ export default {
       )
     },
     check (root, node, data) {
-      this.getCategory(data.id)
+      this.getCategory(data.value)
     },
     append (event, data) {
       console.log(data)
       event.stopPropagation()
       this.addCategory({id: data.id, name: data.title})
-      // console.log('添加', data)
-      // event.cancelBubble = true
-      // event.stopPropagation()
-      // const children = data.children || []
-      // this.curCategory.parent = data.title
-      // this.curCategory.name = data.title + '的子类目'
-      // this.stagingDate.parent = data
-      // this.stagingDate.parentId = data.nodeKey
-      // this.stagingDate.children = children
-      // this.stagingDate.title = ''
     },
     remove (root, node, data) {
       // const parentKey = root.find(el => el === node).parent

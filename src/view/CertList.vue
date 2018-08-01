@@ -43,9 +43,6 @@
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
-  mounted () {
-    console.log(this.list)
-  },
   data () {
     return {
       url: 'Cert',
