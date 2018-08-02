@@ -276,10 +276,12 @@ export default {
     filterMethod (value, option) {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
-    check: () => {
-      console.log('000000000')
+    check () {
+      location.href = '/#/crm/CrmPoolCheck'
+      // this.$router.push('/crm/CrmPoolCheck')
+      // console.log('000000000')
     },
-    receive: () => {
+    receive () {
       console.log('11111')
     },
     changePage () {

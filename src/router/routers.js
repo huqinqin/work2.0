@@ -179,6 +179,8 @@ export default [
     children: [
       { path: 'CrmCommonPool', meta: { icon: 'lock-combination', title: '公海池' }, name: 'crm_CommonPool', component: () => import('@/view/CrmCommonPool.vue') },
       { path: 'CrmPoolAdd', name: 'New crease', component: () => import('@/view/CrmPoolAdd.vue') },
+      { path: 'CrmPoolEdit', name: 'Crm Edit', component: () => import('@/view/CrmPoolEdit.vue') },
+      { path: 'CrmPoolCheck', name: 'Crm Check', component: () => import('@/view/CrmPoolCheck.vue') },
       { path: 'detail/:id', meta: { icon: 'lock-combination', hideInMenu: true, title: '人员详情' }, name: 'staff_detail', component: () => import('@/view/StaffDetail.vue') }
     ]
   },
