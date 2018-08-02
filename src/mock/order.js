@@ -1,50 +1,55 @@
 import Mock from 'mockjs'
 const orderList = Mock.mock({
   'list|10': [{
-    id: 'ID',
+    id: '@id',
     address: {
-      receiver: '收货人',
-      detail: '详细地址',
-      company: '公司名',
-      zip: '邮编',
-      telnum: '收货人电话'
+      receiver: '@name',
+      detail: '@county(true)',
+      company: '@first',
+      zip: '@zip',
+      telnum: '@integer(10000000, 90000000)'
     },
-    buyerStoreId: '所属门店',
-    cdate: '创建时间',
-    pStatus: '支付状态',
-    source: '来源',
-    uEmail: '用户邮箱',
-    sCode: '用户ID',
-    sName: '公司名',
-    payAmount: '总金额',
-    salesName: '销售'
+    buyerStoreId: '@last',
+    cdate: '@date',
+    'pStatus|1': ['unpaid', 'paid', 'finish'],
+    source: '@last',
+    uEmail: 'email',
+    sCode: '@integer(100000, 900000)',
+    sName: '@first',
+    payAmount: '@integer(1000, 9000)',
+    salesName: '@name'
   }]
 })
 const orderDetail = Mock.mock({
   data: {
-    id: 'ID',
+    id: '@id',
     address: {
-      receiver: '收货人',
-      detail: '详细地址',
-      company: '公司名',
-      zip: '邮编',
-      telnum: '收货人电话'
+      receiver: '@name',
+      detail: '@county(true)',
+      company: '@first',
+      zip: '@zip',
+      telnum: '@integer(10000000, 90000000)'
     },
-    buyerStoreId: '所属门店',
-    cdate: '创建时间',
-    pStatus: '支付状态',
-    source: '来源',
-    uEmail: '用户邮箱',
-    sCode: '用户ID',
-    sName: '公司名',
-    payAmount: '总金额',
-    taxFee: '税费',
-    shippingFee: '运费',
-    itemFee: '应付金额',
-    salesName: '销售',
-    pTime: '支付时间',
+    buyerStoreId: '@last',
+    cdate: '@date',
+    'pStatus|1': ['unpaid', 'paid', 'finish'],
+    source: '@last',
+    uEmail: 'email',
+    sCode: '@integer(100000, 900000)',
+    sName: '@first',
+    payAmount: '@integer(1000, 9000)',
+    taxFee: '@integer(100, 900)',
+    shippingFee: '@integer(100, 900)',
+    itemFee: '@integer(1000, 9000)',
+    discountFee: '@integer(100, 500)',
+    otherFee: '0',
+    taxFeeInfo: {
+      rate: '0.1'
+    },
+    salesName: '@name',
+    pTime: '@date',
     'itemList|3-9': [{
-      id: '商品ID',
+      id: '@id',
       title: '@cparagraph',
       'imgUrls|1-3': ['@image(100x100)'],
       weight: '@integer(1, 3)',

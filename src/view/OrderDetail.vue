@@ -29,27 +29,56 @@
     </table>
     <i-table :columns="columns" :data="form.itemList" size="small" ref="table"></i-table>
     <div class="pay-info">
-      <p>应付金额: <span>{{form.itemFee}}</span></p>
-      <p>税费: <span>{{form.taxFee}}</span></p>
-      <p>运费: <span>{{form.shippingFee}}</span></p>
-      <p>优惠: <span>{{form.discountFee}}</span></p>
-      <p>实付金额: <span>{{form.payAmount}}</span></p>
+      <p>
+        <label>应付金额:</label>
+        <span>${{form.itemFee}}</span>
+      </p>
+      <p>
+        <label>税率:</label>
+        <span v-if="form.pStatus === 'unpaid'"><Input v-model="rate" /></span>
+        <span v-else>{{rate}}</span>
+      </p>
+      <p>
+        <label>税费:</label>
+        <span>${{tax}}</span>
+      </p>
+      <p>
+        <label>运费:</label>
+        <span>${{form.shippingFee}}</span>
+      </p>
+      <p>
+        <label>优惠:</label>
+        <span>${{form.discountFee}}</span>
+      </p>
+      <p>
+        <label>手动:</label>
+        <span v-if="form.pStatus === 'unpaid'"><Input v-model="handling" /></span>
+        <span v-else>${{handling}}</span>
+      </p>
+      <p>
+        <label>实付金额:</label>
+        <span>${{total}}</span>
+      </p>
     </div>
     <hr>
     <i-form class="more-info" label-position="left">
       <form-item label="备注">{{form.note}}</form-item>
-      <form-item label="收货人信息">
-        <p>{{form.address.receiver}} {{form.address.telnum}}</p>
+      <form-item label="收货人信息" v-if="form.address">
+        <p>{{form.address.receiver}} - {{form.address.telnum}}</p>
         <p>{{form.address.detail}} {{form.address.zip}}</p>
       </form-item>
     </i-form>
+    <Button style="margin-right: 24px;" @click="$router.push({name: 'order_list'})">返回</Button>
+    <Button v-if="form.pStatus === 'unpaid'" type="primary" @click="submit">确认</Button>
   </card>
 </template>
 <script>
 export default {
   data () {
     return {
-      url: '订单列表',
+      url: 'Order',
+      handling: 0,
+      rate: '',
       form: {
         shop: '',
         status: '',
@@ -111,16 +140,44 @@ export default {
       ]
     }
   },
+  computed: {
+    tax () {
+      let total = (+this.form.itemFee) + (+this.form.shippingFee) + (+this.handling) - (+this.form.discountFee)
+      return (+this.rate * total).toFixed()
+    },
+    total () {
+      return (+this.form.itemFee) + (+this.form.shippingFee) - (+this.form.discountFee) + (+this.handling) + (+this.tax)
+    }
+  },
   methods: {
     getDetail () {
       this.$http.getOrder({
         id: this.$route.params.id
       }).then(data => {
+        this.rate = data.taxFeeInfo.rate
+        this.handling = data.otherFee
         this.form = data
       })
+    },
+    submit () {
+      if ((+this.rate) !== (+this.form.taxFeeInfo.rate)) {
+        this.$http.handleOrder({
+          id: this.form.id,
+          taxFee: this.tax,
+          otherFee: this.handling,
+          taxFeeInfo: JSON.stringify({
+            rate: this.rate,
+            sign: 'handle'
+          })
+        }).then(() => {
+          this.$Notice.open({
+            title: '修改成功'
+          })
+        })
+      }
     }
   },
-  created () {
+  beforeMount () {
     if (this.$route.params.id) this.getDetail()
   }
 }
@@ -131,11 +188,17 @@ export default {
     margin-bottom: 18px;
   }
   .pay-info{
-    text-align: right;
+    label{
+      display: inline-block;
+      width:120px;
+    }
     span{
       display: inline-block;
-      width:128px;
+      width:120px;
       color:red;
+      /deep/ .ivu-input{
+        width:98px;
+      }
     }
   }
   /deep/ .more-info{
