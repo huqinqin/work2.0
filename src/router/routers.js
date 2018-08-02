@@ -111,7 +111,7 @@ export default [
     component: Main,
     children: [
       { path: 'order_list', meta: { icon: 'lock-combination', title: '订单列表' }, name: 'order_list', component: () => import('@/view/OrderList.vue') },
-      { path: 'order_detail/:id?', meta: { icon: 'lock-combination', title: '订单详情' }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
+      { path: 'order_detail/:id', meta: { icon: 'lock-combination', title: '订单详情' }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
     ]
   },
   {
@@ -161,12 +161,13 @@ export default [
   },
   {
     path: '/permission',
-    meta: { icon: 'lock-combination', title: '权限管理', hideInMenu: true },
-    redirect: '/permission/menu',
+    meta: { icon: 'lock-combination', title: '权限管理' },
+    redirect: '/permission/role',
     name: 'permission',
     component: Main,
     children: [
-      { path: 'menu', name: 'menu', meta: { icon: 'lock-combination', title: '菜单管理' }, component: () => import('@/view/register.vue') }
+      { path: 'menu', name: 'menu', meta: { icon: 'lock-combination', title: '菜单管理', hideInMenu: true }, component: () => import('@/view/PermissionMenu.vue') },
+      { path: 'role', name: 'role', meta: { icon: 'lock-combination', title: '角色管理', hideInMenu: true }, component: () => import('@/view/PermissionRole.vue') }
     ]
   },
   {

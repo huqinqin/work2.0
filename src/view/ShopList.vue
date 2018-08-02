@@ -1,28 +1,5 @@
 <template>
   <card>
-    <i-form ref="filter" :model="filter" inline>
-      <form-item prop="id">
-        <i-input v-model="filter.id" type="text" placeholder="编号" ></i-input>
-      </form-item>
-      <form-item prop="name">
-        <i-input v-model="filter.name" type="text" placeholder="门店" ></i-input>
-      </form-item>
-      <form-item prop="account">
-        <i-input v-model="filter.account" type="text" placeholder="账号" ></i-input>
-      </form-item>
-      <form-item prop="address">
-        <date-picker type="date" placeholder="地址"></date-picker>
-      </form-item>
-      <form-item prop="phone">
-        <i-input v-model="filter.phone" type="text" placeholder="联系方式" ></i-input>
-      </form-item>
-      <form-item prop="status">
-        <i-input v-model="filter.status" type="text" placeholder="状态" ></i-input>
-      </form-item>
-      <form-item>
-        <i-button type="primary" @click="query">查询</i-button>
-      </form-item>
-    </i-form>
     <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
@@ -42,11 +19,6 @@ export default {
         id: '', name: '', account: '', address: '', phone: '', status: ''
       },
       columns: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
         {
           title: '编号',
           key: 'id'
