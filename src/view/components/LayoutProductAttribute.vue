@@ -58,7 +58,7 @@ export default {
             return (
               <span>
                 {params.row.props.map(t => {
-                  return <span>{t.name}|</span>
+                  return <span>{t.value}|</span>
                 })}
               </span>
             )

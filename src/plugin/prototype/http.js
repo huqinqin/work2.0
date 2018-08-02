@@ -162,7 +162,7 @@ export default {
     return axios.post('/base/setting/promo/get', params)
   },
   getHome () {
-    return axios.post('/base/setting/getHome')
+    return axios.post('/base/setting/home/get')
   },
   saveHome (params) {
     return axios.post('/base/setting/home/save', params)

@@ -102,8 +102,19 @@ export default {
     },
     query () {
       this.$http.getHome().then(data => {
-        this.config = data.content && data.content
+        data.content && data.content.forEach(t => {
+          if (t.type === 'floor') {
+            this.getProductsByIds(t.data.products)
+          }
+        })
         this.id = data.id
+      })
+    },
+    getProductsByIds (ids) {
+      this.$http.fetchProduct({
+        ids: ids
+      }).then(data => {
+        console.log(data)
       })
     }
   },

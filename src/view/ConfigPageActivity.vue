@@ -103,7 +103,6 @@ export default {
       return modules.getModuleName(type)
     },
     handleModule (moduleIndex, operate) {
-      console.log(moduleIndex, operate)
       if (operate === '删除') {
         this.config.splice(moduleIndex, 1)
       } else if (operate === '上移') {
@@ -129,11 +128,23 @@ export default {
       this.modal = true
     },
     saveConfig () {
+      let content = JSON.parse(JSON.stringify(this.config))
+      content.forEach(t => {
+        if (t.type === 'product') {
+          t.data = t.data.map(v => {
+            return v.id
+          })
+        } else if (t.type === 'fllor') {
+          t.data.products = t.data.products.map(v => {
+            return v.id
+          })
+        }
+      })
       if (this.id) {
         this.$http.savePromo({
           id: this.id,
           name: this.name,
-          content: this.config
+          content: content
         })
       } else {
         this.$http.savePromo({
@@ -146,8 +157,19 @@ export default {
       this.$http.getPromo({
         name: this.name
       }).then(data => {
-        this.config = data.content
+        data.content.forEach(t => {
+          if (t.type === 'product') {
+            this.getProductsByIds(t.data)
+          }
+        })
         this.id = data.id
+      })
+    },
+    getProductsByIds (ids) {
+      this.$http.fetchProduct({
+        ids: ids
+      }).then(data => {
+        console.log(data)
       })
     }
   },

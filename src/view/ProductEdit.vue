@@ -265,7 +265,7 @@ export default {
         onum: '',
         status: '',
         keyword: [],
-        imgUrls: ['xxx.com'],
+        imgUrls: ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'],
         itemProps: [
           {
             skuProps: [],
@@ -354,14 +354,14 @@ export default {
         if (sku.checked.length) {
           let values = []
           sku.values.forEach(t => {
-            if (sku.checked.indexOf(t.id) !== -1) values.push({valueId: t.id, value: t.name})
+            if (sku.checked.indexOf(t.id) !== -1) values.push({id: t.id, name: t.name})
           })
-          this.form.itemProps[0].skuProps.push({name: sku.name, nameId: sku.id, values: values})
+          this.form.itemProps[0].skuProps.push({name: sku.name, id: sku.id, values: values})
         }
       })
       let skuArr = this.form.itemProps[0].skuProps.map(t => {
         return t.values.map(v => {
-          return {id: v.valueId, name: v.value}
+          return {valueId: v.id, value: v.name, name: t.name, nameId: t.id}
         })
       })
       if (skuArr.length === 0) {
