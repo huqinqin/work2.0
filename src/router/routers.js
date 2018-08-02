@@ -161,12 +161,13 @@ export default [
   },
   {
     path: '/permission',
-    meta: { icon: 'lock-combination', title: '权限管理', hideInMenu: true },
-    redirect: '/permission/menu',
+    meta: { icon: 'lock-combination', title: '权限管理' },
+    redirect: '/permission/role',
     name: 'permission',
     component: Main,
     children: [
-      { path: 'menu', name: 'menu', meta: { icon: 'lock-combination', title: '菜单管理' }, component: () => import('@/view/register.vue') }
+      { path: 'menu', name: 'menu', meta: { icon: 'lock-combination', title: '菜单管理', hideInMenu: true }, component: () => import('@/view/PermissionMenu.vue') },
+      { path: 'role', name: 'role', meta: { icon: 'lock-combination', title: '角色管理', hideInMenu: true }, component: () => import('@/view/PermissionRole.vue') }
     ]
   },
   { path: '/401', name: 'error_401', component: () => import('@/view/error-page/401.vue') },

@@ -130,6 +130,22 @@ const shopDetail = Mock.mock({
     phone: '@integer(20000000,90000000)'
   }
 })
+const installerList = Mock.mock({
+  'list|10': [{
+    'id|+1': '@id',
+    name: '@name',
+    account: '@name',
+    address: '@id',
+    'status|1': ['待审核', '已通过'],
+    'account|2': [{
+      account: '@name',
+      firstName: '@first',
+      lastName: '@last',
+      email: '@email',
+      mobile: '@integer(20000000,90000000)'
+    }]
+  }]
+})
 export default {
   listStore () {
     return {
@@ -151,6 +167,16 @@ export default {
     return {
       code: '000000',
       data: {}
+    }
+  },
+  getInstallerList () {
+    return {
+      code: '000000',
+      data: {
+        total: 50,
+        ...installerList
+      },
+      msg: ''
     }
   },
   listInstallerRegister () {

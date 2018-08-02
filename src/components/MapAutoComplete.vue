@@ -63,7 +63,6 @@ export default {
       type: Object,
       default () {
         return {
-          company: '',
           detail: '',
           street: '',
           street_number: null,

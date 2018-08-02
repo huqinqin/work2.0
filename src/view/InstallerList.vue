@@ -25,7 +25,6 @@
       <form-item prop="status">
         <i-input v-model="filter.status" type="text" placeholder="账户启用状态" ></i-input>
       </form-item>
-
       <form-item>
         <i-button type="primary">查询</i-button>
       </form-item>
@@ -45,7 +44,7 @@ export default {
   name: 'InstallerList',
   data () {
     return {
-      url: 'installer/getInstallerList',
+      url: 'Installer',
       filter: {
         custId: '', id: '', account: '', companyName: '', grade: '', historyMoney: '', orderNum: '', availableIntegral: '', status: ''
       },
@@ -55,11 +54,30 @@ export default {
           width: 60,
           align: 'center'
         }, {
+          type: 'expand',
+          width: 50,
+          render (h, params) {
+            const accounts = []
+            for (const account of params.row.account) {
+              accounts.push(<row>
+                <i-col span={4}>账号：{account.account}</i-col>
+                <i-col span={4}>firstName：{account.firstName}</i-col>
+                <i-col span={4}>lastName：{account.lastName}</i-col>
+                <i-col span={4}>email：{account.email}</i-col>
+                <i-col span={4}>mobile：{account.mobile}</i-col>
+                <i-col span={4}>
+                  <i-switch value={params.row.status === 'enabled'} size="large">
+                    <span slot="open">激活</span>
+                    <span slot="close">冻结</span>
+                  </i-switch>
+                </i-col>
+              </row>)
+            }
+            return accounts
+          }
+        }, {
           title: 'Cust ID',
           key: 'custId'
-        }, {
-          title: '账号',
-          key: 'account'
         }, {
           title: '公司名',
           key: 'companyName'
@@ -84,7 +102,8 @@ export default {
           key: 'action',
           width: 250,
           align: 'center',
-          render: (h, params) => {
+          render (h, params) {
+            console.log(params)
             return h('div', [
               h('Button', {
                 props: {
