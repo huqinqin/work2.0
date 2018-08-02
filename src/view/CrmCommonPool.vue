@@ -56,7 +56,7 @@
    <Row>
      <Col span="18" style="padding-right:10px">
        <Button type="primary" @click="importInstaller">导入</Button>
-       <Button type="primary">新增</Button>
+       <Button type="primary" @click="crmPoolAdd">新增</Button>
        <Button type="primary">批量领取</Button>
        <Button type="primary" @click="invalidBussiness">无效商机</Button>
        <Button type="error">导出</Button>
@@ -82,17 +82,27 @@
      </Modal>
    </Row>
    <Row>
-     <Modal v-model="invalidBussinessModal" width="600" title="导入模板">
-       <Row>
+     <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
+       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+         <FormItem label="类型" prop="invalidBussinessSelect">
+             <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
+               <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+             </Select>
+         </FormItem>
+         <FormItem  prop="subInvalidBussinessSelect">
+             <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
+               <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+             </Select>
+         </FormItem>
+         <FormItem label="备注" prop="note">
+           <Row>
          <Col span="18">
-          <Select v-model="invalidBussinessSelect">
-           <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-         </Select>
-          <Select v-model="subInvalidBussinessSelect" v-if="invalidBussinessSelect === 'New York1'">
-           <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-         </Select>
+         <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
          </Col>
        </Row>
+         </FormItem>
+         <div style="margin-left: 80px">注：如果已开通商城账号，加入无效商机名单后将冻结该工程商的账号</div>
+       </Form>
      </Modal>
    </Row>
  </div>
@@ -157,12 +167,16 @@ export default {
           key: 'baseInfo',
           render: (h, params) => {
             return (
-              <div>
-                <span class="ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class="ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class="ivu-icon ivu-icon-ios-checkmark">1234</span>
-              </div>
-            )
+              < div > < span
+                class
+                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
+              < span
+                class
+                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
+              < span
+                class
+                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
+              < /div>)
           }
         },
         {
@@ -180,11 +194,17 @@ export default {
           align: 'center',
           render: (h, params) => {
             return (
-              <div>
-                <i-button type="primary" onClick={this.check}>查看</i-button>
-                <i-button type="primary" onClick={this.receive}>领取</i-button>
-              </div>
-            )
+              <div><i-button
+                type = "primary"
+                onClick = {this.check
+                }>
+            查看 </i-button>
+              <i-button
+                type = "primary"
+                onClick = {this.receive
+                }>
+            领取 </i-button>
+              </div>)
           }
         }
       ],
@@ -207,15 +227,29 @@ export default {
         value: 'New York1',
         label: 'New York1'
       }],
-      invalidBussinessSelect: '',
-      subInvalidBussinessSelect: '',
       subInvalidBussinessList: [{
         value: 'New York',
         label: 'New York'
       }, {
         value: 'New York1',
         label: 'New York1'
-      }]
+      }],
+      formValidate: {
+        subInvalidBussinessSelect: '',
+        invalidBussinessSelect: '',
+        note: ''
+      },
+      ruleValidate: {
+        subInvalidBussinessSelect: [
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ],
+        invalidBussinessSelect: [
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ],
+        note: [
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ]
+      }
     }
   },
   methods: {
@@ -283,7 +317,25 @@ export default {
       this.importInstallerModal = true
     },
     invalidBussiness () {
+      this.$refs.formValidate.resetFields()
       this.invalidBussinessModal = true
+    },
+    handleSubmit () {
+      this.$refs.formValidate.validate((valid) => {
+        if (valid) {
+          this.$Message.success('Success!')
+        } else {
+          this.$refs.formValidate.resetFields()
+          this.$Message.error('Fail!')
+        }
+      })
+    },
+    handleReset () {
+      console.log('77777')
+      this.$refs.formValidate.resetFields()
+    },
+    crmPoolAdd () {
+      this.$router.push('/crm/CrmPoolAdd')
     }
   }
 }

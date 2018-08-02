@@ -177,6 +177,7 @@ export default [
     component: Main,
     children: [
       { path: 'CrmCommonPool', meta: { icon: 'lock-combination', title: '公海池' }, name: 'crm_CommonPool', component: () => import('@/view/CrmCommonPool.vue') },
+      { path: 'CrmPoolAdd', name: 'New crease', component: () => import('@/view/CrmPoolAdd.vue') },
       { path: 'detail/:id', meta: { icon: 'lock-combination', hideInMenu: true, title: '人员详情' }, name: 'staff_detail', component: () => import('@/view/StaffDetail.vue') }
     ]
   },
