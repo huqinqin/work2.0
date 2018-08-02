@@ -1,5 +1,6 @@
-import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute } from '@/libs/util'
+import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute } from '~libs/util'
 import routers from '@/router/routers'
+
 export default {
   state: {
     breadCrumbList: [],

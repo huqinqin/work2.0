@@ -53,7 +53,20 @@ PC端移动端商城需要与后台保持一致，按模块编写组件，根据
 ### mock
 模拟数据，本地测试使用
 ### plugin
-存放vue插件
+存放vue插件  
+index.js设置批量导入相应的插件，在main中设置
+```
+import plugin from './plugin'
+Vue.use(plugin)
+```
+将会自动导入prototype文件夹中的文件作为实例方法
+#### libs
+存放第三方库文件，该文件夹不使用自动导入，在文件中使用时可以使用`~libs`作为路径别名。
+##### axios
+请求方法，设置根路由，设置通用的错误处理方式。
+#### prototype
+存放vue实例方法，在vue中以$[filename]的形式调用
+#### 
 ### store
 存放vuex文件，全局变量
 ### router
