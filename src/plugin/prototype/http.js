@@ -173,7 +173,7 @@ export default {
   getOrder (params) {
     return axios.post('/trade/orderSell/getOrderSellerDetail', params)
   },
-  handleOrder (params) {
+  changeOrderPrice (params) {
     return axios.post('/trade/orderSell/updateOrderPrice', params)
   }
 }
