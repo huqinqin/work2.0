@@ -172,5 +172,8 @@ export default {
   },
   getOrder (params) {
     return axios.post('/trade/viewOrderSell/getOrderSellerDetail', params)
+  },
+  fetchInstaller (params) {
+    return axios.post('/base/store/getInstallerList', params)
   }
 }
