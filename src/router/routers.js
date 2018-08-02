@@ -111,7 +111,7 @@ export default [
     component: Main,
     children: [
       { path: 'order_list', meta: { icon: 'lock-combination', title: '订单列表' }, name: 'order_list', component: () => import('@/view/OrderList.vue') },
-      { path: 'order_detail/:id?', meta: { icon: 'lock-combination', title: '订单详情' }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
+      { path: 'order_detail/:id', meta: { icon: 'lock-combination', title: '订单详情' }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
     ]
   },
   {

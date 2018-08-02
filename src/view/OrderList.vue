@@ -8,7 +8,7 @@
       </form-item>
       <form-item prop="status">
         <Select v-model="filter.status" type="text" placeholder="选择状态" >
-          <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          <Option v-for="item in orderStatus" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </form-item>
       <form-item prop="source">
@@ -64,6 +64,30 @@ export default {
           label: 'Canberra'
         }
       ],
+      orderStatus: [
+        {
+          value: 'unpaid',
+          label: 'unpaid'
+        }, {
+          value: 'paid',
+          label: 'paid'
+        }, {
+          value: 'accept',
+          label: 'accept'
+        }, {
+          value: 'ship',
+          label: 'ship'
+        }, {
+          value: 'finish',
+          label: 'finish'
+        }, {
+          value: 'close',
+          label: 'close'
+        }, {
+          value: 'delete',
+          label: 'delete'
+        }
+      ],
       filter: {
         buyerStoreId: '', status: '', id: '', source: ''
       },
@@ -89,7 +113,10 @@ export default {
           align: 'center',
           render: (h, params) => {
             return (
-              <span>{params.row.address.receiver} - {params.row.address.telnum}</span>
+              <div>
+                <p>{params.row.address.receiver}</p>
+                <p>{params.row.address.telnum}</p>
+              </div>
             )
           }
         }, {
@@ -104,7 +131,12 @@ export default {
         }, {
           title: '金额',
           align: 'center',
-          key: 'payAmount'
+          key: '',
+          render: (h, params) => {
+            return (
+              <span>${params.row.payAmount}</span>
+            )
+          }
         }, {
           title: '销售',
           align: 'center',
@@ -113,6 +145,10 @@ export default {
           title: '创建时间',
           align: 'center',
           key: 'cdate'
+        }, {
+          title: '状态',
+          align: 'center',
+          key: 'pStatus'
         },
         {
           title: '操作',
@@ -141,7 +177,12 @@ export default {
       ]
     }
   },
-  created () {
+  beforeMount () {
+    for (let key in this.filter) {
+      if (!this.filter[key]) {
+        delete this.filter[key]
+      }
+    }
     this.query()
   }
 }
