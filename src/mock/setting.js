@@ -72,11 +72,13 @@ const promo = Mock.mock({
   }
 })
 const promoList = Mock.mock({
-  'data|3-9': [
-    {
-      name: '@name'
-    }
-  ]
+  data: {
+    'list|3-9': [
+      {
+        name: '@name'
+      }
+    ]
+  }
 })
 
 export default {
@@ -105,20 +107,21 @@ export default {
         ...promo,
         msg: ''
       }
-    }
-  },
-  save () {
-    return {
-      code: '000000',
-      data: 'success',
-      msg: ''
-    }
-  },
-  list () {
-    return {
-      code: '000000',
-      ...promoList,
-      msg: ''
+    },
+    save () {
+      return {
+        code: '000000',
+        data: 'success',
+        msg: ''
+      }
+    },
+    list () {
+      return {
+        code: '000000',
+        ...promoList,
+        msg: ''
+      }
     }
   }
+
 }
