@@ -41,9 +41,7 @@ export default {
   },
   methods: {
     handleButton () {
-      console.log(event.target.innerText)
       const operate = trim(event.target.innerText)
-      console.log(operate)
       if (operate === '编辑') {
         const self = this
         this.$selectProducts.show({

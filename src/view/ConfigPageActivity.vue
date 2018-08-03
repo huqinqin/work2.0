@@ -154,13 +154,27 @@ export default {
       }
     },
     query () {
+      let getListPromiseArr = []
       this.$http.getPromo({
         name: this.name
       }).then(data => {
         data.content.forEach(t => {
           if (t.type === 'product') {
-            this.getProductsByIds(t.data)
+            getListPromiseArr.push(
+              this.$http.fetchProduct({ids: t.data}).then(data => {
+                t.data = data.list
+              })
+            )
+          } else if (t.type === 'floor') {
+            getListPromiseArr.push(
+              this.$http.fetchProduct({ids: t.data.products}).then(data => {
+                t.data.products = data.list
+              })
+            )
           }
+        })
+        Promise.all(getListPromiseArr).then(() => {
+          this.config = data.content
         })
         this.id = data.id
       })
@@ -177,7 +191,6 @@ export default {
     if (this.$route.params.name) {
       this.name = this.$route.params.name
       this.query()
-      // this.config = JSON.parse('[{"type":"banner","data":{"img":"http://ltsres-us.oss-us-west-1.aliyuncs.com/misc/16e7ed7a4748794db45a4e76184397c0.png","link":"1234567890-="}},{"type":"desc","data":"1234567890-"},{"type":"product","data":[{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/fa7e0edb13400a7fb8a13b1ffd7f9d4f.jpeg","id":10851,"name":"DHWD20PURZ","brand":"LTS","label":"","total":0,"createAt":1530005772000,"status":"已下架","realPrice":100,"oldPrice":8000,"saleRule":"{\\"startTime\\":\\"2018-06-27 16:04:00\\",\\"endTime\\":\\"2018-06-27 16:10:00\\",\\"price\\":100,\\"minimum\\":3,\\"total\\":2,\\"maxinum\\":4}","discountType":4,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/fa7e0edb13400a7fb8a13b1ffd7f9d4f.jpeg","id":10850,"name":"DHWD20PURZ","brand":"LTS","label":"","total":0,"createAt":1530001534000,"status":"已下架","realPrice":1200,"oldPrice":8000,"saleRule":"{\\"startTime\\":\\"2018-06-26 00:00:00\\",\\"endTime\\":\\"2018-06-26 00:00:00\\",\\"price\\":1200,\\"minimum\\":1,\\"total\\":12,\\"maxinum\\":9}","discountType":4,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/f301f2e707d5a0bfd7eb6b09f3993dc4.jpg","id":10848,"name":"测试222","brand":"LTS","label":"","total":0,"createAt":1529481048000,"status":"创建中","realPrice":100,"oldPrice":100,"saleRule":"","discountType":0,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/fa7e0edb13400a7fb8a13b1ffd7f9d4f.jpeg","id":10847,"name":"DHWD20PURZ","brand":"LTS","label":"","total":0,"createAt":1529031051000,"status":"已上架","realPrice":8000,"oldPrice":8000,"saleRule":"","discountType":0,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/0438d7154c65a96aed8c55741c0f3730.png","id":10846,"name":"LTA1007,  Connector - BNC Male Crimp-On","brand":"LTS","label":"Clearance","total":0,"createAt":1527840997000,"status":"已上架","realPrice":700,"oldPrice":1000,"saleRule":"","discountType":2,"discount":300},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/2bb0b517ca4be232631a59078aa432b9.jpg","id":10845,"name":"满减CMIP8042-28, Platinum Mini Bullet Network IP Camera 4MP - 2.8mm","brand":"LTS","label":"Clearance","total":0,"createAt":1527680390000,"status":"已上架","realPrice":100,"oldPrice":20000,"saleRule":"{\\"startTime\\":\\"2018-06-27 04:11:00\\",\\"endTime\\":\\"2018-06-27 04:11:29\\",\\"price\\":100,\\"minimum\\":1,\\"total\\":1,\\"maxinum\\":1}","discountType":4,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/f432f6810fb6d39adc2d71c549a92718.jpg","id":10844,"name":"满减测试0525","brand":"ltd","label":"JunePromotion","total":0,"createAt":1527238642000,"status":"已上架","realPrice":99900,"oldPrice":99900,"saleRule":"{\\"startTime\\":\\"2018-06-06 00:00:00\\",\\"endTime\\":\\"2018-06-30 00:00:00\\",\\"price\\":1400,\\"minimum\\":\\"1\\",\\"total\\":\\"11\\",\\"maxinum\\":\\"5\\"}","discountType":0,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/2bb0b517ca4be232631a59078aa432b9.jpg","id":10843,"name":"满减CMIP8042-28, Platinum Mini Bullet Network IP Camera 4MP - 2.8mm","brand":"LTS","label":"","total":10061,"createAt":1527233911000,"status":"已上架","realPrice":20000,"oldPrice":20000,"saleRule":"","discountType":0,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/bc2403ef7bff3a29b72b0b096fd4e410.jpg","id":10841,"name":"#test#001","brand":"LTS","label":"","total":0,"createAt":1527230130000,"status":"创建中","realPrice":100,"oldPrice":100,"saleRule":"","discountType":0,"discount":0},{"image":"http://ltsres-us.oss-us-west-1.aliyuncs.com/item/8cbd295c40f82598a9cc66d753291f00.png","id":10834,"name":"test prod two","brand":"test","label":"","total":0,"createAt":1526459304000,"status":"已上架","realPrice":2400,"oldPrice":2400,"saleRule":"","discountType":0,"discount":0}]}]')
     }
   }
 }

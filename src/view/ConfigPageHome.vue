@@ -30,7 +30,6 @@ export default {
   data () {
     return {
       url: 'Home',
-      id: '',
       carousel: [],
       fixImg: [],
       floor: [],
@@ -87,7 +86,6 @@ export default {
       }
     },
     saveConfig () {
-      console.log(JSON.stringify(this.config))
       this.config.forEach(arr => {
         if (arr.type === 'floor') {
           arr.data.products = arr.data.products.map(t => {
@@ -95,26 +93,25 @@ export default {
           })
         }
       })
-      console.log(JSON.stringify(this.config))
       this.$http.saveHome({
         content: this.config
       })
     },
     query () {
+      let getListPromiseArr = []
       this.$http.getHome().then(data => {
         data.content && data.content.forEach(t => {
           if (t.type === 'floor') {
-            this.getProductsByIds(t.data.products)
+            getListPromiseArr.push(
+              this.$http.fetchProduct({ids: t.data.products}).then(data => {
+                t.data.products = data.list
+              })
+            )
           }
         })
-        this.id = data.id
-      })
-    },
-    getProductsByIds (ids) {
-      this.$http.fetchProduct({
-        ids: ids
-      }).then(data => {
-        console.log(data)
+        Promise.all(getListPromiseArr).then(() => {
+          this.config = data.content
+        })
       })
     }
   },
