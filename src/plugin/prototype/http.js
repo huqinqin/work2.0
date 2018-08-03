@@ -72,13 +72,13 @@ export default {
     return axios.post('product/item/setStatus', params)
   },
   fetchCodeTable (params) {
-    return axios.post('/base/common/getCodeTable', params)
+    return axios.post('base/common/getCodeTable', params)
   },
   fetchSkuProps (params) {
-    return axios.post('/item/category/listSkuProp', params)
+    return axios.post('item/category/listSkuProp', params)
   },
   fetchSpuProps (params) {
-    return axios.post('/item/category/listProp', params)
+    return axios.post('item/category/listProp', params)
   },
   getBrand (params) {
     return axios.post('item/brand/getBrandDetail', params)
@@ -135,7 +135,7 @@ export default {
     return axios.post('item/category/deleteSkuPropsTag', { categoryId, catePropId, id })
   },
   getPolicy () {
-    return axios.post('/base/common/getPolicy')
+    return axios.post('base/common/getPolicy')
   },
   fetchCert (params) {
     return axios.post('base/store/cert/list', params)
@@ -153,30 +153,30 @@ export default {
     return axios.post('base/store/cert/pass', params)
   },
   savePromo (params) {
-    return axios.post('/base/setting/promo/save', params)
+    return axios.post('base/setting/promo/save', params)
   },
   fetchPromo (params) {
-    return axios.post('/base/setting/promo/list', params)
+    return axios.post('base/setting/promo/list', params)
   },
   getPromo (params) {
-    return axios.post('/base/setting/promo/get', params)
+    return axios.post('base/setting/promo/get', params)
   },
   getHome () {
-    return axios.post('/base/setting/home/get')
+    return axios.post('base/setting/home/get')
   },
   saveHome (params) {
-    return axios.post('/base/setting/home/save', params)
+    return axios.post('base/setting/home/save', params)
   },
   fetchOrder (params) {
-    return axios.post('/trade/orderSell/listOrderSeller', params)
+    return axios.post('trade/orderSell/listOrderSeller', params)
   },
   getOrder (params) {
-    return axios.post('/trade/orderSell/getOrderSellerDetail', params)
+    return axios.post('trade/orderSell/getOrderSellerDetail', params)
   },
   fetchInstaller (params) {
-    return axios.post('/base/store/getInstallerList', params)
+    return axios.post('base/store/getInstallerList', params)
   },
   changeOrderPrice (params) {
-    return axios.post('/trade/orderSell/updateOrderPrice', params)
+    return axios.post('trade/orderSell/updateOrderPrice', params)
   }
 }
