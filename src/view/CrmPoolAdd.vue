@@ -293,9 +293,9 @@ export default {
       this.addModal = true
     },
     validForm () {
-      Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
+      Promise.all([this.$refs.address.valid(), this.$refs.formValidate.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
-          this.submit()
+        } else {
         }
       })
     }

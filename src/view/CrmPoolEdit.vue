@@ -295,7 +295,7 @@ export default {
     validForm () {
       Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
-          this.submit()
+          // this.submit()
         }
       })
     }

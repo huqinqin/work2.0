@@ -181,7 +181,9 @@ export default [
       { path: 'CrmPoolAdd', name: 'New crease', component: () => import('@/view/CrmPoolAdd.vue') },
       { path: 'CrmPoolEdit', name: 'Crm Edit', component: () => import('@/view/CrmPoolEdit.vue') },
       { path: 'CrmPoolCheck', name: 'Crm Check', component: () => import('@/view/CrmPoolCheck.vue') },
-      { path: 'detail/:id', meta: { icon: 'lock-combination', hideInMenu: true, title: '人员详情' }, name: 'staff_detail', component: () => import('@/view/StaffDetail.vue') }
+      { path: 'CrmLog', name: 'Crm Log', component: () => import('@/view/CrmLog.vue') },
+      { path: 'CrmAllocation', name: 'Crm Allocation', component: () => import('@/view/CrmAllocation.vue') },
+      { path: 'CrmTemporaryList', meta: { icon: 'lock-combination', title: '临时关系池' }, name: 'crm_Temporary_List', component: () => import('@/view/CrmTemporaryList.vue') }
     ]
   },
   { path: '/401', name: 'error_401', component: () => import('@/view/error-page/401.vue') },
