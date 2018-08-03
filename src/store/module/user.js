@@ -21,7 +21,7 @@ export default {
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
-      http.post('user/logout').then(() => {
+      http.Logout().then(() => {
         router.push({name: 'login'})
       })
     }

@@ -14,6 +14,9 @@ export default {
       password: md5(params.password)
     })
   },
+  Logout () {
+    return axios.post('base/user/logout')
+  },
   getShop (params) {
     return axios.post('base/store/getStore', params)
   },
