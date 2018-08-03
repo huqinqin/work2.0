@@ -9,6 +9,7 @@ import i18n from '@/locale'
 import config from '@/config'
 import 'iview/dist/styles/iview.css'
 import '@/assets/coverage.less'
+import cache from 'store2'
 // 自动加载所有的组件
 import './components'
 // 加载编写的插件
@@ -19,6 +20,7 @@ if (process.env.VUE_APP_MOCK === 'true') require('@/mock')
 Vue.use(iView)
 Vue.config.productionTip = false
 Vue.prototype.$config = config
+Vue.prototype.$cache = cache
 /**
  * @description 全局注册应用配置
  */

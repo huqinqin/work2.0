@@ -1,6 +1,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { Message } from 'iview'
+import cache from 'store2'
 // 设置基础url
 axios.defaults.baseURL = '/work'
 
@@ -54,6 +55,7 @@ axios.interceptors.response.use(
       return res.data
     } else if (res.code === '000001') {
       // 用户未登录处理
+      cache.clearAll()
       router.replace({name: 'login'})
     } else {
       const message = res.msg ? res.msg : errorMap[res.code]
