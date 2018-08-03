@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { showTitle } from '@/libs/util'
+import { showTitle } from '~libs/util'
 export default {
   name: 'tagsNav',
   props: {
