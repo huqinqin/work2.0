@@ -100,6 +100,7 @@ export default {
     query () {
       let getListPromiseArr = []
       this.$http.getHome().then(data => {
+        console.log(data)
         data.content && data.content.forEach(t => {
           if (t.type === 'floor') {
             getListPromiseArr.push(

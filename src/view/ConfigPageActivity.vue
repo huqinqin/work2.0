@@ -134,7 +134,7 @@ export default {
           t.data = t.data.map(v => {
             return v.id
           })
-        } else if (t.type === 'fllor') {
+        } else if (t.type === 'floor') {
           t.data.products = t.data.products.map(v => {
             return v.id
           })
