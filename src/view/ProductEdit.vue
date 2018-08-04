@@ -68,8 +68,8 @@
           <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
             <i-form label-position="left" class="prop-form">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
-                <RadioGroup v-model="item.value" @on-change="checkSpu">
-                  <Radio v-for="(value, spuIndex) in item.values" :label="value" :key="spuIndex"></Radio>
+                <RadioGroup v-model="item.valueId" @on-change="checkSpu">
+                  <Radio v-for="value in item.values" :label="value.valueId" :key="value.valueId">{{value.value}}</Radio>
                 </RadioGroup>
                 <i-button type="primary" size="small" style="marginLeft: 8px" @click="addProp(index)">新增</i-button>
                 <i-button type="error" size="small" style="marginLeft: 8px" @click="delProp(index)">删除</i-button>
@@ -85,12 +85,12 @@
               <!--<i-button @click="upload" type="primary">选择图片</i-button>-->
               <!--<i-button @click="upload">上传图片</i-button>-->
             <!--</div>-->
-            <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index"
+            <div class="demo-upload-list" v-for="(item, index) in imgList" :key="index"
                  :class="{'default': index === 0}">
               <template v-if="item.status === 'finished'">
                 <img :src="item.url">
                 <div class="demo-upload-list-cover">
-                  <Icon type="ios-eye-outline" @click="handleView(item.name)"></Icon>
+                  <Icon type="ios-eye-outline" @click="handleView(item.url)"></Icon>
                   <div class="default" @click="handleDefault(index)">设为默认</div>
                   <div class="delete" @click="handleRemove(item.name)">删除</div>
                 </div>
@@ -101,7 +101,7 @@
             </div>
             <Upload
               ref="upload"
-              :show-upload-list="true"
+              :show-upload-list="false"
               :default-file-list="imgUrls"
               :on-success="handleSuccess"
               :format="['jpg','jpeg','png']"
@@ -119,9 +119,9 @@
               </div>
             </Upload>
             <Modal title="View Image" v-model="visible">
-              <img :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" v-if="visible" style="width: 100%">
+              <img :src="imgUrl" v-if="visible" style="width: 100%">
             </Modal>
-            <!--<BaseUploadProductImgs v-model="form.imgUrls"></BaseUploadProductImgs>-->
+            <!--<BaseUploadProductImgs v-model="imgList"></BaseUploadProductImgs>-->
           </form-item>
         </i-col>
         <i-col :span="24">
@@ -136,7 +136,8 @@
             <Upload
               class="edit-upload"
               type="drag"
-              :before-upload="beforeLoad"
+              ref="editUpload"
+              :before-upload="beforeUpload"
               :on-success="loadSuccess"
               :on-error="loadError"
               :data="Object.assign(formUp, formData)"
@@ -247,7 +248,6 @@ export default {
       spinShow: false,
       imgName: '',
       visible: false,
-      uploadList: [],
       tag: '',
       spu: '',
       content: '',
@@ -263,7 +263,7 @@ export default {
         brandId: '',
         kind: '',
         onum: '',
-        status: '',
+        status: 'onsale',
         keyword: [],
         imgUrls: ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'],
         itemProps: [
@@ -329,7 +329,7 @@ export default {
           }
         }
       },
-      filelist: []
+      imgList: []
     }
   },
   methods: {
@@ -375,7 +375,7 @@ export default {
         })
       }
       this.form.skus = this.descartes(skuArr).map(t => {
-        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: ''}
+        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: '', priceStatus: 'enabled'}
       })
     },
     descartes (skuArr) {
@@ -428,43 +428,54 @@ export default {
       console.log(event)
     },
     beforeLoad (file) {
-      console.log('file', file)
       this.formData.name = file.name
       this.formData.key = this.formUp.preKey + '/' + file.name
       this.formData.Filename = file.name
-      this.filelist.push(file)
+      this.$nextTick(() => {
+        this.$refs.upload.post(file)
+      })
       return false
     },
-    upload () {
-      console.log(this.filelist)
-      console.log(this.$refs.upload.post)
+    beforeUpload (file) {
+      this.formData.name = file.name
+      this.formData.key = this.formUp.preKey + '/' + file.name
+      this.formData.Filename = file.name
+      this.$nextTick(() => {
+        this.$refs.editUpload.post(file)
+      })
+      return false
     },
     loadSuccess (response, file) {
-      this.img = this.formData.host + '/' + this.formData.dir + '/' + file.name
-      console.log(this.img)
-      console.log(file)
+      let quill = this.$refs.myQuillEditor.quill
+      let img = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
+      // 获取光标所在位置
+      let length = quill.getSelection().index
+      // 插入图片  res.info为服务器返回的图片地址
+      quill.insertEmbed(length, 'image', img)
+      // 调整光标到最后
+      quill.setSelection(length + 1)
     },
     loadError (error) {
       console.log(error)
     },
     // 图片上传相关
     handleDefault (index) {
-      let defaultItem = this.uploadList[index]
-      this.uploadList.splice(index, 1)
-      this.uploadList.unshift(defaultItem)
+      let defaultItem = this.imgList[index]
+      this.imgList.splice(index, 1)
+      this.imgList.unshift(defaultItem)
     },
-    handleView (name) {
-      this.imgName = name
+    handleView (url) {
+      this.imgUrl = url
       this.visible = true
     },
     handleRemove (file) {
-      const fileList = this.uploadList
-      this.uploadList.splice(fileList.indexOf(file), 1)
+      const fileList = this.imgList
+      this.imgList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
-      file.url = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.uploadList.push(file)
+      this.imgList.push(file)
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -519,10 +530,13 @@ export default {
         }
       })
     },
+    // 保存商品信息
     submit () {
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log(JSON.stringify(this.form))
+          this.form.imgUrls = this.imgList.map(t => {
+            return t.url
+          })
           this.$http.saveProduct({
             ...this.form
           }).then(data => {
@@ -531,6 +545,7 @@ export default {
               title: '保存成功',
               desc: ''
             })
+            this.$router.push({name: 'product_list'})
           })
         }
       })
@@ -538,10 +553,18 @@ export default {
     checkSpu () {
       this.form.itemProps[0].props = []
       this.spuProps.forEach(t => {
-        if (t.value) {
+        if (t.valueId) {
+          let value = ''
+          t.values.forEach(v => {
+            if (v.valueId === t.valueId) {
+              value = v.value
+            }
+          })
           this.form.itemProps[0].props.push({
             name: t.name,
-            value: t.value,
+            nameId: t.nameId,
+            valueId: t.valueId,
+            value: value,
             canSee: t.canSee,
             canSearch: t.canSearch
           })
@@ -549,7 +572,7 @@ export default {
       })
     },
     delProp (index) {
-      this.spuProps[index].value = ''
+      this.spuProps[index].valueId = ''
       this.spuProps[index].canSee = false
       this.spuProps[index].canSearch = false
       this.checkSpu()
@@ -576,15 +599,22 @@ export default {
           data.list.forEach((t, index) => {
             let values = []
             t.values.forEach(v => {
-              values.push(v.name)
+              values.push({
+                value: v.name,
+                valueId: v.id
+              })
             })
-            this.spuProps.push({name: t.name, canSee: false, canSearch: false, values: values, value: ''})
+            this.spuProps.push({name: t.name, nameId: t.id, canSee: false, canSearch: false, values: values, valueId: ''})
             this.form.itemProps[0].props.forEach(v => {
               this.spuProps.forEach(t => {
-                if (t.name === v.name) {
-                  t.value = v.value
-                  t.canSee = v.canSee
-                  t.canSearch = v.canSearch
+                if (t.nameId === v.nameId) {
+                  t.values.forEach(x => {
+                    if (x.valueId === v.valueId) {
+                      t.valueId = v.valueId
+                      t.canSee = v.canSee
+                      t.canSearch = v.canSearch
+                    }
+                  })
                 }
               })
             })
@@ -606,7 +636,7 @@ export default {
       this.$http.getProduct({
         id: this.$route.params.id
       }).then(data => {
-        this.uploadList = data.imgUrls.map((url, index) => {
+        this.imgList = data.imgUrls.map((url, index) => {
           return {
             name: index,
             url: url,
