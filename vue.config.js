@@ -8,6 +8,8 @@ const resolve = dir => {
 // http(s)://a.com/my-app/
 const BASE_URL = '/'
 const TRAGET_URL = 'http://192.168.1.104:8882'
+// 本地环境 http://192.168.1.150:8882
+// 测试环境 http://47.89.251.79:8062
 
 module.exports = {
   baseUrl: BASE_URL,

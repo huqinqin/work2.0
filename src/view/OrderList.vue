@@ -256,6 +256,7 @@ export default {
         delete this.filter[key]
       }
     }
+    this.filter.status = 'unpaid'
     this.query()
   }
 }
