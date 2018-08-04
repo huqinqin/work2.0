@@ -181,5 +181,8 @@ export default {
   },
   changeOrderPrice (params) {
     return axios.post('/trade/orderSell/updateOrderPrice', params)
+  },
+  fetchGroupStore () {
+    return axios.post('/base/store/group')
   }
 }

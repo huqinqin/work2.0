@@ -29,17 +29,18 @@
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="门店" prop="store">
-            <i-input v-model="form.store" type="text" placeholder="门店"></i-input>
-          </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="角色" prop="role">
-            <i-input v-model="form.role" type="text" placeholder="角色"></i-input>
+            <CodeTable v-model="form.store" type="store"></CodeTable>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="部门" prop="group">
-            <i-input v-model="form.group" type="text" placeholder="部门"></i-input>
+            <CodeTable v-model="form.group" type="group"></CodeTable>
+          </form-item>
+        </i-col>
+        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+          <form-item label="角色" prop="role">
+            <CodeTable v-model="form.role" type="role"></CodeTable>
+            <!-- <i-input v-model="form.role" type="text" placeholder="角色"></i-input> -->
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
