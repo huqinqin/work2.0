@@ -37,6 +37,13 @@ export default {
           render: this.editCellRender
         },
         {
+          title: '单位重量',
+          align: 'center',
+          key: 'weight',
+          width: 160,
+          render: this.editCellRender
+        },
+        {
           title: '销售价格',
           align: 'center',
           key: 'basePrice',
@@ -44,11 +51,11 @@ export default {
           render: this.editCellRender
         },
         {
-          title: '单位重量',
+          title: '是否默认价格',
           align: 'center',
-          key: 'weight',
+          key: 'priceStatus',
           width: 160,
-          render: this.editCellRender
+          render: this.changePriceStatusRender
         },
         {
           title: '属性值',
@@ -90,13 +97,24 @@ export default {
         <i-input on-on-blur={(e) => this.editCell(params.index, params.column.key, e)} value={value}></i-input>
       )
     },
+    changePriceStatusRender (h, params) {
+      const value = params.row[params.column.key]
+      return (
+        <i-switch true-value="default" false-value="enabled" on-on-change={e => this.changePriceStatus(params.index, params.column.key, e)} value={value}></i-switch>
+      )
+    },
     editCell (rowIndex, key, event) {
       this.tableData[rowIndex][key] = event.target.value
       this.$emit('input', this.tableData)
-      // if (key === 'edit') {
-      // 当点击按钮时，重新加载表格，触发表格刷新
-      // this.initColumnsList()
-      // }
+    },
+    changePriceStatus (rowIndex, key, value) {
+      this.tableData[rowIndex][key] = value
+      this.tableData.forEach((t, index) => {
+        if (index !== rowIndex) {
+          this.tableData[index][key] = 'enabled'
+        }
+      })
+      this.$emit('input', this.tableData)
     },
     handleOnstart1 (from) {
       this.table1.oldIndex = from

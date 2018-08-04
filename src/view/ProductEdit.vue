@@ -375,7 +375,7 @@ export default {
         })
       }
       this.form.skus = this.descartes(skuArr).map(t => {
-        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: ''}
+        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: '', priceStatus: 'enabled'}
       })
     },
     descartes (skuArr) {
@@ -556,7 +556,9 @@ export default {
         if (t.valueId) {
           let value = ''
           t.values.forEach(v => {
-            if (v.id === t.valueId) value = v.value
+            if (v.valueId === t.valueId) {
+              value = v.value
+            }
           })
           this.form.itemProps[0].props.push({
             name: t.name,
@@ -570,7 +572,7 @@ export default {
       })
     },
     delProp (index) {
-      this.spuProps[index].value = ''
+      this.spuProps[index].valueId = ''
       this.spuProps[index].canSee = false
       this.spuProps[index].canSearch = false
       this.checkSpu()

@@ -21,9 +21,8 @@ export default {
             )
           }
         }, {
-          align: 'center',
           key: '',
-          width: 320,
+          minWidth: 320,
           render: (h, params) => {
             return (
               <p class="item-title single-ellipsis" title={params.row.title}>{params.row.title}</p>
