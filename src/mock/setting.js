@@ -47,7 +47,7 @@ const home = Mock.mock({
 const promo = Mock.mock({
   data: {
     id: '@id',
-    name: '@name',
+    name: '@first',
     content: [
       {
         type: 'banner',
@@ -57,7 +57,7 @@ const promo = Mock.mock({
         }
       }, {
         type: 'desc',
-        data: '2333333333333333333333333'
+        data: '@paragraph(1)'
       }, {
         type: 'product',
         'data|4-9': ['@id']
@@ -65,6 +65,7 @@ const promo = Mock.mock({
         type: 'floor',
         data: {
           name: '@name',
+          link: '@url',
           'products|3-9': ['@id']
         }
       }
@@ -75,7 +76,7 @@ const promoList = Mock.mock({
   data: {
     'list|3-9': [
       {
-        name: '@name'
+        name: '@first'
       }
     ]
   }

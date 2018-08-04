@@ -16,7 +16,8 @@
       </tr>
       <tr>
         <td class="speTd">状态</td>
-        <td>{{form.pStatus}}</td>
+        <td v-if="form.pStatus" :style="{color: statusOption[form.pStatus].color}">{{statusOption[form.pStatus].text}}</td>
+        <td v-else></td>
         <td class="speTd">创建时间</td>
         <td>{{form.cdate}}</td>
       </tr>
@@ -35,7 +36,7 @@
       </p>
       <p>
         <label>税率:</label>
-        <span v-if="form.pStatus === 'unpaid'"><Input v-model="rate" /></span>
+        <span v-if="form.pStatus === 'unpaid' && 0"><Input v-model="rate" /></span>
         <span v-else>{{rate}}</span>
       </p>
       <p>
@@ -52,7 +53,7 @@
       </p>
       <p>
         <label>手动:</label>
-        <span v-if="form.pStatus === 'unpaid'"><Input v-model="handling" /></span>
+        <span v-if="form.pStatus === 'unpaid' && 0"><Input v-model="handling" /></span>
         <span v-else>${{handling}}</span>
       </p>
       <p>
@@ -87,6 +88,32 @@ export default {
         id: '',
         source: ''
       },
+      statusOption: {
+        unpaid: {
+          color: '#FF2572',
+          text: 'Pending Payment'
+        },
+        paid: {
+          color: '#2594FF',
+          text: 'Paid'
+        },
+        ship: {
+          color: '#255DFF',
+          text: 'Shipped'
+        },
+        accept: {
+          color: '#F39925',
+          text: 'Order Receiving'
+        },
+        finish: {
+          color: '#22E339',
+          text: 'Finish'
+        },
+        close: {
+          color: '#23E6DF',
+          text: 'Close'
+        }
+      },
       columns: [
         {
           title: '商品信息',
@@ -94,9 +121,9 @@ export default {
           width: 720,
           render: (h, params) => {
             return (
-              <div style="display: flex;">
-                <div><img style="height:48px;width:48px;vertical-align: top;" src={params.row.imgUrls && params.row.imgUrls[0]} alt="商品主图" height="100"/></div>
-                <div style="line-height: 2;overflow : hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;">{params.row.title}</div>
+              <div class="item-info">
+                <img height="26" width="26" src={params.row.imgUrls && params.row.imgUrls[0]} alt="商品主图" />
+                <p title={params.row.title} class="item-title single-ellipsis">{params.row.title}</p>
               </div>
             )
           }
@@ -189,15 +216,29 @@ export default {
     margin-top: 18px;
     margin-bottom: 18px;
   }
+  /deep/ .item-info{
+    display: flex;
+    align-items: center;
+    div{
+      display: inline-block;
+    }
+    img{
+      height: 26px;
+      width: 26px;
+      vertical-align: top;
+      margin-right: 12px;
+    }
+  }
   .pay-info{
+    text-align: right;
     label{
       display: inline-block;
       width:120px;
     }
     span{
       display: inline-block;
-      width:120px;
-      color:red;
+      width:98px;
+      color: #FF3B41;
       /deep/ .ivu-input{
         width:98px;
       }
@@ -205,7 +246,7 @@ export default {
   }
   /deep/ .more-info{
     label{
-      width:120px;
+      width:98px;
     }
   }
   p{

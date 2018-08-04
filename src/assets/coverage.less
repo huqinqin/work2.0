@@ -93,3 +93,52 @@
   border: 1px dashed #57a3f3;
   outline: none;
 }
+// 单行省略号
+.single-ellipsis{
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+// 多行省略号
+//.multi-ellipsis(@num: 2){
+//  display: -webkit-box;
+//  -webkit-box-orient: vertical;
+//  -webkit-line-clamp: @num;
+//  overflow: hidden;
+//}
+.multi-ellipsis-2{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.note-modal,.change-fee-modal{
+  p{
+    line-height: 2;
+  }
+}
+.change-fee-modal .ivu-modal-body{
+  label{
+    display: inline-block;
+    width:60px;
+  }
+  span{
+    display: inline-block;
+    color: #FF3B41;
+  }
+  /deep/ .ivu-input-wrapper{
+    width:98px;
+  }
+}
+.confirm-pay-modal .ivu-modal-body{
+  p{
+    line-height: 2;
+  }
+  p.confirm-text{
+    font-weight: bold;
+    font-size: 16px;
+    span{
+      color: #FF3B41;
+    }
+  }
+}
