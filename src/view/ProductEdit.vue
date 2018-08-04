@@ -68,8 +68,8 @@
           <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
             <i-form label-position="left" class="prop-form">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
-                <RadioGroup v-model="item.value" @on-change="checkSpu">
-                  <Radio v-for="(value, spuIndex) in item.values" :label="value" :key="spuIndex"></Radio>
+                <RadioGroup v-model="item.valueId" @on-change="checkSpu">
+                  <Radio v-for="value in item.values" :label="value.valueId" :key="value.valueId">{{value.value}}</Radio>
                 </RadioGroup>
                 <i-button type="primary" size="small" style="marginLeft: 8px" @click="addProp(index)">新增</i-button>
                 <i-button type="error" size="small" style="marginLeft: 8px" @click="delProp(index)">删除</i-button>
@@ -553,10 +553,16 @@ export default {
     checkSpu () {
       this.form.itemProps[0].props = []
       this.spuProps.forEach(t => {
-        if (t.value) {
+        if (t.valueId) {
+          let value = ''
+          t.values.forEach(v => {
+            if (v.id === t.valueId) value = v.value
+          })
           this.form.itemProps[0].props.push({
             name: t.name,
-            value: t.value,
+            nameId: t.nameId,
+            valueId: t.valueId,
+            value: value,
             canSee: t.canSee,
             canSearch: t.canSearch
           })
@@ -591,15 +597,22 @@ export default {
           data.list.forEach((t, index) => {
             let values = []
             t.values.forEach(v => {
-              values.push(v.name)
+              values.push({
+                value: v.name,
+                valueId: v.id
+              })
             })
-            this.spuProps.push({name: t.name, canSee: false, canSearch: false, values: values, value: ''})
+            this.spuProps.push({name: t.name, nameId: t.id, canSee: false, canSearch: false, values: values, valueId: ''})
             this.form.itemProps[0].props.forEach(v => {
               this.spuProps.forEach(t => {
-                if (t.name === v.name) {
-                  t.value = v.value
-                  t.canSee = v.canSee
-                  t.canSearch = v.canSearch
+                if (t.nameId === v.nameId) {
+                  t.values.forEach(x => {
+                    if (x.valueId === v.valueId) {
+                      t.valueId = v.valueId
+                      t.canSee = v.canSee
+                      t.canSearch = v.canSearch
+                    }
+                  })
                 }
               })
             })
