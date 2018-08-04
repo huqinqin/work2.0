@@ -1,24 +1,16 @@
 <template>
   <card>
     <i-form ref="filter" :model="filter" inline>
-      <Row>
-        <form-item prop="" label="Cust ID">
-          <i-input v-model="filter.Customer" type="text" placeholder="Customer ID" ></i-input>
-        </form-item>
-        <form-item prop="" label="公司名">
-          <i-input v-model="filter.sName" type="text" placeholder="公司名" ></i-input>
-        </form-item>
-        <form-item prop="id" label="订单号">
-          <i-input v-model="filter.id" type="text" placeholder="输入订单编号" ></i-input>
-        </form-item>
-        <form-item label=" ">
-          <i-button type="primary" @click="query">查询</i-button>
-        </form-item>
-        <form-item label=" ">
-          <i-button type="primary">展开</i-button>
-        </form-item>
-      </Row>
-      <Row>
+      <form-item prop="" label="Cust ID">
+        <i-input v-model="filter.Customer" type="text" placeholder="Customer ID" ></i-input>
+      </form-item>
+      <form-item prop="" label="公司名">
+        <i-input v-model="filter.sName" type="text" placeholder="公司名" ></i-input>
+      </form-item>
+      <form-item prop="id" label="订单号">
+        <i-input v-model="filter.id" type="text" placeholder="输入订单编号" ></i-input>
+      </form-item>
+      <template v-if="showMoreFilter">
         <form-item prop="status" label="订单状态">
           <Select v-model="filter.status" type="text" placeholder="选择状态" >
             <Option v-for="item in orderStatus" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -33,8 +25,6 @@
         <form-item prop="" label="收货人">
           <i-input v-model="filter.attention" type="text" placeholder="attention" ></i-input>
         </form-item>
-      </Row>
-      <Row>
         <form-item prop="source" label="订单来源">
           <Select v-model="filter.source" type="text" placeholder="选择来源" >
             <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -48,7 +38,13 @@
         <form-item prop="" label="时间">
           <DatePicker v-model="filter.date" type="daterange" :options="dateOptions" placement="bottom-end" placeholder="Select date" style="width: 200px"></DatePicker>
         </form-item>
-      </Row>
+      </template>
+      <form-item label=" ">
+        <i-button type="primary" @click="query">查询</i-button>
+      </form-item>
+      <form-item label=" ">
+        <i-button type="primary" @click="showMoreFilter = !showMoreFilter">展开</i-button>
+      </form-item>
     </i-form>
     <Modal v-model="noteModal" draggable scrollable title="修改备注" @on-cancel="cancelNote" @on-ok="submitNote" class="note-modal">
       <p>订单号: {{activeRow.id}}</p>
@@ -223,6 +219,7 @@ export default {
       activeRow: {},
       rate: '',
       handling: '',
+      showMoreFilter: false,
       noteModal: false,
       changeFeeModal: false,
       confirmPayModal: false,
