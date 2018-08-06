@@ -115,6 +115,17 @@ export default [
     ]
   },
   {
+    path: '/quotation',
+    redirect: '/quotation/index',
+    meta: { icon: 'lock-combination', title: '询价单管理' },
+    name: 'quotation',
+    component: Main,
+    children: [
+      { path: 'quotation_list', meta: { icon: 'lock-combination', title: '询价单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') },
+      { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '新增询价单' }, name: 'quotation_edit', component: () => import('@/view/QuotationEdit.vue') }
+    ]
+  },
+  {
     path: '/pay',
     redirect: '/pay/index',
     meta: { icon: 'lock-combination', title: '应付管理', hideInMenu: true },

@@ -184,5 +184,11 @@ export default {
   },
   fetchGroupStore () {
     return axios.post('base/store/group')
+  },
+  fetchQuotation (params) {
+    return axios.post('base/quotation/list', params)
+  },
+  getQuotation (params) {
+    return axios.post('base/quotation/get', params)
   }
 }

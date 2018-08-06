@@ -10,6 +10,7 @@ import installer from './installer'
 import store from './store'
 import order from './order'
 import setting from './setting'
+import quotation from './quotation'
 
 const options = Mock.mock({
   'data|9': [
@@ -28,6 +29,7 @@ mapMock('/installer', installer)
 mapMock('/orderSell', order)
 mapMock('/store', store)
 mapMock('/setting', setting)
+mapMock('/quotation', quotation)
 
 Mock.mock(/\/common\/getCodeTable/, 'post', req => {
   const data = JSON.parse(req.body)
