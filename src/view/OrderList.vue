@@ -2,7 +2,7 @@
   <card>
     <i-form ref="filter" :model="filter" inline>
       <form-item prop="" label="Cust ID">
-        <i-input v-model="filter.Customer" type="text" placeholder="Customer ID" ></i-input>
+        <i-input v-model="filter.Customer" type="text" placeholder="Customer ID" ></i-input>{{19|formatPrice}}
       </form-item>
       <form-item prop="" label="公司名">
         <i-input v-model="filter.sName" type="text" placeholder="公司名" ></i-input>
@@ -112,6 +112,7 @@
 <script>
 import mixin from '@/mixins/list'
 import expandRow from './OrderListExpand.vue'
+import formatPrice from '../plugin/filter/formatPrice'
 
 export default {
   mixins: [mixin],
@@ -261,7 +262,7 @@ export default {
           title: '金额',
           render: (h, params) => {
             return (
-              <span>{params.row.payAmount}</span>
+              <span> {formatPrice.formatPrice(params.row.payAmount)}</span>
             )
           }
         }, {
@@ -337,10 +338,6 @@ export default {
                   type: 'primary',
                   size: 'small'
                 },
-                style: {
-                  marginRight: '5px',
-                  marginBottom: '6px'
-                },
                 on: {
                   click: () => {
                     this.showNote(params.row)
@@ -351,10 +348,6 @@ export default {
                 props: {
                   type: 'info',
                   size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  marginBottom: '6px'
                 },
                 on: {
                   click: () => {
@@ -368,8 +361,6 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px',
-                  marginBottom: '6px',
                   display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -384,8 +375,6 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px',
-                  marginBottom: '6px',
                   display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -400,8 +389,6 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px',
-                  marginBottom: '6px',
                   display: params.row.pStatus !== 'finish' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -501,19 +488,3 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-  /deep/ .ivu-table-expanded-cell{
-    padding: 0;
-  }
-  /deep/ .ivu-select{
-    width: 162px;
-  }
-  /deep/ .ivu-table-small td {
-    padding: 6px 0;
-    vertical-align: top;
-  }
-  /deep/ .ivu-table-cell{
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-</style>
