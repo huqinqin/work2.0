@@ -244,9 +244,10 @@ export default {
         }, {
           title: 'customer ID',
           key: 'sCode'
+
         }, {
           title: '收货信息',
-          minWidth: 280,
+          width: 230,
           render: (h, params) => {
             // <p class="multi-ellipsis-2">{params.row.address.detail}</p>
             return (
@@ -302,12 +303,11 @@ export default {
                 break
             }
             return (
-              <div>{payStatus}</div>
+              <div style="width:80px;">{payStatus}</div>
             )
           }
         }, {
           title: '销售/门店',
-          key: '',
           render: (h, params) => {
             return (
               <div>
@@ -318,15 +318,18 @@ export default {
           }
         }, {
           title: '时间',
-          key: 'cdate'
+          render: (h, params) => {
+            return (
+              <div style="width: 70px;">{params.row.cdate}</div>
+            )
+          }
         }, {
           title: '来源',
           key: 'source'
         }, {
           title: '操作',
           key: 'action',
-          width: 320,
-          align: 'center',
+          width: 180,
           render: (h, params) => {
             return h('div', [
               h('Button', {
@@ -335,7 +338,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px'
+                  marginRight: '5px',
+                  marginBottom: '6px'
                 },
                 on: {
                   click: () => {
@@ -349,7 +353,8 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px'
+                  marginRight: '5px',
+                  marginBottom: '6px'
                 },
                 on: {
                   click: () => {
@@ -359,26 +364,12 @@ export default {
               }, '详情'),
               h('Button', {
                 props: {
-                  type: 'success',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
-                },
-                on: {
-                  click: () => {
-                    this.showChangeFee(params.row)
-                  }
-                }
-              }, '修改金额'),
-              h('Button', {
-                props: {
                   type: 'warning',
                   size: 'small'
                 },
                 style: {
                   marginRight: '5px',
+                  marginBottom: '6px',
                   display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -389,11 +380,28 @@ export default {
               }, '支付'),
               h('Button', {
                 props: {
+                  type: 'success',
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px',
+                  marginBottom: '6px',
+                  display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
+                },
+                on: {
+                  click: () => {
+                    this.showChangeFee(params.row)
+                  }
+                }
+              }, '修改金额'),
+              h('Button', {
+                props: {
                   type: 'error',
                   size: 'small'
                 },
                 style: {
                   marginRight: '5px',
+                  marginBottom: '6px',
                   display: params.row.pStatus !== 'finish' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -503,5 +511,9 @@ export default {
   /deep/ .ivu-table-small td {
     padding: 6px 0;
     vertical-align: top;
+  }
+  /deep/ .ivu-table-cell{
+    padding-left: 8px;
+    padding-right: 8px;
   }
 </style>
