@@ -4,6 +4,9 @@
       <div class="btn">
         <Button type="primary" @click="log">登陆日志</Button>
         <Button type="primary" @click="allocation">分配纪录</Button>
+        <Button type="primary" @click="associateOms">关联oms的cust id</Button>
+        <Button type="primary" @click="createShopAccount">创建商城账号</Button>
+        <a href="/#/crm/CrmPoolEdit" style="float: right;margin-right:150px">编辑</a>
       </div>
       <div class="top">
         <div class="topLeft">
@@ -40,12 +43,12 @@
             <Col span="12">
             <span>公司地址:</span><span>XXXXXX</span>
             </Col>
-            <Col span="6">
+            <!--<Col span="6">
             <Button type="primary">登陆日志</Button>
             </Col>
             <Col span="6">
             <Button>分配纪录</Button>
-            </Col>
+            </Col>-->
           </Row>
         </div>
       </div>
@@ -178,9 +181,9 @@
       <Row>
         <Col>
         <Table :columns="installerInfo" :data="installerInfoData"></Table>
-        <div style="margin: 10px;overflow: hidden">
+        <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
           <div style="float: right;">
-            <Page :total="100" :current="1" @on-change="changePage"></Page>
+            <Page @on-change="changePage" @on-page-size-change="changeSize" :total="100" size="small" show-elevator show-sizer></Page>
           </div>
         </div>
         </Col>
@@ -192,29 +195,86 @@
         <Table :columns="installerCard" :data="installerCardData"></Table>
         <div style="margin: 10px;overflow: hidden">
           <div style="float: right;">
-            <Page :total="100" :current="1" @on-change="changePage"></Page>
+            <Page @on-change="changePage" @on-page-size-change="changeSize" :total="100" size="small" show-elevator show-sizer></Page>
           </div>
         </div>
         </Col>
       </Row>
       <h2>沟通纪录</h2>
+      <!--有权限的按钮-->
+      <Button type="primary" @click="newContactMethod" class="btn">增加沟通纪录</Button>
       <div class="record">
         <Row class="recordContent">
-          <div span="24">
-            <span>08-20-2018 10:09:09</span>
-            <span>未联系</span>
-            <span>电话沟通</span>
-          </div>
-          <div span="24">
-            <span>XX门店</span>
-            <span>XXSales</span>
-          </div>
-          <div span="24" class="remark">
-            <div>备注:</div>
-            <p>WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW</p>
-          </div>
+          <ul>
+            <li>
+              <div span="24">
+                <span>08-20-2018 10:09:09</span>
+                <span>未联系</span>
+                <span>电话沟通</span>
+              </div>
+              <div span="24">
+                <span>XX门店</span>
+                <span>XXSales</span>
+              </div>
+              <div span="24" class="remark">
+                <div>备注:</div>
+                <p>WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW</p>
+              </div>
+            </li>
+          </ul>
+          <a href="/#/crm/CrmContact">More</a>
         </Row>
       </div>
+      <Row>
+        <Modal
+          v-model="newContactRecode"
+          title="新增沟通纪录"
+          @on-ok="selectSellOk"
+          @on-cancel="cancel">
+          <div>
+            <span>时间:</span>
+            <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue" @on-change="handleChange"></DatePicker>
+          </div>
+          <div>
+            <span>类型:</span>
+            <Select v-model="newType" style="width:200px">
+              <Option v-for="item in newTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+          <div>
+            <span>沟通状态:</span>
+            <Select v-model="newContact" style="width:200px">
+              <Option v-for="item in newContactList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+          <div>
+            <span>备注:</span>
+            <Input v-model="contactNote" type="textarea" placeholder="Enter something..." />
+          </div>
+        </Modal>
+      </Row>
+      <Row>
+        <Modal
+          v-model="createNewAccount"
+          title="创建商城账号"
+          @on-ok="selectSellOk"
+          @on-cancel="cancel">
+            <span>商城账号:</span>
+            <Select v-model="newAccount" style="width:200px">
+              <Option v-for="item in newAccountList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+        </Modal>
+      </Row>
+      <Row>
+        <Modal
+          v-model="createOmsCustId"
+          title="创建cust id"
+          @on-ok="selectSellOk"
+          @on-cancel="cancel">
+          <span>cust id:</span>
+          <Input v-model="createCustId"  placeholder="Enter something..." />
+        </Modal>
+      </Row>
     </div>
 </template>
 
@@ -225,14 +285,6 @@ export default {
     return {
       installerList: [
         {
-          title: 'cust id',
-          key: 'custId'
-        },
-        {
-          title: 'company',
-          key: 'company'
-        },
-        {
           title: 'First name',
           key: 'firstName'
         },
@@ -241,12 +293,20 @@ export default {
           key: 'lastName'
         },
         {
-          title: 'isCount',
-          key: 'isCount'
+          title: '职位',
+          key: 'job'
         },
         {
-          title: 'time',
-          key: 'time'
+          title: '联系电话',
+          key: 'contactNum'
+        },
+        {
+          title: 'Email',
+          key: 'email'
+        },
+        {
+          title: '账号',
+          key: 'account'
         },
         {
           title: '操作',
@@ -257,7 +317,7 @@ export default {
             return (
               <div><i-button
                 type = "primary"
-                onClick = {() => { this.check(params.index) }}>
+                onClick = {() => { this.check(params) }}>
                   编辑 </i-button>
               <i-button
                 type = "primary"
@@ -270,121 +330,108 @@ export default {
       ],
       installerdata: [
         {
-          custId: '11111',
-          company: '2222',
           firstName: 'xiao',
           lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }, {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }, {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          job: '前端开发',
+          contactNum: '8965236548',
+          email: '4524563@qq.com',
+          account: '已开通'
         }
       ],
       installerInfo: [
         {
-          title: 'cust id',
-          key: 'custId'
+          title: '采购总额',
+          key: 'totalProcurement'
         },
         {
-          title: 'company',
-          key: 'company'
+          title: '合作时长',
+          key: 'duration'
         },
         {
-          title: 'First name',
-          key: 'firstName'
+          title: '首单成交时间',
+          key: 'transaction'
         },
         {
-          title: 'Last name',
-          key: 'lastName'
+          title: '首单金额',
+          key: 'firstSingle'
         },
         {
-          title: 'isCount',
-          key: 'isCount'
+          title: '首单来源',
+          key: 'firstSource'
         },
         {
-          title: 'time',
-          key: 'time'
+          title: '最近成交时间',
+          key: 'lastTime'
         },
         {
-          title: '操作',
-          key: 'action',
-          width: 250,
-          align: 'center',
-          render: (h, params) => {
-            return (
-              <div><i-button
-                type = "primary"
-                onClick = {() => { this.editInstaller(params) }}>
-            编辑 </i-button>
-              <i-button
-                type = "primary"
-                onClick = {() => { this.del(params.index) }
-                }>
-            删除 </i-button>
-              </div>)
-          }
+          title: '最近一单金额',
+          key: 'lastMoney'
+        },
+        {
+          title: '订单数量',
+          key: 'orderNum'
+        },
+        {
+          title: '退货量',
+          key: 'refund'
+        },
+        {
+          title: '优惠券',
+          key: 'coupon'
         }
       ],
       installerInfoData: [
         {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }, {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }, {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          totalProcurement: '11111',
+          duration: '2222',
+          firstSingle: '0',
+          firstSource: '1',
+          transaction: 'xiao',
+          lastMoney: 'qincai',
+          orderNum: 'No',
+          refund: 'a',
+          coupon: '11'
         }
       ],
       installerCard: [
         {
-          title: 'cust id',
-          key: 'custId'
+          title: '图片',
+          render: (h, params) => {
+            return (
+              <div><img src="#" style="width:20px;height:20px"/></div>)
+          }
         },
         {
-          title: 'company',
-          key: 'company'
+          title: '分销证号',
+          key: 'card'
         },
         {
-          title: 'First name',
-          key: 'firstName'
+          title: '详细地址',
+          key: 'detailAddress'
         },
         {
-          title: 'Last name',
-          key: 'lastName'
+          title: '城市',
+          key: 'city'
         },
         {
-          title: 'isCount',
-          key: 'isCount'
+          title: '州',
+          key: 'state'
         },
         {
-          title: 'time',
-          key: 'time'
+          title: '国家',
+          key: 'country'
+        },
+        {
+          title: '邮编',
+          key: 'zipCode'
+        },
+        {
+          title: '有效期',
+          key: 'dateLine'
+        },
+        {
+          title: '审核状态',
+          key: 'status'
         },
         {
           title: '操作',
@@ -408,26 +455,14 @@ export default {
       ],
       installerCardData: [
         {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }, {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }, {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          card: '11111',
+          detailAddress: '2222',
+          city: 'xiao',
+          state: 'qincai',
+          country: 'No',
+          zipCode: '77034',
+          dateLine: '09-20-2018',
+          status: '已通过'
         }
       ],
       self: '',
@@ -484,12 +519,58 @@ export default {
           lng: 0
         }
       },
-      loading: true
+      loading: true,
+      newContactRecode: false,
+      dateValue: '',
+      newType: '',
+      newTypeList: [{
+        value: '0',
+        label: '电话沟通'
+      }, {
+        value: '1',
+        label: '当面拜访'
+      }, {
+        value: '2',
+        label: '邮件沟通'
+      }, {
+        value: '3',
+        label: '其他'
+      }],
+      newContact: '',
+      newContactList: [{
+        value: '0',
+        label: '未联系'
+      }, {
+        value: '1',
+        label: '联系中未询价'
+      }, {
+        value: '2',
+        label: '联系中询价中'
+      }, {
+        value: '3',
+        label: '激活已下单'
+      }, {
+        value: '4',
+        label: '拉新已下单'
+      }, {
+        value: '5',
+        label: '无效客人'
+      }],
+      createNewAccount: false,
+      newAccount: '',
+      newAccountList: [{
+        value: '0',
+        label: '896267787@qq.com'
+      }],
+      createCustId: '',
+      contactNote: '',
+      createOmsCustId: false
     }
   },
   methods: {
-    check (index) {
-      console.log(index)
+    check (params) {
+      this.$refs.formInline.resetFields()
+      this.createInstallerModal = true
     },
     del (index) {
       this.self.installerdata.splice(index, 1)
@@ -535,6 +616,9 @@ export default {
         })
       }
       return data
+    },
+    changeSize (row) {
+      console.log(row)
     },
     maintenance () {
       this.$refs.formInline.resetFields()
@@ -595,6 +679,22 @@ export default {
     },
     allocation () {
       this.$router.push('/crm/CrmAllocation')
+    },
+    newContactMethod () {
+      this.newContactRecode = true
+      console.log('00000')
+    },
+    cancel () {},
+    selectSellOk () {},
+    handleChange (date) {
+      this.dateValue = date
+    },
+    associateOms () {
+      this.createOmsCustId = true
+    },
+    createShopAccount () {
+      this.createNewAccount = true
+      console.log('1111')
     }
   }
 }

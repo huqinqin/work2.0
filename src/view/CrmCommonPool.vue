@@ -36,10 +36,10 @@
        <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
      </Select>
      </Col>
-     <Col span="5" style="padding-right:10px" v-if="trade === 'New York1'">
+     <Col span="5" style="padding-right:10px" v-if="trade === '0'">
      <span style="color: #F0F0F0">111</span>
-     <Select v-model="trade">
-       <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+     <Select v-model="trade1">
+       <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
      </Select>
      </Col>
      <Col span="5" style="padding-right:10px">
@@ -125,19 +125,54 @@ export default {
       company: '',
       type: '',
       typeList: [{
-        value: 'New York',
-        label: 'New York'
+        value: '0',
+        label: 'Installer'
       }, {
-        value: 'New York1',
-        label: 'New York1'
+        value: '1',
+        label: 'Integrator'
+      }, {
+        value: '2',
+        label: 'Wholesale'
+      }, {
+        value: '3',
+        label: 'Distributor'
+      }, {
+        value: '4',
+        label: 'Retailer'
+      }, {
+        value: '5',
+        label: 'Onlinestore'
+      }, {
+        value: '6',
+        label: 'Other'
       }],
       trade: '',
       tradeList: [{
-        value: 'New York',
-        label: 'New York'
+        value: '0',
+        label: '视频监控'
       }, {
-        value: 'New York1',
-        label: 'New York1'
+        value: '1',
+        label: '门禁'
+      }, {
+        value: '2',
+        label: '报警'
+      }, {
+        value: '3',
+        label: '音视频'
+      }, {
+        value: '4',
+        label: '其他'
+      }],
+      trade1: '',
+      tradeList1: [{
+        value: '0',
+        label: 'IP'
+      }, {
+        value: '1',
+        label: 'HD-TVI'
+      }, {
+        value: '2',
+        label: 'Both'
       }],
       email: '',
       installerList: [
@@ -201,8 +236,7 @@ export default {
             查看 </i-button>
               <i-button
                 type = "primary"
-                onClick = {this.receive
-                }>
+                onClick = {() => { this.receive(params) }}>
             领取 </i-button>
               </div>)
           }
@@ -221,11 +255,26 @@ export default {
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
+        value: '0',
+        label: 'Installer'
       }, {
-        value: 'New York1',
-        label: 'New York1'
+        value: '1',
+        label: 'Integrator'
+      }, {
+        value: '2',
+        label: 'Wholesale'
+      }, {
+        value: '3',
+        label: 'Distributor'
+      }, {
+        value: '4',
+        label: 'Retailer'
+      }, {
+        value: '5',
+        label: 'Onlinestore'
+      }, {
+        value: '6',
+        label: 'Other'
       }],
       subInvalidBussinessList: [{
         value: 'New York',
@@ -281,8 +330,9 @@ export default {
       // this.$router.push('/crm/CrmPoolCheck')
       // console.log('000000000')
     },
-    receive () {
-      console.log('11111')
+    receive (params) {
+      console.log(params)
+      // console.log('11111')
     },
     changePage () {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server

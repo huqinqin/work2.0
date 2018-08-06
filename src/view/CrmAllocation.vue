@@ -21,38 +21,33 @@ export default {
     return {
       AllocationList: [
         {
-          title: 'cust id',
-          key: 'custId'
+          title: '时间',
+          key: 'allocationTime'
         },
         {
-          title: 'company',
-          key: 'company'
+          title: '类型',
+          key: 'type'
         },
         {
-          title: 'First name',
-          key: 'firstName'
+          title: '店铺',
+          key: 'shop'
         },
         {
-          title: 'Last name',
-          key: 'lastName'
+          title: 'sales',
+          key: 'sales'
         },
         {
-          title: 'isCount',
-          key: 'isCount'
-        },
-        {
-          title: 'time',
-          key: 'time'
+          title: '操作人',
+          key: 'handle'
         }
       ],
       AllocationData: [
         {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          allocationTime: '09-23-2018 10：00：00',
+          type: '系统到期进入公海池',
+          shop: 'GA',
+          sales: 'qincai',
+          handle: '系统自动'
         }
       ]
     }

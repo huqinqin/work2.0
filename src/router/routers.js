@@ -183,7 +183,11 @@ export default [
       { path: 'CrmPoolCheck', name: 'Crm Check', component: () => import('@/view/CrmPoolCheck.vue') },
       { path: 'CrmLog', name: 'Crm Log', component: () => import('@/view/CrmLog.vue') },
       { path: 'CrmAllocation', name: 'Crm Allocation', component: () => import('@/view/CrmAllocation.vue') },
-      { path: 'CrmTemporaryList', meta: { icon: 'lock-combination', title: '临时关系池' }, name: 'crm_Temporary_List', component: () => import('@/view/CrmTemporaryList.vue') }
+      { path: 'CrmTemporaryList', meta: { icon: 'lock-combination', title: '临时关系池' }, name: 'crm_Temporary_List', component: () => import('@/view/CrmTemporaryList.vue') },
+      { path: 'CrmPrivatePool', meta: { icon: 'lock-combination', title: '私有关系池' }, name: 'crm_Private_Pool', component: () => import('@/view/CrmPrivatePool.vue') },
+      { path: 'CrmInvalidChance', meta: { icon: 'lock-combination', title: '无效商机' }, name: 'crm_Invalid_Chance', component: () => import('@/view/CrmInvalidChance.vue') },
+      { path: 'CrmReport', meta: { icon: 'lock-combination', title: '报表' }, name: 'crm_Report', component: () => import('@/view/CrmReport.vue') },
+      { path: 'CrmContact', name: 'crm_Contact', component: () => import('@/view/CrmContact.vue') }
     ]
   },
   { path: '/401', name: 'error_401', component: () => import('@/view/error-page/401.vue') },

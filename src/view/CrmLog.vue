@@ -21,38 +21,23 @@ export default {
     return {
       LogList: [
         {
-          title: 'cust id',
-          key: 'custId'
+          title: '时间',
+          key: 'logTime'
         },
         {
-          title: 'company',
-          key: 'company'
+          title: '账号',
+          key: 'account'
         },
         {
-          title: 'First name',
-          key: 'firstName'
-        },
-        {
-          title: 'Last name',
-          key: 'lastName'
-        },
-        {
-          title: 'isCount',
-          key: 'isCount'
-        },
-        {
-          title: 'time',
-          key: 'time'
+          title: '登陆方式',
+          key: 'logMethod'
         }
       ],
       Logdata: [
         {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          logTime: '09-21-2018 10:09:09',
+          account: '1984288545@qq.com',
+          logMethod: 'pc端登陆'
         }
       ]
     }
