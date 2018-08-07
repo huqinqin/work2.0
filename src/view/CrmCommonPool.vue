@@ -345,13 +345,19 @@ export default {
     filterMethod (value, option) {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
-    check () {
-      location.href = '/#/crm/CrmPoolCheck'
-      // this.$router.push('/crm/CrmPoolCheck')
-      // console.log('000000000')
+    check (params) {
+      this.$http.installerCheck({
+        id: params.row.id
+      }).then((data) => {
+        this.$router.push({name: 'Crm Check', params: data.data})
+        console.log(data)
+      })
     },
     receive (params) {
-      console.log(params)
+      this.selection = []
+      this.selection.push(params.row)
+      this.batchCollectionInstaller()
+      // console.log(this.selection)
       // console.log('11111')
     },
     changePage () {
@@ -407,7 +413,7 @@ export default {
       this.$refs.formValidate.resetFields()
     },
     crmPoolAdd () {
-      this.$router.push('/crm/CrmPoolAdd')
+      this.$router.push({name: 'New crease', params: {crmFlag: 3}})
     },
     getInstallerList () {
       this.$http.crmInstallerList({
@@ -431,7 +437,6 @@ export default {
     batchCollectionInstaller () {
       this.ids = []
       this.selection.forEach((item) => { this.ids.push(item.id) })
-      console.log(this.ids)
       this.$http.batchCollectionInstaller({
         ids: this.ids
       }).then((data) => { console.log(data) })

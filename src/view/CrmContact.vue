@@ -3,26 +3,12 @@
     <h2>沟通纪录</h2>
     <Button type="primary" @click="back">返回</Button>
     <ul>
-      <li>
+      <li v-for="(item,index) in contactInstallerList" :key="index">
         <span></span>
-        <div><span>08-20 2018 10:09:09</span><span>未联系</span><span>电话沟通</span></div>
-        <div><span>XX门店</span><span>XXsales</span></div>
+        <div><span>{{item.cdate}}</span><span>{{item.status}}</span><span>{{item.type}}</span></div>
+        <div><span>{{item.storeName}}</span><span>{{item.salesName}}</span></div>
         <div><span>备注:</span></div>
-        <div><p>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p></div>
-      </li>
-      <li>
-        <span></span>
-        <div><span>08-20 2018 10:09:09</span><span>未联系</span><span>电话沟通</span></div>
-        <div><span>XX门店</span><span>XXsales</span></div>
-        <div><span>备注:</span></div>
-        <div><p>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p></div>
-      </li>
-      <li>
-        <span></span>
-        <div><span>08-20 2018 10:09:09</span><span>未联系</span><span>电话沟通</span></div>
-        <div><span>XX门店</span><span>XXsales</span></div>
-        <div><span>备注:</span></div>
-        <div><p>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p></div>
+        <div><p>{{item.note}}</p></div>
       </li>
     </ul>
   </div>
@@ -31,10 +17,23 @@
 <script>
 export default {
   name: 'crm-contact',
+  data () {
+    return {
+      contactInstallerList: []
+    }
+  },
   methods: {
     back () {
       this.$router.push('/crm/CrmPoolCheck')
+    },
+    contactListRecode () {
+      this.$http.contactList({}).then((data) => {
+        this.contactInstallerList = data.data
+      })
     }
+  },
+  mounted () {
+    this.contactListRecode()
   }
 }
 </script>

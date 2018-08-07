@@ -1,6 +1,6 @@
 <template>
    <div class="crmPoolAdd">
-     <h2>新增工程商</h2>
+     <h2>编辑工程商</h2>
      <div>
        <h4>基础信息</h4>
        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -237,7 +237,8 @@ export default {
       custIdSelect: '',
       companySelect: '',
       firstNameSelect: '',
-      lastNameSelect: ''
+      lastNameSelect: '',
+      data: {}
     }
   },
   methods: {
@@ -302,6 +303,20 @@ export default {
   },
   components: {
     MapAutoComplete: () => import('@/components/MapAutoComplete')
+  },
+  mounted () {
+    this.data = this.$route.params
+    this.formValidate.companyName = this.data.name
+    this.formValidate.telephone = this.data.phone
+    this.formValidate.mail = this.data.email
+    this.formValidate.type = this.data.type
+    this.formValidate.size = this.data.staffNum
+    this.formValidate.num = this.data.subStoreNum
+    this.formValidate.industry = this.data.industry
+    this.formValidate.amount = this.data.shoppingNum
+    this.formValidate.source = this.data.source
+    this.formValidate.industry = this.data.industry
+    this.form.address = this.data.address
   }
 }
 </script>

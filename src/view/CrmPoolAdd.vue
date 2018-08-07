@@ -8,7 +8,7 @@
            <Row>
              <i-col span="8">
                <FormItem label="cust id" prop="custId" >
-                  <span>OOOOO</span>
+                  <span>{{custId}}</span>
                </FormItem>
              </i-col>
              <i-col span="8">
@@ -237,7 +237,8 @@ export default {
       custIdSelect: '',
       companySelect: '',
       firstNameSelect: '',
-      lastNameSelect: ''
+      lastNameSelect: '',
+      custId: ''
     }
   },
   methods: {
@@ -295,6 +296,21 @@ export default {
     validForm () {
       Promise.all([this.$refs.address.valid(), this.$refs.formValidate.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
+          this.$http.crmInstallerList({
+            name: this.formValidate.companyName,
+            source: this.formValidate.source,
+            type: this.formValidate.type,
+            staffNum: this.formValidate.size,
+            subStoreNum: this.formValidate.num,
+            shoppingNum: this.formValidate.amount,
+            industry: this.formValidate.industryType,
+            phone: this.formValidate.telephone,
+            address: this.form.address,
+            email: this.formValidate.mail,
+            inPoolType: this.$route.params.crmFlag
+          }).then((data) => {
+            this.custId = data.data
+          })
         } else {
         }
       })

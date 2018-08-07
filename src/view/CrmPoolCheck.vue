@@ -6,42 +6,43 @@
         <Button type="primary" @click="allocation">分配纪录</Button>
         <Button type="primary" @click="associateOms">关联oms的cust id</Button>
         <Button type="primary" @click="createShopAccount">创建商城账号</Button>
-        <a href="/#/crm/CrmPoolEdit" style="float: right;margin-right:150px">编辑</a>
+        <Button type="primary" @click="editInstallerList">编辑</Button>
+        <!--<a href="/#/crm/CrmPoolEdit" style="float: right;margin-right:150px">编辑</a>-->
       </div>
       <div class="top">
         <div class="topLeft">
           <div class="imgLeft"><img src="../assets/images/logo-min.jpg" alt=""></div>
-          <div>XXXX公司</div>
+          <div>{{checkDate.name?checkDate.name:"ppp"}}</div>
           <div>商城账号:123456@qq.com</div>
         </div>
         <div class="topRight">
           <Row>
             <Col span="6">
-              <span>cust id:</span><span>XXXXXX</span>
+              <span>cust id:</span><span>{{checkDate.custCode?checkDate.custCode:"ppppp"}}</span>
             </Col>
             <Col span="6">
-            <span>公司名称:</span><span>XXXXXX</span>
+            <span>公司名称:</span><span>{{checkDate.name?checkDate.name:'222333'}}</span>
             </Col>
             <Col span="6">
-            <span>公司电话:</span><span>XXXXXX</span>
+            <span>公司电话:</span><span>{{checkDate.telephone?checkDate.telephone:'44444'}}</span>
             </Col>
             <Col span="6">
-            <span>网址:</span><span>XXXXXX</span>
+            <span>网址:</span><span>{{checkDate.homeUrl?checkDate.homeUrl:'www.baidu.com'}}</span>
             </Col>
             <Col span="6">
-            <span>客户来源:</span><span>XXXXXX</span>
+            <span>客户来源:</span><span>{{checkDate.source?checkDate.source:'wertty'}}</span>
             </Col>
             <Col span="6">
-            <span>类型:</span><span>XXXXXX</span>
+            <span>类型:</span><span>{{checkDate.type?checkDate.type:'installer'}}</span>
             </Col>
             <Col span="6">
-            <span>员工数量:</span><span>XXXXXX</span>
+            <span>员工数量:</span><span>{{checkDate.staffNum?checkDate.staffNum:30}}</span>
             </Col>
             <Col span="6">
-            <span>行业:</span><span>XXXXXX</span>
+            <span>行业:</span><span>{{checkDate.industry?checkDate.industry:'34345'}}</span>
             </Col>
             <Col span="12">
-            <span>公司地址:</span><span>XXXXXX</span>
+            <span>公司地址:</span><span>{{checkDate.address?checkDate.address.detail:'2222'}}</span>
             </Col>
             <!--<Col span="6">
             <Button type="primary">登陆日志</Button>
@@ -160,19 +161,19 @@
         </Col>
         <Col span="6">
           <span>用户分类：</span>
-          <span>XX</span>
+          <span>{{checkDate.ext?checkDate.ext.cate:"ppppp"}}</span>
         </Col>
         <Col span="6">
           <span>用户质量：</span>
-          <span>XX</span>
+          <span>{{checkDate.ext?checkDate.ext.quality:"ppppp"}}</span>
         </Col>
         <Col span="6">
           <span>用户分层：</span>
-          <span>XX</span>
+          <span>{{checkDate.ext?checkDate.ext.layer:"ppppp"}}</span>
         </Col>
         <Col span="6">
           <span>促销属性：</span>
-          <span>XX</span>
+          <span>{{checkDate.ext?checkDate.ext.promotionAttr:"ppppp"}}</span>
         </Col>
         <Col span="24">
           <Checkbox v-model="promotionEmail">是否接受促销邮件</Checkbox>
@@ -206,19 +207,19 @@
       <div class="record">
         <Row class="recordContent">
           <ul>
-            <li>
+            <li v-for="(item,index )in contactInstallerList" :key="index">
               <div span="24">
-                <span>08-20-2018 10:09:09</span>
-                <span>未联系</span>
-                <span>电话沟通</span>
+                <span>{{item.cdate}}</span>
+                <span>{{item.status}}</span>
+                <span>{{item.type}}</span>
               </div>
               <div span="24">
-                <span>XX门店</span>
-                <span>XXSales</span>
+                <span>{{item.storeName}}</span>
+                <span>{{item.salesName}}</span>
               </div>
               <div span="24" class="remark">
                 <div>备注:</div>
-                <p>WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW</p>
+                <p>{{item.note}}</p>
               </div>
             </li>
           </ul>
@@ -229,7 +230,7 @@
         <Modal
           v-model="newContactRecode"
           title="新增沟通纪录"
-          @on-ok="selectSellOk"
+          @on-ok="newRecordOk"
           @on-cancel="cancel">
           <div>
             <span>时间:</span>
@@ -294,11 +295,11 @@ export default {
         },
         {
           title: '职位',
-          key: 'job'
+          key: 'post'
         },
         {
           title: '联系电话',
-          key: 'contactNum'
+          key: 'phone'
         },
         {
           title: 'Email',
@@ -306,7 +307,7 @@ export default {
         },
         {
           title: '账号',
-          key: 'account'
+          key: 'open'
         },
         {
           title: '操作',
@@ -332,10 +333,10 @@ export default {
         {
           firstName: 'xiao',
           lastName: 'qincai',
-          job: '前端开发',
-          contactNum: '8965236548',
+          post: '前端开发',
+          phone: '8965236548',
           email: '4524563@qq.com',
-          account: '已开通'
+          open: '已开通'
         }
       ],
       installerInfo: [
@@ -564,7 +565,16 @@ export default {
       }],
       createCustId: '',
       contactNote: '',
-      createOmsCustId: false
+      createOmsCustId: false,
+      checkDate: {
+        address: {
+          detail: ''
+        },
+        contact: [],
+        ext: {}
+      },
+      contactInstallerList: [],
+      data: {}
     }
   },
   methods: {
@@ -580,7 +590,15 @@ export default {
       this.createInstallerModal = true
     },
     submitNewInstaller () {
-      console.log('9999')
+      this.$http.createLinkman({
+        firstName: this.formInline.firstName,
+        lastName: this.formInline.lastName,
+        phone: this.formInline.mobile,
+        position: this.formInline.job,
+        email: this.formInline.email
+      }).then((data) => {
+        console.log(data)
+      })
     },
     handleReset () {
       console.log('77777')
@@ -629,7 +647,15 @@ export default {
       this.InstallerCardModal = true
     },
     maintenanceInstaller () {
-      console.log('hfjdsk')
+      this.$http.maintenanceList({
+        cate: this.formItem.select,
+        quality: this.formItem.quality,
+        layer: this.formItem.level,
+        promotionAttr: this.formItem.checkbox,
+        promotionEmail: this.formItem.radio
+      }).then((data) => {
+        console.log(data)
+      })
     },
     changeLoading () {
       this.loading = false
@@ -686,6 +712,18 @@ export default {
     },
     cancel () {},
     selectSellOk () {},
+    newRecordOk () {
+      this.$http.newContactList({
+        storeId: '111',
+        saleId: '222',
+        type: this.newType,
+        status: this.newContact,
+        note: this.contactNote,
+        cdate: this.dateValue
+      }).then((data) => {
+        console.log(data)
+      })
+    },
     handleChange (date) {
       this.dateValue = date
     },
@@ -695,7 +733,33 @@ export default {
     createShopAccount () {
       this.createNewAccount = true
       console.log('1111')
+    },
+    contactListRecode () {
+      this.$http.contactList({}).then((data) => {
+        this.contactInstallerList = data.data
+      })
+    },
+    editInstallerList () {
+      this.$router.push({name: 'Crm Edit', params: this.data})
+    },
+    /* 通过id查询工程商列表 */
+    getInstallerList () {
+      this.$http.installerCheck({
+        id: this.checkDate.id
+      }).then((data) => {
+        this.data = data.data
+        this.installerdata = this.data.contact
+      })
     }
+  },
+  mounted () {
+    if (this.$route.params) {
+      this.checkDate = this.$route.params
+      // this.installerdata = this.checkDate.contact;
+      // console.log(this.$route.params);
+    };
+    this.contactListRecode()
+    this.getInstallerList()
   }
 }
 </script>

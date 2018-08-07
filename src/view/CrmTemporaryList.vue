@@ -381,11 +381,11 @@ export default {
         },
         {
           title: 'cust id',
-          key: 'custId'
+          key: 'custCode'
         },
         {
           title: 'company',
-          key: 'company'
+          key: 'name'
         },
         {
           title: 'First name',
@@ -397,7 +397,7 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'baseInfo',
+          key: 'address',
           render: (h, params) => {
             return (
               < div > < span
@@ -414,11 +414,11 @@ export default {
         },
         {
           title: 'isCount',
-          key: 'isCount'
+          key: 'open'
         },
         {
           title: 'time',
-          key: 'time'
+          key: 'cdate'
         },
         {
           title: '操作',
@@ -431,19 +431,40 @@ export default {
                 type = "primary"
                 onClick = { () => { this.check(params) }
                 }>
-              查看 </i-button>
+            查看 </i-button>
+              <i-button
+                type = "primary"
+                onClick = {() => { this.receive(params) }}>
+            领取 </i-button>
               </div>)
           }
         }
       ],
       installerdata: [
         {
-          custId: '11111',
-          company: '2222',
+          custCode: '11111',
+          name: '2222',
           firstName: 'xiao',
           lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          open: 'No',
+          cdate: '2016-10-03',
+          id: 1
+        }, {
+          custCode: '22222',
+          name: '2222',
+          firstName: 'xiao',
+          lastName: 'qincai',
+          open: 'No',
+          cdate: '2016-10-03',
+          id: 2
+        }, {
+          custCode: '3333',
+          name: '2222',
+          firstName: 'xiao',
+          lastName: 'qincai',
+          open: 'No',
+          cdate: '2016-10-03',
+          id: 3
         }
       ],
       installerList1: [
@@ -630,11 +651,11 @@ export default {
     filterMethod (value, option) {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
-    check (params) {
+    /* check (params) {
       // location.href = '/#/crm/CrmPoolCheck' + params
       this.$router.push({name: 'Crm Check', params: {row: params.row}})
       // console.log('000000000')
-    },
+    }, */
     receive () {
       console.log('11111')
     },
@@ -691,7 +712,7 @@ export default {
       this.$refs.formValidate.resetFields()
     },
     crmPoolAdd () {
-      this.$router.push('/crm/CrmPoolAdd')
+      this.$router.push({name: 'New crease', params: {crmFlag: 1}})
     },
     allocation () {
       this.isSaller = true
@@ -722,10 +743,35 @@ export default {
         })
         console.log(this.list)
       }
+    },
+    getTemplatePoolInstallerList () {
+      this.$http.templatePoolInstallerList({
+        storeId: this.noAssociateStore,
+        custCode: this.custId,
+        email: this.email,
+        name: this.company,
+        industryJoin: this.trade,
+        contactStatus: this.contact,
+        state: this.state,
+        city: this.city,
+        ltsUser: '',
+        allotStatus: 0
+      }).then((data) => {
+        // this.installerdata = data.list;
+      })
+    },
+    check (params) {
+      this.$http.installerCheck({
+        id: params.row.id
+      }).then((data) => {
+        this.$router.push({name: 'Crm Check', params: data.data})
+        console.log(data)
+      })
     }
   },
   mounted () {
     this.getStoreList()
+    this.getTemplatePoolInstallerList()
   },
   watch: {
     list (newVal) {
