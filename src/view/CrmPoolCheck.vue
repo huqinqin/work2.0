@@ -207,7 +207,7 @@
       <div class="record">
         <Row class="recordContent">
           <ul>
-            <li v-for="(item,index )in contactInstallerList" :key="index">
+            <li v-for="(item) in contactInstallerList" :key="item.id">
               <div span="24">
                 <span>{{item.cdate}}</span>
                 <span>{{item.status}}</span>

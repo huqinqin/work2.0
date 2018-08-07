@@ -3,7 +3,7 @@
     <h2>沟通纪录</h2>
     <Button type="primary" @click="back">返回</Button>
     <ul>
-      <li v-for="(item,index) in contactInstallerList" :key="index">
+      <li v-for="(item) in contactInstallerList" :key="item.id">
         <span></span>
         <div><span>{{item.cdate}}</span><span>{{item.status}}</span><span>{{item.type}}</span></div>
         <div><span>{{item.storeName}}</span><span>{{item.salesName}}</span></div>
