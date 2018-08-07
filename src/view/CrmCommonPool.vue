@@ -20,7 +20,7 @@
      </Col>
      <Col span="6" style="padding-right:10px">
      <span>time:</span>
-     <DatePicker type="daterange" placement="bottom-end" placeholder="Select date"></DatePicker>
+     <DatePicker @on-change="handleChange" :value="dateValue" type="datetimerange" format="yyyy-MM-dd HH:mm" placement="bottom-end" placeholder="Select date"></DatePicker>
      </Col>
    </Row>
    <Row>
@@ -49,7 +49,7 @@
      <Col span="4" style="padding-right:10px">
      <span style="color: #F0F0F0">Search:</span>
      <div>
-       <Button type="primary">Search</Button>
+       <Button type="primary" @click="getInstallerList">Search</Button>
      </div>
      </Col>
    </Row>
@@ -57,14 +57,14 @@
      <Col span="18" style="padding-right:10px">
        <Button type="primary" @click="importInstaller">导入</Button>
        <Button type="primary" @click="crmPoolAdd">新增</Button>
-       <Button type="primary">批量领取</Button>
+       <Button type="primary" @click="batchCollectionInstaller">批量领取</Button>
        <Button type="primary" @click="invalidBussiness">无效商机</Button>
        <Button type="error">导出</Button>
      </Col>
    </Row>
    <Row>
      <Col>
-       <Table :columns="installerList" :data="installerdata"></Table>
+       <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
        <div style="margin: 10px;overflow: hidden">
        <div style="float: right;">
          <Page :total="100" :current="1" @on-change="changePage"></Page>
@@ -115,6 +115,7 @@ export default {
   data () {
     return {
       state: '',
+      dateValue: '',
       loading1: false,
       options1: [],
       model14: [],
@@ -183,11 +184,11 @@ export default {
         },
         {
           title: 'cust id',
-          key: 'custId'
+          key: 'custCode'
         },
         {
           title: 'company',
-          key: 'company'
+          key: 'name'
         },
         {
           title: 'First name',
@@ -199,7 +200,7 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'baseInfo',
+          key: 'address',
           render: (h, params) => {
             return (
               < div > < span
@@ -216,11 +217,11 @@ export default {
         },
         {
           title: 'isCount',
-          key: 'isCount'
+          key: 'open'
         },
         {
           title: 'time',
-          key: 'time'
+          key: 'cdate'
         },
         {
           title: '操作',
@@ -231,7 +232,7 @@ export default {
             return (
               <div><i-button
                 type = "primary"
-                onClick = {this.check
+                onClick = { () => { this.check(params) }
                 }>
             查看 </i-button>
               <i-button
@@ -244,12 +245,29 @@ export default {
       ],
       installerdata: [
         {
-          custId: '11111',
-          company: '2222',
+          custCode: '11111',
+          name: '2222',
           firstName: 'xiao',
           lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
+          open: 'No',
+          cdate: '2016-10-03',
+          id: 1
+        }, {
+          custCode: '22222',
+          name: '2222',
+          firstName: 'xiao',
+          lastName: 'qincai',
+          open: 'No',
+          cdate: '2016-10-03',
+          id: 2
+        }, {
+          custCode: '3333',
+          name: '2222',
+          firstName: 'xiao',
+          lastName: 'qincai',
+          open: 'No',
+          cdate: '2016-10-03',
+          id: 3
         }
       ],
       importInstallerModal: false,
@@ -298,7 +316,9 @@ export default {
         note: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ]
-      }
+      },
+      ids: [],
+      selection: []
     }
   },
   methods: {
@@ -388,7 +408,45 @@ export default {
     },
     crmPoolAdd () {
       this.$router.push('/crm/CrmPoolAdd')
+    },
+    getInstallerList () {
+      this.$http.crmInstallerList({
+        state: this.state,
+        city: this.city,
+        name: this.company,
+        beginTime: new Date(this.dateValue[0]).getTime(),
+        endTime: new Date(this.dateValue[1]).getTime(),
+        type: this.type,
+        industry: this.trade,
+        email: this.email
+      }).then((data) => {
+        // this.installerdata = data.list;
+        // data.list.forEach()
+      })
+    },
+    handleChange (date) {
+      this.dateValue = date
+      console.log(new Date(this.dateValue[0]).getTime())
+    },
+    batchCollectionInstaller () {
+      this.ids = []
+      this.selection.forEach((item) => { this.ids.push(item.id) })
+      console.log(this.ids)
+      this.$http.batchCollectionInstaller({
+        ids: this.ids
+      }).then((data) => { console.log(data) })
+    },
+    collection (selection, row) {
+      this.selection = selection
+      // console.log(selection);
+    },
+    collectionAll (selection) {
+      this.selection = selection
+      // console.log(selection);
     }
+  },
+  mounted () {
+    this.getInstallerList()
   }
 }
 </script>

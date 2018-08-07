@@ -132,7 +132,7 @@
           <Col span="6" style="padding-right:10px">
           <span>Associate store:</span>
           <Select v-model="associateStore" style="width:200px">
-            <Option v-for="item in associateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
           <Col span="4" style="padding-right:10px">
@@ -277,11 +277,18 @@
 </template>
 
 <script>
-
+import mixin from '@/mixins/list'
 export default {
+  mixins: [mixin],
   name: 'crm-common-pool',
   data () {
     return {
+      url: 'Shop',
+      filter: {
+        id: '', name: '', account: '', address: '', phone: '', status: ''
+      },
+      list: [],
+      total: 0,
       state: '',
       state1: '',
       loading1: false,
@@ -556,17 +563,9 @@ export default {
         label: '张三'
       }],
       associateStore: '',
-      associateStoreList: [
-        {
-          value: '0',
-          label: '1111111'
-        }],
+      associateStoreList: [],
       noAssociateStore: '',
-      noAssociateStoreList: [
-        {
-          value: '0',
-          label: '1111111'
-        }],
+      noAssociateStoreList: [],
       custId: '',
       allocationCustId: '',
       newContactRecode: false,
@@ -707,6 +706,35 @@ export default {
     },
     handleChange (date) {
       this.dateValue = date
+    },
+    storeDataHandle () {
+
+    },
+    getStoreList () {
+      this.query()
+      if (this.list.length > 0) {
+        this.list.forEach((item) => {
+          let obj = {}
+          obj.label = item.name
+          obj.value = item.id
+          this.noAssociateStoreList.push(obj)
+          console.log(obj)
+        })
+        console.log(this.list)
+      }
+    }
+  },
+  mounted () {
+    this.getStoreList()
+  },
+  watch: {
+    list (newVal) {
+      newVal.forEach((item) => {
+        let obj = {}
+        obj.label = item.name
+        obj.value = item.id
+        this.noAssociateStoreList.push(obj)
+      })
     }
   }
 }

@@ -178,5 +178,14 @@ export default {
   },
   handleOrder (params) {
     return axios.post('/trade/orderSell/updateOrderPrice', params)
+  },
+  /* crm接口 */
+  /* 公海池工程商列表 */
+  crmInstallerList (params) {
+    return axios.post('/crm/company/save', params)
+  },
+  /* 公海池批量领取 */
+  batchCollectionInstaller (params) {
+    return axios.post('/crm/company/batchGetCompany', params)
   }
 }
