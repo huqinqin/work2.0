@@ -5,16 +5,18 @@
         <p>选择工程商</p>
         <div class="divider"></div>
       </div>
-      <i-form>
-        <form-item label="搜索工程商">
-          <Select v-model="installerType" style="width: 120px">
+      <Row :gutter="16">
+        <i-col span="2">
+          <Select v-model="installerType">
             <Option value="custID">Cust ID</Option>
             <Option value="sName">公司名称</Option>
             <Option value="account">账号</Option>
             <Option value="phone">电话</Option>
             <Option value="email">邮箱</Option>
           </Select>
-          <Poptip trigger="focus" placement="bottom" popper-class="installer-popover">
+        </i-col>
+        <i-col span="22">
+          <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="installer-popover">
             <i-input v-model="installerValue" @on-change="queryInstaller"></i-input>
             <div slot="content">
               <ul class="installer-list">
@@ -24,8 +26,8 @@
               </ul>
             </div>
           </Poptip>
-        </form-item>
-      </i-form>
+        </i-col>
+      </Row>
       <table border="1" class="baseDataTable">
         <tr>
           <td class="speTd">账号</td>
@@ -82,42 +84,80 @@
                 <Radio v-for="item in expressOption" :label="item.value" :key="item.value">{{item.label}}</Radio>
               </RadioGroup>
             </form-item>
+            <form-item>
+              <Checkbox v-model="shipForm.sign">本人签收</Checkbox>
+              <Checkbox v-model="shipForm.UCSA">Use customer's shipping account</Checkbox>
+            </form-item>
           </template>
         </i-form>
       </div>
     </card>
     <card class="address-card">
       <div class="title">
-        <p>选择收货地址 <Button type="text">+添加地址</Button></p>
+        <p>选择收货地址 <Button type="text" @click="showAddAddressForm">+添加地址</Button></p>
         <div class="divider"></div>
         <table border="1" class="addressTable">
           <tr>
-            <th>收货人</th>
-            <th>公司名称</th>
-            <th>电话</th>
+            <th width="160">收货人</th>
+            <th width="140">公司名称</th>
+            <th width="120">电话</th>
             <th>详细地址</th>
           </tr>
           <tr>
-            <td>{{chechedAddress}}</td>
-            <td>{{chechedAddress}}</td>
-            <td>{{chechedAddress}}</td>
-            <td>{{chechedAddress}}</td>
+            <td>{{checkedAddress.receiver}}</td>
+            <td>{{checkedAddress.company}}</td>
+            <td>{{checkedAddress.telnum}}</td>
+            <td>{{checkedAddress.detail}}</td>
           </tr>
         </table>
-        <Button type="primary">选择地址</Button>
+        <Button type="primary" @click="showAddressTable = true">选择地址</Button>
+        <Modal
+          v-model="showAddressTable"
+          width="920"
+          title="地址信息">
+          <footer slot="footer"><Button type="primary" @click="showAddAddressForm">新增地址</Button></footer>
+          <i-table :columns="addressColumns" :data="addressList" size="small" ref="addressTable"></i-table>
+        </Modal>
+        <Modal
+          v-model="showAddressForm"
+          title="新增地址">
+          <MapAutoComplete :googleAddress="editAddressForm.address" ref="address"></MapAutoComplete>
+          <footer slot="footer">
+            <Button type="primary" @click="showAddressForm = false">取消</Button>
+            <Button type="primary" @click="submitAddressForm">确定</Button>
+          </footer>
+        </Modal>
       </div>
     </card>
     <card class="po-card">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
-        <Input />
+        <Input placeholder="请输入P/O NO." />
       </div>
     </card>
     <card class="product-card">
       <div class="title">
         <p>选择商品</p>
         <div class="divider"></div>
+        <Row>
+          <i-col span="24">
+            <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="product-popover">
+              <i-input v-model="productValue" @on-change="queryProduct"></i-input>
+              <div slot="content">
+                <ul class="installer-list">
+                  <li v-for="product in productList" :key="product.id" @click="checkProduct(product)">
+                    product - {{product.title}}
+                  </li>
+                </ul>
+              </div>
+            </Poptip>
+          </i-col>
+        </Row>
+        <i-table
+          :data="checkedProducts"
+          :columns="productColumns"
+        ></i-table>
       </div>
     </card>
     <card class="pay-card">
@@ -125,21 +165,21 @@
         <p>支付信息</p>
         <div class="divider"></div>
         <i-form ref="payForm" :model="payForm" label-position="top">
-          <form-item label="支付方式" prop="type">
-            <RadioGroup v-model="payForm.type">
-              <Radio label="willCall">自提</Radio>
-              <Radio label="express">快递</Radio>
-              <Radio label="express">快递</Radio>
-              <Radio label="express">快递</Radio>
-              <Radio label="express">快递</Radio>
-              <Radio label="express">快递</Radio>
-              <Radio label="express">快递</Radio>
+          <form-item label="支付方式" prop="payType">
+            <RadioGroup v-model="payForm.payType">
+              <Radio label="willCall">信用卡</Radio>
+              <Radio label="express">现金</Radio>
+              <Radio label="express">支票</Radio>
+              <Radio label="express">COD</Radio>
+              <Radio label="express">Credit Memo</Radio>
+              <Radio label="express">账期</Radio>
+              <Radio label="express">Other</Radio>
             </RadioGroup>
           </form-item>
-          <form-item label="快递公司" prop="company">
-            <RadioGroup v-model="payForm.company">
-              <Radio label="UPS">UPSqeadasdwqe</Radio>
-              <Radio label="Fedex">Fedewqeqeqwe</Radio>
+          <form-item label="Packing Type" prop="packingType">
+            <RadioGroup v-model="payForm.packingType">
+              <Radio label="UPS">Pick List Only</Radio>
+              <Radio label="Fedex">No Invoice No Pick List</Radio>
             </RadioGroup>
           </form-item>
         </i-form>
@@ -149,14 +189,38 @@
       <div class="title">
         <p>订单金额</p>
         <div class="divider"></div>
+        <i-form>
+          <form-item label="商品金额">
+            <div>{{orderPayInfo.itemFee}}</div><div>Gross Profit Margin : 100.00%</div>
+          </form-item>
+          <form-item label="满减优惠">
+            <div>{{orderPayInfo.itemFee}}</div><div><Checkbox>Whether to participate in sitewide promotion</Checkbox></div>
+          </form-item>
+          <form-item label="税费/税率">
+            <div>{{orderPayInfo.taxRate}}{{orderPayInfo.taxFee}}</div>
+          </form-item>
+          <form-item label="运费">
+            <div>{{orderPayInfo.shippingFee}}</div><div><Checkbox>Insufficient inventory/Dropship from other office</Checkbox></div>
+          </form-item>
+          <form-item label="减免">
+            <div>{{orderPayInfo.discountFee}}</div><div>{{orderPayInfo.discountFee}}</div>
+          </form-item>
+        </i-form>
       </div>
     </card>
     <card class="order-note-card">
       <div class="title">
         <p>订单备注</p>
         <div class="divider"></div>
+        <Input placeholder="请输入备注" type="textarea" :rows="4"/>
       </div>
     </card>
+    <div class="buttons">
+      <Button type="primary">保存并发送邮件</Button>
+      <Button type="primary">保存并下载询价单</Button>
+      <Button type="primary">保存</Button>
+      <Button type="success">提交审核</Button>
+    </div>
   </div>
 </template>
 
@@ -173,7 +237,9 @@ export default {
       shipForm: {
         type: 'express',
         company: 'Fedex',
-        service: ''
+        service: '',
+        UCSA: false,
+        sign: false
       },
       expressOption: [
         {value: '01', label: 'Next Day Air'},
@@ -191,10 +257,166 @@ export default {
         {value: '96', label: 'UPS Worldwide Express Freight'},
         {value: '71', label: 'UPS Worldwide Express Freight Midday'}
       ],
-      chechedAddress: {},
+      checkedAddress: {},
       payForm: {
-        type: '',
-        company: ''
+        payType: '',
+        packingType: ''
+      },
+      showAddressTable: false,
+      showAddressForm: false,
+      addressList: [],
+      editAddressForm: {
+        address: {
+          receiver: '',
+          detail: '',
+          street: '',
+          city: '',
+          state: '',
+          zip: '',
+          country: '',
+          telnum: '',
+          lat: '',
+          lng: '',
+          company: ''
+        },
+        status: ''
+      },
+      addressColumns: [
+        {
+          title: '收货人',
+          render: (h, params) => {
+            return (
+              <div>{params.row.address.receiver}</div>
+            )
+          }
+        }, {
+          title: '公司名称',
+          render: (h, params) => {
+            return (
+              <div>{params.row.address.company}</div>
+            )
+          }
+        }, {
+          title: '电话',
+          render: (h, params) => {
+            return (
+              <div>{params.row.address.telnum}</div>
+            )
+          }
+        }, {
+          title: '详细地址',
+          width: 180,
+          render: (h, params) => {
+            return (
+              <div>{params.row.address.detail}</div>
+            )
+          }
+        }, {
+          title: ' ',
+          width: 150,
+          align: 'center',
+          render: (h, params) => {
+            return (
+              <div>
+                <i-button type="error" size="small" onClick={ () => { this.checkAddress(params.row) }}>选择</i-button>
+                <i-button type="primary" size="small" onClick={ () => { this.editAddress(params.row.id) }}>编辑</i-button>
+              </div>
+            )
+          }
+        }
+      ],
+      productValue: '',
+      productList: [],
+      checkedProducts: [
+        {'id': '810000198611162592', 'offerPrice': 427, 'vipPrice': 753, 'basePrice': 142, 'num': 809, 'unit': 'pc', 'size': null, 'spec': '1', 'weight': '1', 'sin': 'Moore', 'onum': '12', 'props': [{'name': 'n', 'value': 'v'}], 'skuid': '650000198004182583', 'title': 'Carol Anderson', 'imgUrls': ['http://dummyimage.com/200x100', 'http://dummyimage.com/200x100', 'http://dummyimage.com/200x100'], 'offerId': 340, 'offerKind': 'Thompson', 'cateId': '12', 'status': true, 'keyword': ['ip', 'ipp', 'iop'], 'kind': '主商品', 'currentPrice': 142, 'amount': '1', 'remark': ''}
+      ],
+      productColumns: [
+        {
+          type: 'index',
+          width: 50,
+          align: 'center'
+        },
+        {
+          title: '商品名称',
+          key: 'title'
+        },
+        {
+          title: '库存',
+          key: 'num'
+        },
+        {
+          title: '指导价',
+          key: 'basePrice'
+        },
+        {
+          title: '单价',
+          align: 'center',
+          key: 'currentPrice',
+          render: this.editCellRender
+        },
+        {
+          title: '数量',
+          align: 'center',
+          key: 'amount',
+          render: this.editCellRender
+        },
+        {
+          title: '成本/毛利率',
+          render: (h, params) => {
+            return (
+              <span>233333</span>
+            )
+          }
+        },
+        {
+          title: '总价',
+          render: (h, params) => {
+            let content = null
+            if (params.row.currentPrice && params.row.amount) {
+              content = <span>{(+params.row.currentPrice) * (+params.row.amount)}</span>
+            }
+            return content
+          }
+        },
+        {
+          title: '备注',
+          align: 'center',
+          key: 'remark',
+          render: this.editCellRender
+        },
+        {
+          title: ' ',
+          render: (h, params) => {
+            return (
+              <div>
+                <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop" placement="bottom-end">
+                  <div slot="content">
+                    <table border="1" class="history-table">
+                      <tr>
+                        <th>Version</th>
+                        <th>Update Time</th>
+                      </tr>
+                      <tr>
+                        <td>0.9.5</td>
+                        <td>2016-10-26</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <i-button type="primary" size="small">more</i-button>
+                </poptip>
+                <i-button type="error" size="small">删除</i-button>
+              </div>
+            )
+          }
+        }
+      ],
+      orderPayInfo: {
+        itemFee: '',
+        taxFee: '',
+        taxRate: '',
+        shippingFee: '',
+        discountFee: '',
+        oversold: false
       }
     }
   },
@@ -206,7 +428,82 @@ export default {
     },
     checkInstaller (installer) {
       this.checkedInstaller = installer
+      this.fetchAddress(installer.id)
+    },
+    fetchAddress (id) {
+      this.$http.fetchInstallerAddress().then(data => {
+        this.addressList = data.list
+      })
+    },
+    checkAddress (row) {
+      this.checkedAddress = row.address
+      this.showAddressTable = false
+    },
+    editAddress (id) {
+      this.showAddressForm = true
+      this.$http.getInstallerAddress({id: id}).then(data => {
+        this.editAddressForm = data
+      })
+    },
+    showAddAddressForm () {
+      // 新增地址打开弹框时首先清空表单
+      for (let key in this.editAddressForm) {
+        if (typeof this.editAddressForm[key] === 'object') {
+          for (let address in this.editAddressForm[key]) {
+            this.editAddressForm[key][address] = ''
+          }
+        } else {
+          this.editAddressForm[key] = ''
+        }
+      }
+      this.showAddressForm = true
+    },
+    submitAddressForm () {
+      this.$refs.address.valid(valid => {
+        if (valid) {
+          this.$http.saveInstallerAddress({
+            ...this.editAddressForm
+          }).then(() => {
+            this.submitAddressForm = false
+            this.$Notice.success({
+              title: '保存地址成功'
+            })
+          })
+        }
+      })
+    },
+    queryProduct () {
+      this.$http.fetchQuotationProduct().then(data => {
+        this.productList = data.list.map(t => {
+          t.itemSku.skuid = t.itemSku.id
+          let item = {
+            ...t.itemSku,
+            ...t,
+            currentPrice: t.itemSku.basePrice,
+            amount: 0,
+            remark: ''
+          }
+          delete item.itemSku
+          return item
+        })
+      })
+    },
+    checkProduct (product) {
+      console.log(product)
+      this.checkedProducts.push(product)
+    },
+    editCellRender (h, params) {
+      const value = params.row[params.column.key]
+      return (
+        <i-input on-on-blur={(e) => this.editCell(params.index, params.column.key, e)} value={value}></i-input>
+      )
+    },
+    editCell (rowIndex, key, event) {
+      this.checkedProducts[rowIndex][key] = event.target.value
     }
+  },
+  beforeMount () {
+    this.fetchAddress()
   }
 }
 </script>
@@ -239,18 +536,17 @@ export default {
       margin-bottom: 16px;
     }
   }
-  .installer-card{
-    /deep/ .ivu-poptip{
+  .installer-card, .product-card{
+    /deep/ .ivu-poptip.select-pop{
       width: 100%;
       margin-bottom: 24px;
-    }
-    /deep/ .ivu-poptip-rel{
-      width: 100%;
+      /deep/ .ivu-poptip-rel{
+        width: 100%;
+      }
     }
   }
-
   .ship-card{
-    form-item{
+    .ivu-form-item{
       width: 100%;
     }
     /deep/ .ivu-form-item-label{
@@ -271,15 +567,16 @@ export default {
       border-collapse: collapse;
       border: 1px solid #e9eaec;
       color: #495060;
-      font-size: 12px;
       background-color: #fff;
       margin-bottom: 20px;
+      th{
+        background-color: #F6F6F6;
+        font-weight: normal;
+        color: #333333;
+      }
       td,th {
-        min-width: 0;
-        width: 25%;
-        height: 48px;
+        height: 30px;
         padding-left: 18px;
-        box-sizing: border-box;
         text-align: left;
         text-overflow: ellipsis;
         vertical-align: middle;
@@ -288,5 +585,28 @@ export default {
   }
   .ship-card{
 
+  }
+  .product-card{
+    /deep/ .history-poptip{
+      .history-table{
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e9eaec;
+        color: #495060;
+        background-color: #fff;
+        td,th {
+          width: 50%;
+          height: 30px;
+          padding-left: 12px;
+          box-sizing: border-box;
+          text-align: left;
+          text-overflow: ellipsis;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+  .buttons{
+    margin-bottom: 24px;
   }
 </style>
