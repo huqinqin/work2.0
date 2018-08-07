@@ -191,16 +191,19 @@ export default {
   getQuotation (params) {
     return axios.post('base/quotation/get', params)
   },
-  fetchInstallerAddress (params) {
-    return axios.post('base/installer/address/list', params)
+  fetchQuotationAddress (params) {
+    return axios.post('base/store/listStoreAddress', params)
   },
-  getInstallerAddress (params) {
+  getQuotationAddress (params) {
     return axios.post('base/installer/address/get', params)
   },
-  saveInstallerAddress (params) {
+  saveQuotationAddress (params) {
     return axios.post('base/installer/address/save', params)
   },
   fetchQuotationProduct (params) {
     return axios.post('product/item/queryItem', params)
+  },
+  queryQuotationInstaller (params) {
+    return axios.post('base/store/queryStore', params)
   }
 }

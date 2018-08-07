@@ -69,8 +69,10 @@ export default {
           render: (h, params) => {
             return (
               <div>
-                <i-button type="primary" size="small" on-click={this.showDetail}>详情</i-button>
-                <i-button type="primary" size="small" on-click={this.showEdit}>编辑</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.detail(params.row.id)}>详情</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.edit(params.row.id)}>编辑</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.review(params.row.id)}>审核</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.pushReview(params.row.id)}>提交审核</i-button>
               </div>
             )
           }
@@ -79,11 +81,17 @@ export default {
     }
   },
   methods: {
-    showEdit () {
-      console.log('edit')
+    edit (id) {
+      console.log('edit', id)
     },
-    showDetail () {
-      console.log('detail')
+    detail (id) {
+      console.log('detail', id)
+    },
+    review (id) {
+      console.log('review', id)
+    },
+    pushReview (id) {
+      console.log('push', id)
     }
   },
   beforeMount () {

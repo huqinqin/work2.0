@@ -5,23 +5,23 @@
         <p>选择工程商</p>
         <div class="divider"></div>
       </div>
-      <Row :gutter="16">
-        <i-col span="2">
+      <Row :gutter="12">
+        <i-col span="4">
           <Select v-model="installerType">
-            <Option value="custID">Cust ID</Option>
-            <Option value="sName">公司名称</Option>
+            <Option value="storeCode">Cust ID</Option>
+            <Option value="storeName">公司名称</Option>
             <Option value="account">账号</Option>
-            <Option value="phone">电话</Option>
-            <Option value="email">邮箱</Option>
+            <Option value="mobile">电话</Option>
+            <Option value="contactEmail">邮箱</Option>
           </Select>
         </i-col>
-        <i-col span="22">
+        <i-col span="20">
           <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="installer-popover">
             <i-input v-model="installerValue" @on-change="queryInstaller"></i-input>
             <div slot="content">
               <ul class="installer-list">
                 <li v-for="installer in installerList" :key="installer.id" @click="checkInstaller(installer)">
-                  {{installer.company}} - {{installer.custId}}
+                  {{installer.storeName}} - {{installer.storeCode}}
                 </li>
               </ul>
             </div>
@@ -31,19 +31,19 @@
       <table border="1" class="baseDataTable">
         <tr>
           <td class="speTd">账号</td>
-          <td>{{checkedInstaller.company}}</td>
+          <td>{{store.company}}</td>
           <td class="speTd">名字/电话</td>
-          <td>{{checkedInstaller.company}}</td>
+          <td>{{store.name}} / {{store.userMobile}}</td>
         </tr>
         <tr>
           <td class="speTd">Cust ID</td>
-          <td>{{checkedInstaller.company}}</td>
+          <td>{{store.storeCode}}</td>
           <td class="speTd">公司名称/邮编</td>
-          <td>{{checkedInstaller.company}}</td>
+          <td>{{store.storeName}} / {{store.userEmail}}</td>
         </tr>
         <tr>
           <td class="speTd">详细地址</td>
-          <td colspan="3">{{checkedInstaller.company}}</td>
+          <td colspan="3">{{store.address}}</td>
         </tr>
       </table>
     </card>
@@ -65,34 +65,34 @@
       <div class="title">
         <p>物流方式</p>
         <div class="divider"></div>
-        <i-form ref="shipForm" :model="shipForm" label-position="top">
+        <i-form ref="shipping" :model="shipping" label-position="top">
           <form-item label="选择方式" prop="type">
-            <RadioGroup v-model="shipForm.type">
+            <RadioGroup v-model="shipping.method">
               <Radio label="willCall">自提</Radio>
               <Radio label="express">快递</Radio>
             </RadioGroup>
           </form-item>
-          <template v-if="shipForm.type === 'express'">
+          <template v-if="shipping.method === 'express'">
             <form-item label="快递公司" prop="company">
-              <RadioGroup v-model="shipForm.company">
+              <RadioGroup v-model="shipping.expressCompany">
                 <Radio label="UPS">UPS</Radio>
                 <Radio label="Fedex">Fedex</Radio>
               </RadioGroup>
             </form-item>
             <form-item label="快递服务" prop="service">
-              <RadioGroup v-model="shipForm.service" class="service-radio">
+              <RadioGroup v-model="shipping.expressService" class="service-radio">
                 <Radio v-for="item in expressOption" :label="item.value" :key="item.value">{{item.label}}</Radio>
               </RadioGroup>
             </form-item>
             <form-item>
-              <Checkbox v-model="shipForm.sign">本人签收</Checkbox>
-              <Checkbox v-model="shipForm.UCSA">Use customer's shipping account</Checkbox>
+              <Checkbox v-model="shipping.expressSignature">本人签收</Checkbox>
+              <Checkbox v-model="shipping.UCSA">Use customer's shipping account</Checkbox>
             </form-item>
           </template>
         </i-form>
       </div>
     </card>
-    <card class="address-card">
+    <card class="address-card" v-if="shipping.method === 'express'">
       <div class="title">
         <p>选择收货地址 <Button type="text" @click="showAddAddressForm">+添加地址</Button></p>
         <div class="divider"></div>
@@ -104,10 +104,10 @@
             <th>详细地址</th>
           </tr>
           <tr>
-            <td>{{checkedAddress.receiver}}</td>
-            <td>{{checkedAddress.company}}</td>
-            <td>{{checkedAddress.telnum}}</td>
-            <td>{{checkedAddress.detail}}</td>
+            <td>{{toAddr.receiver}}</td>
+            <td>{{toAddr.company}}</td>
+            <td>{{toAddr.telnum}}</td>
+            <td>{{toAddr.detail}}</td>
           </tr>
         </table>
         <Button type="primary" @click="showAddressTable = true">选择地址</Button>
@@ -129,11 +129,11 @@
         </Modal>
       </div>
     </card>
-    <card class="po-card">
+    <card class="po-card" v-if="shipping.method === 'express'">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
-        <Input placeholder="请输入P/O NO." />
+        <Input placeholder="请输入P/O NO." v-model="poNo"/>
       </div>
     </card>
     <card class="product-card">
@@ -189,21 +189,21 @@
       <div class="title">
         <p>订单金额</p>
         <div class="divider"></div>
-        <i-form>
+        <i-form label-position="left">
           <form-item label="商品金额">
-            <div>{{orderPayInfo.itemFee}}</div><div>Gross Profit Margin : 100.00%</div>
+            <div class="fee">{{pay.itemFee}}</div><div class="other">Gross Profit Margin : 100.00%</div>
           </form-item>
           <form-item label="满减优惠">
-            <div>{{orderPayInfo.itemFee}}</div><div><Checkbox>Whether to participate in sitewide promotion</Checkbox></div>
+            <div class="fee">{{pay.itemFee}}</div><div class="other"><Checkbox>Whether to participate in sitewide promotion</Checkbox></div>
           </form-item>
           <form-item label="税费/税率">
-            <div>{{orderPayInfo.taxRate}}{{orderPayInfo.taxFee}}</div>
+            <div class="fee">{{pay.taxRate}}/{{pay.taxFee}}</div>
           </form-item>
           <form-item label="运费">
-            <div>{{orderPayInfo.shippingFee}}</div><div><Checkbox>Insufficient inventory/Dropship from other office</Checkbox></div>
+            <div class="fee">{{pay.shippingFee}}</div><div class="other"><Checkbox v-model="shipping.dropShipping">Insufficient inventory/Dropship from other office</Checkbox></div>
           </form-item>
           <form-item label="减免">
-            <div>{{orderPayInfo.discountFee}}</div><div>{{orderPayInfo.discountFee}}</div>
+            <div class="fee">{{pay.discountFee}}</div><div class="other">{{pay.discountFee}}</div>
           </form-item>
         </i-form>
       </div>
@@ -231,15 +231,18 @@ export default {
     return {
       note: 'hbdkFHVSDOSNFYNC[SDMUBVDOCWEDOKSXONPBSEVDK',
       installerValue: '',
-      installerType: 'custID',
+      installerType: 'storeCode',
       installerList: [],
-      checkedInstaller: {},
-      shipForm: {
-        type: 'express',
-        company: 'Fedex',
-        service: '',
-        UCSA: false,
-        sign: false
+      queryInstallerDebounce: '',
+      store: {},
+      poNo: '',
+      shipping: {
+        method: 'express',
+        expressCompany: 'Fedex',
+        expressService: '',
+        dropShipping: false,
+        expressSignature: true,
+        UCSA: false
       },
       expressOption: [
         {value: '01', label: 'Next Day Air'},
@@ -257,7 +260,7 @@ export default {
         {value: '96', label: 'UPS Worldwide Express Freight'},
         {value: '71', label: 'UPS Worldwide Express Freight Midday'}
       ],
-      checkedAddress: {},
+      toAddr: {},
       payForm: {
         payType: '',
         packingType: ''
@@ -319,7 +322,7 @@ export default {
             return (
               <div>
                 <i-button type="error" size="small" onClick={ () => { this.checkAddress(params.row) }}>选择</i-button>
-                <i-button type="primary" size="small" onClick={ () => { this.editAddress(params.row.id) }}>编辑</i-button>
+                <i-button type="primary" size="small" onClick={ () => { this.editAddress(params.row) }}>编辑</i-button>
               </div>
             )
           }
@@ -410,40 +413,60 @@ export default {
           }
         }
       ],
-      orderPayInfo: {
-        itemFee: '',
-        taxFee: '',
-        taxRate: '',
-        shippingFee: '',
-        discountFee: '',
+      pay: {
+        payType: '',
+        itemFee: 5234,
+        taxFee: 523,
+        taxRate: 3,
+        shippingFee: 5424,
+        discountFee: 5324,
         oversold: false
       }
     }
   },
   methods: {
     queryInstaller () {
-      this.$http.fetchReview().then(data => {
-        this.installerList = data.list
-      })
+      clearTimeout(this.queryInstallerDebounce)
+      this.queryInstallerDebounce = setTimeout(() => {
+        this.$http.queryQuotationInstaller({
+          [this.installerType]: this.installerValue
+        }).then(data => {
+          this.installerList = data.map(t => {
+            return {
+              contactEmail: t.userResponses[0].email,
+              storeCode: t.code,
+              storeName: t.address.company,
+              userMobile: t.userResponses[0].mobile,
+              account: t.userResponses[0].account,
+              storeId: t.id,
+              name: t.userResponses[0].firstName + ' ' + t.userResponses[0].lastName,
+              address: t.address.detail
+            }
+          })
+        })
+      }, 800)
     },
     checkInstaller (installer) {
-      this.checkedInstaller = installer
-      this.fetchAddress(installer.id)
+      this.store = installer
+      console.log(installer)
+      this.fetchAddress(installer.storeId)
     },
     fetchAddress (id) {
-      this.$http.fetchInstallerAddress().then(data => {
+      this.$http.fetchQuotationAddress({
+        // storeId: id
+        storeId: 10004
+      }).then(data => {
         this.addressList = data.list
       })
     },
     checkAddress (row) {
-      this.checkedAddress = row.address
+      this.toAddr = row.address
+      this.toAddr.zipCode = this.toAddr.zip
       this.showAddressTable = false
     },
-    editAddress (id) {
+    editAddress (row) {
       this.showAddressForm = true
-      this.$http.getInstallerAddress({id: id}).then(data => {
-        this.editAddressForm = data
-      })
+      this.editAddressForm = row
     },
     showAddAddressForm () {
       // 新增地址打开弹框时首先清空表单
@@ -473,7 +496,9 @@ export default {
       })
     },
     queryProduct () {
-      this.$http.fetchQuotationProduct().then(data => {
+      this.$http.fetchQuotationProduct({
+        conditions: this.productValue
+      }).then(data => {
         this.productList = data.list.map(t => {
           t.itemSku.skuid = t.itemSku.id
           let item = {
@@ -603,6 +628,21 @@ export default {
           text-overflow: ellipsis;
           vertical-align: middle;
         }
+      }
+    }
+  }
+  .order-card{
+    /deep/ .ivu-form-item{
+      /deep/ .ivu-form-item-label{
+        width: 120px;
+      }
+    }
+    /deep/ .ivu-form-item-content{
+      .fee,.other{
+        display: inline-block;
+      }
+      .fee{
+        width:136px;
       }
     }
   }
