@@ -10,9 +10,15 @@
   width: 1200px;
   padding-bottom: 120px;
 }
-.ivu-layout-content::-webkit-scrollbar {
-  display:none
+.ivu-card{
+  min-width: 990px;
 }
+// .ivu-layout-content{
+//   overflow: auto;
+// }
+// .ivu-layout-content::-webkit-scrollbar {
+//   display:none
+// }
 .ivu-layout-sider-children {
   overflow: auto;
   &::-webkit-scrollbar {
@@ -92,4 +98,75 @@
 .btn-add:focus{
   border: 1px dashed #57a3f3;
   outline: none;
+}
+// 单行省略号
+.single-ellipsis{
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+// 多行省略号
+//.multi-ellipsis(@num: 2){
+//  display: -webkit-box;
+//  -webkit-box-orient: vertical;
+//  -webkit-line-clamp: @num;
+//  overflow: hidden;
+//}
+.multi-ellipsis-2{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.note-modal,.change-fee-modal{
+  p{
+    line-height: 2;
+  }
+}
+.change-fee-modal .ivu-modal-body{
+  label{
+    display: inline-block;
+    width:60px;
+  }
+  span{
+    display: inline-block;
+    color: #FF3B41;
+  }
+  /deep/ .ivu-input-wrapper{
+    width:98px;
+  }
+}
+.confirm-pay-modal .ivu-modal-body{
+  p{
+    line-height: 2;
+  }
+  p.confirm-text{
+    font-weight: bold;
+    font-size: 16px;
+    span{
+      color: #FF3B41;
+    }
+  }
+}
+@media only screen and (max-width: 1500px) {
+  .layout-column {
+    width: 904px;
+  }
+}
+@media only screen and (min-width: 1500px ) {
+  .layout-column{
+    width: 1130px;
+  }
+}
+.layout-column{
+  margin: 0 auto 16px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.layout-cell{
+  width: 210px;
+  margin: 0 8px;
+}
+.layout-cell.flex-item{
+  flex: 1;
 }

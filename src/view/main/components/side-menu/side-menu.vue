@@ -15,8 +15,10 @@
 <script>
 import sideMenuItem from './side-menu-item.vue'
 import collapsedMenu from './collapsed-menu.vue'
-import { getIntersection } from '@/libs/tools'
 import mixin from './mixin'
+const getIntersection = (arr1, arr2) => {
+  return Array.from(new Set([...arr1, ...arr2]))
+}
 export default {
   name: 'sideMenu',
   mixins: [ mixin ],

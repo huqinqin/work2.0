@@ -1,5 +1,6 @@
 import http from '~prototype/http.js'
 import router from '@/router'
+import cache from 'store2'
 
 export default {
   state: {
@@ -9,7 +10,14 @@ export default {
   },
   mutations: {
     setUserInfo (state, data) {
-      state = data
+      if (data) {
+        cache('user', data)
+      } else {
+        data = cache('user')
+      }
+      state.account = data.account
+      state.email = data.email
+      state.avatar = data.avatar
     }
   },
   actions: {
@@ -21,7 +29,8 @@ export default {
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
-      http.post('user/logout').then(() => {
+      http.Logout().then(() => {
+        cache.clearAll()
         router.push({name: 'login'})
       })
     }

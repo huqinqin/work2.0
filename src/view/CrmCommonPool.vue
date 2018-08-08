@@ -74,8 +74,24 @@
    </Row>
    <Row>
      <Modal v-model="importInstallerModal" width="360" title="导入模板">
-       <Upload action="//jsonplaceholder.typicode.com/posts/">
-         <Button icon="ios-cloud-upload-outline">Upload files</Button>
+       <Upload
+         ref="upload"
+         :show-upload-list="true"
+         :default-file-list="imgUrls"
+         :on-success="handleSuccess"
+         :format="['jpg','jpeg','png']"
+         :max-size="2048"
+         :on-format-error="handleFormatError"
+         :on-exceeded-size="handleMaxSize"
+         :before-upload="beforeLoad"
+         :data="Object.assign(formUp, formData)"
+         multiple
+         type="drag"
+         action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
+         style="display: inline-block;width:256px; height: 256px;">
+         <div style="width: 256px;height:256px;line-height: 256px;">
+           <Icon type="camera" size="48"></Icon>
+         </div>
        </Upload>
        <span>如没有模板请先下载导入模板</span>
        <a href="#">下载模板</a>
@@ -318,7 +334,22 @@ export default {
         ]
       },
       ids: [],
-      selection: []
+      selection: [],
+      formUp: {
+        policy: 'eyJleHBpcmF0aW9uIjoiMjAyMC0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
+        OSSAccessKeyId: 'LTAIdExaLJELmORj',
+        signature: 'Xc8E45q5qzV+9gPLvepFqmS0oVk=',
+        preKey: '',
+        dir: '',
+        host: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/',
+        expire: '',
+        success_action_status: 200
+      },
+      formData: {
+        name: '',
+        key: '',
+        Filename: ''
+      }
     }
   },
   methods: {
@@ -448,10 +479,57 @@ export default {
     collectionAll (selection) {
       this.selection = selection
       // console.log(selection);
+    },
+    handleFormatError (file) {
+      this.$Notice.warning({
+        title: 'The file format is incorrect',
+        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+      })
+    },
+    handleMaxSize (file) {
+      this.$Notice.warning({
+        title: 'Exceeding file size limit',
+        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+      })
+    },
+    beforeLoad (file) {
+      console.log('file', file)
+      this.formData.name = file.name
+      this.formData.key = this.formUp.preKey + '/' + file.name
+      this.formData.Filename = file.name
+      this.filelist.push(file)
+      return false
+    },
+    loadSuccess (response, file) {
+      this.img = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      console.log(this.img)
+      console.log(file)
+    },
+    loadError (error) {
+      console.log(error)
+    },
+    getPolicy () {
+      this.$http.getPolicy().then(data => {
+        this.formUp.policy = data.policy
+        this.formUp.OSSAccessKeyId = data.accessid
+        this.formUp.signature = data.signature
+        this.formUp.dir = data.dir
+        this.formUp.host = data.host
+        this.formUp.preKey = data.dir
+        this.formUp.expire = data.expire
+      })
+    },
+    handleSuccess (res, file) {
+      file.url = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      file.status = 'finished'
+      this.uploadList.push(file)
     }
   },
   mounted () {
     this.getInstallerList()
+  },
+  beforeMount () {
+    this.getPolicy()
   }
 }
 </script>

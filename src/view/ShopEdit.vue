@@ -24,29 +24,34 @@
         </i-col>
       </row>
       <row v-for="(contact, index) in form.contact" :key="index">
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        <i-col :span="5">
           <form-item label="first name" :prop="'contact.' + index + '.firstName'" :rules="rule">
             <i-input v-model="contact.firstName" type="text" placeholder="联系人" ></i-input>
           </form-item>
         </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        <i-col :span="5" offset="1">
           <form-item label="last name" :prop="'contact.' + index + '.lastName'" :rules="rule">
             <i-input v-model="contact.lastName" type="text" placeholder="联系人" ></i-input>
           </form-item>
         </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        <i-col :span="5" offset="1">
           <form-item label="手机" :prop="'contact.' + index + '.mobile'" :rules="rule">
             <i-input v-model="contact.mobile" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        <i-col :span="5" offset="1">
           <form-item label="邮箱" :prop="'contact.' + index + '.email'" :rules="rule">
             <i-input v-model="contact.email" type="text" placeholder="邮箱" ></i-input>
           </form-item>
         </i-col>
+        <i-col :span="1">
+          <form-item label=" " style="text-align: center;">
+            <Icon type="ios-close" color="red" @click="delContact(index)"></Icon>
+          </form-item>
+        </i-col>
       </row>
       <row>
-         <i-col :lg="6" :md="8" :sm="12" :xs="24">
+         <i-col :span="5">
           <i-button @click="addContact">新增联系人</i-button>
         </i-col>
       </row>
@@ -151,6 +156,11 @@ export default {
     },
     addContact () {
       this.form.contact.push({firstName: '', lastName: '', mobile: '', email: ''})
+    },
+    delContact (index) {
+      if (this.form.contact.length > 1) {
+        this.form.contact.splice(index, 1)
+      }
     }
   }
 }

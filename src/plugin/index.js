@@ -10,5 +10,12 @@ export default {
         console.log('prototype', key, name)
       }
     })
+    const filters = require.context('./filter/', false, /\.js$/)
+    filters.keys().forEach(key => {
+      if (key !== './index.js') {
+        const name = key.match(/([a-zA-Z0-9-]*)\.js$/i)[1]
+        Vue.filter(`${name}`, filters(key).default[name])
+      }
+    })
   }
 }

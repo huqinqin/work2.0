@@ -34,9 +34,9 @@
 </template>
 <script>
 export default {
+  name: 'ShopDetail',
   data () {
     return {
-      url: '/shop',
       form: {
         storeName: '', contact: [], address: {}, phone: ''
       }

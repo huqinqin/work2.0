@@ -36,7 +36,7 @@ import headerBar from './components/header-bar'
 import tagsNav from './components/tags-nav'
 import user from './components/user'
 import { mapMutations, mapActions } from 'vuex'
-import { getNewTagList } from '@/libs/util'
+import { getNewTagList } from '~libs/util'
 import minLogo from '@/assets/images/logo-min.jpg'
 import maxLogo from '@/assets/images/logo.jpg'
 import './main.less'
@@ -60,7 +60,7 @@ export default {
       return this.$store.state.app.tagNavList
     },
     userAvator () {
-      return this.$store.state.user.avatorImgPath
+      return this.$store.state.user.avatar
     },
     cacheList () {
       return this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)) : []
@@ -71,6 +71,7 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'setUserInfo',
       'setBreadCrumb',
       'setTagNavList',
       'addTag'
@@ -99,6 +100,9 @@ export default {
       this.setBreadCrumb(newRoute.matched)
       this.setTagNavList(getNewTagList(this.tagNavList, newRoute))
     }
+  },
+  beforeMount () {
+    this.setUserInfo()
   },
   mounted () {
     /**
