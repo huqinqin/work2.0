@@ -19,37 +19,53 @@
       <Input v-model="company" placeholder="Enter company" />
       </Col>
       <Col span="6" style="padding-right:10px">
-      <span>time:</span>
-      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date"></DatePicker>
+      <span>联系状态:</span>
+      <Select v-model="contactStatus">
+        <Option v-for="item in contactStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
       </Col>
+      <!--<Col span="6" style="padding-right:10px">
+      <span>time:</span>
+      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date" @on-change="handleChange" :value="dateValue"></DatePicker>
+      </Col>-->
     </Row>
     <Row>
-      <Col span="5" style="padding-right:10px">
+      <Col span="6" style="padding-right:10px">
+      <span>Associate store:</span>
+      <Select v-model="noAssociateStore" style="width:200px">
+        <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
+      </Col>
+      <!--<Col span="5" style="padding-right:10px">
       <span>type:</span>
       <Select v-model="type">
         <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
-      </Col>
+      </Col>-->
       <Col span="5" style="padding-right:10px">
       <span>行业:</span>
       <Select v-model="trade">
         <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>
-      <Col span="5" style="padding-right:10px" v-if="trade === 'New York1'">
+      <Col span="5" style="padding-right:10px" v-if="trade === '0'">
       <span style="color: #F0F0F0">111</span>
-      <Select v-model="trade">
-        <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      <Select v-model="trade1">
+        <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>
       <Col span="5" style="padding-right:10px">
       <span>Email:</span>
       <Input v-model="email" placeholder="Enter email" />
       </Col>
+      <Col span="5" style="padding-right:10px">
+      <span>cust id:</span>
+      <Input v-model="custId" placeholder="Enter cust id" />
+      </Col>
       <Col span="4" style="padding-right:10px">
       <span style="color: #F0F0F0">Search:</span>
       <div>
-        <Button type="primary">Search</Button>
+        <Button type="primary" @click="getPrivateInstallerList">Search</Button>
       </div>
       </Col>
     </Row>
@@ -59,7 +75,7 @@
       <Button type="primary" @click="crmPoolAdd">新增</Button>-->
       <Button type="primary" @click="allocation">批量分配</Button>
      <!-- <Button type="primary" @click="invalidBussiness">无效商机</Button>-->
-      <Button type="error">导出</Button>
+      <Button type="error" @click="privatePoolInstallerExport">导出</Button>
       </Col>
     </Row>
     <Row>
@@ -120,11 +136,18 @@
 </template>
 
 <script>
-
+import mixin from '@/mixins/list'
 export default {
   name: 'crm-common-pool',
+  mixins: [mixin],
   data () {
     return {
+      url: 'Shop',
+      filter: {
+        id: '', name: '', account: '', address: '', phone: '', status: ''
+      },
+      list: [],
+      custId: '',
       state: '',
       loading1: false,
       options1: [],
@@ -143,12 +166,32 @@ export default {
         label: 'New York1'
       }],
       trade: '',
-      tradeList: [{
-        value: 'New York',
-        label: 'New York'
+      trade1: '',
+      tradeList1: [{
+        value: '0',
+        label: 'IP'
       }, {
-        value: 'New York1',
-        label: 'New York1'
+        value: '1',
+        label: 'HD-TVI'
+      }, {
+        value: '2',
+        label: 'Both'
+      }],
+      tradeList: [{
+        value: '0',
+        label: '视频监控'
+      }, {
+        value: '1',
+        label: '门禁'
+      }, {
+        value: '2',
+        label: '报警'
+      }, {
+        value: '3',
+        label: '音视频'
+      }, {
+        value: '4',
+        label: '其他'
       }],
       email: '',
       installerList: [
@@ -266,7 +309,30 @@ export default {
         value: '0',
         label: '张三'
       }],
-      isSaller: false
+      isSaller: false,
+      dateValue: [],
+      contactStatus: '',
+      contactStatusList: [{
+        value: '0',
+        label: '未联系'
+      }, {
+        value: '1',
+        label: '联系中未询价'
+      }, {
+        value: '2',
+        label: '联系中询价中'
+      }, {
+        value: '3',
+        label: '激活已下单'
+      }, {
+        value: '4',
+        label: '拉新已下单'
+      }, {
+        value: '5',
+        label: '无效客人'
+      }],
+      noAssociateStore: '',
+      noAssociateStoreList: []
     }
   },
   methods: {
@@ -360,7 +426,65 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {},
-    cancel () {}
+    cancel () {},
+    getPrivateInstallerList () {
+      this.$http.privatePoolInstallerList({
+        storeId: this.noAssociateStore ? this.noAssociateStore : '',
+        custCode: this.custId ? this.custId : '',
+        email: this.email ? this.email : '',
+        name: this.company ? this.company : '',
+        industryJoin: this.trade ? this.trade : '',
+        contactStatus: this.contactStatus ? this.contactStatus : '',
+        state: this.state ? this.contactStatus : '',
+        city: this.city ? this.city : ''
+      }).then(() => {})
+    },
+    handleChange (date) {
+      this.dateValue = date
+      console.log(new Date(this.dateValue[0]).getTime())
+    },
+    getStoreList () {
+      this.query()
+      if (this.list.length > 0) {
+        this.list.forEach((item) => {
+          let obj = {}
+          obj.label = item.name
+          obj.value = item.id
+          this.noAssociateStoreList.push(obj)
+          console.log(obj)
+        })
+        console.log(this.list)
+      }
+    },
+    privatePoolInstallerExport () {
+      this.$http.privatePoolListExport({
+        storeId: this.noAssociateStore ? this.noAssociateStore : '',
+        custCode: this.custId ? this.custId : '',
+        email: this.email ? this.email : '',
+        name: this.company ? this.company : '',
+        industryJoin: this.trade ? this.trade : '',
+        contactStatus: this.contact ? this.contact : '',
+        state: this.state ? this.state : '',
+        city: this.city ? this.city : '',
+        ltsUser: ''
+      }).then((data) => {
+        // this.installerdata = data.list;
+      })
+    }
+  },
+  mounted () {
+    this.getStoreList()
+    this.getPrivateInstallerList()
+  },
+  watch: {
+    list (newVal) {
+      newVal.forEach((item) => {
+        let obj = {}
+        obj.label = item.name
+        obj.value = item.id
+        this.noAssociateStoreList.push(obj)
+      })
+    }
   }
 }
 </script>

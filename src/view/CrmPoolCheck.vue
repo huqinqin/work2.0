@@ -1,6 +1,7 @@
 <template>
     <div class="checkInstaller">
       <h2>查看工程商</h2>
+      <span><span>到期时间:</span><span>{{checkDate.expireTime?checkDate.expireTime:"ppp"}}</span></span>
       <div class="btn">
         <Button type="primary" @click="log">登陆日志</Button>
         <Button type="primary" @click="allocation">分配纪录</Button>

@@ -7,11 +7,23 @@
       </Col>
       <Col span="6" style="padding-right:10px">
       <span>time:</span>
-      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date"></DatePicker>
+      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date"  @on-change="handleChange" :value="dateValue"></DatePicker>
       </Col>
       <Col span="5" style="padding-right:10px">
       <span>Email:</span>
       <Input v-model="email" placeholder="Enter email" />
+      </Col>
+      <Col span="5" style="padding-right:10px">
+      <span>类型:</span>
+      <Select v-model="trade">
+        <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
+      </Col>
+      <Col span="5" style="padding-right:10px" v-if="trade === '0'">
+      <span style="color: #F0F0F0">111</span>
+      <Select v-model="trade1">
+        <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
       </Col>
       <Col span="4" style="padding-right:10px">
       <span style="color: #F0F0F0">Search:</span>
@@ -22,11 +34,7 @@
     </Row>
     <Row>
       <Col span="18" style="padding-right:10px">
-      <!--<Button type="primary" @click="importInstaller">导入</Button>
-      <Button type="primary" @click="crmPoolAdd">新增</Button>-->
-      <!--<Button type="primary" @click="allocation">批量分配</Button>-->
-      <!-- <Button type="primary" @click="invalidBussiness">无效商机</Button>-->
-      <Button type="error">导出</Button>
+      <Button type="error" @click="invalidBussinessExport">导出</Button>
       </Col>
     </Row>
     <Row>
@@ -110,12 +118,26 @@ export default {
         label: 'New York1'
       }],
       trade: '',
+      trade1: '',
       tradeList: [{
-        value: 'New York',
-        label: 'New York'
+        value: '0',
+        label: '黑名单'
       }, {
-        value: 'New York1',
-        label: 'New York1'
+        value: '1',
+        label: '终端用户'
+      }, {
+        value: '2',
+        label: '非安防行业'
+      }],
+      tradeList1: [{
+        value: '0',
+        label: '竞争对手'
+      }, {
+        value: '1',
+        label: '坏账'
+      }, {
+        value: '2',
+        label: '其他'
       }],
       email: '',
       installerList: [
@@ -126,7 +148,7 @@ export default {
         },
         {
           title: 'company',
-          key: 'company'
+          key: 'name'
         },
         {
           title: 'firstName',
@@ -138,7 +160,7 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'baseInfo',
+          key: 'address',
           render: (h, params) => {
             return (
               < div > < span
@@ -163,7 +185,7 @@ export default {
         },
         {
           title: '操作人',
-          key: 'handler'
+          key: 'operator'
         },
         {
           title: '操作',
@@ -174,7 +196,7 @@ export default {
             return (
               <div><i-button
                 type = "primary"
-                onClick = {this.check
+                onClick = {() => { this.check(params) }
                 }>
               查看 </i-button>
               </div>)
@@ -183,12 +205,13 @@ export default {
       ],
       installerdata: [
         {
-          company: '11111',
+          id: 1,
+          name: '11111',
           firstName: '2222',
           lastName: 'qincai',
           type: 'No',
           note: '2016-10-03',
-          handler: 'zhangsan'
+          operator: 'zhangsan'
         }
       ],
       importInstallerModal: false,
@@ -228,7 +251,8 @@ export default {
         value: '0',
         label: '张三'
       }],
-      isSaller: false
+      isSaller: false,
+      dateValue: []
     }
   },
   methods: {
@@ -255,10 +279,13 @@ export default {
     filterMethod (value, option) {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
-    check () {
-      location.href = '/#/crm/CrmPoolCheck'
-      // this.$router.push('/crm/CrmPoolCheck')
-      // console.log('000000000')
+    check (params) {
+      this.$http.installerCheck({
+        id: params.row.id
+      }).then((data) => {
+        this.$router.push({name: 'Crm Check', params: data.data})
+        console.log(data)
+      })
     },
     receive () {
       console.log('11111')
@@ -322,7 +349,37 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {},
-    cancel () {}
+    cancel () {},
+    invalidBussinessExport () {
+      this.$http.invalidBussinessListExport({
+        email: this.email ? this.email : '',
+        name: this.company ? this.company : '',
+        industryJoin: this.trade ? this.trade : '',
+        beginTime: new Date(this.dateValue[0]).getTime(),
+        endTime: new Date(this.dateValue[1]).getTime()
+      }).then((data) => {
+        // this.installerdata = data.list;
+      })
+    },
+    handleChange (date) {
+      this.dateValue = date
+    },
+    invalidInstallerList () {
+      this.$http.crmInstallerList({
+        state: this.state ? this.state : '',
+        city: this.city ? this.city : '',
+        name: this.company ? this.company : '',
+        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : '',
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : '',
+        type: this.type ? this.type : '',
+        industry: this.trade ? this.trade : '',
+        email: this.email ? this.email : '',
+        typeJoin: this.trade === '0' ? this.trade + this.trade1 : this.trade
+      }).then((data) => {
+        // this.installerdata = data.list;
+        // data.list.forEach()
+      })
+    }
   }
 }
 </script>

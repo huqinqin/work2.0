@@ -57,7 +57,7 @@
           <Col span="4" style="padding-right:10px">
           <span style="color: #F0F0F0">Search:</span>
           <div>
-            <Button type="primary">Search</Button>
+            <Button type="primary" @click="getTemplatePoolInstallerList('0')">Search</Button>
           </div>
           </Col>
         </Row>
@@ -67,7 +67,7 @@
           <Button type="primary" @click="crmPoolAdd">新增</Button>
           <Button type="primary" @click="allocation">批量分配</Button>
           <Button type="primary" @click="invalidBussiness">无效商机</Button>
-          <Button type="error">导出</Button>
+          <Button type="error" @click="exportInstallerList('0')">导出</Button>
           </Col>
         </Row>
         <Row>
@@ -183,7 +183,7 @@
           <Col span="4" style="padding-right:10px">
           <span style="color: #F0F0F0">Search:</span>
           <div>
-            <Button type="primary">Search</Button>
+            <Button type="primary" @click="getTemplatePoolInstallerList('1')">Search</Button>
           </div>
           </Col>
         </Row>
@@ -193,7 +193,7 @@
          <!-- <Button type="primary" @click="crmPoolAdd">新增</Button>-->
           <Button type="primary" @click="allocation">批量分配</Button>
           <Button type="primary" @click="invalidBussiness">无效商机</Button>
-          <Button type="error">导出</Button>
+          <Button type="error" @click="exportInstallerList('1')">导出</Button>
           </Col>
         </Row>
         <Row>
@@ -304,17 +304,41 @@ export default {
       contact: '',
       contactList: [{
         value: '0',
-        label: '电话沟通'
+        label: '未联系'
       }, {
         value: '1',
-        label: '拜访'
+        label: '联系中未询价'
+      }, {
+        value: '2',
+        label: '联系中询价中'
+      }, {
+        value: '3',
+        label: '激活已下单'
+      }, {
+        value: '4',
+        label: '拉新已下单'
+      }, {
+        value: '5',
+        label: '无效客人'
       }],
       typeList: [{
         value: '0',
-        label: '电话沟通'
+        label: '未联系'
       }, {
         value: '1',
-        label: '拜访'
+        label: '联系中未询价'
+      }, {
+        value: '2',
+        label: '联系中询价中'
+      }, {
+        value: '3',
+        label: '激活已下单'
+      }, {
+        value: '4',
+        label: '拉新已下单'
+      }, {
+        value: '5',
+        label: '无效客人'
       }],
       trade: '',
       tradeList: [{
@@ -729,7 +753,6 @@ export default {
       this.dateValue = date
     },
     storeDataHandle () {
-
     },
     getStoreList () {
       this.query()
@@ -744,18 +767,18 @@ export default {
         console.log(this.list)
       }
     },
-    getTemplatePoolInstallerList () {
+    getTemplatePoolInstallerList (val) {
       this.$http.templatePoolInstallerList({
-        storeId: this.noAssociateStore,
-        custCode: this.custId,
-        email: this.email,
-        name: this.company,
-        industryJoin: this.trade,
-        contactStatus: this.contact,
-        state: this.state,
-        city: this.city,
+        storeId: val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0),
+        custCode: this.custId ? this.custId : '',
+        email: this.email ? this.email : '',
+        name: this.company ? this.company : '',
+        industryJoin: this.trade ? this.trade : '',
+        contactStatus: this.contact ? this.contact : '',
+        state: this.state ? this.state : '',
+        city: this.city ? this.city : '',
         ltsUser: '',
-        allotStatus: 0
+        allotStatus: val
       }).then((data) => {
         // this.installerdata = data.list;
       })
@@ -767,6 +790,20 @@ export default {
         this.$router.push({name: 'Crm Check', params: data.data})
         console.log(data)
       })
+    },
+    exportInstallerList (val) {
+      this.$http.templatePoolListExport({
+        storeId: val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0),
+        custCode: this.custId ? this.custId : '',
+        email: this.email ? this.email : '',
+        name: this.company ? this.company : '',
+        industryJoin: this.trade ? this.trade : '',
+        contactStatus: this.contact ? this.contact : '',
+        state: this.state ? this.state : '',
+        city: this.city ? this.city : '',
+        ltsUser: '',
+        allotStatus: val
+      }).then((data) => {})
     }
   },
   mounted () {

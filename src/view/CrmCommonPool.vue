@@ -66,10 +66,10 @@
      <Col>
        <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
        <div style="margin: 10px;overflow: hidden">
-       <div style="float: right;">
-         <Page :total="100" :current="1" @on-change="changePage"></Page>
+         <div style="float: right;">
+           <Page :total="100" :current="1" @on-change="changePage"></Page>
+         </div>
        </div>
-     </div>
      </Col>
    </Row>
    <Row>
