@@ -191,19 +191,24 @@ export default {
   getQuotation (params) {
     return axios.post('base/quotation/get', params)
   },
-  fetchQuotationAddress (params) {
-    return axios.post('base/store/listStoreAddress', params)
+  saveQuotation (params) {
+    console.log(params)
+    return axios.post('order/quotation/save', params)
   },
-  getQuotationAddress (params) {
-    return axios.post('base/installer/address/get', params)
+  fetchQuotationAddress (params) {
+    return axios.post('base/address/listStoreAddress', params)
   },
   saveQuotationAddress (params) {
-    return axios.post('base/installer/address/save', params)
+    return axios.post('base/address/saveStoreAddress', params)
   },
   fetchQuotationProduct (params) {
     return axios.post('product/item/queryItem', params)
   },
   queryQuotationInstaller (params) {
     return axios.post('base/store/queryStore', params)
+  },
+  simulateTrade (params) {
+    console.log(params)
+    return axios.post('trade/trade/simulateTrade', params)
   }
 }
