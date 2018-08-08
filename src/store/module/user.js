@@ -15,9 +15,13 @@ export default {
       } else {
         data = cache('user')
       }
-      state.account = data.account
-      state.email = data.email
-      state.avatar = data.avatar
+      if (data) {
+        state.account = data.account
+        state.email = data.email
+        state.avatar = data.avatar
+      } else {
+        // router.push({ name: 'login' })
+      }
     }
   },
   actions: {

@@ -6,7 +6,7 @@
           <div class="layout-cell">
             <form-item label="优惠券类型" prop="couponType">
               <i-select v-model="form.couponType">
-                <i-option v-for="item in types" :value="item.key" :key="item.key">{{item.value}}</i-option>
+                <i-option v-for="item in types" :value="item.value" :key="item.value">{{item.label}}</i-option>
               </i-select>
             </form-item>
           </div>
@@ -77,25 +77,25 @@
         <div class="layout-column">
           <div class="layout-cell flex-item">
             <form-item label="可使用商品">
-              <radio-group>
-                <radio v-for="(item, index) in includes" :key="index" :lable="item">{{item}}</radio>
+              <radio-group v-model="includeType">
+                <radio v-for="(item, index) in includes" :key="index" :label="item">{{item}}</radio>
               </radio-group>
             </form-item>
           </div>
         </div>
-        <div class="layout-column">
+        <div class="layout-column" v-if="includes.indexOf(includeType) === 1">
           <div class="layout-cell flex-item">
-            <i-button type="primary" style="margin-bottom: 16px;">选择商品</i-button>
+            <i-button type="primary" style="margin-bottom: 16px;" @click="addProducts">选择商品</i-button>
             <i-table :columns="columns" :data="selProducts"></i-table>
           </div>
         </div>
-        <div class="layout-column">
+        <div class="layout-column" v-if="includes.indexOf(includeType) === 2">
           <div class="layout-cell flex-item">
             购买以下分类商品可使用优惠券抵扣金额  已选中20个分类
             <Tree :data="data2" show-checkbox></Tree>
           </div>
         </div>
-        <div class="layout-column">
+        <div class="layout-column" v-if="includes.indexOf(includeType) === 3">
           <div class="layout-cell flex-item">
             <checkbox-group>
               <checkbox label="品牌">品牌</checkbox>
@@ -118,6 +118,7 @@ export default {
   name: 'CouponNew',
   data () {
     return {
+      includeType: '全场通用',
       standard: 0,
       validType: 'range',
       selProducts: [],
@@ -128,7 +129,7 @@ export default {
         amountType: 'off',
         amount: 0,
         standard: 0,
-        include: {},
+        include: null,
         startTime: new Date(),
         endTime: new Date(),
         effectiveTime: 0
@@ -210,6 +211,13 @@ export default {
   methods: {
     setStartAndEndTime (daterange) {
       console.log('​setStartAndEndTime -> daterange', daterange)
+    },
+    addProducts () {
+      this.$selectProducts.show({
+        addProducts (products) {
+          console.log(products)
+        }
+      })
     }
   }
 }
