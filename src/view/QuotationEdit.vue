@@ -67,12 +67,12 @@
         <div class="divider"></div>
         <i-form ref="shipping" :model="shipping" label-position="top">
           <form-item label="选择方式" prop="type">
-            <RadioGroup v-model="shipping.method">
+            <RadioGroup v-model="shipping.methods">
               <Radio label="willCall">自提</Radio>
               <Radio label="express">快递</Radio>
             </RadioGroup>
           </form-item>
-          <template v-if="shipping.method === 'express'">
+          <template v-if="shipping.methods === 'express'">
             <form-item label="快递公司" prop="company">
               <RadioGroup v-model="shipping.expressCompany">
                 <Radio label="UPS">UPS</Radio>
@@ -92,7 +92,7 @@
         </i-form>
       </div>
     </card>
-    <card class="address-card" v-if="shipping.method === 'express'">
+    <card class="address-card" v-if="shipping.methods === 'express'">
       <div class="title">
         <p>选择收货地址 <Button type="text" @click="showAddAddressForm">+添加地址</Button></p>
         <div class="divider"></div>
@@ -129,7 +129,7 @@
         </Modal>
       </div>
     </card>
-    <card class="po-card" v-if="shipping.method === 'express'">
+    <card class="po-card" v-if="shipping.methods === 'express'">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
@@ -238,8 +238,8 @@ export default {
   data () {
     return {
       note: {
-        remark: '',
-        packingType: ''
+        remark: '2333333333333333',
+        packingType: 'Pick List Only'
       },
       installerValue: '',
       installerType: 'storeCode',
@@ -248,9 +248,9 @@ export default {
       store: {},
       poNo: '',
       shipping: {
-        method: 'express',
+        methods: 'express',
         expressCompany: 'Fedex',
-        expressService: '',
+        expressService: '01',
         dropShipping: false,
         expressSignature: true,
         UCSA: false
@@ -272,10 +272,6 @@ export default {
         {value: '71', label: 'UPS Worldwide Express Freight Midday'}
       ],
       toAddr: {},
-      payForm: {
-        payType: '',
-        packingType: ''
-      },
       showAddressTable: false,
       showAddressForm: false,
       addressList: [],
@@ -431,7 +427,7 @@ export default {
         }
       ],
       pay: {
-        payType: '',
+        payType: 'anet',
         itemFee: 98400,
         orderDiscount: 0,
         taxFee: 523,
@@ -610,7 +606,7 @@ export default {
           id: t.id,
           num: t.amount,
           sku: { id: t.skuid },
-          diyPrice: t.divPrice,
+          diyPrice: t.diyPrice,
           note: { remark: t.note.remark }
         }
       })
@@ -623,7 +619,10 @@ export default {
         pay: { payType: this.pay.payType, note: { remark: '' } },
         note: { remark: this.note.remark },
         source: 'work',
-        orderDiscount: this.orderDiscount
+        type: 'quotation',
+        orderDiscount: this.orderDiscount,
+        toAddr: this.toAddr,
+        fromAddr: this.toAddr
       }).then(data => {
         console.log(data)
       })
@@ -638,6 +637,7 @@ export default {
         pay: this.pay,
         note: this.note,
         source: 'work',
+        type: 'quotation',
         sendEmail: false
       }).then(data => {
         console.log(data)

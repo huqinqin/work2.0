@@ -193,7 +193,7 @@ export default {
   },
   saveQuotation (params) {
     console.log(params)
-    return axios.post('order/quotation/save', params)
+    return axios.post('order/quotation/saveOrUpdate', params)
   },
   fetchQuotationAddress (params) {
     return axios.post('base/address/listStoreAddress', params)
