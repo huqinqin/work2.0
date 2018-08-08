@@ -182,6 +182,58 @@ export default {
   changeOrderPrice (params) {
     return axios.post('trade/orderSell/updateOrderPrice', params)
   },
+  handleOrder (params) {
+    return axios.post('/trade/orderSell/updateOrderPrice', params)
+  },
+  /* crm接口 */
+  /* 公海池工程商列表、编辑、新增 、无效商机 */
+  crmInstallerList (params) {
+    return axios.post('/crm/company/save', params)
+  },
+  /* 公海池批量领取 */
+  batchCollectionInstaller (params) {
+    return axios.post('/crm/company/batchGetCompany', params)
+  },
+  /* 公海池工程商查看 */
+  installerCheck (params) {
+    return axios.post('/crm/company/get', params)
+  },
+  /* 公海池沟通记录列表 */
+  contactList (params) {
+    return axios.post('/crm/company/listCommunicationRecord', params)
+  },
+  /* 临时池新增沟通纪录 */
+  newContactList (params) {
+    return axios.post('/crm/company/addCommunicationRecord', params)
+  },
+  /* 维护用户特点 */
+  maintenanceList (params) {
+    return axios.post('/crm/company/modifyExt', params)
+  },
+  /* 新增联系人 */
+  createLinkman (params) {
+    return axios.post('/crm/company/addContact', params)
+  },
+  /* 临时池工程商列表 */
+  templatePoolInstallerList (params) {
+    return axios.post('/crm/bupoll/formoment/page', params)
+  },
+  /* 临时池列表的导出 */
+  templatePoolListExport (params) {
+    return axios.post('/crm/export/formoment/page', params)
+  },
+  /* 私有池列表 */
+  privatePoolInstallerList (params) {
+    return axios.post('/crm/bupoll/priv/page', params)
+  },
+  /* 私有池列表的导出 */
+  privatePoolListExport (params) {
+    return axios.post('/crm/export/priv/page', params)
+  },
+  /* 无效商机导出 */
+  invalidBussinessListExport (params) {
+    return axios.post('/crm/export/invalid/business', params)
+  },
   fetchGroupStore () {
     return axios.post('base/store/group')
   },
