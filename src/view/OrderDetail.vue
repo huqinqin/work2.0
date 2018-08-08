@@ -32,7 +32,7 @@
     <div class="pay-info">
       <p>
         <label>应付金额:</label>
-        <span>${{form.itemFee}}</span>
+        <span>{{form.itemFee | formatPrice}}</span>
       </p>
       <p>
         <label>税率:</label>
@@ -41,24 +41,24 @@
       </p>
       <p>
         <label>税费:</label>
-        <span>${{tax}}</span>
+        <span>{{tax | formatPrice}}</span>
       </p>
       <p>
         <label>运费:</label>
-        <span>${{form.shippingFee}}</span>
+        <span>{{form.shippingFee | formatPrice}}</span>
       </p>
       <p>
         <label>优惠:</label>
-        <span>${{form.discountFee}}</span>
+        <span>{{form.discountFee | formatPrice}}</span>
       </p>
       <p>
         <label>手动:</label>
         <span v-if="form.pStatus === 'unpaid' && 0"><Input v-model="handling" /></span>
-        <span v-else>${{handling}}</span>
+        <span v-else>{{handling | formatPrice}}</span>
       </p>
       <p>
         <label>实付金额:</label>
-        <span>${{total}}</span>
+        <span>{{total | formatPrice}}</span>
       </p>
     </div>
     <hr>
@@ -76,6 +76,8 @@
   </card>
 </template>
 <script>
+
+import formatPrice from '../plugin/filter/formatPrice'
 export default {
   data () {
     return {
@@ -147,8 +149,8 @@ export default {
           render: (h, params) => {
             return (
               <div>
-                <del>${params.row.price}</del>
-                <p>${params.row.realPrice}</p>
+                <del>{formatPrice.formatPrice(params.row.price)}</del>
+                <p>{formatPrice.formatPrice(params.row.realPrice)}</p>
               </div>
             )
           }
@@ -162,7 +164,7 @@ export default {
           align: 'center',
           render: (h, params) => {
             return (
-              <span>${params.row.amount}</span>
+              <span>{formatPrice.formatPrice(params.row.amount)}</span>
             )
           }
         }

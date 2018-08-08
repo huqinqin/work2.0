@@ -6,6 +6,7 @@ import iView from 'iview'
 
 Vue.use(Router)
 const router = new Router({
+  mode: 'history',
   routes
 })
 // const LOCK_PAGE_NAME = 'lock_page'

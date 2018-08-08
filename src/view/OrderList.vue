@@ -36,7 +36,7 @@
           </Select>
         </form-item>
         <form-item prop="" label="时间">
-          <DatePicker v-model="filter.date" type="daterange" :options="dateOptions" placement="bottom-end" placeholder="Select date" style="width: 200px"></DatePicker>
+          <DatePicker v-model="filter.date" type="daterange" :options="dateOptions" placeholder="Select date" style="width: 200px"></DatePicker>
         </form-item>
       </template>
       <form-item label=" ">
@@ -112,6 +112,7 @@
 <script>
 import mixin from '@/mixins/list'
 import expandRow from './OrderListExpand.vue'
+import formatPrice from '../plugin/filter/formatPrice'
 
 export default {
   mixins: [mixin],
@@ -244,9 +245,10 @@ export default {
         }, {
           title: 'customer ID',
           key: 'sCode'
+
         }, {
           title: '收货信息',
-          minWidth: 280,
+          width: 230,
           render: (h, params) => {
             // <p class="multi-ellipsis-2">{params.row.address.detail}</p>
             return (
@@ -260,7 +262,7 @@ export default {
           title: '金额',
           render: (h, params) => {
             return (
-              <span>{params.row.payAmount}</span>
+              <span> {formatPrice.formatPrice(params.row.payAmount)}</span>
             )
           }
         }, {
@@ -302,12 +304,11 @@ export default {
                 break
             }
             return (
-              <div>{payStatus}</div>
+              <div style="width:80px;">{payStatus}</div>
             )
           }
         }, {
           title: '销售/门店',
-          key: '',
           render: (h, params) => {
             return (
               <div>
@@ -318,24 +319,24 @@ export default {
           }
         }, {
           title: '时间',
-          key: 'cdate'
+          render: (h, params) => {
+            return (
+              <div style="width: 70px;">{params.row.cdate}</div>
+            )
+          }
         }, {
           title: '来源',
           key: 'source'
         }, {
           title: '操作',
           key: 'action',
-          width: 320,
-          align: 'center',
+          width: 180,
           render: (h, params) => {
             return h('div', [
               h('Button', {
                 props: {
                   type: 'primary',
                   size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
                 },
                 on: {
                   click: () => {
@@ -348,9 +349,6 @@ export default {
                   type: 'info',
                   size: 'small'
                 },
-                style: {
-                  marginRight: '5px'
-                },
                 on: {
                   click: () => {
                     this.$router.push({path: `order_detail/${params.row.id}`})
@@ -359,26 +357,10 @@ export default {
               }, '详情'),
               h('Button', {
                 props: {
-                  type: 'success',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
-                },
-                on: {
-                  click: () => {
-                    this.showChangeFee(params.row)
-                  }
-                }
-              }, '修改金额'),
-              h('Button', {
-                props: {
                   type: 'warning',
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px',
                   display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -389,11 +371,24 @@ export default {
               }, '支付'),
               h('Button', {
                 props: {
+                  type: 'success',
+                  size: 'small'
+                },
+                style: {
+                  display: params.row.pStatus === 'unpaid' ? 'inline-block' : 'none'
+                },
+                on: {
+                  click: () => {
+                    this.showChangeFee(params.row)
+                  }
+                }
+              }, '修改金额'),
+              h('Button', {
+                props: {
                   type: 'error',
                   size: 'small'
                 },
                 style: {
-                  marginRight: '5px',
                   display: params.row.pStatus !== 'finish' ? 'inline-block' : 'none'
                 },
                 on: {
@@ -493,15 +488,3 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
-  /deep/ .ivu-table-expanded-cell{
-    padding: 0;
-  }
-  /deep/ .ivu-select{
-    width: 162px;
-  }
-  /deep/ .ivu-table-small td {
-    padding: 6px 0;
-    vertical-align: top;
-  }
-</style>

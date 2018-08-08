@@ -17,7 +17,7 @@ const orderList = Mock.mock({
     sCode: '@integer(100000, 900000)',
     sName: '@first',
     payAmount: '@integer(1000, 9000)',
-    salesName: '@name',
+    salesName: '@last',
     taxFee: '@integer(100, 900)',
     shippingFee: '@integer(100, 900)',
     itemFee: '@integer(1000, 9000)',

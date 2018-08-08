@@ -21,7 +21,48 @@ const installerAccountList = Mock.mock({
     shop: '@name',
     'status|1': ['激活', '冻结']
   }] })
-
+const addressList = Mock.mock({
+  data: {
+    'list|10': [
+      {
+        'id|+1': '@increment(10)',
+        'status|1': ['default', 'enabled'],
+        address: {
+          receiver: '@name',
+          detail: '@region' + '@province' + '@zip',
+          street: '@region',
+          city: '@province',
+          state: '@province',
+          zip: '@zip',
+          country: 'US',
+          telnum: '@integer(100000000,999999999)',
+          lat: '1234567',
+          lng: '8765431',
+          company: '@clast'
+        }
+      }
+    ]
+  }
+})
+const addressDetail = Mock.mock({
+  data: {
+    'id|+1': '@increment(10)',
+    'status|1': ['default', 'enabled'],
+    address: {
+      receiver: '@name',
+      detail: '@region' + '@province' + '@zip',
+      street: '@region',
+      city: '@province',
+      state: '@province',
+      zip: '@zip',
+      country: 'US',
+      telnum: '@integer(100000000,999999999)',
+      lat: '1234567',
+      lng: '8765431',
+      company: '@clast'
+    }
+  }
+})
 export default {
   getInstallerList: {
     list () {
@@ -43,6 +84,32 @@ export default {
           total: 50,
           ...installerAccountList
         },
+        msg: ''
+      }
+    }
+  },
+  address: {
+    list () {
+      return {
+        code: '000000',
+        total: 50,
+        ...addressList,
+        msg: ''
+      }
+    },
+    get () {
+      return {
+        code: '000000',
+        total: 50,
+        ...addressDetail,
+        msg: ''
+      }
+    },
+    save () {
+      return {
+        code: '000000',
+        total: 50,
+        data: '保存地址成功',
         msg: ''
       }
     }
