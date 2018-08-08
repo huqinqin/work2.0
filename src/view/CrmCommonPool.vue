@@ -77,7 +77,6 @@
        <Upload
          ref="upload"
          :show-upload-list="true"
-         :default-file-list="imgUrls"
          :on-success="handleSuccess"
          :format="['jpg','jpeg','png']"
          :max-size="2048"
@@ -98,7 +97,7 @@
      </Modal>
    </Row>
    <Row>
-     <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
+     <Modal v-model="invalidBussinessModal" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
          <FormItem label="类型" prop="invalidBussinessSelect">
              <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
@@ -113,7 +112,7 @@
          <FormItem label="备注" prop="note">
            <Row>
          <Col span="18">
-         <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
+         <Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
          </Col>
        </Row>
          </FormItem>
@@ -454,7 +453,7 @@ export default {
         beginTime: new Date(this.dateValue[0]).getTime(),
         endTime: new Date(this.dateValue[1]).getTime(),
         type: this.type,
-        industry: this.trade,
+        industry: this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade,
         email: this.email
       }).then((data) => {
         // this.installerdata = data.list;
@@ -493,11 +492,12 @@ export default {
       })
     },
     beforeLoad (file) {
-      console.log('file', file)
       this.formData.name = file.name
       this.formData.key = this.formUp.preKey + '/' + file.name
       this.formData.Filename = file.name
-      this.filelist.push(file)
+      this.$nextTick(() => {
+        this.$refs.upload.post(file)
+      })
       return false
     },
     loadSuccess (response, file) {
@@ -520,9 +520,9 @@ export default {
       })
     },
     handleSuccess (res, file) {
-      file.url = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.uploadList.push(file)
+      this.imgList.push(file)
     }
   },
   mounted () {

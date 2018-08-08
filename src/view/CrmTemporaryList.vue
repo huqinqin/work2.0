@@ -90,7 +90,7 @@
           </Modal>
         </Row>
         <Row>
-          <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
+          <Modal v-model="invalidBussinessModal" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
               <FormItem label="类型" prop="invalidBussinessSelect">
                 <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
@@ -105,7 +105,7 @@
               <FormItem label="备注" prop="note">
                 <Row>
                   <Col span="18">
-                  <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
+                  <Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
                   </Col>
                 </Row>
               </FormItem>
