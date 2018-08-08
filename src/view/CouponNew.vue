@@ -111,6 +111,7 @@
         </div>
       </i-form>
     </card>
+    <LayoutSelectProduct v-model="showSelProduct" @select="setSelProducts" :sel-ids="selProducts.map(item => item.id)"></LayoutSelectProduct>
   </div>
 </template>
 <script>
@@ -118,6 +119,7 @@ export default {
   name: 'CouponNew',
   data () {
     return {
+      showSelProduct: false,
       includeType: '全场通用',
       standard: 0,
       validType: 'range',
@@ -136,19 +138,19 @@ export default {
       },
       columns: [{
         title: '商品名称',
-        key: 'name'
+        key: 'title'
       }, {
         title: 'sku编码',
-        render (h, params) {
+        render: (h, params) => {
           return (
             <span>{params.row.skus.join(',')}</span>
           )
         }
       }, {
         title: '操作',
-        render (h, params) {
+        render: (h, params) => {
           return (
-            <i-button type="primary">删除</i-button>
+            <i-button type="error" size="small" onClick={() => this.delSelProducts(params.index)}>删除</i-button>
           )
         }
       }],
@@ -208,16 +210,21 @@ export default {
       }]
     }
   },
+  mounted () {
+    console.log(this.delSelProducts)
+  },
   methods: {
     setStartAndEndTime (daterange) {
       console.log('​setStartAndEndTime -> daterange', daterange)
     },
     addProducts () {
-      this.$selectProducts.show({
-        addProducts (products) {
-          console.log(products)
-        }
-      })
+      this.showSelProduct = true
+    },
+    setSelProducts (list) {
+      this.selProducts = this.selProducts.concat(list)
+    },
+    delSelProducts (index) {
+      this.selProducts.splice(index, 1)
     }
   }
 }

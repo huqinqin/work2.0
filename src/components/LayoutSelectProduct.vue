@@ -1,7 +1,8 @@
 <template>
   <Modal
-    v-model="show"
-    title="Common Modal dialog box title" width="80%" class="no-footer">
+    :value="value"
+    @input="onInput"
+    title="选择商品" width="80%" class="no-footer">
     <i-form ref="filter" :model="filter" inline>
       <form-item prop="image">
         <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
@@ -32,7 +33,7 @@
         <i-button type="primary" @click="addSelection">添加所选</i-button>
       </form-item>
     </i-form>
-    <i-table :columns="columns" :data="list" size="small" ref="table" @on-selection-change="changeSelection"></i-table>
+    <i-table :columns="columns" :data="products" size="small" ref="table" @on-selection-change="changeSelection"></i-table>
     <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
       <div style="float:right;">
         <Page @on-change="changeCurPage" :total="40" size="small" show-elevator show-sizer></Page>
@@ -43,10 +44,22 @@
 <script>
 export default {
   name: 'LayoutSelectProduct',
+  props: {
+    value: {
+      type: Boolean,
+      default: false
+    },
+    // 已经选择的商品id，这些商品id无法再次选择
+    selIds: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
   data () {
     return {
       selection: [],
-      show: false,
       curPage: 1,
       total: 500,
       list: [],
@@ -106,65 +119,45 @@ export default {
           align: 'center',
           render: (h, params) => {
             if (params.row._disabled) {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'success',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {}
-                  }
-                }, '已添加')
-              ])
+              return (
+                <i-button type="success" size="small">已添加</i-button>
+              )
             }
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    if (this.addProducts) {
-                      this.addProducts([params.row])
-                    }
-                  }
-                }
-              }, '添加')
-            ])
+            return (
+              <i-button type="primary" size="small" onClick={() => this.selProduct([params.row])}>添加</i-button>
+            )
           }
         }
       ]
     }
   },
-  props: {
-    selectIds: {
-      type: Array,
-      default () {
-        return []
+  computed: {
+    products () {
+      let list = []
+      for (const item of this.list) {
+        if (this.selIds.indexOf(item.id) > -1) {
+          list.push({...item, _disabled: true})
+        } else {
+          list.push(item)
+        }
       }
-    },
-    addProducts: Function,
-    delProducts: Function
+      return list
+    }
   },
   methods: {
+    onInput (val) {
+      this.$emit('input', val)
+    },
+    selProduct (item) {
+      this.$emit('select', item)
+    },
     addSelection () {
-      if (this.addProducts) {
-        this.addProducts(this.selection)
-      }
+      this.$emit('select', this.selection)
     },
     changeSelection (selection) {
       this.selection = selection
     },
     changeCurPage (page) {
-      console.log(page)
       this.curPage = page
       this.query()
     },
