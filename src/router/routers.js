@@ -161,6 +161,17 @@ export default [
     ]
   },
   {
+    path: '/activity',
+    meta: { icon: 'lock-combination', title: '活动优惠' },
+    name: 'activity',
+    component: Main,
+    children: [
+      { path: 'coupon_new', meta: { icon: 'lock-combination', title: '新增优惠券' }, name: 'coupon_new', component: () => import('@/view/CouponNew.vue') },
+      { path: 'coupon_list', meta: { icon: 'lock-combination', title: '优惠券列表' }, name: 'coupon_list', component: () => import('@/view/CouponList.vue') },
+      { path: 'coupon_detail', meta: { icon: 'lock-combination', title: '优惠券详情', hideInMenu: true }, name: 'coupon_detail', component: () => import('@/view/CouponDetail.vue') }
+    ]
+  },
+  {
     path: '/report',
     redirect: '/report/index',
     meta: { icon: 'lock-combination', title: '数据报表', hideInMenu: true },
