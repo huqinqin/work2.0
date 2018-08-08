@@ -49,7 +49,7 @@ export default {
     return {
       url: 'Quotation',
       filter: {
-        id: '', custID: '', account: '', sName: '', status: '', date: '', sales: ''
+        id: '', custID: '', account: '', sName: '', status: '', date: [], sales: ''
       },
       salesOption: [
         {
@@ -137,9 +137,7 @@ export default {
           render: (h, params) => {
             return (
               <div>
-                <i-button type="primary" size="small" on-click={(e) => this.edit(params.row.id)}>编辑</i-button>
-                <i-button type="success" size="small" on-click={(e) => this.review(params.row.id)}>审核</i-button>
-                <i-button type="error" size="small" on-click={(e) => this.pushReview(params.row.id)}>提交审核</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.review(params.row.id)}>审核</i-button>
               </div>
             )
           }
@@ -148,14 +146,8 @@ export default {
     }
   },
   methods: {
-    detail (id) {
-      console.log('detail', id)
-    },
     review (id) {
       console.log('review', id)
-    },
-    pushReview (id) {
-      console.log('push', id)
     }
   },
   beforeMount () {

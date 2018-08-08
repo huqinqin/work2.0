@@ -63,6 +63,7 @@
   </card>
 </template>
 <script>
+import md5 from 'md5'
 import mixin from '@/mixins/edit'
 export default {
   mixins: [mixin],
@@ -73,6 +74,8 @@ export default {
         storeName: '',
         storeCode: '',
         phone: '',
+        userAccount: '',
+        userPassword: md5(12345678),
         contact: [{firstName: '', lastName: '', mobile: '', email: ''}],
         address: {
           detail: '',
@@ -150,6 +153,7 @@ export default {
     validForm () {
       Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
+          this.form.userAccount = this.form.storeCode + '001'
           this.submit()
         }
       })

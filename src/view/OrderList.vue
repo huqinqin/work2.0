@@ -2,7 +2,7 @@
   <card>
     <i-form ref="filter" :model="filter" inline>
       <form-item prop="" label="Cust ID">
-        <i-input v-model="filter.Customer" type="text" placeholder="Customer ID" ></i-input>{{19|formatPrice}}
+        <i-input v-model="filter.Customer" type="text" placeholder="Customer ID" ></i-input>
       </form-item>
       <form-item prop="" label="公司名">
         <i-input v-model="filter.sName" type="text" placeholder="公司名" ></i-input>
@@ -36,7 +36,7 @@
           </Select>
         </form-item>
         <form-item prop="" label="时间">
-          <DatePicker v-model="filter.date" type="daterange" :options="dateOptions" placement="bottom-end" placeholder="Select date" style="width: 200px"></DatePicker>
+          <DatePicker v-model="filter.date" type="daterange" :options="dateOptions" placeholder="Select date" style="width: 200px"></DatePicker>
         </form-item>
       </template>
       <form-item label=" ">

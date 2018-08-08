@@ -121,6 +121,7 @@ export default [
     name: 'quotation',
     component: Main,
     children: [
+      { path: 'quotation_review_list', meta: { icon: 'lock-combination', title: '待审核询价单列表' }, name: 'quotation_review_list', component: () => import('@/view/QuotationReviewList.vue') },
       { path: 'quotation_list', meta: { icon: 'lock-combination', title: '询价单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') },
       { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '新增询价单' }, name: 'quotation_edit', component: () => import('@/view/QuotationEdit.vue') }
     ]
