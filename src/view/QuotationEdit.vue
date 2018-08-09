@@ -1,6 +1,6 @@
 <template>
   <div>
-    <card class="installer-card">
+    <card class="installer-card" id="store" :class="{'empty': !validForm.store}">
       <div class="title">
         <p>选择工程商</p>
         <div class="divider"></div>
@@ -18,13 +18,18 @@
         <i-col span="20">
           <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="installer-popover">
             <i-input v-model="installerValue" @on-change="queryInstaller"></i-input>
-            <div slot="content">
-              <ul class="installer-list">
-                <li v-for="installer in installerList" :key="installer.id" @click="checkInstaller(installer)">
-                  {{installer.storeName}} - {{installer.storeCode}}
-                </li>
-              </ul>
-            </div>
+            <template slot="content">
+              <div class="content" v-if="installerValue && gotInstaller && installerList.length">
+                <ul class="installer-list">
+                  <li v-for="installer in installerList" :key="installer.id" @click="checkInstaller(installer)">
+                    {{installer.storeName}} - {{installer.storeCode}}
+                  </li>
+                </ul>
+              </div>
+              <div class="content" v-if="installerValue && gotInstaller && !installerList.length">
+                <p>没有结果，请稍后重试或者更换搜索条件</p>
+              </div>
+            </template>
           </Poptip>
         </i-col>
       </Row>
@@ -52,12 +57,12 @@
         <i-col span="12">
           <div>
             <p>Cust Notes</p>
-            <Input v-model="store.custNotes" type="textarea" :rows="4"/>
+            <Input v-model="store.custNotes" type="textarea" :rows="4" readonly/>
           </div>
         </i-col>
         <i-col span="12">
           <p>Account Notes</p>
-          <Input v-model="store.accountNotes" type="textarea" :rows="4"/>
+          <Input v-model="store.accountNotes" type="textarea" :rows="4" readonly/>
         </i-col>
       </Row>
     </card>
@@ -67,12 +72,12 @@
         <div class="divider"></div>
         <i-form ref="shipping" :model="shipping" label-position="top">
           <form-item label="选择方式" prop="type">
-            <RadioGroup v-model="shipping.method">
+            <RadioGroup v-model="shipping.methods">
               <Radio label="willCall">自提</Radio>
               <Radio label="express">快递</Radio>
             </RadioGroup>
           </form-item>
-          <template v-if="shipping.method === 'express'">
+          <template v-if="shipping.methods === 'express'">
             <form-item label="快递公司" prop="company">
               <RadioGroup v-model="shipping.expressCompany">
                 <Radio label="UPS">UPS</Radio>
@@ -92,7 +97,7 @@
         </i-form>
       </div>
     </card>
-    <card class="address-card" v-if="shipping.method === 'express'">
+    <card class="address-card" v-if="shipping.methods === 'express'" id="address" :class="{'empty': !validForm.address}">
       <div class="title">
         <p>选择收货地址 <Button type="text" @click="showAddAddressForm">+添加地址</Button></p>
         <div class="divider"></div>
@@ -124,19 +129,19 @@
           <MapAutoComplete :googleAddress="editAddressForm.address" ref="address"></MapAutoComplete>
           <footer slot="footer">
             <Button type="primary" @click="cancelAddressForm">取消</Button>
-            <Button type="primary" @click="submitAddressForm">确定</Button>
+            <Button type="primary" @click="submitAddressForm" :loading="addressLoading">确定</Button>
           </footer>
         </Modal>
       </div>
     </card>
-    <card class="po-card" v-if="shipping.method === 'express'">
+    <card class="po-card" v-if="shipping.methods === 'express'">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
         <Input placeholder="请输入P/O NO." v-model="poNo"/>
       </div>
     </card>
-    <card class="product-card">
+    <card class="product-card" id="product" :class="{'empty': !validForm.items}">
       <div class="title">
         <p>选择商品</p>
         <div class="divider"></div>
@@ -159,7 +164,7 @@
           :columns="productColumns"
         ></i-table>
       </div>
-    </card>
+    </card >
     <card class="pay-card">
       <div class="title">
         <p>支付信息</p>
@@ -194,13 +199,15 @@
             <div class="fee">{{pay.itemFee | formatPrice}}</div><div class="other">Gross Profit Margin : 100.00%</div>
           </form-item>
           <form-item label="满减优惠">
-            <div class="fee">{{pay.orderDiscount | formatPrice}}</div><div class="other"><Checkbox v-model="orderDiscount">Whether to participate in sitewide promotion</Checkbox></div>
+            <div class="fee">{{pay.discountFee | formatPrice}}</div>
+            <div class="other"><Checkbox v-model="pay.orderDiscount">Whether to participate in sitewide promotion</Checkbox></div>
           </form-item>
           <form-item label="税费/税率">
             <div class="fee">{{pay.taxRate}} / {{pay.taxFee | formatPrice}}</div>
           </form-item>
           <form-item label="运费">
-            <div class="fee"><Input v-model="shippingFee" @on-change="getFee" /></div><div class="other"><Checkbox v-model="shipping.dropShipping">Insufficient inventory/Dropship from other office</Checkbox></div>
+            <div class="fee"><Input v-model="shippingFee" @on-change="getFee" /></div>
+            <div class="other"><Checkbox v-model="shipping.dropShipping">Insufficient inventory/Dropship from other office</Checkbox></div>
           </form-item>
           <form-item label="减免">
             <div class="discount">
@@ -226,8 +233,9 @@
     <div class="buttons">
       <Button type="primary">保存并发送邮件</Button>
       <Button type="primary">保存并下载询价单</Button>
-      <Button type="primary" @click="simuTrade">保存</Button>
-      <Button type="success" @click="saveQuotation">提交审核</Button>
+      <Button type="primary" @click="simuTrade">模拟下单</Button>
+      <Button type="primary" @click="saveQuotation">保存</Button>
+      <Button type="success" @click="sendQuotation">提交审核</Button>
     </div>
   </div>
 </template>
@@ -238,19 +246,20 @@ export default {
   data () {
     return {
       note: {
-        remark: '',
-        packingType: ''
+        remark: 'order-remark',
+        packingType: 'Pick List Only'
       },
       installerValue: '',
       installerType: 'storeCode',
       installerList: [],
       queryInstallerClock: '',
+      gotInstaller: false,
       store: {},
       poNo: '',
       shipping: {
-        method: 'express',
+        methods: 'express',
         expressCompany: 'Fedex',
-        expressService: '',
+        expressService: '01',
         dropShipping: false,
         expressSignature: true,
         UCSA: false
@@ -272,10 +281,8 @@ export default {
         {value: '71', label: 'UPS Worldwide Express Freight Midday'}
       ],
       toAddr: {},
-      payForm: {
-        payType: '',
-        packingType: ''
-      },
+      fromAddr: {},
+      supplyId: '',
       showAddressTable: false,
       showAddressForm: false,
       addressList: [],
@@ -332,13 +339,20 @@ export default {
           render: (h, params) => {
             return (
               <div>
-                <i-button type="error" size="small" onClick={ () => { this.checkAddress(params.row) }}>选择</i-button>
-                <i-button type="primary" size="small" onClick={ () => { this.editAddress(params.row) }}>编辑</i-button>
+                <i-button type="error" size="small" onClick={() => {
+                  this.checkAddress(params.row)
+                }}>选择
+                </i-button>
+                <i-button type="primary" size="small" onClick={() => {
+                  this.editAddress(params.row)
+                }}>编辑
+                </i-button>
               </div>
             )
           }
         }
       ],
+      addressLoading: false,
       productValue: '',
       productList: [],
       itemList: [],
@@ -352,7 +366,7 @@ export default {
           title: '图片',
           render: (h, params) => {
             return (
-              <img src={params.row.imgUrls[0]} alt="主图" width="26" height="26"/>
+              <img src={params.row.imgUrls[0]} alt="主图" width="26" height="26" />
             )
           }
         },
@@ -409,7 +423,8 @@ export default {
           render: (h, params) => {
             return (
               <div>
-                <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop" placement="bottom-end">
+                <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop"
+                  placement="bottom-end">
                   <div slot="content">
                     <table border="1" class="history-table">
                       <tr>
@@ -424,44 +439,60 @@ export default {
                   </div>
                   <i-button type="primary" size="small">more</i-button>
                 </poptip>
-                <i-button type="error" size="small" on-click={(e) => { this.deleteProduct(params.index) }}>删除</i-button>
+                <i-button type="error" size="small" on-click={(e) => {
+                  this.deleteProduct(params.index)
+                }}>删除
+                </i-button>
               </div>
             )
           }
         }
       ],
       pay: {
-        payType: '',
-        itemFee: 98400,
-        orderDiscount: 0,
-        taxFee: 523,
-        taxRate: 0.017,
-        shippingFee: 3453,
-        discountFee: 0,
-        oversold: false
+        payType: 'anet', // 支付方式
+        itemFee: 0, // 商品金额
+        taxFee: 0, // 税费
+        taxRate: 0, // 税率
+        shippingFee: 0, // 运费
+        discountFee: 0, // 满减优惠
+        otherFee: '', // 手动减免
+        orderDiscount: false, // 是否参与满减
+        oversold: false // 是否超卖
       },
       discountType: 'num',
       discountNum: '0.00',
       discountPercent: '0.00',
-      shippingFee: 34.53,
+      shippingFee: 0,
       getFeeClock: null,
-      orderDiscount: false
+      validForm: {
+        store: true,
+        address: true,
+        items: true
+      }
     }
   },
   computed: {
     total () {
-      console.log(this.pay.itemFee, this.pay.taxFee, this.pay.discountFee, this.pay.shippingFee)
-      return (+this.pay.itemFee) + (+this.pay.taxFee) + (+this.pay.discountFee) + (+this.pay.shippingFee)
+      console.log(this.pay.itemFee, this.pay.taxFee, this.pay.discountFee, this.pay.shippingFee, this.pay.otherFee)
+      return (+this.pay.itemFee) + (+this.pay.taxFee) + (+this.pay.discountFee) + (+this.pay.shippingFee) + (+this.pay.otherFee)
     }
   },
   methods: {
     queryInstaller () {
+      this.gotInstaller = false
       clearTimeout(this.queryInstallerClock)
       this.queryInstallerClock = setTimeout(() => {
         this.$http.queryQuotationInstaller({
           [this.installerType]: this.installerValue
         }).then(data => {
-          this.installerList = data.map(t => {
+          this.gotInstaller = true
+          let installerArr = []
+          data.forEach(i => {
+            i.userResponses.forEach(v => {
+              installerArr.push(Object.assign({}, i, {userData: v}))
+            })
+          })
+          this.installerList = installerArr.map(t => {
             return {
               storeCode: t.code,
               storeName: t.address.company,
@@ -476,12 +507,14 @@ export default {
               custNotes: ''
             }
           })
+        }, msg => {
+          this.gotInstaller = true
         })
       }, 800)
     },
     checkInstaller (installer) {
+      this.validForm.store = true
       this.store = installer
-      console.log(installer)
       this.fetchAddress()
     },
     fetchAddress () {
@@ -493,6 +526,7 @@ export default {
       })
     },
     checkAddress (row) {
+      this.validForm.address = true
       this.toAddr = row.address
       this.toAddr.zipCode = this.toAddr.zip
       this.showAddressTable = false
@@ -516,9 +550,11 @@ export default {
     },
     submitAddressForm () {
       if (this.$refs.address.valid()) {
+        this.addressLoading = true
         this.$http.saveQuotationAddress({
           ...this.editAddressForm
         }).then(() => {
+          this.addressLoading = false
           this.showAddressForm = false
           this.$Notice.success({
             title: '保存地址成功'
@@ -535,7 +571,7 @@ export default {
       this.$http.fetchQuotationProduct({
         conditions: this.productValue
       }).then(data => {
-        this.productList = data.data.map(t => {
+        this.productList = data.map(t => {
           t.itemSku.skuid = t.itemSku.id
           let item = {
             ...t.itemSku,
@@ -550,7 +586,506 @@ export default {
           return item
         })
       }, msg => {
-        let data = {'code': '000000', 'msg': '', 'err': '', 'data': [{'id': 6, 'brandId': 5, 'brandName': 'brandName1', 'cateId': 1, 'cateName': null, 'keyword': ['11', '222'], 'skuIds': [35, 36], 'skus': null, 'skuId': null, 'kind': 'kind2', 'title': '2121212', 'imgUrls': ['http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/MD.png'], 'detail': '<p>测试商品<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/seagate.png">数据06<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png"></p>', 'itemProps': [{'nameId': null, 'valueId': null, 'name': null, 'value': null, 'canSearch': null, 'canSee': null, 'skuProps': [{'id': 100003, 'name': '测试类目sku属性11', 'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {'id': 100004, 'name': 'sku标签2', 'categoryId': null, 'catePropId': null}], 'categoryId': null}], 'props': [{'nameId': 100003, 'valueId': 100014, 'name': '测试类目sku属性11', 'value': 'ddd', 'canSearch': true, 'canSee': true, 'skuProps': null, 'props': null}]}], 'attr': null, 'ext': null, 'onum': 1111, 'status': 'onsale', 'upTime': '2018-07-30T08:51:26Z', 'downTime': null, 'cdate': null, 'edate': null, 'introduction': null, 'offerId': 1, 'offerKind': 'item', 'itemSku': {'id': 35, 'cateId': 1, 'sin': '212121201', 'props': [{'nameId': 100003, 'valueId': 100003, 'name': '测试类目sku属性11', 'value': 'sku标签1', 'canSearch': null, 'canSee': null, 'skuProps': null, 'props': null}], 'attr': null, 'ext': null, 'name': null, 'spec': '1', 'vipPriceScript': null, 'unit': 'pc', 'size': null, 'weight': 1, 'onum': 11, 'basePrice': 22900, 'vipPrice': 0, 'offerPrice': 18320, 'priceStatus': 'enabled', 'status': 'enabled', 'num': null}}, {'id': 6, 'brandId': 5, 'brandName': 'brandName1', 'cateId': 1, 'cateName': null, 'keyword': ['11', '222'], 'skuIds': [35, 36], 'skus': null, 'skuId': null, 'kind': 'kind2', 'title': '2121212', 'imgUrls': ['http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/MD.png'], 'detail': '<p>测试商品<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/seagate.png">数据06<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png"></p>', 'itemProps': [{'nameId': null, 'valueId': null, 'name': null, 'value': null, 'canSearch': null, 'canSee': null, 'skuProps': [{'id': 100003, 'name': '测试类目sku属性11', 'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {'id': 100004, 'name': 'sku标签2', 'categoryId': null, 'catePropId': null}], 'categoryId': null}], 'props': [{'nameId': 100003, 'valueId': 100014, 'name': '测试类目sku属性11', 'value': 'ddd', 'canSearch': true, 'canSee': true, 'skuProps': null, 'props': null}]}], 'attr': null, 'ext': null, 'onum': 1111, 'status': 'onsale', 'upTime': '2018-07-30T08:51:26Z', 'downTime': null, 'cdate': null, 'edate': null, 'introduction': null, 'offerId': 1, 'offerKind': 'item', 'itemSku': {'id': 36, 'cateId': 1, 'sin': '212121202', 'props': [{'nameId': 100003, 'valueId': 100004, 'name': '测试类目sku属性11', 'value': 'sku标签2', 'canSearch': null, 'canSee': null, 'skuProps': null, 'props': null}], 'attr': null, 'ext': null, 'name': null, 'spec': '1', 'vipPriceScript': null, 'unit': 'pc', 'size': null, 'weight': 1, 'onum': 12, 'basePrice': 10100, 'vipPrice': 0, 'offerPrice': 8080, 'priceStatus': 'enabled', 'status': 'enabled', 'num': null}}, {'id': 7, 'brandId': 4, 'brandName': 'brandName1', 'cateId': 1, 'cateName': null, 'keyword': ['1123', '234234'], 'skuIds': [34], 'skus': null, 'skuId': null, 'kind': 'kind2', 'title': '20180802', 'imgUrls': ['http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/youtube_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/linkedin_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/facebook_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/history.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/hikvision.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/MD.png'], 'detail': '<p>12312312312321321321</p>', 'itemProps': [{'nameId': null, 'valueId': null, 'name': null, 'value': null, 'canSearch': null, 'canSee': null, 'skuProps': [{'id': 100003, 'name': '测试类目sku属性11', 'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}], 'categoryId': null}], 'props': [{'nameId': 100003, 'valueId': 100014, 'name': '测试类目sku属性11', 'value': 'ddd', 'canSearch': true, 'canSee': true, 'skuProps': null, 'props': null}]}], 'attr': null, 'ext': null, 'onum': 111111, 'status': 'onsale', 'upTime': '2018-07-30T08:59:22Z', 'downTime': null, 'cdate': null, 'edate': null, 'introduction': null, 'offerId': 1, 'offerKind': 'item', 'itemSku': {'id': 34, 'cateId': 1, 'sin': '201808021', 'props': [{'nameId': 100003, 'valueId': 100003, 'name': '测试类目sku属性11', 'value': 'sku标签1', 'canSearch': null, 'canSee': null, 'skuProps': null, 'props': null}], 'attr': null, 'ext': null, 'name': null, 'spec': '1', 'vipPriceScript': null, 'unit': 'pc', 'size': null, 'weight': 1, 'onum': 1, 'basePrice': 111, 'vipPrice': 0, 'offerPrice': 88, 'priceStatus': 'enabled', 'status': 'enabled', 'num': null}}, {'id': 8, 'brandId': 7, 'brandName': 'brandName1', 'cateId': 1, 'cateName': null, 'keyword': ['0802'], 'skuIds': [41], 'skus': null, 'skuId': null, 'kind': 'kind1', 'title': '测试商品0802·', 'imgUrls': ['https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'], 'detail': '<p><span class="ql-size-huge">测试商品08020000000000000000000000000</span></p>', 'itemProps': [{'nameId': null, 'valueId': null, 'name': null, 'value': null, 'canSearch': null, 'canSee': null, 'skuProps': [{'id': 100003, 'name': '测试类目sku属性11', 'values': [{'id': 100015, 'name': 'cehis', 'categoryId': null, 'catePropId': null}], 'categoryId': null}], 'props': [{'nameId': 100003, 'valueId': 100014, 'name': '测试类目sku属性11', 'value': 'ddd', 'canSearch': true, 'canSee': true, 'skuProps': null, 'props': null}]}], 'attr': null, 'ext': null, 'onum': 12, 'status': 'onsale', 'upTime': '2018-08-02T07:20:37Z', 'downTime': null, 'cdate': null, 'edate': null, 'introduction': null, 'offerId': 1, 'offerKind': 'item', 'itemSku': {'id': 41, 'cateId': 1, 'sin': '0802001', 'props': [{'nameId': 100003, 'valueId': 100015, 'name': '测试类目sku属性11', 'value': 'cehis', 'canSearch': null, 'canSee': null, 'skuProps': null, 'props': null}], 'attr': null, 'ext': null, 'name': null, 'spec': '1', 'vipPriceScript': null, 'unit': 'pc', 'size': null, 'weight': 1, 'onum': 1, 'basePrice': 80000, 'vipPrice': 0, 'offerPrice': 64000, 'priceStatus': 'enabled', 'status': 'enabled', 'num': null}}, {'id': 9, 'brandId': 9, 'brandName': 'brandName1', 'cateId': 1, 'cateName': null, 'keyword': ['0803'], 'skuIds': [38, 39], 'skus': null, 'skuId': null, 'kind': 'kind1', 'title': '测试商品0803', 'imgUrls': ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'], 'detail': '<h1><span class="ql-size-huge">测试商品080300000000</span></h1><p>测试商品</p><p>测试商品</p>', 'itemProps': [{'nameId': null, 'valueId': null, 'name': null, 'value': null, 'canSearch': null, 'canSee': null, 'skuProps': [{'id': 100003, 'name': '测试类目sku属性11', 'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {'id': 100004, 'name': 'sku标签2', 'categoryId': null, 'catePropId': null}, {'id': 100015, 'name': 'cehis', 'categoryId': null, 'catePropId': null}], 'categoryId': null}], 'props': [{'nameId': 100003, 'valueId': 100003, 'name': '测试类目sku属性11', 'value': 'sku标签1', 'canSearch': true, 'canSee': true, 'skuProps': null, 'props': null}]}], 'attr': null, 'ext': null, 'onum': 12, 'status': 'onsale', 'upTime': '2018-08-02T07:27:53Z', 'downTime': null, 'cdate': null, 'edate': null, 'introduction': null, 'offerId': 1, 'offerKind': 'item', 'itemSku': {'id': 38, 'cateId': 1, 'sin': '080301', 'props': [{'nameId': 100003, 'valueId': 100003, 'name': '测试类目sku属性11', 'value': 'sku标签1', 'canSearch': null, 'canSee': null, 'skuProps': null, 'props': null}], 'attr': null, 'ext': null, 'name': null, 'spec': '1', 'vipPriceScript': null, 'unit': 'pc', 'size': null, 'weight': 1, 'onum': 1, 'basePrice': 100, 'vipPrice': 0, 'offerPrice': 80, 'priceStatus': 'enabled', 'status': 'enabled', 'num': null}}, {'id': 9, 'brandId': 9, 'brandName': 'brandName1', 'cateId': 1, 'cateName': null, 'keyword': ['0803'], 'skuIds': [38, 39], 'skus': null, 'skuId': null, 'kind': 'kind1', 'title': '测试商品0803', 'imgUrls': ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'], 'detail': '<h1><span class="ql-size-huge">测试商品080300000000</span></h1><p>测试商品</p><p>测试商品</p>', 'itemProps': [{'nameId': null, 'valueId': null, 'name': null, 'value': null, 'canSearch': null, 'canSee': null, 'skuProps': [{'id': 100003, 'name': '测试类目sku属性11', 'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {'id': 100004, 'name': 'sku标签2', 'categoryId': null, 'catePropId': null}, {'id': 100015, 'name': 'cehis', 'categoryId': null, 'catePropId': null}], 'categoryId': null}], 'props': [{'nameId': 100003, 'valueId': 100003, 'name': '测试类目sku属性11', 'value': 'sku标签1', 'canSearch': true, 'canSee': true, 'skuProps': null, 'props': null}]}], 'attr': null, 'ext': null, 'onum': 12, 'status': 'onsale', 'upTime': '2018-08-02T07:27:53Z', 'downTime': null, 'cdate': null, 'edate': null, 'introduction': null, 'offerId': 1, 'offerKind': 'item', 'itemSku': {'id': 39, 'cateId': 1, 'sin': '080302', 'props': [{'nameId': 100003, 'valueId': 100004, 'name': '测试类目sku属性11', 'value': 'sku标签2', 'canSearch': null, 'canSee': null, 'skuProps': null, 'props': null}], 'attr': null, 'ext': null, 'name': null, 'spec': '1', 'vipPriceScript': null, 'unit': 'pc', 'size': null, 'weight': 1, 'onum': 2, 'basePrice': 101, 'vipPrice': 0, 'offerPrice': 80, 'priceStatus': 'enabled', 'status': 'enabled', 'num': null}}]}
+        let data = {
+          'code': '000000',
+          'msg': '',
+          'err': '',
+          'data': [{
+            'id': 6,
+            'brandId': 5,
+            'brandName': 'brandName1',
+            'cateId': 1,
+            'cateName': null,
+            'keyword': ['11', '222'],
+            'skuIds': [35, 36],
+            'skus': null,
+            'skuId': null,
+            'kind': 'kind2',
+            'title': '2121212',
+            'imgUrls': ['http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/MD.png'],
+            'detail': '<p>测试商品<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/seagate.png">数据06<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png"></p>',
+            'itemProps': [{
+              'nameId': null,
+              'valueId': null,
+              'name': null,
+              'value': null,
+              'canSearch': null,
+              'canSee': null,
+              'skuProps': [{
+                'id': 100003,
+                'name': '测试类目sku属性11',
+                'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {
+                  'id': 100004,
+                  'name': 'sku标签2',
+                  'categoryId': null,
+                  'catePropId': null
+                }],
+                'categoryId': null
+              }],
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100014,
+                'name': '测试类目sku属性11',
+                'value': 'ddd',
+                'canSearch': true,
+                'canSee': true,
+                'skuProps': null,
+                'props': null
+              }]
+            }],
+            'attr': null,
+            'ext': null,
+            'onum': 1111,
+            'status': 'onsale',
+            'upTime': '2018-07-30T08:51:26Z',
+            'downTime': null,
+            'cdate': null,
+            'edate': null,
+            'introduction': null,
+            'offerId': 1,
+            'offerKind': 'item',
+            'itemSku': {
+              'id': 35,
+              'cateId': 1,
+              'sin': '212121201',
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100003,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签1',
+                'canSearch': null,
+                'canSee': null,
+                'skuProps': null,
+                'props': null
+              }],
+              'attr': null,
+              'ext': null,
+              'name': null,
+              'spec': '1',
+              'vipPriceScript': null,
+              'unit': 'pc',
+              'size': null,
+              'weight': 1,
+              'onum': 11,
+              'basePrice': 22900,
+              'vipPrice': 0,
+              'offerPrice': 18320,
+              'priceStatus': 'enabled',
+              'status': 'enabled',
+              'num': null
+            }
+          }, {
+            'id': 6,
+            'brandId': 5,
+            'brandName': 'brandName1',
+            'cateId': 1,
+            'cateName': null,
+            'keyword': ['11', '222'],
+            'skuIds': [35, 36],
+            'skus': null,
+            'skuId': null,
+            'kind': 'kind2',
+            'title': '2121212',
+            'imgUrls': ['http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/MD.png'],
+            'detail': '<p>测试商品<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/seagate.png">数据06<img src="http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png"></p>',
+            'itemProps': [{
+              'nameId': null,
+              'valueId': null,
+              'name': null,
+              'value': null,
+              'canSearch': null,
+              'canSee': null,
+              'skuProps': [{
+                'id': 100003,
+                'name': '测试类目sku属性11',
+                'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {
+                  'id': 100004,
+                  'name': 'sku标签2',
+                  'categoryId': null,
+                  'catePropId': null
+                }],
+                'categoryId': null
+              }],
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100014,
+                'name': '测试类目sku属性11',
+                'value': 'ddd',
+                'canSearch': true,
+                'canSee': true,
+                'skuProps': null,
+                'props': null
+              }]
+            }],
+            'attr': null,
+            'ext': null,
+            'onum': 1111,
+            'status': 'onsale',
+            'upTime': '2018-07-30T08:51:26Z',
+            'downTime': null,
+            'cdate': null,
+            'edate': null,
+            'introduction': null,
+            'offerId': 1,
+            'offerKind': 'item',
+            'itemSku': {
+              'id': 36,
+              'cateId': 1,
+              'sin': '212121202',
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100004,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签2',
+                'canSearch': null,
+                'canSee': null,
+                'skuProps': null,
+                'props': null
+              }],
+              'attr': null,
+              'ext': null,
+              'name': null,
+              'spec': '1',
+              'vipPriceScript': null,
+              'unit': 'pc',
+              'size': null,
+              'weight': 1,
+              'onum': 12,
+              'basePrice': 10100,
+              'vipPrice': 0,
+              'offerPrice': 8080,
+              'priceStatus': 'enabled',
+              'status': 'enabled',
+              'num': null
+            }
+          }, {
+            'id': 7,
+            'brandId': 4,
+            'brandName': 'brandName1',
+            'cateId': 1,
+            'cateName': null,
+            'keyword': ['1123', '234234'],
+            'skuIds': [34],
+            'skus': null,
+            'skuId': null,
+            'kind': 'kind2',
+            'title': '20180802',
+            'imgUrls': ['http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/youtube_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/twitter_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/linkedin_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/facebook_icon.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/history.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/hikvision.png', 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/item-pic/MD.png'],
+            'detail': '<p>12312312312321321321</p>',
+            'itemProps': [{
+              'nameId': null,
+              'valueId': null,
+              'name': null,
+              'value': null,
+              'canSearch': null,
+              'canSee': null,
+              'skuProps': [{
+                'id': 100003,
+                'name': '测试类目sku属性11',
+                'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}],
+                'categoryId': null
+              }],
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100014,
+                'name': '测试类目sku属性11',
+                'value': 'ddd',
+                'canSearch': true,
+                'canSee': true,
+                'skuProps': null,
+                'props': null
+              }]
+            }],
+            'attr': null,
+            'ext': null,
+            'onum': 111111,
+            'status': 'onsale',
+            'upTime': '2018-07-30T08:59:22Z',
+            'downTime': null,
+            'cdate': null,
+            'edate': null,
+            'introduction': null,
+            'offerId': 1,
+            'offerKind': 'item',
+            'itemSku': {
+              'id': 34,
+              'cateId': 1,
+              'sin': '201808021',
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100003,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签1',
+                'canSearch': null,
+                'canSee': null,
+                'skuProps': null,
+                'props': null
+              }],
+              'attr': null,
+              'ext': null,
+              'name': null,
+              'spec': '1',
+              'vipPriceScript': null,
+              'unit': 'pc',
+              'size': null,
+              'weight': 1,
+              'onum': 1,
+              'basePrice': 111,
+              'vipPrice': 0,
+              'offerPrice': 88,
+              'priceStatus': 'enabled',
+              'status': 'enabled',
+              'num': null
+            }
+          }, {
+            'id': 8,
+            'brandId': 7,
+            'brandName': 'brandName1',
+            'cateId': 1,
+            'cateName': null,
+            'keyword': ['0802'],
+            'skuIds': [41],
+            'skus': null,
+            'skuId': null,
+            'kind': 'kind1',
+            'title': '测试商品0802·',
+            'imgUrls': ['https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'],
+            'detail': '<p><span class="ql-size-huge">测试商品08020000000000000000000000000</span></p>',
+            'itemProps': [{
+              'nameId': null,
+              'valueId': null,
+              'name': null,
+              'value': null,
+              'canSearch': null,
+              'canSee': null,
+              'skuProps': [{
+                'id': 100003,
+                'name': '测试类目sku属性11',
+                'values': [{'id': 100015, 'name': 'cehis', 'categoryId': null, 'catePropId': null}],
+                'categoryId': null
+              }],
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100014,
+                'name': '测试类目sku属性11',
+                'value': 'ddd',
+                'canSearch': true,
+                'canSee': true,
+                'skuProps': null,
+                'props': null
+              }]
+            }],
+            'attr': null,
+            'ext': null,
+            'onum': 12,
+            'status': 'onsale',
+            'upTime': '2018-08-02T07:20:37Z',
+            'downTime': null,
+            'cdate': null,
+            'edate': null,
+            'introduction': null,
+            'offerId': 1,
+            'offerKind': 'item',
+            'itemSku': {
+              'id': 41,
+              'cateId': 1,
+              'sin': '0802001',
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100015,
+                'name': '测试类目sku属性11',
+                'value': 'cehis',
+                'canSearch': null,
+                'canSee': null,
+                'skuProps': null,
+                'props': null
+              }],
+              'attr': null,
+              'ext': null,
+              'name': null,
+              'spec': '1',
+              'vipPriceScript': null,
+              'unit': 'pc',
+              'size': null,
+              'weight': 1,
+              'onum': 1,
+              'basePrice': 80000,
+              'vipPrice': 0,
+              'offerPrice': 64000,
+              'priceStatus': 'enabled',
+              'status': 'enabled',
+              'num': null
+            }
+          }, {
+            'id': 9,
+            'brandId': 9,
+            'brandName': 'brandName1',
+            'cateId': 1,
+            'cateName': null,
+            'keyword': ['0803'],
+            'skuIds': [38, 39],
+            'skus': null,
+            'skuId': null,
+            'kind': 'kind1',
+            'title': '测试商品0803',
+            'imgUrls': ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'],
+            'detail': '<h1><span class="ql-size-huge">测试商品080300000000</span></h1><p>测试商品</p><p>测试商品</p>',
+            'itemProps': [{
+              'nameId': null,
+              'valueId': null,
+              'name': null,
+              'value': null,
+              'canSearch': null,
+              'canSee': null,
+              'skuProps': [{
+                'id': 100003,
+                'name': '测试类目sku属性11',
+                'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {
+                  'id': 100004,
+                  'name': 'sku标签2',
+                  'categoryId': null,
+                  'catePropId': null
+                }, {'id': 100015, 'name': 'cehis', 'categoryId': null, 'catePropId': null}],
+                'categoryId': null
+              }],
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100003,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签1',
+                'canSearch': true,
+                'canSee': true,
+                'skuProps': null,
+                'props': null
+              }]
+            }],
+            'attr': null,
+            'ext': null,
+            'onum': 12,
+            'status': 'onsale',
+            'upTime': '2018-08-02T07:27:53Z',
+            'downTime': null,
+            'cdate': null,
+            'edate': null,
+            'introduction': null,
+            'offerId': 1,
+            'offerKind': 'item',
+            'itemSku': {
+              'id': 38,
+              'cateId': 1,
+              'sin': '080301',
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100003,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签1',
+                'canSearch': null,
+                'canSee': null,
+                'skuProps': null,
+                'props': null
+              }],
+              'attr': null,
+              'ext': null,
+              'name': null,
+              'spec': '1',
+              'vipPriceScript': null,
+              'unit': 'pc',
+              'size': null,
+              'weight': 1,
+              'onum': 1,
+              'basePrice': 100,
+              'vipPrice': 0,
+              'offerPrice': 80,
+              'priceStatus': 'enabled',
+              'status': 'enabled',
+              'num': null
+            }
+          }, {
+            'id': 9,
+            'brandId': 9,
+            'brandName': 'brandName1',
+            'cateId': 1,
+            'cateName': null,
+            'keyword': ['0803'],
+            'skuIds': [38, 39],
+            'skus': null,
+            'skuId': null,
+            'kind': 'kind1',
+            'title': '测试商品0803',
+            'imgUrls': ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'],
+            'detail': '<h1><span class="ql-size-huge">测试商品080300000000</span></h1><p>测试商品</p><p>测试商品</p>',
+            'itemProps': [{
+              'nameId': null,
+              'valueId': null,
+              'name': null,
+              'value': null,
+              'canSearch': null,
+              'canSee': null,
+              'skuProps': [{
+                'id': 100003,
+                'name': '测试类目sku属性11',
+                'values': [{'id': 100003, 'name': 'sku标签1', 'categoryId': null, 'catePropId': null}, {
+                  'id': 100004,
+                  'name': 'sku标签2',
+                  'categoryId': null,
+                  'catePropId': null
+                }, {'id': 100015, 'name': 'cehis', 'categoryId': null, 'catePropId': null}],
+                'categoryId': null
+              }],
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100003,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签1',
+                'canSearch': true,
+                'canSee': true,
+                'skuProps': null,
+                'props': null
+              }]
+            }],
+            'attr': null,
+            'ext': null,
+            'onum': 12,
+            'status': 'onsale',
+            'upTime': '2018-08-02T07:27:53Z',
+            'downTime': null,
+            'cdate': null,
+            'edate': null,
+            'introduction': null,
+            'offerId': 1,
+            'offerKind': 'item',
+            'itemSku': {
+              'id': 39,
+              'cateId': 1,
+              'sin': '080302',
+              'props': [{
+                'nameId': 100003,
+                'valueId': 100004,
+                'name': '测试类目sku属性11',
+                'value': 'sku标签2',
+                'canSearch': null,
+                'canSee': null,
+                'skuProps': null,
+                'props': null
+              }],
+              'attr': null,
+              'ext': null,
+              'name': null,
+              'spec': '1',
+              'vipPriceScript': null,
+              'unit': 'pc',
+              'size': null,
+              'weight': 1,
+              'onum': 2,
+              'basePrice': 101,
+              'vipPrice': 0,
+              'offerPrice': 80,
+              'priceStatus': 'enabled',
+              'status': 'enabled',
+              'num': null
+            }
+          }]
+        }
         this.productList = data.data.map(t => {
           t.itemSku.skuid = t.itemSku.id
           let item = {
@@ -568,6 +1103,7 @@ export default {
       })
     },
     checkProduct (product) {
+      this.validForm.items = true
       for (let item in this.itemList) {
         if ((item.id === product.id) && (item.skuid === product.skuid)) {
           this.$Message.error('已经选择了该商品')
@@ -591,61 +1127,125 @@ export default {
     getFee () {
       clearTimeout(this.getFeeClock)
       this.getFeeClock = setTimeout(() => {
-        let itemAndShip = (+this.pay.itemFee) + (+this.pay.shippingFee)
         if (this.discountType === 'num') {
-          this.pay.discountFee = -(+this.discountNum) * 100
-          this.discountPercent = ((+this.discountNum) * 100 / itemAndShip * 100).toFixed(2)
-          if (this.discountNum === '') this.discountNum = '0.00'
+          this.pay.otherFee = -(+this.discountNum) * 100
+          this.discountPercent = ((-this.pay.otherFee) / (+this.pay.itemFee)).toFixed(2)
+          // if (this.discountNum === '') this.discountNum = '0.00'
         } else if (this.discountType === 'percent') {
-          this.pay.discountFee = -(this.discountPercent * itemAndShip / 100).toFixed()
-          this.discountNum = (this.discountPercent * itemAndShip / 100 / 100).toFixed(2)
+          this.pay.otherFee = -(this.discountPercent * (+this.pay.itemFee) / 100).toFixed()
+          this.discountNum = ((-this.pay.otherFee) / 100).toFixed(2)
         }
-        this.pay.taxFee = (this.pay.taxRate * (itemAndShip + this.pay.discountFee)).toFixed()
         this.pay.shippingFee = (+this.shippingFee * 100).toFixed()
+        this.pay.taxFee = (this.pay.taxRate * ((+this.pay.itemFee) + (+this.pay.discountFee) + (+this.pay.shippingFee) + (+this.pay.otherFee))).toFixed()
       }, 800)
     },
     simuTrade () {
-      let items = this.itemList.map(t => {
-        return {
-          id: t.id,
-          num: t.amount,
-          sku: { id: t.skuid },
-          diyPrice: t.divPrice,
-          note: { remark: t.note.remark }
-        }
-      })
-      this.$http.simulateTrade({
-        items: items,
-        buyer: { id: this.store.userId },
-        buyerStore: { id: this.store.storeId },
-        shipping: this.shipping,
-        tax: { fee: false },
-        pay: { payType: this.pay.payType, note: { remark: '' } },
-        note: { remark: this.note.remark },
-        source: 'work',
-        orderDiscount: this.orderDiscount
-      }).then(data => {
-        console.log(data)
-      })
+      if (this.validateForm()) {
+        let items = this.itemList.map(t => {
+          return {
+            id: t.id,
+            num: t.amount,
+            sku: {id: t.skuid},
+            diyPrice: t.diyPrice * 100,
+            note: {remark: t.note.remark}
+          }
+        })
+        this.$http.simulateTrade({
+          items: items,
+          buyer: {id: this.store.userId},
+          buyerStore: {id: this.store.storeId},
+          shipping: this.shipping,
+          tax: {fee: false},
+          pay: {payType: this.pay.payType, note: {remark: ''}},
+          note: {remark: this.note.remark},
+          source: 'work',
+          type: 'quotation',
+          orderDiscount: this.pay.orderDiscount,
+          toAddr: this.toAddr,
+          fromAddr: this.fromAddr
+        }).then(data => {
+          this.pay.itemFee = data.itemFee
+          this.pay.shippingFee = data.shippingFee
+          this.pay.taxFee = data.taxFee
+          this.pay.taxRate = data.taxRate
+          this.pay.otherFee = data.otherFee
+          this.pay.discountFee = data.rebateFee
+        })
+      }
     },
     saveQuotation () {
-      this.$http.saveQuotation({
-        store: this.store,
-        poNo: this.poNo,
-        itemList: this.itemList,
-        toAddr: this.toAddr,
-        shipping: this.shipping,
-        pay: this.pay,
-        note: this.note,
-        source: 'work',
-        sendEmail: false
-      }).then(data => {
-        console.log(data)
+      if (this.validateForm()) {
+        this.$http.saveQuotation({
+          store: this.store,
+          poNo: this.poNo,
+          itemList: this.itemList,
+          toAddr: this.toAddr,
+          shipping: this.shipping,
+          pay: this.pay,
+          note: this.note,
+          source: 'work',
+          type: 'quotation',
+          fromAddr: this.fromAddr,
+          sendEmail: false
+        }).then(data => {
+          this.$Notice.success({
+            title: '保存询价单成功'
+          })
+        })
+        this.$router.push({ name: 'quotation_list' })
+      }
+    },
+    sendQuotation () {
+      if (this.validateForm()) {
+        this.$http.sendQuotation({
+          store: this.store,
+          poNo: this.poNo,
+          itemList: this.itemList,
+          toAddr: this.toAddr,
+          shipping: this.shipping,
+          pay: this.pay,
+          note: this.note,
+          source: 'work',
+          type: 'quotation',
+          fromAddr: this.fromAddr,
+          sendEmail: false
+        }).then(data => {
+          this.$Notice.success({
+            title: '保存询价单成功'
+          })
+          this.$router.push({ name: 'quotation_list' })
+        })
+      }
+    },
+    getFromAddr () {
+      this.$http.getSupplyInfo().then(data => {
+        this.fromAddr = data[0].address
+        this.supplyId = data[0].id
       })
+    },
+    validateForm () {
+      if (this.itemList.length === 0) {
+        this.validForm.items = false
+        location.href = '#product'
+      }
+      if (JSON.stringify(this.toAddr) === '{}') {
+        this.validForm.address = false
+        location.href = '#address'
+      }
+      if (JSON.stringify(this.store) === '{}') {
+        this.validForm.store = false
+        location.href = '#store'
+      }
+      if (Object.keys(this.validForm).some(key => this.validForm[key] === false)) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   beforeMount () {
     this.fetchAddress()
+    this.getFromAddr()
   }
 }
 </script>
@@ -684,6 +1284,14 @@ export default {
       margin-bottom: 24px;
       /deep/ .ivu-poptip-rel{
         width: 100%;
+      }
+    }
+  }
+  /deep/ .installer-popover{
+    .ivu-poptip-body{
+      padding: 0 !important;
+      .content{
+        padding: 8px 16px;
       }
     }
   }
@@ -787,5 +1395,25 @@ export default {
   }
   .buttons{
     margin-bottom: 24px;
+  }
+  .empty{
+    border: 1px solid red;
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .empty::after{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    color: red;
+  }
+  .installer-card.empty::after{
+    content: '请选择工程商';
+  }
+  .address-card.empty::after{
+    content: '请选择收货地址';
+  }
+  .product-card.empty::after{
+    content: '请选择商品';
   }
 </style>

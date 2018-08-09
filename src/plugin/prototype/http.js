@@ -237,15 +237,12 @@ export default {
   fetchGroupStore () {
     return axios.post('base/store/group')
   },
-  fetchQuotation (params) {
-    return axios.post('base/quotation/list', params)
-  },
   getQuotation (params) {
     return axios.post('base/quotation/get', params)
   },
   saveQuotation (params) {
     console.log(params)
-    return axios.post('order/quotation/save', params)
+    return axios.post('order/quotation/saveOrUpdate', params)
   },
   fetchQuotationAddress (params) {
     return axios.post('base/address/listStoreAddress', params)
@@ -262,6 +259,18 @@ export default {
   simulateTrade (params) {
     console.log(params)
     return axios.post('trade/trade/simulateTrade', params)
+  },
+  getSupplyInfo () {
+    return axios.post('base/store/getSupply')
+  },
+  fetchQuotationTodo (params) {
+    return axios.post('order/quotation/listToDo', params)
+  },
+  fetchQuotation (params) {
+    return axios.post('order/quotation/list', params)
+  },
+  sendQuotation (params) {
+    return axios.post('order/quotation/send', params)
   },
   saveCoupon (params, {itemIds, cateIds, brandIds}) {
     if (params.offerCouponInclude.type === '') {
