@@ -77,6 +77,8 @@ export default {
       'addTag'
     ]),
     ...mapActions([
+      'fetchBrands',
+      'fetchCates',
       'handleLogin'
     ]),
     turnToPage (name) {
@@ -93,6 +95,10 @@ export default {
     },
     handleClick (item) {
       this.turnToPage(item.name)
+    },
+    fetchOptions () {
+      this.fetchBrands()
+      this.fetchCates()
     }
   },
   watch: {
@@ -102,6 +108,7 @@ export default {
     }
   },
   beforeMount () {
+    this.fetchOptions()
     this.setUserInfo()
   },
   mounted () {

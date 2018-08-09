@@ -27,7 +27,7 @@ export default {
     return axios.post('base/store/listStore', params)
   },
   delShop (ids) {
-    return axios.post('', ids)
+    return axios.post('', {ids})
   },
   getStaff (params) {
     return axios.post('base/user/personnel/get', params)
@@ -39,7 +39,7 @@ export default {
     return axios.post('base/user/personnel/save', params)
   },
   delStaff (ids) {
-    return axios.post('base/user/delUsers', ids)
+    return axios.post('base/user/delUsers', {ids})
   },
   resetStaffPw (id) {
     return axios.post('base/user/reset', {id})
@@ -90,7 +90,7 @@ export default {
     return axios.post('item/brand/listBrand', params)
   },
   delBrand (ids) {
-    return axios.post('item/brand/brandDelete', ids)
+    return axios.post('item/brand/brandDelete', {ids})
   },
   saveBrand (params) {
     return axios.post('item/brand/saveOrUpdate', params)
@@ -262,5 +262,13 @@ export default {
   simulateTrade (params) {
     console.log(params)
     return axios.post('trade/trade/simulateTrade', params)
+  },
+  saveCoupon (params, {itemIds, cateIds, brandIds}) {
+    if (params.offerCouponInclude.type === '') {
+      params.offerCouponInclude = {}
+    } else {
+      params.offerCouponInclude.itemIds = [params.offerCouponInclude.type + 'Ids']
+    }
+    return axios.post('item/offer/coupon/add', params)
   }
 }
