@@ -163,7 +163,7 @@ export default [
   },
   {
     path: '/activity',
-    meta: { icon: 'lock-combination', title: '活动优惠' },
+    meta: { icon: 'lock-combination', title: '活动优惠', hideInMenu: true },
     name: 'activity',
     component: Main,
     children: [
@@ -184,7 +184,7 @@ export default [
   },
   {
     path: '/permission',
-    meta: { icon: 'lock-combination', title: '权限管理' },
+    meta: { icon: 'lock-combination', title: '权限管理', hideInMenu: true },
     redirect: '/permission/role',
     name: 'permission',
     component: Main,
@@ -196,7 +196,7 @@ export default [
   {
     path: '/crm',
     redirect: '/crm/index',
-    meta: { icon: 'lock-combination', title: '客户关系管理' },
+    meta: { icon: 'lock-combination', title: '客户关系管理', hideInMenu: true },
     name: 'crm',
     component: Main,
     children: [

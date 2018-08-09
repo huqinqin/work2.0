@@ -47,7 +47,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
-      url: 'Quotation',
+      url: 'QuotationTodo',
       filter: {
         id: '', custID: '', account: '', sName: '', status: '', date: [], sales: ''
       },
@@ -112,7 +112,7 @@ export default {
       columns: [
         {
           title: '询价单编号',
-          key: 'id'
+          key: 'mid'
         }, {
           title: '账号',
           key: 'account'
@@ -138,6 +138,7 @@ export default {
             return (
               <div>
                 <i-button type="primary" size="small" on-click={(e) => this.review(params.row.id)}>审核</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.send(params.row.id)}>提交审核</i-button>
               </div>
             )
           }
@@ -148,6 +149,15 @@ export default {
   methods: {
     review (id) {
       console.log('review', id)
+    },
+    send (id) {
+      this.$http.sendQuotation({
+        id: id
+      }).then(() => {
+        this.$Notice.success({
+          title: '提交审核成功'
+        })
+      })
     }
   },
   beforeMount () {

@@ -129,7 +129,7 @@
           <MapAutoComplete :googleAddress="editAddressForm.address" ref="address"></MapAutoComplete>
           <footer slot="footer">
             <Button type="primary" @click="cancelAddressForm">取消</Button>
-            <Button type="primary" @click="submitAddressForm">确定</Button>
+            <Button type="primary" @click="submitAddressForm" :loading="addressLoading">确定</Button>
           </footer>
         </Modal>
       </div>
@@ -233,8 +233,9 @@
     <div class="buttons">
       <Button type="primary">保存并发送邮件</Button>
       <Button type="primary">保存并下载询价单</Button>
-      <Button type="primary" @click="simuTrade">保存</Button>
-      <Button type="success" @click="saveQuotation">提交审核</Button>
+      <Button type="primary" @click="simuTrade">模拟下单</Button>
+      <Button type="primary" @click="saveQuotation">保存</Button>
+      <Button type="success" @click="sendQuotation">提交审核</Button>
     </div>
   </div>
 </template>
@@ -281,6 +282,7 @@ export default {
       ],
       toAddr: {},
       fromAddr: {},
+      supplyId: '',
       showAddressTable: false,
       showAddressForm: false,
       addressList: [],
@@ -350,6 +352,7 @@ export default {
           }
         }
       ],
+      addressLoading: false,
       productValue: '',
       productList: [],
       itemList: [],
@@ -447,10 +450,10 @@ export default {
       ],
       pay: {
         payType: 'anet', // 支付方式
-        itemFee: 98400, // 商品金额
+        itemFee: 0, // 商品金额
         taxFee: 0, // 税费
-        taxRate: 0.017, // 税率
-        shippingFee: 3453, // 运费
+        taxRate: 0, // 税率
+        shippingFee: 0, // 运费
         discountFee: 0, // 满减优惠
         otherFee: '', // 手动减免
         orderDiscount: false, // 是否参与满减
@@ -459,7 +462,7 @@ export default {
       discountType: 'num',
       discountNum: '0.00',
       discountPercent: '0.00',
-      shippingFee: 34.53,
+      shippingFee: 0,
       getFeeClock: null,
       validForm: {
         store: true,
@@ -483,7 +486,13 @@ export default {
           [this.installerType]: this.installerValue
         }).then(data => {
           this.gotInstaller = true
-          this.installerList = data.map(t => {
+          let installerArr = []
+          data.forEach(i => {
+            i.userResponses.forEach(v => {
+              installerArr.push(Object.assign({}, i, {userData: v}))
+            })
+          })
+          this.installerList = installerArr.map(t => {
             return {
               storeCode: t.code,
               storeName: t.address.company,
@@ -504,6 +513,7 @@ export default {
       }, 800)
     },
     checkInstaller (installer) {
+      this.validForm.store = true
       this.store = installer
       this.fetchAddress()
     },
@@ -516,6 +526,7 @@ export default {
       })
     },
     checkAddress (row) {
+      this.validForm.address = true
       this.toAddr = row.address
       this.toAddr.zipCode = this.toAddr.zip
       this.showAddressTable = false
@@ -539,9 +550,11 @@ export default {
     },
     submitAddressForm () {
       if (this.$refs.address.valid()) {
+        this.addressLoading = true
         this.$http.saveQuotationAddress({
           ...this.editAddressForm
         }).then(() => {
+          this.addressLoading = false
           this.showAddressForm = false
           this.$Notice.success({
             title: '保存地址成功'
@@ -558,7 +571,7 @@ export default {
       this.$http.fetchQuotationProduct({
         conditions: this.productValue
       }).then(data => {
-        this.productList = data.data.map(t => {
+        this.productList = data.map(t => {
           t.itemSku.skuid = t.itemSku.id
           let item = {
             ...t.itemSku,
@@ -1090,6 +1103,7 @@ export default {
       })
     },
     checkProduct (product) {
+      this.validForm.items = true
       for (let item in this.itemList) {
         if ((item.id === product.id) && (item.skuid === product.skuid)) {
           this.$Message.error('已经选择了该商品')
@@ -1132,7 +1146,7 @@ export default {
             id: t.id,
             num: t.amount,
             sku: {id: t.skuid},
-            diyPrice: t.diyPrice,
+            diyPrice: t.diyPrice * 100,
             note: {remark: t.note.remark}
           }
         })
@@ -1150,9 +1164,12 @@ export default {
           toAddr: this.toAddr,
           fromAddr: this.fromAddr
         }).then(data => {
-          this.$Notice.success({
-            title: '模拟下单成功'
-          })
+          this.pay.itemFee = data.itemFee
+          this.pay.shippingFee = data.shippingFee
+          this.pay.taxFee = data.taxFee
+          this.pay.taxRate = data.taxRate
+          this.pay.otherFee = data.otherFee
+          this.pay.discountFee = data.rebateFee
         })
       }
     },
@@ -1168,17 +1185,42 @@ export default {
           note: this.note,
           source: 'work',
           type: 'quotation',
+          fromAddr: this.fromAddr,
           sendEmail: false
         }).then(data => {
           this.$Notice.success({
             title: '保存询价单成功'
           })
         })
+        this.$router.push({ name: 'quotation_list' })
+      }
+    },
+    sendQuotation () {
+      if (this.validateForm()) {
+        this.$http.sendQuotation({
+          store: this.store,
+          poNo: this.poNo,
+          itemList: this.itemList,
+          toAddr: this.toAddr,
+          shipping: this.shipping,
+          pay: this.pay,
+          note: this.note,
+          source: 'work',
+          type: 'quotation',
+          fromAddr: this.fromAddr,
+          sendEmail: false
+        }).then(data => {
+          this.$Notice.success({
+            title: '保存询价单成功'
+          })
+          this.$router.push({ name: 'quotation_list' })
+        })
       }
     },
     getFromAddr () {
-      this.$http.getSupplyAddress().then(data => {
-        this.fromAddr = data.addresses[0].address
+      this.$http.getSupplyInfo().then(data => {
+        this.fromAddr = data[0].address
+        this.supplyId = data[0].id
       })
     },
     validateForm () {
