@@ -262,5 +262,8 @@ export default {
   simulateTrade (params) {
     console.log(params)
     return axios.post('trade/trade/simulateTrade', params)
+  },
+  getSupplyAddress () {
+    return axios.post('base/address/getSupplyAddress')
   }
 }

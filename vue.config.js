@@ -8,7 +8,7 @@ const resolve = dir => {
 // http(s)://a.com/my-app/
 const BASE_URL = '/'
 // const TRAGET_URL = 'http://47.89.251.79:8882'
-const TRAGET_URL = 'http://192.168.1.113:8882'
+const TRAGET_URL = 'http://192.168.1.103:8882'
 
 module.exports = {
   baseUrl: BASE_URL,
