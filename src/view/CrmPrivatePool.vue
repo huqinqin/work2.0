@@ -124,7 +124,7 @@
     <Row>
       <Modal
         v-model="isSaller"
-        title="Common Modal dialog box title"
+        title="分配sales"
         @on-ok="selectSellOk"
         @on-cancel="cancel">
         <Select v-model="allocationSells" style="width:200px">
@@ -221,16 +221,10 @@ export default {
           key: 'baseInfo',
           render: (h, params) => {
             return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+              <div><span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark"> 1234 </span>
+              </div>)
           }
         },
         {
@@ -250,8 +244,7 @@ export default {
             return (
               <div><i-button
                 type = "primary"
-                onClick = {this.check
-                }>
+                onClick = { () => { this.check(params) } }>
               查看 </i-button>
               <i-button
                 type = "primary"
@@ -289,14 +282,14 @@ export default {
         label: 'New York1'
       }],
       formValidate: {
-        subInvalidBussinessSelect: '',
+        /* subInvalidBussinessSelect: '', */
         invalidBussinessSelect: '',
         note: ''
       },
       ruleValidate: {
-        subInvalidBussinessSelect: [
+        /* subInvalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ],
+        ], */
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -359,8 +352,9 @@ export default {
     filterMethod (value, option) {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
-    check () {
-      location.href = '/#/crm/CrmPoolCheck'
+    check (params) {
+      this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
+      /* location.href = '/#/crm/CrmPoolCheck' */
       // this.$router.push('/crm/CrmPoolCheck')
       // console.log('000000000')
     },
@@ -429,14 +423,14 @@ export default {
     cancel () {},
     getPrivateInstallerList () {
       this.$http.privatePoolInstallerList({
-        storeId: this.noAssociateStore ? this.noAssociateStore : '',
-        custCode: this.custId ? this.custId : '',
-        email: this.email ? this.email : '',
-        name: this.company ? this.company : '',
-        industryJoin: this.trade ? this.trade : '',
-        contactStatus: this.contactStatus ? this.contactStatus : '',
-        state: this.state ? this.contactStatus : '',
-        city: this.city ? this.city : ''
+        storeId: this.noAssociateStore ? this.noAssociateStore : null,
+        custCode: this.custId ? this.custId : null,
+        email: this.email ? this.email : null,
+        name: this.company ? this.company : null,
+        industryJoin: this.trade ? this.trade : null,
+        contactStatus: this.contactStatus ? this.contactStatus : null,
+        state: this.state ? this.contactStatus : null,
+        city: this.city ? this.city : null
       }).then(() => {})
     },
     handleChange (date) {
@@ -470,11 +464,15 @@ export default {
       }).then((data) => {
         // this.installerdata = data.list;
       })
+    },
+    salesCheck () {
+      this.$http.salesCheck({}).then((data) => {})
     }
   },
   mounted () {
     this.getStoreList()
     this.getPrivateInstallerList()
+    this.salesCheck()
   },
   watch: {
     list (newVal) {

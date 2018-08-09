@@ -6,7 +6,7 @@
       <li v-for="(item) in contactInstallerList" :key="item.id">
         <span></span>
         <div><span>{{item.cdate}}</span><span>{{item.status}}</span><span>{{item.type}}</span></div>
-        <div><span>{{item.storeName}}</span><span>{{item.salesName}}</span></div>
+        <div><span>{{item.storeName}}门店</span><span>{{item.salesName}}sales</span></div>
         <div><span>备注:</span></div>
         <div><p>{{item.note}}</p></div>
       </li>
@@ -24,15 +24,24 @@ export default {
   },
   methods: {
     back () {
-      this.$router.push('/crm/CrmPoolCheck')
+      // this.$router.push('/crm/CrmPoolCheck')；
+      history.back()
     },
-    contactListRecode () {
+    /* contactListRecode () {
       this.$http.contactList({}).then((data) => {
         this.contactInstallerList = data.data
+      })
+    }, */
+    contactListRecode () {
+      this.$http.contactList({
+      }).then((data) => {
+        this.contactInstallerList = data.list
+        console.log(this.contactInstallerList)
       })
     }
   },
   mounted () {
+    this.contactListRecode()
     this.contactListRecode()
   }
 }

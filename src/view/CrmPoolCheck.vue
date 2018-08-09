@@ -13,37 +13,41 @@
       <div class="top">
         <div class="topLeft">
           <div class="imgLeft"><img src="../assets/images/logo-min.jpg" alt=""></div>
-          <div>{{checkDate.name?checkDate.name:"ppp"}}</div>
+          <div>{{checkDate.name}}</div>
           <div>商城账号:123456@qq.com</div>
         </div>
         <div class="topRight">
           <Row>
             <Col span="6">
-              <span>cust id:</span><span>{{checkDate.custCode?checkDate.custCode:"ppppp"}}</span>
+              <span>cust id:</span><span>{{checkDate.custCode}}</span>
             </Col>
             <Col span="6">
-            <span>公司名称:</span><span>{{checkDate.name?checkDate.name:'222333'}}</span>
+            <span>公司名称:</span><span>{{checkDate.name}}</span>
             </Col>
             <Col span="6">
-            <span>公司电话:</span><span>{{checkDate.telephone?checkDate.telephone:'44444'}}</span>
+            <span>公司电话:</span><span>{{checkDate.phone}}</span>
             </Col>
             <Col span="6">
-            <span>网址:</span><span>{{checkDate.homeUrl?checkDate.homeUrl:'www.baidu.com'}}</span>
+            <span>网址:</span><span>{{checkDate.homeUrl}}</span>
             </Col>
             <Col span="6">
-            <span>客户来源:</span><span>{{checkDate.source?checkDate.source:'wertty'}}</span>
+            <span>客户来源:</span><span>{{checkDate.source}}</span>
             </Col>
             <Col span="6">
-            <span>类型:</span><span>{{checkDate.type?checkDate.type:'installer'}}</span>
+            <span>类型:</span><span>{{checkDate.type}}</span>
             </Col>
             <Col span="6">
-            <span>员工数量:</span><span>{{checkDate.staffNum?checkDate.staffNum:30}}</span>
+            <span>员工数量:</span><span>{{checkDate.staffNum}}</span>
             </Col>
             <Col span="6">
-            <span>行业:</span><span>{{checkDate.industry?checkDate.industry:'34345'}}</span>
+            <span>行业:</span><span>{{checkDate.industry}}</span>
             </Col>
             <Col span="12">
-            <span>公司地址:</span><span>{{checkDate.address?checkDate.address.detail:'2222'}}</span>
+            <span>公司地址:</span>
+            <span><span>详细地址：</span><span>{{checkDate.address.detail}}</span></span>
+            <span><span>国家：</span><span>{{checkDate.address.country}}</span></span>
+            <span><span>城市：</span><span>{{checkDate.address.city}}</span></span>
+            <span><span>州：</span><span>{{checkDate.address.state}}</span></span>
             </Col>
             <!--<Col span="6">
             <Button type="primary">登陆日志</Button>
@@ -208,15 +212,15 @@
       <div class="record">
         <Row class="recordContent">
           <ul>
-            <li v-for="(item) in contactInstallerList" :key="item.id">
+            <li v-for="(item,index) in contactInstallerList" :key="item.id" v-if="index < 3">
               <div span="24">
                 <span>{{item.cdate}}</span>
                 <span>{{item.status}}</span>
                 <span>{{item.type}}</span>
               </div>
               <div span="24">
-                <span>{{item.storeName}}</span>
-                <span>{{item.salesName}}</span>
+                <span>{{item.storeName}}门店</span>
+                <span>{{item.salesName}}sales</span>
               </div>
               <div span="24" class="remark">
                 <div>备注:</div>
@@ -296,7 +300,7 @@ export default {
         },
         {
           title: '职位',
-          key: 'post'
+          key: 'position'
         },
         {
           title: '联系电话',
@@ -334,7 +338,7 @@ export default {
         {
           firstName: 'xiao',
           lastName: 'qincai',
-          post: '前端开发',
+          position: '前端开发',
           phone: '8965236548',
           email: '4524563@qq.com',
           open: '已开通'
@@ -400,16 +404,16 @@ export default {
           title: '图片',
           render: (h, params) => {
             return (
-              <div><img src="#" style="width:20px;height:20px"/></div>)
+              <div><img src={params.row.imgUrl} style="width:20px;height:20px"/></div>)
           }
         },
         {
           title: '分销证号',
-          key: 'card'
+          key: 'number'
         },
         {
           title: '详细地址',
-          key: 'detailAddress'
+          key: 'detail'
         },
         {
           title: '城市',
@@ -425,11 +429,11 @@ export default {
         },
         {
           title: '邮编',
-          key: 'zipCode'
+          key: 'zip'
         },
         {
-          title: '有效期',
-          key: 'dateLine'
+          title: '有效结束时间',
+          key: 'expireEndTime'
         },
         {
           title: '审核状态',
@@ -448,7 +452,7 @@ export default {
             修改 </i-button>
               <i-button
                 type = "primary"
-                onClick = {() => { this.del(params.index) }
+                onClick = {() => { this.del(params) }
                 }>
             删除 </i-button>
               </div>)
@@ -458,12 +462,12 @@ export default {
       installerCardData: [
         {
           card: '11111',
-          detailAddress: '2222',
+          detail: '2222',
           city: 'xiao',
           state: 'qincai',
           country: 'No',
-          zipCode: '77034',
-          dateLine: '09-20-2018',
+          zip: '77034',
+          expireEndTime: '09-20-2018',
           status: '已通过'
         }
       ],
@@ -475,7 +479,7 @@ export default {
         job: '',
         mobile: '',
         email: '',
-        checked: ''
+        checked: false
       },
       promotionEmail: '',
       maintenanceInstallerModal: false,
@@ -526,36 +530,36 @@ export default {
       dateValue: '',
       newType: '',
       newTypeList: [{
-        value: '0',
+        value: '1',
         label: '电话沟通'
       }, {
-        value: '1',
+        value: '2',
         label: '当面拜访'
       }, {
-        value: '2',
+        value: '3',
         label: '邮件沟通'
       }, {
-        value: '3',
+        value: '4',
         label: '其他'
       }],
       newContact: '',
       newContactList: [{
-        value: '0',
+        value: '1',
         label: '未联系'
       }, {
-        value: '1',
+        value: '2',
         label: '联系中未询价'
       }, {
-        value: '2',
+        value: '3',
         label: '联系中询价中'
       }, {
-        value: '3',
+        value: '4',
         label: '激活已下单'
       }, {
-        value: '4',
+        value: '5',
         label: '拉新已下单'
       }, {
-        value: '5',
+        value: '6',
         label: '无效客人'
       }],
       createNewAccount: false,
@@ -583,8 +587,12 @@ export default {
       this.$refs.formInline.resetFields()
       this.createInstallerModal = true
     },
-    del (index) {
-      this.self.installerdata.splice(index, 1)
+    del (params) {
+      this.$http.delCard({
+        id: params.row.id
+      }).then((data) => {
+        this.self.installerdata.splice(params.index, 1)
+      })
     },
     ceateNewInstaller () {
       this.$refs.formInline.resetFields()
@@ -592,13 +600,15 @@ export default {
     },
     submitNewInstaller () {
       this.$http.createLinkman({
+        companyId: parseInt(this.$route.params.id),
         firstName: this.formInline.firstName,
         lastName: this.formInline.lastName,
         phone: this.formInline.mobile,
         position: this.formInline.job,
         email: this.formInline.email
       }).then((data) => {
-        console.log(data)
+        location.reload()
+        // console.log(data)
       })
     },
     handleReset () {
@@ -669,6 +679,12 @@ export default {
         if (data.every(valid => { return valid })) {
           setTimeout(() => {
             this.changeLoading()
+            this.$http.cardSave({
+              companyName: this.formValidate.companyName ? this.formValidate.companyName : null,
+              imgUrl: '',
+              number: this.formValidate.cardNum ? this.formValidate.cardNum : null,
+              address: this.form.address ? this.form.address : null
+            }).then(() => {})
             this.InstallerCardModal = false
             this.$Message.success('done')
           }, 1000)
@@ -715,8 +731,7 @@ export default {
     selectSellOk () {},
     newRecordOk () {
       this.$http.newContactList({
-        storeId: '111',
-        saleId: '222',
+        companyId: parseInt(this.$route.params.id),
         type: this.newType,
         status: this.newContact,
         note: this.contactNote,
@@ -736,31 +751,54 @@ export default {
       console.log('1111')
     },
     contactListRecode () {
-      this.$http.contactList({}).then((data) => {
-        this.contactInstallerList = data.data
+      this.$http.contactList({
+      }).then((data) => {
+        this.contactInstallerList = data.list
+        console.log(this.contactInstallerList)
       })
     },
     editInstallerList () {
-      this.$router.push({name: 'Crm Edit', params: this.data})
+      this.$router.push({name: 'Crm Edit', params: this.checkDate})
     },
     /* 通过id查询工程商列表 */
     getInstallerList () {
       this.$http.installerCheck({
-        id: this.checkDate.id
+        id: parseInt(this.$route.params.id)
       }).then((data) => {
-        this.data = data.data
-        this.installerdata = this.data.contact
+        // this.data = data
+        this.checkDate = data
+        console.log(this.checkDate)
+        // this.installerdata = this.data.contact
+        this.installerdata = data.contact
+      })
+    },
+    /* 分销证列表 */
+    cardNumList () {
+      this.$http.cardList({
+        companyId: parseInt(this.$route.params.id)
+      }).then((data) => {
+        data.forEach((item) => {
+          item.detail = item.address.detail
+          item.city = item.address.city
+          item.state = item.address.state
+          item.zip = item.address.zip
+          item.country = item.address.country
+          console.log(item.detail)
+        })
+        this.installerCardData = data
       })
     }
   },
   mounted () {
     if (this.$route.params) {
-      this.checkDate = this.$route.params
+      // this.checkDate = this.$route.params;
+      // console.log(this.checkDate);
       // this.installerdata = this.checkDate.contact;
       // console.log(this.$route.params);
     };
     this.contactListRecode()
     this.getInstallerList()
+    this.cardNumList()
   }
 }
 </script>

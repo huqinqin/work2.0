@@ -191,7 +191,7 @@ export default [
       { path: 'CrmCommonPool', meta: { icon: 'lock-combination', title: '公海池' }, name: 'crm_CommonPool', component: () => import('@/view/CrmCommonPool.vue') },
       { path: 'CrmPoolAdd', name: 'New crease', component: () => import('@/view/CrmPoolAdd.vue') },
       { path: 'CrmPoolEdit', name: 'Crm Edit', component: () => import('@/view/CrmPoolEdit.vue') },
-      { path: 'CrmPoolCheck', name: 'Crm Check', component: () => import('@/view/CrmPoolCheck.vue') },
+      { path: 'CrmPoolCheck/:id', name: 'Crm Check', component: () => import('@/view/CrmPoolCheck.vue') },
       { path: 'CrmLog', name: 'Crm Log', component: () => import('@/view/CrmLog.vue') },
       { path: 'CrmAllocation', name: 'Crm Allocation', component: () => import('@/view/CrmAllocation.vue') },
       { path: 'CrmTemporaryList', meta: { icon: 'lock-combination', title: '临时关系池' }, name: 'crm_Temporary_List', component: () => import('@/view/CrmTemporaryList.vue') },

@@ -241,7 +241,7 @@
         </Row>
         <Row>
           <Modal
-            v-model="isSaller"
+            v-model="isSaller1"
             title="Common Modal dialog box title"
             @on-ok="selectSellOk"
             @on-cancel="cancel">
@@ -254,7 +254,7 @@
           <Modal
             v-model="newContactRecode"
             title="新增沟通纪录"
-            @on-ok="selectSellOk"
+            @on-ok="newContactOk"
             @on-cancel="cancel">
             <i-col span="24">
               <DatePicker style="width: 200px" type="date" placeholder="Select date" :value="dateValue" @on-change="handleChange" ></DatePicker>
@@ -424,16 +424,10 @@ export default {
           key: 'address',
           render: (h, params) => {
             return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+              <div><span class= "ivu-icon ivu-icon-ios-checkmark">123</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+              </div>)
           }
         },
         {
@@ -518,16 +512,11 @@ export default {
           key: 'baseInfo',
           render: (h, params) => {
             return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+              <div><span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+              </div>
+            )
           }
         },
         {
@@ -602,6 +591,7 @@ export default {
         ]
       },
       isSaller: false,
+      isSaller1: false,
       allocationSells: '',
       sellsList: [{
         value: '0',
@@ -742,6 +732,10 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {
+      this.$http.batchSales({
+        salesId: 0,
+        companyIds: []
+      }).then(() => {})
     },
     cancel () {
     },
@@ -769,27 +763,28 @@ export default {
     },
     getTemplatePoolInstallerList (val) {
       this.$http.templatePoolInstallerList({
-        storeId: val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0),
-        custCode: this.custId ? this.custId : '',
-        email: this.email ? this.email : '',
-        name: this.company ? this.company : '',
-        industryJoin: this.trade ? this.trade : '',
-        contactStatus: this.contact ? this.contact : '',
-        state: this.state ? this.state : '',
-        city: this.city ? this.city : '',
-        ltsUser: '',
+        storeId: val === '0' ? (this.noAssociateStore ? this.noAssociateStore : null) : (this.associateStore ? this.associateStore : null),
+        custCode: this.custId ? this.custId : null,
+        email: this.email ? this.email : null,
+        name: this.company ? this.company : null,
+        industryJoin: this.trade ? this.trade : null,
+        contactStatus: this.contact ? this.contact : null,
+        state: this.state ? this.state : null,
+        city: this.city ? this.city : null,
+        ltsUser: null,
         allotStatus: val
       }).then((data) => {
         // this.installerdata = data.list;
       })
     },
     check (params) {
-      this.$http.installerCheck({
+      this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
+      /* this.$http.installerCheck({
         id: params.row.id
       }).then((data) => {
         this.$router.push({name: 'Crm Check', params: data.data})
         console.log(data)
-      })
+      }) */
     },
     exportInstallerList (val) {
       this.$http.templatePoolListExport({
@@ -804,11 +799,18 @@ export default {
         ltsUser: '',
         allotStatus: val
       }).then((data) => {})
-    }
+    },
+    getSalesList () {
+      this.$http.salesCheck({}).then((data) => {
+        this.sellsList = data.data
+      })
+    },
+    newContactOk () {}
   },
   mounted () {
     this.getStoreList()
     this.getTemplatePoolInstallerList()
+    this.getSalesList()
   },
   watch: {
     list (newVal) {

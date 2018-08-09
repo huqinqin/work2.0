@@ -67,7 +67,7 @@
        <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
        <div style="margin: 10px;overflow: hidden">
          <div style="float: right;">
-           <Page :total="100" :current="1" @on-change="changePage"></Page>
+           <Page :total="total" :current="1" @on-change="changePage"></Page>
          </div>
        </div>
      </Col>
@@ -104,11 +104,6 @@
                <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
              </Select>
          </FormItem>
-         <FormItem  prop="subInvalidBussinessSelect">
-             <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
-               <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-             </Select>
-         </FormItem>
          <FormItem label="备注" prop="note">
            <Row>
          <Col span="18">
@@ -129,6 +124,7 @@ export default {
   name: 'crm-common-pool',
   data () {
     return {
+      total: 0,
       state: '',
       dateValue: '',
       loading1: false,
@@ -215,19 +211,17 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'address',
           render: (h, params) => {
-            return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+            if (params.row.address) {
+              return (
+                <div>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.city}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.state}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.country}</span>
+                </div>
+              )
+            }
           }
         },
         {
@@ -236,7 +230,7 @@ export default {
         },
         {
           title: 'time',
-          key: 'cdate'
+          key: 'updateTime'
         },
         {
           title: '操作',
@@ -288,43 +282,32 @@ export default {
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
-        value: '0',
+        value: 'Installer',
         label: 'Installer'
       }, {
-        value: '1',
+        value: 'Integrator',
         label: 'Integrator'
       }, {
-        value: '2',
+        value: 'Wholesale',
         label: 'Wholesale'
       }, {
-        value: '3',
+        value: 'Distributor',
         label: 'Distributor'
       }, {
-        value: '4',
+        value: 'Retailer',
         label: 'Retailer'
       }, {
-        value: '5',
+        value: 'Onlinestore',
         label: 'Onlinestore'
       }, {
-        value: '6',
+        value: 'Other',
         label: 'Other'
       }],
-      subInvalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }],
       formValidate: {
-        subInvalidBussinessSelect: '',
         invalidBussinessSelect: '',
         note: ''
       },
       ruleValidate: {
-        subInvalidBussinessSelect: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ],
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -376,12 +359,14 @@ export default {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
     check (params) {
-      this.$http.installerCheck({
+      // console.log(params);
+      this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
+      /* this.$http.installerCheck({
         id: params.row.id
       }).then((data) => {
         this.$router.push({name: 'Crm Check', params: data.data})
         console.log(data)
-      })
+      }) */
     },
     receive (params) {
       this.selection = []
@@ -431,6 +416,11 @@ export default {
     handleSubmit () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          this.$http.invalidBussinessListSave({
+            companyId: this.selection,
+            bizNote: this.formValidate.invalidBussinessSelect + this.formValidate.note
+          }).then((data) => {
+          })
           this.$Message.success('Success!')
         } else {
           this.$refs.formValidate.resetFields()
@@ -446,18 +436,26 @@ export default {
       this.$router.push({name: 'New crease', params: {crmFlag: 3}})
     },
     getInstallerList () {
-      this.$http.crmInstallerList({
-        state: this.state,
-        city: this.city,
-        name: this.company,
-        beginTime: new Date(this.dateValue[0]).getTime(),
-        endTime: new Date(this.dateValue[1]).getTime(),
-        type: this.type,
-        industry: this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade,
-        email: this.email
+      this.$http.crmInstallerListData({
+        state: this.state ? this.state : null,
+        city: this.city ? this.city : null,
+        name: this.company ? this.company : null,
+        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
+        type: this.type ? this.type : null,
+        industry: this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null,
+        email: this.email ? this.email : null
       }).then((data) => {
-        // this.installerdata = data.list;
-        // data.list.forEach()
+        data.list.forEach((item) => {
+          /* if (item.contact !== 'null' && item.contact.length > 0) {
+            item.firstName = item.contact[0].firstName
+            item.lastName = item.contact[0].lastName
+            item.email = item.contact[0].email
+            item.phone = item.contact[0].phone
+          } */
+          this.installerdata = data.list
+          this.total = data.total
+        })
       })
     },
     handleChange (date) {

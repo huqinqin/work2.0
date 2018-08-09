@@ -186,9 +186,13 @@ export default {
     return axios.post('/trade/orderSell/updateOrderPrice', params)
   },
   /* crm接口 */
-  /* 公海池工程商列表、编辑、新增 、无效商机 */
+  /* 公海池工程商、编辑、新增 、无效商机 */
   crmInstallerList (params) {
     return axios.post('/crm/company/save', params)
+  },
+  /* 公海池列表 */
+  crmInstallerListData (params) {
+    return axios.post('/crm/bupoll/pub/page', params)
   },
   /* 公海池批量领取 */
   batchCollectionInstaller (params) {
@@ -233,6 +237,34 @@ export default {
   /* 无效商机导出 */
   invalidBussinessListExport (params) {
     return axios.post('/crm/export/invalid/business', params)
+  },
+  /* 无效商机的保存 */
+  invalidBussinessListSave (params) {
+    return axios.post('/crm/company/setCompanyInvalid', params)
+  },
+  /* 分销证列表 */
+  cardList (params) {
+    return axios.post('/crm/company/queryCompanyCertByCompanyId', params)
+  },
+  /* 分销证的保存 */
+  cardSave (params) {
+    return axios.post('/crm/company/companyCertSave', params)
+  },
+  /* 分销证的刪除 */
+  delCard (params) {
+    return axios.post('/crm/company/deleteComanyCert', params)
+  },
+  /* 私有池sales查询 */
+  salesCheck (params) {
+    return axios.post('/crm/resource/sales/list', params)
+  },
+  /* 临时池批量分配sales */
+  batchSales (params) {
+    return axios.post('/crm/bupoll/save', params)
+  },
+  /* 分配纪录点击进去后的列表 */
+  allocationSales (params) {
+    return axios.post('/crm/bupool/listBusinessPoolRecord', params)
   },
   fetchGroupStore () {
     return axios.post('base/store/group')

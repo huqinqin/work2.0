@@ -86,6 +86,11 @@ export default {
     },
     back () {
       this.$router.push('/crm/CrmPoolCheck')
+    },
+    allocationList () {
+      this.$http.allocationSales({}).then((data) => {
+        console.log(data)
+      })
     }
   }
 }
