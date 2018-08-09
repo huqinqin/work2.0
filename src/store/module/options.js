@@ -14,7 +14,10 @@ export default {
   },
   actions: {
     fetchBrands ({commit}) {
-      http.fetchBrand().then(data => {
+      http.fetchCodeTable({
+        type: 'brand',
+        source: 'lts'
+      }).then(data => {
         commit('setBrands', data)
       })
     },
