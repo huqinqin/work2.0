@@ -272,12 +272,13 @@ export default {
   sendQuotation (params) {
     return axios.post('order/quotation/send', params)
   },
-  saveCoupon (params, {itemIds, cateIds, brandIds}) {
-    if (params.offerCouponInclude.type === '') {
-      params.offerCouponInclude = {}
-    } else {
-      params.offerCouponInclude.itemIds = [params.offerCouponInclude.type + 'Ids']
-    }
+  saveCoupon (params) {
     return axios.post('item/offer/coupon/add', params)
+  },
+  fetchCoupon (params) {
+    return axios.post('item/offer/coupon/list', params)
+  },
+  fetchCouponUse (params) {
+    return axios.post('item/offer/coupon/useDetail', params)
   }
 }

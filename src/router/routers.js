@@ -163,7 +163,7 @@ export default [
   },
   {
     path: '/activity',
-    meta: { icon: 'lock-combination', title: '活动优惠', hideInMenu: true },
+    meta: { icon: 'lock-combination', title: '活动优惠' },
     name: 'activity',
     component: Main,
     children: [
