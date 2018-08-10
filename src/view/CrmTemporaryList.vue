@@ -72,10 +72,10 @@
         </Row>
         <Row>
           <Col>
-          <Table :columns="installerList" :data="installerdata"></Table>
+          <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="100" :current="1" @on-change="changePage"></Page>
+              <Page :total="total" :current="1" @on-change="changePage"></Page>
             </div>
           </div>
           </Col>
@@ -116,7 +116,7 @@
         <Row>
           <Modal
             v-model="isSaller"
-            title="Common Modal dialog box title"
+            title="分配sales"
             @on-ok="selectSellOk"
             @on-cancel="cancel">
             <Select v-model="allocationSells" style="width:200px">
@@ -201,7 +201,7 @@
           <Table :columns="installerList1" :data="installerdata1"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="100" :current="1" @on-change="changePage"></Page>
+              <Page :total="total1" :current="1" @on-change="changePage"></Page>
             </div>
           </div>
           </Col>
@@ -216,18 +216,18 @@
           </Modal>
         </Row>
         <Row>
-          <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
+          <Modal v-model="invalidBussinessModal" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
               <FormItem label="类型" prop="invalidBussinessSelect">
                 <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
                   <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </FormItem>
-              <FormItem  prop="subInvalidBussinessSelect">
+              <!--<FormItem  prop="subInvalidBussinessSelect">
                 <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
                   <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-              </FormItem>
+              </FormItem>-->
               <FormItem label="备注" prop="note">
                 <Row>
                   <Col span="18">
@@ -423,11 +423,15 @@ export default {
           title: 'Base info',
           key: 'address',
           render: (h, params) => {
-            return (
-              <div><span class= "ivu-icon ivu-icon-ios-checkmark">123</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-              </div>)
+            if (params.row.address) {
+              return (
+                <div><span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail ? params.row.address.detail : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.state ? params.row.address.state : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.city ? params.row.address.city : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.country ? params.row.address.country : ''}</span>
+                </div>
+              )
+            }
           }
         },
         {
@@ -561,28 +565,43 @@ export default {
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
+        value: 'Installer',
+        label: 'Installer'
+      }, {
+        value: 'Integrator',
+        label: 'Integrator'
+      }, {
+        value: 'Wholesale',
+        label: 'Wholesale'
+      }, {
+        value: 'Distributor',
+        label: 'Distributor'
+      }, {
+        value: 'Retailer',
+        label: 'Retailer'
+      }, {
+        value: 'Onlinestore',
+        label: 'Onlinestore'
+      }, {
+        value: 'Other',
+        label: 'Other'
+      }],
+      /* subInvalidBussinessList: [{
         value: 'New York',
         label: 'New York'
       }, {
         value: 'New York1',
         label: 'New York1'
-      }],
-      subInvalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }],
+      }], */
       formValidate: {
-        subInvalidBussinessSelect: '',
+        /* subInvalidBussinessSelect: '', */
         invalidBussinessSelect: '',
         note: ''
       },
       ruleValidate: {
-        subInvalidBussinessSelect: [
+        /* subInvalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ],
+        ], */
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -638,7 +657,10 @@ export default {
         value: '3',
         label: '其他'
       }],
-      dateValue: ''
+      dateValue: '',
+      ids: [],
+      selection: [],
+      total1: 0
     }
   },
   methods: {
@@ -670,8 +692,17 @@ export default {
       this.$router.push({name: 'Crm Check', params: {row: params.row}})
       // console.log('000000000')
     }, */
-    receive () {
-      console.log('11111')
+    receive (params) {
+      this.selection = []
+      this.selection.push(params.row)
+      this.batchCollectionInstaller()
+    },
+    batchCollectionInstaller () {
+      this.ids = []
+      this.selection.forEach((item) => { this.ids.push(item.id) })
+      this.$http.batchCollectionInstaller({
+        ids: this.ids
+      }).then((data) => { console.log(data) })
     },
     changePage () {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
@@ -712,8 +743,15 @@ export default {
       this.invalidBussinessModal = true
     },
     handleSubmit () {
+      this.ids = []
+      this.selection.forEach((item) => { this.ids.push(item.id) })
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          this.$http.invalidBussinessListSave({
+            companyId: this.ids.join(),
+            bizNote: this.formValidate.invalidBussinessSelect + '-' + this.formValidate.note
+          }).then((data) => {
+          })
           this.$Message.success('Success!')
         } else {
           this.$refs.formValidate.resetFields()
@@ -732,10 +770,20 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {
+      this.ids = []
+      this.selection.forEach((item) => { this.ids.push(item.id) })
       this.$http.batchSales({
-        salesId: 0,
-        companyIds: []
+        salesId: this.allocationSells,
+        companyIds: this.ids.join()
       }).then(() => {})
+    },
+    collection (selection, row) {
+      this.selection = selection
+      // console.log(selection);
+    },
+    collectionAll (selection) {
+      this.selection = selection
+      // console.log(selection);
     },
     cancel () {
     },
@@ -774,7 +822,8 @@ export default {
         ltsUser: null,
         allotStatus: val
       }).then((data) => {
-        // this.installerdata = data.list;
+        this.installerdata = data.list
+        this.total = data.total
       })
     },
     check (params) {
@@ -802,14 +851,22 @@ export default {
     },
     getSalesList () {
       this.$http.salesCheck({}).then((data) => {
-        this.sellsList = data.data
+        if (data && data.length > 0) {
+          data.forEach((item) => {
+            let obj = {}
+            obj.label = item.account
+            obj.value = item.id
+            this.sellsList.push(obj)
+          })
+          console.log(this.sellsList)
+        }
       })
     },
     newContactOk () {}
   },
   mounted () {
     this.getStoreList()
-    this.getTemplatePoolInstallerList()
+    this.getTemplatePoolInstallerList('0')
     this.getSalesList()
   },
   watch: {

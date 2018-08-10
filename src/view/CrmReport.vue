@@ -3,7 +3,7 @@
     <Row>
       <Col span="6" style="padding-right:10px">
       <span>Associate store:</span>
-      <Select v-model="noAssociateStore" style="width:200px">
+      <Select v-model="noAssociateStore" style="width:200px" @on-change="associationSelect">
         <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>
@@ -13,12 +13,12 @@
       </Col>
       <Col span="6" style="padding-right:10px">
       <span>time:</span>
-      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date"></DatePicker>
+      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date" :value="dateValue" @on-change="handleChange"></DatePicker>
       </Col>
     </Row>
     <Row>
       <Col span="18" style="padding-right:10px">
-      <Button type="error">导出</Button>
+      <a @click="reportExportData"><Button type="error">导出</Button></a>
       </Col>
     </Row>
     <Row>
@@ -68,6 +68,7 @@ export default {
       sales: '',
       company: '',
       email: '',
+      dateValue: '',
       installerList: [
         {
           type: 'selection',
@@ -76,27 +77,27 @@ export default {
         },
         {
           title: '时间',
-          key: 'time'
+          key: 'createTime'
         },
         {
           title: '门店',
-          key: 'store'
+          key: 'storeName'
         },
         {
           title: 'sales',
-          key: 'sales'
+          key: 'salesName'
         },
         {
           title: '拉新数量',
-          key: 'newNum'
+          key: 'newsNum'
         },
         {
           title: '促活数量',
-          key: 'reliveNum'
+          key: 'activeNum'
         },
         {
           title: '联系客户数',
-          key: 'time',
+          key: 'exchangeNum',
           width: 250,
           align: 'center',
           render: (h, params) => {
@@ -104,7 +105,8 @@ export default {
               <div
                 onMouseover={ () => { this.overShow(params) }}
                 onMouseout={ () => { this.outHide(params) }}>
-              30
+                30
+                {params.row.exchangeNum}
               </div>
             )
           }
@@ -193,7 +195,9 @@ export default {
       },
       list: [],
       total: 0,
-      contactInstallerNum: false
+      contactInstallerNum: false,
+      storeId: 0,
+      salesId: 0
     }
   },
   methods: {
@@ -301,16 +305,45 @@ export default {
         console.log(this.list)
       }
     },
-    overShow () {
+    overShow (params) {
       this.contactInstallerNum = true
+      this.salesId = params.rows.baseUserId
     },
     outHide () {
       // this.contactInstallerNum = false;
     },
-    contactOk () {}
+    contactOk () {},
+    reportExportData () {
+      let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime()
+      window.open(s)
+    },
+    reportList () {
+      this.$http.reportList({
+        storeId: this.storeId ? this.storeId : null,
+        salesKeyword: this.sales ? this.sales : null,
+        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null
+      }).then((data) => {
+        this.installerdata = data
+      })
+    },
+    associationSelect (val) {
+      this.storeId = val
+    },
+    handleChange (date) {
+      this.dateValue = date
+    },
+    installerDetail () {
+      this.$http.crmInstallerListData({
+        baseUserId: this.salesId,
+        storeId: this.storeId
+      }).then((data) => {
+      })
+    }
   },
   mounted () {
     this.getStoreList()
+    this.reportList()
   },
   watch: {
     list (newVal) {

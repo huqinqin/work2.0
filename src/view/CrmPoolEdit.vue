@@ -8,7 +8,7 @@
            <Row>
              <i-col span="8">
                <FormItem label="cust id" prop="custId" >
-                  <span>OOOOO</span>
+                  <span>{{formValidate.custCode}}</span>
                </FormItem>
              </i-col>
              <i-col span="8">
@@ -29,24 +29,24 @@
              <i-col span="8">
                <FormItem label="类型" prop="type" span="8">
                  <Select v-model="formValidate.type" placeholder="Select your city">
-                   <Option value="0">Installer</Option>
-                   <Option value="1"> Integrator</Option>
-                   <Option value="2">Wholesale</Option>
-                   <Option value="3">Distributor</Option>
-                   <Option value="4">Retailer</Option>
-                   <Option value="5">Onlinestore</Option>
-                   <Option value="6">Other</Option>
+                   <Option value="Installer">Installer</Option>
+                   <Option value="Integrator"> Integrator</Option>
+                   <Option value="Wholesale">Wholesale</Option>
+                   <Option value="Distributor">Distributor</Option>
+                   <Option value="Retailer">Retailer</Option>
+                   <Option value="Onlinestore">Onlinestore</Option>
+                   <Option value="Other">Other</Option>
                  </Select>
                </FormItem>
              </i-col>
              <i-col span="8">
                <FormItem label="员工规模" prop="size" span="8">
                  <Select v-model="formValidate.size" placeholder="Select your city">
-                   <Option value="0">0-20人</Option>
-                   <Option value="1">20-100人</Option>
-                   <Option value="2">100-500人</Option>
-                   <Option value="3">500-1000人</Option>
-                   <Option value="4">1000人以上</Option>
+                   <Option value="0-20">0-20人</Option>
+                   <Option value="20-100">20-100人</Option>
+                   <Option value="100-500">100-500人</Option>
+                   <Option value="500-1000">500-1000人</Option>
+                   <Option value="1000人以上">1000人以上</Option>
                  </Select>
                </FormItem>
              </i-col>
@@ -58,20 +58,20 @@
              <i-col span="8">
                <FormItem label="行业" prop="industry" span="8">
                  <Select v-model="formValidate.industry" placeholder="Select your city">
-                   <Option value="0">视频监控</Option>
-                   <Option value="1">门禁</Option>
-                   <Option value="2">报警</Option>
-                   <Option value="3">音视频</Option>
-                   <Option value="4">其他</Option>
+                   <Option value="视频监控">视频监控</Option>
+                   <Option value="门禁">门禁</Option>
+                   <Option value="报警">报警</Option>
+                   <Option value="音视频">音视频</Option>
+                   <Option value="其他">其他</Option>
                  </Select>
                </FormItem>
              </i-col>
-             <i-col span="8" v-if="formValidate.industry === '0'">
+             <i-col span="8" v-if="formValidate.industry === '视频监控'">
                <FormItem  prop="industryType" span="8">
                  <Select v-model="formValidate.industryType" placeholder="Select your city">
-                   <Option value="0">IP</Option>
-                   <Option value="1">HD-TVI</Option>
-                   <Option value="2">Both</Option>
+                   <Option value="IP">IP</Option>
+                   <Option value="HD-TVI">HD-TVI</Option>
+                   <Option value="Both">Both</Option>
                  </Select>
                </FormItem>
              </i-col>
@@ -83,15 +83,15 @@
              <i-col span="8">
                <FormItem label="客户来源" prop="source" span="8">
                  <Select v-model="formValidate.source" placeholder="Select your city">
-                   <Option value="0">搜索</Option>
-                   <Option value="1">展会</Option>
-                   <Option value="2">偶遇</Option>
-                   <Option value="3">客户推荐</Option>
-                   <Option value="4">其他</Option>
+                   <Option value="搜索">搜索</Option>
+                   <Option value="展会">展会</Option>
+                   <Option value="偶遇">偶遇</Option>
+                   <Option value="客户推荐">客户推荐</Option>
+                   <Option value="其他">其他</Option>
                  </Select>
                </FormItem>
              </i-col>
-             <i-col span="8" v-if="formValidate.source === '3'">
+             <i-col span="8" v-if="formValidate.source === '客户推荐'">
                <FormItem   span="8">
                 <Button type="primary" @click="selectInstaller">选择客户</Button>
                </FormItem>
@@ -299,24 +299,33 @@ export default {
           // this.submit()
         }
       })
+    },
+    getInstallerList () {
+      this.$http.installerCheck({
+        id: parseInt(this.$route.params.id)
+      }).then((data) => {
+        this.formValidate.custCode = data.custCode
+        this.formValidate.companyName = data.name
+        this.formValidate.telephone = data.phone
+        this.formValidate.mail = data.email
+        this.formValidate.type = data.type
+        this.formValidate.size = data.staffNum
+        this.formValidate.num = data.subStoreNum
+        this.formValidate.industry = data.industry.indexOf('视频监控') > -1 ? (data.industry.split('-')[0] || data.industry.split('-')[0]) : data.industry
+        this.formValidate.industryType = data.industry.indexOf('视频监控') > -1 ? data.industry.split('-')[1] : ''
+        this.formValidate.amount = data.shoppingNum
+        this.formValidate.source = data.source
+        this.formValidate.industry = data.industry
+        this.form.address = data.address
+        console.log(data.industry.indexOf('视频监控') > -1 ? (data.industry.split('-')[1] || data.industry.split('-')[0]) : data.industry)
+      })
     }
   },
   components: {
     MapAutoComplete: () => import('@/components/MapAutoComplete')
   },
   mounted () {
-    this.data = this.$route.params
-    this.formValidate.companyName = this.data.name
-    this.formValidate.telephone = this.data.phone
-    this.formValidate.mail = this.data.email
-    this.formValidate.type = this.data.type
-    this.formValidate.size = this.data.staffNum
-    this.formValidate.num = this.data.subStoreNum
-    this.formValidate.industry = this.data.industry
-    this.formValidate.amount = this.data.shoppingNum
-    this.formValidate.source = this.data.source
-    this.formValidate.industry = this.data.industry
-    this.form.address = this.data.address
+    this.getInstallerList()
   }
 }
 </script>

@@ -134,7 +134,7 @@
          </Row>
          <Row>
            <Col>
-           <Table :columns="installerList" :data="installerdata"></Table>
+           <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
            <div style="margin: 10px;overflow: hidden">
              <div style="float: right;">
                <Page :total="100" :current="1" @on-change="changePage"></Page>
@@ -201,11 +201,11 @@ export default {
         },
         {
           title: 'cust id',
-          key: 'custId'
+          key: 'custCode'
         },
         {
           title: 'company',
-          key: 'company'
+          key: 'name'
         },
         {
           title: 'First name',
@@ -216,29 +216,22 @@ export default {
           key: 'lastName'
         },
         {
-          title: 'isCount',
-          key: 'isCount'
+          title: 'email',
+          key: 'email'
         },
         {
-          title: 'time',
-          key: 'time'
+          title: '联系电话',
+          key: 'telephone'
         }
       ],
-      installerdata: [
-        {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }
-      ],
+      installerdata: [],
       custIdSelect: '',
       companySelect: '',
       firstNameSelect: '',
       lastNameSelect: '',
-      custId: ''
+      custId: '',
+      selection: [],
+      ids: []
     }
   },
   methods: {
@@ -255,9 +248,19 @@ export default {
       this.$refs[name].resetFields()
     },
     search () {
-      console.log('0000')
+      this.selectInstallerEvevt()
     },
-    sureSelect () {},
+    sureSelect () {
+      console.log(this.selection)
+      this.ids = []
+      this.selection.forEach((item) => { this.ids.push(item) })
+      this.$http.crmInstallerList({
+        recCid: this.ids[0].id,
+        firstName: this.ids[0].firstName,
+        lastName: this.ids[0].lastName,
+        custCode: this.ids[0].custCode
+      }).then((data) => { console.log(data) })
+    },
     cancleSelect () {},
     changePage () {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
@@ -290,6 +293,16 @@ export default {
       }
       return data
     },
+    selectInstallerEvevt () {
+      this.$http.crmInstallerListData({
+        custCode: this.custIdSelect ? this.custIdSelect : null,
+        fisrtName: this.firstName ? this.firstName : null,
+        lastName: this.lastName ? this.lastName : null,
+        name: this.companySelect ? this.companySelect : null
+      }).then((data) => {
+        this.installerdata = data.list
+      })
+    },
     selectInstaller () {
       this.addModal = true
     },
@@ -314,10 +327,21 @@ export default {
         } else {
         }
       })
+    },
+    collection (selection, row) {
+      this.selection = selection
+      // console.log(selection);
+    },
+    collectionAll (selection) {
+      this.selection = selection
+      // console.log(selection);
     }
   },
   components: {
     MapAutoComplete: () => import('@/components/MapAutoComplete')
+  },
+  mounted () {
+    this.selectInstallerEvevt()
   }
 }
 </script>

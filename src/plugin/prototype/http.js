@@ -206,6 +206,22 @@ export default {
   contactList (params) {
     return axios.post('/crm/company/listCommunicationRecord', params)
   },
+  /* 公有池的导出 */
+  commonPoolExport (params) {
+    return axios.post('/crm/export/pub/list', params)
+  },
+  /* 创建账号 */
+  createAccount (params) {
+    return axios.post('/crm/company/newAccount', params)
+  },
+  /* 邮件列表的查询 */
+  emailSelect (params) {
+    return axios.post('/crm/company/listEmail', params)
+  },
+  /* 关联oms的id */
+  omsId (params) {
+    return axios.post('/crm/company/associatedCustCode', params)
+  },
   /* 临时池新增沟通纪录 */
   newContactList (params) {
     return axios.post('/crm/company/addCommunicationRecord', params)
@@ -233,6 +249,10 @@ export default {
   /* 私有池列表的导出 */
   privatePoolListExport (params) {
     return axios.post('/crm/export/priv/page', params)
+  },
+  /* 私有池批量分配 */
+  privatePoolBatch (params) {
+    return axios.post('/crm/bupoll/priv/batch/do', params)
   },
   /* 无效商机导出 */
   invalidBussinessListExport (params) {
@@ -265,6 +285,14 @@ export default {
   /* 分配纪录点击进去后的列表 */
   allocationSales (params) {
     return axios.post('/crm/bupool/listBusinessPoolRecord', params)
+  },
+  /* 报表的列表 */
+  reportList (params) {
+    return axios.post('/crm/report/storesales/query', params)
+  },
+  /* 报表的导出 */
+  reportExport (params) {
+    return axios.post('/crm/export/storesales', params)
   },
   fetchGroupStore () {
     return axios.post('base/store/group')

@@ -71,16 +71,13 @@
     </Row>
     <Row>
       <Col span="18" style="padding-right:10px">
-      <!--<Button type="primary" @click="importInstaller">导入</Button>
-      <Button type="primary" @click="crmPoolAdd">新增</Button>-->
       <Button type="primary" @click="allocation">批量分配</Button>
-     <!-- <Button type="primary" @click="invalidBussiness">无效商机</Button>-->
       <Button type="error" @click="privatePoolInstallerExport">导出</Button>
       </Col>
     </Row>
     <Row>
       <Col>
-      <Table :columns="installerList" :data="installerdata"></Table>
+      <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
           <Page :total="100" :current="1" @on-change="changePage"></Page>
@@ -98,36 +95,12 @@
       </Modal>
     </Row>
     <Row>
-      <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-          <FormItem label="类型" prop="invalidBussinessSelect">
-            <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
-              <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem  prop="subInvalidBussinessSelect">
-            <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
-              <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem label="备注" prop="note">
-            <Row>
-              <Col span="18">
-              <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
-              </Col>
-            </Row>
-          </FormItem>
-          <div style="margin-left: 80px">注：如果已开通商城账号，加入无效商机名单后将冻结该工程商的账号</div>
-        </Form>
-      </Modal>
-    </Row>
-    <Row>
       <Modal
         v-model="isSaller"
         title="分配sales"
         @on-ok="selectSellOk"
         @on-cancel="cancel">
-        <Select v-model="allocationSells" style="width:200px">
+        <Select v-model="allocationSells" style="width:200px" >
           <Option v-for="item in sellsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
         </Select>
       </Modal>
@@ -202,11 +175,11 @@ export default {
         },
         {
           title: 'cust id',
-          key: 'custId'
+          key: 'custCode'
         },
         {
           title: 'company',
-          key: 'company'
+          key: 'name'
         },
         {
           title: 'First name',
@@ -218,26 +191,27 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'baseInfo',
           render: (h, params) => {
-            return (
-              <div><span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark"> 1234 </span>
-              </div>)
+            if (params.row.address) {
+              return (
+                <div><span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail ? params.row.address.detail : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.city ? params.row.address.city : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.country ? params.row.address.country : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.state ? params.row.address.state : ''}</span>
+                </div>)
+            }
           }
         },
         {
           title: 'isCount',
-          key: 'isCount'
+          key: 'account'
         },
         {
           title: 'time',
-          key: 'time'
+          key: 'updateTime'
         },
         {
           title: '操作',
-          key: 'action',
           width: 250,
           align: 'center',
           render: (h, params) => {
@@ -267,41 +241,8 @@ export default {
       ],
       importInstallerModal: false,
       invalidBussinessModal: false,
-      invalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }],
-      subInvalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }],
-      formValidate: {
-        /* subInvalidBussinessSelect: '', */
-        invalidBussinessSelect: '',
-        note: ''
-      },
-      ruleValidate: {
-        /* subInvalidBussinessSelect: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ], */
-        invalidBussinessSelect: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ],
-        note: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ]
-      },
       allocationSells: '',
-      sellsList: [{
-        value: '0',
-        label: '张三'
-      }],
+      sellsList: [],
       isSaller: false,
       dateValue: [],
       contactStatus: '',
@@ -325,7 +266,9 @@ export default {
         label: '无效客人'
       }],
       noAssociateStore: '',
-      noAssociateStoreList: []
+      noAssociateStoreList: [],
+      selection: [],
+      ids: []
     }
   },
   methods: {
@@ -419,7 +362,35 @@ export default {
     allocation () {
       this.isSaller = true
     },
-    selectSellOk () {},
+    selectSellOk () {
+      this.ids = []
+      this.selection.forEach((item) => { this.ids.push(item.id) })
+      this.$http.privatePoolBatch({
+        salesId: this.allocationSells,
+        companyIds: this.ids
+      }).then(() => {})
+    },
+    collection (selection, row) {
+      this.selection = selection
+      // console.log(selection);
+    },
+    collectionAll (selection) {
+      this.selection = selection
+      // console.log(selection);
+    },
+    getSalesList () {
+      this.$http.salesCheck({}).then((data) => {
+        if (data && data.length > 0) {
+          data.forEach((item) => {
+            let obj = {}
+            obj.label = item.account
+            obj.value = item.id
+            this.sellsList.push(obj)
+          })
+          console.log(this.sellsList)
+        }
+      })
+    },
     cancel () {},
     getPrivateInstallerList () {
       this.$http.privatePoolInstallerList({
@@ -431,7 +402,10 @@ export default {
         contactStatus: this.contactStatus ? this.contactStatus : null,
         state: this.state ? this.contactStatus : null,
         city: this.city ? this.city : null
-      }).then(() => {})
+      }).then((data) => {
+        this.installerdata = data.list
+        console.log(this.installerdata)
+      })
     },
     handleChange (date) {
       this.dateValue = date
@@ -461,18 +435,16 @@ export default {
         state: this.state ? this.state : '',
         city: this.city ? this.city : '',
         ltsUser: ''
-      }).then((data) => {
-        // this.installerdata = data.list;
-      })
-    },
-    salesCheck () {
-      this.$http.salesCheck({}).then((data) => {})
+      }).then((data) => {})
     }
+    /* salesCheck () {
+      this.$http.salesCheck({}).then((data) => {})
+    } */
   },
   mounted () {
     this.getStoreList()
     this.getPrivateInstallerList()
-    this.salesCheck()
+    this.getSalesList()
   },
   watch: {
     list (newVal) {

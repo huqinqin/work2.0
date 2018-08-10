@@ -14,7 +14,7 @@
         <div class="topLeft">
           <div class="imgLeft"><img src="../assets/images/logo-min.jpg" alt=""></div>
           <div>{{checkDate.name}}</div>
-          <div>商城账号:123456@qq.com</div>
+          <div>商城账号:{{checkDate.account}}</div>
         </div>
         <div class="topRight">
           <Row>
@@ -89,41 +89,41 @@
         <Form :model="formItem" :label-width="100">
           <FormItem label="用户分类">
             <Select v-model="formItem.select">
-              <Option value="0">活跃</Option>
-              <Option value="1">不活跃</Option>
-              <Option value="2">潜在</Option>
-              <Option value="3">内部测试</Option>
+              <Option value="1">活跃</Option>
+              <Option value="2">不活跃</Option>
+              <Option value="3">潜在</Option>
+              <Option value="4">内部测试</Option>
             </Select>
           </FormItem>
           <FormItem label="用户质量">
             <Select v-model="formItem.quality">
-              <Option value="0">高质量用户</Option>
-              <Option value="1">中质量用户</Option>
-              <Option value="2">低质量用户</Option>
+              <Option value="1">高质量用户</Option>
+              <Option value="2">中质量用户</Option>
+              <Option value="3">低质量用户</Option>
             </Select>
           </FormItem>
           <FormItem label="用户分层">
             <Select v-model="formItem.level">
-              <Option value="0">0</Option>
-              <Option value="1">1</Option>
-              <Option value="2">2</Option>
-              <Option value="2">3</Option>
-              <Option value="2">4</Option>
-              <Option value="2">5</Option>
+              <Option value="1">0</Option>
+              <Option value="2">1</Option>
+              <Option value="3">2</Option>
+              <Option value="4">3</Option>
+              <Option value="5">4</Option>
+              <Option value="6">5</Option>
             </Select>
           </FormItem>
           <FormItem label="促销属性">
             <CheckboxGroup v-model="formItem.checkbox">
-              <Checkbox label="价格敏感" value="0"></Checkbox>
-              <Checkbox label="服务敏感" value="1"></Checkbox>
-              <Checkbox label="品牌敏感" value="2"></Checkbox>
-              <Checkbox label="质量敏感" value="3"></Checkbox>
+              <Checkbox label="价格敏感" value="1"></Checkbox>
+              <Checkbox label="服务敏感" value="2"></Checkbox>
+              <Checkbox label="品牌敏感" value="3"></Checkbox>
+              <Checkbox label="质量敏感" value="4"></Checkbox>
             </CheckboxGroup>
           </FormItem>
           <FormItem label="接受促销邮件">
             <RadioGroup v-model="formItem.radio">
-              <Radio label="是" value="1">是</Radio>
-              <Radio label="否" value="2">否</Radio>
+              <Radio label="是" value="true">是</Radio>
+              <Radio label="否" value="false">否</Radio>
             </RadioGroup>
           </FormItem>
         </Form>
@@ -132,22 +132,27 @@
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
           <FormItem label="分销证信息" prop="cardInfo">
             <Upload
+              ref="upload"
+              :show-upload-list="true"
               :on-success="handleSuccess"
               :format="['jpg','jpeg','png']"
               :max-size="2048"
               :on-format-error="handleFormatError"
               :on-exceeded-size="handleMaxSize"
-              action="//jsonplaceholder.typicode.com/posts/"
-            >
-              <div style="padding: 20px 0">
-                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                <p>Click or drag files here to upload</p>
+              :before-upload="beforeLoad"
+              :data="Object.assign(formUp, formData)"
+              multiple
+              type="drag"
+              action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
+              style="display: inline-block;width:256px; height: 256px;">
+              <div style="width: 256px;height:256px;line-height: 256px;">
+                <Icon type="camera" size="48"></Icon>
               </div>
             </Upload>
           </FormItem>
-          <FormItem label="公司名" prop="companyName">
+          <!--<FormItem label="公司名" prop="companyName">
             <Input v-model="formValidate.companyName" placeholder="Enter your e-mail"></Input>
-          </FormItem>
+          </FormItem>-->
           <FormItem label="分销证号" prop="cardNum">
             <Input v-model="formValidate.cardNum" placeholder="Enter your e-mail"></Input>
           </FormItem>
@@ -275,7 +280,7 @@
         <Modal
           v-model="createOmsCustId"
           title="创建cust id"
-          @on-ok="selectSellOk"
+          @on-ok="createCustIdOk"
           @on-cancel="cancel">
           <span>cust id:</span>
           <Input v-model="createCustId"  placeholder="Enter something..." />
@@ -327,23 +332,14 @@ export default {
                   编辑 </i-button>
               <i-button
                 type = "primary"
-                onClick = {() => { this.del(params.index) }
+                onClick = {() => { this.del(params) }
                 }>
                   删除 </i-button>
               </div>)
           }
         }
       ],
-      installerdata: [
-        {
-          firstName: 'xiao',
-          lastName: 'qincai',
-          position: '前端开发',
-          phone: '8965236548',
-          email: '4524563@qq.com',
-          open: '已开通'
-        }
-      ],
+      installerdata: [],
       installerInfo: [
         {
           title: '采购总额',
@@ -564,10 +560,7 @@ export default {
       }],
       createNewAccount: false,
       newAccount: '',
-      newAccountList: [{
-        value: '0',
-        label: '896267787@qq.com'
-      }],
+      newAccountList: [],
       createCustId: '',
       contactNote: '',
       createOmsCustId: false,
@@ -579,13 +572,34 @@ export default {
         ext: {}
       },
       contactInstallerList: [],
-      data: {}
+      data: {},
+      formUp: {
+        policy: 'eyJleHBpcmF0aW9uIjoiMjAyMC0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
+        OSSAccessKeyId: 'LTAIdExaLJELmORj',
+        signature: 'Xc8E45q5qzV+9gPLvepFqmS0oVk=',
+        preKey: '',
+        dir: '',
+        host: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/',
+        expire: '',
+        success_action_status: 200
+      },
+      formData: {
+        name: '',
+        key: '',
+        Filename: ''
+      }
     }
   },
   methods: {
     check (params) {
       this.$refs.formInline.resetFields()
       this.createInstallerModal = true
+      this.formInline.firstName = params.row.firstName
+      this.formInline.lastName = params.row.lastName
+      this.formInline.job = params.row.position
+      this.formInline.email = params.row.email
+      this.formInline.mobile = params.row.phone
+      // this.formInline.checked = params.row.open
     },
     del (params) {
       this.$http.delCard({
@@ -654,8 +668,11 @@ export default {
       this.maintenanceInstallerModal = true
     },
     modify (params) {
-      // console.log(params);
+      console.log(params)
       this.InstallerCardModal = true
+      this.formValidate.cardNum = params.row.number
+      // this.formValidate.companyName = params.row.number;
+      this.form.address = params.row.address
     },
     maintenanceInstaller () {
       this.$http.maintenanceList({
@@ -680,27 +697,20 @@ export default {
           setTimeout(() => {
             this.changeLoading()
             this.$http.cardSave({
-              companyName: this.formValidate.companyName ? this.formValidate.companyName : null,
-              imgUrl: '',
+              // companyName: this.formValidate.companyName ? this.formValidate.companyName : null,
+              imgUrl: this.formData.key,
               number: this.formValidate.cardNum ? this.formValidate.cardNum : null,
-              address: this.form.address ? this.form.address : null
-            }).then(() => {})
-            this.InstallerCardModal = false
-            this.$Message.success('done')
+              address: this.form.address ? this.form.address : null,
+              id: this.$route.params.id
+            }).then((data) => {
+              this.InstallerCardModal = false
+              this.$Message.success('done')
+              location.reload()
+            })
           }, 1000)
         } else {
           return this.changeLoading()
         }
-      })
-    },
-    handleSuccess (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
-    },
-    handleFormatError (file) {
-      this.$Notice.warning({
-        title: 'The file format is incorrect',
-        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
       })
     },
     handleMaxSize (file) {
@@ -728,7 +738,18 @@ export default {
       console.log('00000')
     },
     cancel () {},
-    selectSellOk () {},
+    selectSellOk () {
+      this.$http.createAccount({
+        companyId: parseInt(this.$route.params.id),
+        email: this.newAccount
+      }).then((data) => {})
+    },
+    createCustIdOk () {
+      this.$http.omsId({
+        companyId: parseInt(this.$route.params.id),
+        custCode: this.createCustId
+      }).then((data) => {})
+    },
     newRecordOk () {
       this.$http.newContactList({
         companyId: parseInt(this.$route.params.id),
@@ -758,7 +779,7 @@ export default {
       })
     },
     editInstallerList () {
-      this.$router.push({name: 'Crm Edit', params: this.checkDate})
+      this.$router.push({name: 'Crm Edit', params: this.$route.params.id})
     },
     /* 通过id查询工程商列表 */
     getInstallerList () {
@@ -767,9 +788,9 @@ export default {
       }).then((data) => {
         // this.data = data
         this.checkDate = data
-        console.log(this.checkDate)
+        // console.log(this.checkDate)
         // this.installerdata = this.data.contact
-        this.installerdata = data.contact
+        this.installerdata.push(data)
       })
     },
     /* 分销证列表 */
@@ -787,6 +808,62 @@ export default {
         })
         this.installerCardData = data
       })
+    },
+    /* 上传图片 */
+    handleSuccess (res, file) {
+      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
+      file.status = 'finished'
+      this.imgList.push(file)
+    },
+    /* 得到签名 */
+    getPolicy () {
+      this.$http.getPolicy().then(data => {
+        this.formUp.policy = data.policy
+        this.formUp.OSSAccessKeyId = data.accessid
+        this.formUp.signature = data.signature
+        this.formUp.dir = data.dir
+        this.formUp.host = data.host
+        this.formUp.preKey = data.dir
+        this.formUp.expire = data.expire
+      })
+    },
+    handleFormatError (file) {
+      this.$Notice.warning({
+        title: 'The file format is incorrect',
+        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+      })
+    },
+    beforeLoad (file) {
+      this.formData.name = file.name
+      this.formData.key = this.formUp.preKey + '/' + file.name
+      this.formData.Filename = file.name
+      this.$nextTick(() => {
+        this.$refs.upload.post(file)
+      })
+      return false
+    },
+    loadSuccess (response, file) {
+      this.img = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      console.log(this.img)
+      console.log(file)
+    },
+    loadError (error) {
+      console.log(error)
+    },
+    emailCheck () {
+      this.$http.emailSelect({
+        companyId: parseInt(this.$route.params.id)
+      }).then((data) => {
+        data.forEach((item) => {
+          let obj = {}
+          obj.label = item
+          obj.value = item
+          this.newAccountList.push(obj)
+          console.log(obj)
+        })
+      })
+    },
+    omsId () {
     }
   },
   mounted () {
@@ -799,6 +876,8 @@ export default {
     this.contactListRecode()
     this.getInstallerList()
     this.cardNumList()
+    this.getPolicy()
+    this.emailCheck()
   }
 }
 </script>

@@ -59,7 +59,7 @@
        <Button type="primary" @click="crmPoolAdd">新增</Button>
        <Button type="primary" @click="batchCollectionInstaller">批量领取</Button>
        <Button type="primary" @click="invalidBussiness">无效商机</Button>
-       <Button type="error">导出</Button>
+       <a @click="reportExportData"><Button type="error">导出</Button></a>
      </Col>
    </Row>
    <Row>
@@ -78,7 +78,6 @@
          ref="upload"
          :show-upload-list="true"
          :on-success="handleSuccess"
-         :format="['jpg','jpeg','png']"
          :max-size="2048"
          :on-format-error="handleFormatError"
          :on-exceeded-size="handleMaxSize"
@@ -93,7 +92,7 @@
          </div>
        </Upload>
        <span>如没有模板请先下载导入模板</span>
-       <a href="#">下载模板</a>
+       <a href="https://ltsb2b2.oss-us-west-1.aliyuncs.com/crm/123.xlsx">下载模板</a>
      </Modal>
    </Row>
    <Row>
@@ -331,7 +330,8 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      searchOptionJoin: {}
     }
   },
   methods: {
@@ -436,6 +436,14 @@ export default {
       this.$router.push({name: 'New crease', params: {crmFlag: 3}})
     },
     getInstallerList () {
+      this.searchOptionJoin.state = this.state ? this.state : ''
+      this.searchOptionJoin.city = this.city ? this.city : ''
+      this.searchOptionJoin.name = this.company ? this.company : ''
+      this.searchOptionJoin.beginTime = new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : ''
+      this.searchOptionJoin.endTime = new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : ''
+      this.searchOptionJoin.type = this.type ? this.type : ''
+      this.searchOptionJoin.industry = this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null
+      this.searchOptionJoin.email = this.email ? this.email : ''
       this.$http.crmInstallerListData({
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
@@ -446,6 +454,8 @@ export default {
         industry: this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null,
         email: this.email ? this.email : null
       }).then((data) => {
+        this.installerdata = data.list
+        this.total = data.total
         data.list.forEach((item) => {
           /* if (item.contact !== 'null' && item.contact.length > 0) {
             item.firstName = item.contact[0].firstName
@@ -453,8 +463,6 @@ export default {
             item.email = item.contact[0].email
             item.phone = item.contact[0].phone
           } */
-          this.installerdata = data.list
-          this.total = data.total
         })
       })
     },
@@ -521,6 +529,11 @@ export default {
       file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
       this.imgList.push(file)
+    },
+    reportExportData () {
+      let s = '/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
+      '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
+      window.open(s)
     }
   },
   mounted () {
