@@ -253,12 +253,18 @@ export default {
     sureSelect () {
       console.log(this.selection)
       this.ids = []
-      this.selection.forEach((item) => { this.ids.push(item) })
+      this.selection.forEach((item) => { this.ids.push(item.id) })
       this.$http.crmInstallerList({
-        recCid: this.ids[0].id,
-        firstName: this.ids[0].firstName,
-        lastName: this.ids[0].lastName,
-        custCode: this.ids[0].custCode
+        recCid: this.ids.id,
+        email: this.formValidate.mail,
+        staffNum: this.formValidate.size,
+        subStoreNum: this.formValidate.num,
+        type: this.formValidate.type,
+        source: this.formValidate.source,
+        name: this.formValidate.companyName,
+        telphone: this.formValidate.telephone,
+        industry: this.formValidate.industry === '视频监控' ? this.formValidate.industry + '-' + this.formValidate.industryType : this.formValidate.industry,
+        shoppingNum: this.formValidate.amount
       }).then((data) => { console.log(data) })
     },
     cancleSelect () {},
