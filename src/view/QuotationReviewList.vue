@@ -11,14 +11,11 @@
         <i-input v-model="filter.account" type="text" placeholder="输入账号" ></i-input>
       </form-item>
       <form-item prop="id" label="询价单编号">
-        <i-input v-model="filter.id" type="text" placeholder="输入单号" ></i-input>
+        <i-input v-model="filter.mid" type="text" placeholder="输入单号" ></i-input>
       </form-item>
       <form-item prop="status" label="状态">
         <Select v-model="filter.status">
-          <Option value="init">待提交审核</Option>
-          <Option value="MANAGER">待销售主管审核</Option>
-          <Option value="FINANCIAL">待财务审核</Option>
-          <Option value="ENABLED">已生成订单</Option>
+          <Option v-for="item in statusOption" :key="item.status" :value="item.status">{{item.label}}</Option>
         </Select>
       </form-item>
       <form-item prop="cdate" label="所属sales">
@@ -49,11 +46,11 @@ export default {
     return {
       url: 'QuotationTodo',
       filter: {
-        id: '', custID: '', account: '', sName: '', status: '', date: [], sales: ''
+        mid: '', custID: '', account: '', sName: '', status: '', date: [], sales: ''
       },
       salesOption: [
         {
-          id: 1,
+          id: 28,
           name: '销售1'
         }, {
           id: 2,
@@ -64,6 +61,21 @@ export default {
         }, {
           id: 4,
           name: '销售4'
+        }
+      ],
+      statusOption: [
+        {
+          status: 'init',
+          label: '待提交'
+        }, {
+          status: 'salesManager',
+          label: '待销售主管审核'
+        }, {
+          status: 'financial',
+          label: '待财务审核'
+        }, {
+          status: 'enabled',
+          label: '已生成订单'
         }
       ],
       dateOptions: {
@@ -115,19 +127,43 @@ export default {
           key: 'mid'
         }, {
           title: '账号',
-          key: 'account'
+          render: (h, params) => {
+            return (
+              <div>{params.row.store.storeCode}</div>
+            )
+          }
         }, {
           title: '公司名称',
-          key: 'sName'
+          render: (h, params) => {
+            return (
+              <div>{params.row.store.storeName}</div>
+            )
+          }
         }, {
           title: '状态',
-          key: 'status'
+          render: (h, params) => {
+            let status = null
+            this.statusOption.forEach(t => {
+              if (t.status === params.row.status) status = t.label
+            })
+            return (
+              <div>{status}</div>
+            )
+          }
         }, {
           title: '创建时间',
           key: 'cdate'
         }, {
           title: 'sales',
-          key: 'sales'
+          render: (h, params) => {
+            let sales = null
+            this.salesOption.forEach(t => {
+              if (t.id === params.row.salesId) sales = t.name
+            })
+            return (
+              <div>{sales}</div>
+            )
+          }
         },
         {
           title: '操作',
@@ -135,20 +171,33 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-            return (
-              <div>
-                <i-button type="primary" size="small" on-click={(e) => this.review(params.row.id)}>审核</i-button>
-                <i-button type="primary" size="small" on-click={(e) => this.send(params.row.id)}>提交审核</i-button>
-              </div>
-            )
+            let content = null
+            if (params.row.status === 'init') {
+              content = (
+                <div>
+                  <i-button type="primary" size="small" on-click={(e) => this.send(params.row.id)}>提交审核</i-button>
+                  <i-button type="success" size="small" on-click={(e) => this.edit(params.row.id)}>销售编辑</i-button>
+                </div>
+              )
+            } else {
+              content = (
+                <div>
+                  <i-button type="error" size="small" on-click={(e) => this.agree(params.row.id)}>审核</i-button>
+                </div>
+              )
+            }
+            return content
           }
         }
       ]
     }
   },
   methods: {
-    review (id) {
-      console.log('review', id)
+    agree (id) {
+      this.$router.push(`quotation_edit/${id}`)
+    },
+    edit (id) {
+      this.$router.push(`quotation_edit/${id}`)
     },
     send (id) {
       this.$http.sendQuotation({
