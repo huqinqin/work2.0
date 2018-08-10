@@ -190,7 +190,7 @@ export default [
     children: [
       { path: 'CrmCommonPool', meta: { icon: 'lock-combination', title: '公海池' }, name: 'crm_CommonPool', component: () => import('@/view/CrmCommonPool.vue') },
       { path: 'CrmPoolAdd', name: 'New crease', component: () => import('@/view/CrmPoolAdd.vue') },
-      { path: 'CrmPoolEdit', name: 'Crm Edit', component: () => import('@/view/CrmPoolEdit.vue') },
+      { path: 'CrmPoolEdit/:id', name: 'Crm Edit', component: () => import('@/view/CrmPoolEdit.vue') },
       { path: 'CrmPoolCheck/:id', name: 'Crm Check', component: () => import('@/view/CrmPoolCheck.vue') },
       { path: 'CrmLog', name: 'Crm Log', component: () => import('@/view/CrmLog.vue') },
       { path: 'CrmAllocation', name: 'Crm Allocation', component: () => import('@/view/CrmAllocation.vue') },
