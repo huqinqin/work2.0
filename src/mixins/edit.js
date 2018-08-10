@@ -25,6 +25,7 @@ export default {
           title: 'Edit success',
           desc: ''
         })
+        this.reset()
       })
     },
     reset () {

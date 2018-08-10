@@ -56,7 +56,7 @@
         </i-col>
       </row>
       <form-item>
-        <Button type="primary" @click="validForm" :loading="loading">Submit</Button>
+        <Button type="primary" @click="submit" :loading="loading">Submit</Button>
         <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>

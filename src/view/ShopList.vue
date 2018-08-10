@@ -20,9 +20,6 @@ export default {
       },
       columns: [
         {
-          title: '编号',
-          key: 'id'
-        }, {
           title: '门店',
           key: 'name'
         }, {

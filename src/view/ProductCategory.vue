@@ -103,7 +103,6 @@ export default {
       this.getCategory(data.value)
     },
     append (event, data) {
-      console.log(data)
       event.stopPropagation()
       this.addCategory({id: data.id, name: data.title})
     },
