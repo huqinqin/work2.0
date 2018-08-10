@@ -11,14 +11,11 @@
         <i-input v-model="filter.account" type="text" placeholder="输入账号" ></i-input>
       </form-item>
       <form-item prop="id" label="询价单编号">
-        <i-input v-model="filter.id" type="text" placeholder="输入单号" ></i-input>
+        <i-input v-model="filter.mid" type="text" placeholder="输入单号" ></i-input>
       </form-item>
       <form-item prop="status" label="状态">
         <Select v-model="filter.status">
-          <Option value="init">待提交审核</Option>
-          <Option value="MANAGER">待销售主管审核</Option>
-          <Option value="FINANCIAL">待财务审核</Option>
-          <Option value="ENABLED">已生成订单</Option>
+          <Option v-for="item in statusOption" :key="item.status" :value="item.status">{{item.label}}</Option>
         </Select>
       </form-item>
       <form-item prop="cdate" label="所属sales">
@@ -49,7 +46,7 @@ export default {
     return {
       url: 'Quotation',
       filter: {
-        id: '', custID: '', account: '', sName: '', status: '', date: '', sales: ''
+        mid: '', custID: '', account: '', sName: '', status: '', date: [], sales: ''
       },
       salesOption: [
         {
@@ -64,6 +61,21 @@ export default {
         }, {
           id: 4,
           name: '销售4'
+        }
+      ],
+      statusOption: [
+        {
+          status: 'init',
+          label: '待提交'
+        }, {
+          status: 'salesManager',
+          label: '待销售主管审核'
+        }, {
+          status: 'financial',
+          label: '待财务审核'
+        }, {
+          status: 'enabled',
+          label: '已生成订单'
         }
       ],
       dateOptions: {
@@ -112,7 +124,7 @@ export default {
       columns: [
         {
           title: '询价单编号',
-          key: 'id'
+          key: 'mid'
         }, {
           title: '账号',
           key: 'account'
@@ -137,9 +149,8 @@ export default {
           render: (h, params) => {
             return (
               <div>
-                <i-button type="primary" size="small" on-click={(e) => this.edit(params.row.id)}>编辑</i-button>
-                <i-button type="success" size="small" on-click={(e) => this.review(params.row.id)}>审核</i-button>
-                <i-button type="error" size="small" on-click={(e) => this.pushReview(params.row.id)}>提交审核</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.detail(params.row.id)}>查看</i-button>
+                <i-button type="primary" size="small" on-click={(e) => this.recall(params.row)}>销售撤回</i-button>
               </div>
             )
           }
@@ -148,17 +159,20 @@ export default {
     }
   },
   methods: {
+    recall (row) {
+      this.$http.refuseQuotation({
+        id: row.id,
+        content: '销售撤回',
+        status: row.status,
+        reviewStatus: 'recall'
+      })
+    },
     detail (id) {
-      console.log('detail', id)
-    },
-    review (id) {
-      console.log('review', id)
-    },
-    pushReview (id) {
-      console.log('push', id)
+      this.$router.push(`quotation_edit/${id}`)
     }
   },
   beforeMount () {
+    if (this.filter.status === '') delete this.filter.status
     this.query()
   }
 }

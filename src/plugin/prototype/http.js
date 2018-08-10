@@ -237,9 +237,6 @@ export default {
   fetchGroupStore () {
     return axios.post('base/store/group')
   },
-  getQuotation (params) {
-    return axios.post('base/quotation/get', params)
-  },
   saveQuotation (params) {
     console.log(params)
     return axios.post('order/quotation/saveOrUpdate', params)
@@ -271,6 +268,15 @@ export default {
   },
   sendQuotation (params) {
     return axios.post('order/quotation/send', params)
+  },
+  getQuotation (params) {
+    return axios.post('order/quotation/get', params)
+  },
+  agreeQuotation (params) {
+    return axios.post('order/quotation/agree', params)
+  },
+  refuseQuotation (params) {
+    return axios.post('order/quotation/refuse', params)
   },
   saveCoupon (params, {itemIds, cateIds, brandIds}) {
     if (params.offerCouponInclude.type === '') {
