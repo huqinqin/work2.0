@@ -339,6 +339,14 @@ export default {
         storeId: this.storeId
       }).then((data) => {
       })
+    },
+    installerDetailList () {
+      this.$http.detailList({
+        salesId: this.noAssociateStore,
+        date: this.dateValue
+      }).then((data) => {
+        this.installerdata1 = data
+      })
     }
   },
   mounted () {

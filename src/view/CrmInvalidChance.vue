@@ -42,7 +42,7 @@
       <Table :columns="installerList" :data="installerdata"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="100" :current="1" @on-change="changePage"></Page>
+          <Page :total="total1" :current="1" @on-change="changePage"></Page>
         </div>
       </div>
       </Col>
@@ -163,16 +163,10 @@ export default {
           key: 'address',
           render: (h, params) => {
             return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+              <div><span class= "ivu-icon ivu-icon-ios-checkmark">123</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">123</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+              </div>)
           }
         },
         {
@@ -252,7 +246,8 @@ export default {
         label: '张三'
       }],
       isSaller: false,
-      dateValue: []
+      dateValue: [],
+      total1: 0
     }
   },
   methods: {
@@ -366,17 +361,18 @@ export default {
     },
     invalidInstallerList () {
       this.$http.crmInstallerList({
-        state: this.state ? this.state : '',
-        city: this.city ? this.city : '',
-        name: this.company ? this.company : '',
-        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : '',
-        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : '',
-        type: this.type ? this.type : '',
-        industry: this.trade ? this.trade : '',
-        email: this.email ? this.email : '',
+        state: this.state ? this.state : null,
+        city: this.city ? this.city : null,
+        name: this.company ? this.company : null,
+        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
+        type: this.type ? this.type : null,
+        industry: this.trade ? this.trade : null,
+        email: this.email ? this.email : null,
         typeJoin: this.trade === '0' ? this.trade + this.trade1 : this.trade
       }).then((data) => {
-        // this.installerdata = data.list;
+        this.installerdata = data.list
+        this.total = data.total
         // data.list.forEach()
       })
     }

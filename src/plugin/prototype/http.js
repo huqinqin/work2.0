@@ -294,6 +294,18 @@ export default {
   reportExport (params) {
     return axios.post('/crm/export/storesales', params)
   },
+  /* 采购等的接口 */
+  purchase (params) {
+    return axios.post('/crm/company/statistic/data', params)
+  },
+  /* 客户明细列表 */
+  detailList (params) {
+    return axios.post('/crm/company/listCustomer', params)
+  },
+  /* crm登陆日志 */
+  crmLog (params) {
+    return axios.post('/crm/statistic/listLoginRecord', params)
+  },
   fetchGroupStore () {
     return axios.post('base/store/group')
   }

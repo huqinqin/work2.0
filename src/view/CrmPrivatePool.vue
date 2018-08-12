@@ -80,7 +80,7 @@
       <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="100" :current="1" @on-change="changePage"></Page>
+          <Page :total="total1" :current="1" @on-change="changePage"></Page>
         </div>
       </div>
       </Col>
@@ -115,6 +115,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
+      total1: 0,
       url: 'Shop',
       filter: {
         id: '', name: '', account: '', address: '', phone: '', status: ''
@@ -400,11 +401,11 @@ export default {
         name: this.company ? this.company : null,
         industryJoin: this.trade ? this.trade : null,
         contactStatus: this.contactStatus ? this.contactStatus : null,
-        state: this.state ? this.contactStatus : null,
+        state: this.state ? this.state : null,
         city: this.city ? this.city : null
       }).then((data) => {
         this.installerdata = data.list
-        console.log(this.installerdata)
+        this.total1 = data.total
       })
     },
     handleChange (date) {
@@ -426,15 +427,15 @@ export default {
     },
     privatePoolInstallerExport () {
       this.$http.privatePoolListExport({
-        storeId: this.noAssociateStore ? this.noAssociateStore : '',
-        custCode: this.custId ? this.custId : '',
-        email: this.email ? this.email : '',
-        name: this.company ? this.company : '',
-        industryJoin: this.trade ? this.trade : '',
-        contactStatus: this.contact ? this.contact : '',
-        state: this.state ? this.state : '',
-        city: this.city ? this.city : '',
-        ltsUser: ''
+        storeId: this.noAssociateStore ? this.noAssociateStore : null,
+        custCode: this.custId ? this.custId : null,
+        email: this.email ? this.email : null,
+        name: this.company ? this.company : null,
+        industryJoin: this.trade ? this.trade : null,
+        contactStatus: this.contact ? this.contact : null,
+        state: this.state ? this.state : null,
+        city: this.city ? this.city : null,
+        ltsUser: null
       }).then((data) => {})
     }
     /* salesCheck () {

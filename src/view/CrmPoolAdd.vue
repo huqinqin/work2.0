@@ -248,7 +248,7 @@ export default {
       this.$refs[name].resetFields()
     },
     search () {
-      this.selectInstallerEvevt()
+      this.selectInstallerEvent()
     },
     sureSelect () {
       console.log(this.selection)
@@ -299,7 +299,7 @@ export default {
       }
       return data
     },
-    selectInstallerEvevt () {
+    selectInstallerEvent () {
       this.$http.crmInstallerListData({
         custCode: this.custIdSelect ? this.custIdSelect : null,
         fisrtName: this.firstName ? this.firstName : null,
@@ -347,7 +347,7 @@ export default {
     MapAutoComplete: () => import('@/components/MapAutoComplete')
   },
   mounted () {
-    this.selectInstallerEvevt()
+    this.selectInstallerEvent()
   }
 }
 </script>

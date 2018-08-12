@@ -1,7 +1,7 @@
 <template>
     <div class="checkInstaller">
       <h2>查看工程商</h2>
-      <span><span>到期时间:</span><span>{{checkDate.expireTime?checkDate.expireTime:"ppp"}}</span></span>
+      <span><span>到期时间:</span><span>{{checkDate.expireTime}}</span></span>
       <div class="btn">
         <Button type="primary" @click="log">登陆日志</Button>
         <Button type="primary" @click="allocation">分配纪录</Button>
@@ -42,7 +42,7 @@
             <Col span="6">
             <span>行业:</span><span>{{checkDate.industry}}</span>
             </Col>
-            <Col span="12">
+            <Col span="24">
             <span>公司地址:</span>
             <span><span>详细地址：</span><span>{{checkDate.address.detail}}</span></span>
             <span><span>国家：</span><span>{{checkDate.address.country}}</span></span>
@@ -194,7 +194,7 @@
         <Table :columns="installerInfo" :data="installerInfoData"></Table>
         <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
           <div style="float: right;">
-            <Page @on-change="changePage" @on-page-size-change="changeSize" :total="100" size="small" show-elevator show-sizer></Page>
+            <Page @on-change="changePage" @on-page-size-change="changeSize" :total="total1" size="small" show-elevator show-sizer></Page>
           </div>
         </div>
         </Col>
@@ -206,7 +206,7 @@
         <Table :columns="installerCard" :data="installerCardData"></Table>
         <div style="margin: 10px;overflow: hidden">
           <div style="float: right;">
-            <Page @on-change="changePage" @on-page-size-change="changeSize" :total="100" size="small" show-elevator show-sizer></Page>
+            <Page @on-change="changePage" @on-page-size-change="changeSize" :total="total2" size="small" show-elevator show-sizer></Page>
           </div>
         </div>
         </Col>
@@ -343,58 +343,46 @@ export default {
       installerInfo: [
         {
           title: '采购总额',
-          key: 'totalProcurement'
+          key: 'totalPayAmount'
         },
         {
           title: '合作时长',
-          key: 'duration'
+          key: 'inDays'
         },
         {
           title: '首单成交时间',
-          key: 'transaction'
+          key: 'firstOrderDate'
         },
         {
           title: '首单金额',
-          key: 'firstSingle'
+          key: 'firstOrderPayAmount'
         },
         {
           title: '首单来源',
-          key: 'firstSource'
+          key: 'firstOrderSource'
         },
         {
           title: '最近成交时间',
-          key: 'lastTime'
+          key: 'lastOrderDate'
         },
         {
           title: '最近一单金额',
-          key: 'lastMoney'
+          key: 'lastOrderPayAmount'
         },
         {
           title: '订单数量',
-          key: 'orderNum'
+          key: 'totalPayAmount'
         },
         {
           title: '退货量',
-          key: 'refund'
+          key: 'refundNum'
         },
         {
           title: '优惠券',
-          key: 'coupon'
+          key: 'enabledCouponNum'
         }
       ],
-      installerInfoData: [
-        {
-          totalProcurement: '11111',
-          duration: '2222',
-          firstSingle: '0',
-          firstSource: '1',
-          transaction: 'xiao',
-          lastMoney: 'qincai',
-          orderNum: 'No',
-          refund: 'a',
-          coupon: '11'
-        }
-      ],
+      installerInfoData: [],
       installerCard: [
         {
           title: '图片',
@@ -587,7 +575,9 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      total1: 0,
+      total2: 0
     }
   },
   methods: {
@@ -728,7 +718,7 @@ export default {
       this.InstallerCardModal = true
     },
     log () {
-      this.$router.push('/crm/CrmLog')
+      this.$router.push({name: 'Crm Log', params: this.$route.params.id})
     },
     allocation () {
       this.$router.push('/crm/CrmAllocation')
@@ -807,6 +797,7 @@ export default {
           console.log(item.detail)
         })
         this.installerCardData = data
+        this.total2 = data.total
       })
     },
     /* 上传图片 */
@@ -863,7 +854,13 @@ export default {
         })
       })
     },
-    omsId () {
+    purchase () {
+      this.$http.purchase({
+        companyId: parseInt(this.$route.params.id)
+      }).then((data) => {
+        this.total1 = data.total
+        this.installerInfoData = [data]
+      })
     }
   },
   mounted () {
@@ -878,6 +875,7 @@ export default {
     this.cardNumList()
     this.getPolicy()
     this.emailCheck()
+    this.purchase()
   }
 }
 </script>
