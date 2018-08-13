@@ -14,7 +14,7 @@
         <div class="topLeft">
           <div class="imgLeft"><img src="../assets/images/logo-min.jpg" alt=""></div>
           <div>{{checkDate.name}}</div>
-          <div>商城账号:{{checkDate.account}}</div>
+          <div>商城账号:{{checkDate.account ? checkDate.account : "无"}}</div>
         </div>
         <div class="topRight">
           <Row>

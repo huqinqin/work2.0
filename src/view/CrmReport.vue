@@ -331,7 +331,7 @@ export default {
         page: this.page,
         rows: 10
       }).then((data) => {
-        this.installerdata1 = data
+        this.installerdata1 = data.list
         this.total1 = data.total
       })
     }
