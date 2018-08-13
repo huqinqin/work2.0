@@ -73,7 +73,7 @@
      </Col>
    </Row>
    <Row>
-     <Modal v-model="importInstallerModal" width="360" title="导入模板">
+     <Modal v-model="importInstallerModal" width="360" title="导入模板" @on-ok="importInsatterData">
        <Upload
          ref="upload"
          :show-upload-list="true"
@@ -251,33 +251,7 @@ export default {
           }
         }
       ],
-      installerdata: [
-        {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 1
-        }, {
-          custCode: '22222',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 2
-        }, {
-          custCode: '3333',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 3
-        }
-      ],
+      installerdata: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
@@ -331,7 +305,8 @@ export default {
         key: '',
         Filename: ''
       },
-      searchOptionJoin: {}
+      searchOptionJoin: {},
+      page: 1
     }
   },
   methods: {
@@ -375,9 +350,11 @@ export default {
       // console.log(this.selection)
       // console.log('11111')
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.getInstallerList()
     },
     mockTableData1 () {
       let data = []
@@ -452,7 +429,9 @@ export default {
         endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
         type: this.type ? this.type : null,
         industry: this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null,
-        email: this.email ? this.email : null
+        email: this.email ? this.email : null,
+        page: this.page ? this.page : null,
+        rows: 10
       }).then((data) => {
         this.installerdata = data.list
         this.total = data.total
@@ -471,11 +450,19 @@ export default {
       console.log(new Date(this.dateValue[0]).getTime())
     },
     batchCollectionInstaller () {
-      this.ids = []
-      this.selection.forEach((item) => { this.ids.push(item.id) })
-      this.$http.batchCollectionInstaller({
-        ids: this.ids
-      }).then((data) => { console.log(data) })
+      if (this.selection.length > 0) {
+        this.ids = []
+        this.selection.forEach((item) => { this.ids.push(item.id) })
+        this.$http.batchCollectionInstaller({
+          ids: this.ids ? this.ids : []
+        }).then((data) => {
+          location.reload()
+        }, (error) => {
+          alert(error.err)
+        })
+      } else {
+        alert('您未选择客户，请选择领取客户')
+      }
     },
     collection (selection, row) {
       this.selection = selection
@@ -532,8 +519,15 @@ export default {
     },
     reportExportData () {
       let s = '/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
-      '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
+        '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
       window.open(s)
+    },
+    importInsatterData () {
+      this.$http.crmInstallerListImport({
+        fileUrl: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/' + this.formData.key
+      }).then((data) => {
+        alert('导入成功')
+      })
     }
   },
   mounted () {

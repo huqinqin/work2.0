@@ -102,8 +102,8 @@
              <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
            </i-col>
            <i-col :span="24">
-             <Button type="primary" @click="validForm">Submit</Button>
-             <Button style="margin-left: 8px">Cancel</Button>
+             <Button type="primary" @click="validForm" :loading="loading">Submit</Button>
+             <Button style="margin-left: 8px" @click="cancleBack">Cancel</Button>
            </i-col>
          </Row>
        </Form>
@@ -187,7 +187,7 @@ export default {
           city: '',
           street: '',
           zip: '',
-          company: '',
+          /* company: '', */
           lat: 0,
           lng: 0
         }
@@ -224,21 +224,13 @@ export default {
           key: 'createTime'
         }
       ],
-      installerdata: [
-        {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }
-      ],
+      installerdata: [],
       custIdSelect: '',
       companySelect: '',
       firstNameSelect: '',
       lastNameSelect: '',
-      data: {}
+      data: {},
+      loading: false
     }
   },
   methods: {
@@ -310,9 +302,38 @@ export default {
       this.addModal = true
     },
     validForm () {
-      Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
+      this.loading = true
+      Promise.all([this.$refs.address.valid(), this.$refs.formValidate.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
-          // this.submit()
+          this.$http.crmInstallerList({
+            id: this.$route.params.id,
+            name: this.formValidate.companyName,
+            source: this.formValidate.source,
+            type: this.formValidate.type,
+            staffNum: this.formValidate.size,
+            subStoreNum: this.formValidate.num,
+            shoppingNum: this.formValidate.amount,
+            industry: this.formValidate.industry === '视频监控' ? this.formValidate.industry + '-' + this.formValidate.industryType : this.formValidate.industry,
+            phone: this.formValidate.telephone,
+            address: this.form.address,
+            email: this.formValidate.mail,
+            inPoolType: this.$route.params.crmFlag
+          }).then((data) => {
+            // this.custId = data.data
+            this.loading = false
+            this.$router.push({name: 'Crm Check', params: data.id})
+          }, (error) => {
+            setTimeout(() => {
+              this.loading = false
+              alert(error.err)
+            }, 2000)
+          }
+          )
+        } else {
+          setTimeout(() => {
+            this.loading = false
+            alert('分配错误')
+          }, 2000)
         }
       })
     },
@@ -327,13 +348,18 @@ export default {
         this.formValidate.type = data.type
         this.formValidate.size = data.staffNum
         this.formValidate.num = data.subStoreNum
-        this.formValidate.industry = data.industry.indexOf('视频监控') > -1 ? (data.industry.split('-')[0] || data.industry.split('-')[0]) : data.industry
+        this.formValidate.industry = data.industry.indexOf('视频监控') > -1 ? data.industry.split('-')[0] : data.industry
         this.formValidate.industryType = data.industry.indexOf('视频监控') > -1 ? data.industry.split('-')[1] : ''
         this.formValidate.amount = data.shoppingNum
         this.formValidate.source = data.source
         this.formValidate.industry = data.industry
-        this.form.address = data.address
-        console.log(data.industry.indexOf('视频监控') > -1 ? (data.industry.split('-')[1] || data.industry.split('-')[0]) : data.industry)
+        this.form.address.detail = data.address.detail
+        this.form.address.state = data.address.state
+        this.form.address.city = data.address.city
+        this.form.address.street = data.address.street
+        this.form.address.zip = data.address.zip
+        this.form.address.country = data.address.country
+        console.log(data.industry.indexOf('视频监控') > -1 ? (data.industry.split('-')[0] || data.industry.split('-')[1]) : data.industry)
       })
     },
     selectInstallerEvent () {
@@ -345,6 +371,9 @@ export default {
       }).then((data) => {
         this.installerdata = data.list
       })
+    },
+    cancleBack () {
+      history.back()
     }
   },
   components: {

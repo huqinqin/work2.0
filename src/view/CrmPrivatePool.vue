@@ -269,7 +269,8 @@ export default {
       noAssociateStore: '',
       noAssociateStoreList: [],
       selection: [],
-      ids: []
+      ids: [],
+      page: 1
     }
   },
   methods: {
@@ -305,9 +306,11 @@ export default {
     receive () {
       console.log('11111')
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.getPrivateInstallerList()
     },
     mockTableData1 () {
       let data = []
@@ -364,12 +367,20 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {
-      this.ids = []
-      this.selection.forEach((item) => { this.ids.push(item.id) })
-      this.$http.privatePoolBatch({
-        salesId: this.allocationSells,
-        companyIds: this.ids
-      }).then(() => {})
+      if (this.selection.length > 0) {
+        this.ids = []
+        this.selection.forEach((item) => { this.ids.push(item.id) })
+        this.$http.privatePoolBatch({
+          salesId: this.allocationSells,
+          companyIds: this.ids
+        }).then((data) => {
+          location.reload()
+        }, (error) => {
+          alert(error.err)
+        })
+      } else {
+        alert('您未选择客户，请选择分配客户')
+      }
     },
     collection (selection, row) {
       this.selection = selection
@@ -402,7 +413,9 @@ export default {
         industryJoin: this.trade ? this.trade : null,
         contactStatus: this.contactStatus ? this.contactStatus : null,
         state: this.state ? this.state : null,
-        city: this.city ? this.city : null
+        city: this.city ? this.city : null,
+        page: this.page ? this.page : null,
+        rows: 10
       }).then((data) => {
         this.installerdata = data.list
         this.total1 = data.total

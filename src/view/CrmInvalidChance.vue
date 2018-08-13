@@ -28,7 +28,7 @@
       <Col span="4" style="padding-right:10px">
       <span style="color: #F0F0F0">Search:</span>
       <div>
-        <Button type="primary">Search</Button>
+        <Button type="primary" @click="invalidInstallerList">Search</Button>
       </div>
       </Col>
     </Row>
@@ -57,7 +57,7 @@
       </Modal>
     </Row>
     <Row>
-      <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
+      <!--<Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
           <FormItem label="类型" prop="invalidBussinessSelect">
             <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
@@ -78,7 +78,7 @@
           </FormItem>
           <div style="margin-left: 80px">注：如果已开通商城账号，加入无效商机名单后将冻结该工程商的账号</div>
         </Form>
-      </Modal>
+      </Modal>-->
     </Row>
     <Row>
       <Modal
@@ -120,23 +120,23 @@ export default {
       trade: '',
       trade1: '',
       tradeList: [{
-        value: '0',
+        value: '黑名单',
         label: '黑名单'
       }, {
-        value: '1',
+        value: '终端用户',
         label: '终端用户'
       }, {
-        value: '2',
+        value: '非安防行业',
         label: '非安防行业'
       }],
       tradeList1: [{
-        value: '0',
+        value: '竞争对手',
         label: '竞争对手'
       }, {
-        value: '1',
+        value: '坏账',
         label: '坏账'
       }, {
-        value: '2',
+        value: '其他',
         label: '其他'
       }],
       email: '',
@@ -160,12 +160,12 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'address',
           render: (h, params) => {
             return (
-              <div><span class= "ivu-icon ivu-icon-ios-checkmark">123</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">123</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
+              <div><span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail}</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.street}</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.city}</span>
+                <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.country}</span>
               </div>)
           }
         },
@@ -197,17 +197,7 @@ export default {
           }
         }
       ],
-      installerdata: [
-        {
-          id: 1,
-          name: '11111',
-          firstName: '2222',
-          lastName: 'qincai',
-          type: 'No',
-          note: '2016-10-03',
-          operator: 'zhangsan'
-        }
-      ],
+      installerdata: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
@@ -247,7 +237,8 @@ export default {
       }],
       isSaller: false,
       dateValue: [],
-      total1: 0
+      total1: 0,
+      page: 1
     }
   },
   methods: {
@@ -275,19 +266,16 @@ export default {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
     check (params) {
-      this.$http.installerCheck({
-        id: params.row.id
-      }).then((data) => {
-        this.$router.push({name: 'Crm Check', params: data.data})
-        console.log(data)
-      })
+      this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
     },
     receive () {
       console.log('11111')
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.invalidInstallerList()
     },
     mockTableData1 () {
       let data = []
@@ -346,7 +334,7 @@ export default {
     selectSellOk () {},
     cancel () {},
     invalidBussinessExport () {
-      this.$http.invalidBussinessListExport({
+      /* this.$http.invalidBussinessListExport({
         email: this.email ? this.email : '',
         name: this.company ? this.company : '',
         industryJoin: this.trade ? this.trade : '',
@@ -354,28 +342,31 @@ export default {
         endTime: new Date(this.dateValue[1]).getTime()
       }).then((data) => {
         // this.installerdata = data.list;
-      })
+      }) */
+      let s = '/crm/export/invalid/business?name=' + this.company + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime() +
+        '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
+      window.open(s)
+      // window.open('http://www/baidu.com')
     },
     handleChange (date) {
       this.dateValue = date
     },
     invalidInstallerList () {
-      this.$http.crmInstallerList({
-        state: this.state ? this.state : null,
-        city: this.city ? this.city : null,
+      this.$http.invalidBussinessList({
         name: this.company ? this.company : null,
         beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
         endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
-        type: this.type ? this.type : null,
-        industry: this.trade ? this.trade : null,
-        email: this.email ? this.email : null,
-        typeJoin: this.trade === '0' ? this.trade + this.trade1 : this.trade
+        typeJoin: this.trade ? ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) : null,
+        email: this.email ? this.email : null
       }).then((data) => {
         this.installerdata = data.list
-        this.total = data.total
+        this.total1 = data.total
         // data.list.forEach()
       })
     }
+  },
+  mounted () {
+    this.invalidInstallerList()
   }
 }
 </script>

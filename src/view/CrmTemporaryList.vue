@@ -1,10 +1,10 @@
 <template>
-  <Tabs type="card">
+  <Tabs type="card" @on-click="tableChange">
     <TabPane label="未分配">
       <div class="temporaryPool">
         <Row>
           <Col span="6" style="padding-right:10px">
-          <span>Associate store:</span>
+          <div>Associate store:</div>
           <Select v-model="noAssociateStore" style="width:200px">
             <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
@@ -81,12 +81,26 @@
           </Col>
         </Row>
         <Row>
-          <Modal v-model="importInstallerModal" width="360" title="导入模板">
-            <Upload action="//jsonplaceholder.typicode.com/posts/">
-              <Button icon="ios-cloud-upload-outline">Upload files</Button>
+          <Modal v-model="importInstallerModal" width="360" title="导入模板" @on-ok="importInsatterData">
+            <Upload
+              ref="upload"
+              :show-upload-list="true"
+              :on-success="handleSuccess"
+              :max-size="2048"
+              :on-format-error="handleFormatError"
+              :on-exceeded-size="handleMaxSize"
+              :before-upload="beforeLoad"
+              :data="Object.assign(formUp, formData)"
+              multiple
+              type="drag"
+              action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
+              style="display: inline-block;width:256px; height: 256px;">
+              <div style="width: 256px;height:256px;line-height: 256px;">
+                <Icon type="camera" size="48"></Icon>
+              </div>
             </Upload>
             <span>如没有模板请先下载导入模板</span>
-            <a href="#">下载模板</a>
+            <a href="https://ltsb2b2.oss-us-west-1.aliyuncs.com/crm/123.xlsx">下载模板</a>
           </Modal>
         </Row>
         <Row>
@@ -130,7 +144,7 @@
       <div class="hasTemporaryPool">
         <Row>
           <Col span="6" style="padding-right:10px">
-          <span>Associate store:</span>
+          <div>Associate store:</div>
           <Select v-model="associateStore" style="width:200px">
             <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
@@ -206,15 +220,29 @@
           </div>
           </Col>
         </Row>
-        <Row>
-          <Modal v-model="importInstallerModal" width="360" title="导入模板">
-            <Upload action="//jsonplaceholder.typicode.com/posts/">
-              <Button icon="ios-cloud-upload-outline">Upload files</Button>
+        <!--<Row>
+          <Modal v-model="importInstallerModal1" width="360" title="导入模板" @on-ok="importInsatterData">
+            <Upload
+              ref="upload"
+              :show-upload-list="true"
+              :on-success="handleSuccess"
+              :max-size="2048"
+              :on-format-error="handleFormatError"
+              :on-exceeded-size="handleMaxSize"
+              :before-upload="beforeLoad"
+              :data="Object.assign(formUp, formData)"
+              multiple
+              type="drag"
+              action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
+              style="display: inline-block;width:256px; height: 256px;">
+              <div style="width: 256px;height:256px;line-height: 256px;">
+                <Icon type="camera" size="48"></Icon>
+              </div>
             </Upload>
             <span>如没有模板请先下载导入模板</span>
-            <a href="#">下载模板</a>
+            <a href="https://ltsb2b2.oss-us-west-1.aliyuncs.com/crm/123.xlsx">下载模板</a>
           </Modal>
-        </Row>
+        </Row>-->
         <Row>
           <Modal v-model="invalidBussinessModal" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -462,33 +490,7 @@ export default {
           }
         }
       ],
-      installerdata: [
-        {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 1
-        }, {
-          custCode: '22222',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 2
-        }, {
-          custCode: '3333',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 3
-        }
-      ],
+      installerdata: [],
       installerList1: [
         {
           type: 'selection',
@@ -497,11 +499,11 @@ export default {
         },
         {
           title: 'cust id',
-          key: 'custId'
+          key: 'custCode'
         },
         {
           title: 'company',
-          key: 'company'
+          key: 'name'
         },
         {
           title: 'First name',
@@ -513,23 +515,26 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'baseInfo',
+          key: 'address',
           render: (h, params) => {
-            return (
-              <div><span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-                <span class= "ivu-icon ivu-icon-ios-checkmark">1234</span>
-              </div>
-            )
+            if (params.row.address) {
+              return (
+                <div><span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail ? params.row.address.detail : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.state ? params.row.address.state : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.city ? params.row.address.city : ''}</span>
+                  <span class= "ivu-icon ivu-icon-ios-checkmark">{params.row.address.country ? params.row.address.country : ''}</span>
+                </div>
+              )
+            }
           }
         },
         {
           title: 'isCount',
-          key: 'isCount'
+          key: 'open'
         },
         {
           title: 'time',
-          key: 'time'
+          key: 'cdate'
         },
         {
           title: '操作',
@@ -542,27 +547,18 @@ export default {
                 type = "primary"
                 onClick = { () => { this.check(params) }
                 }>
-            查看 </i-button>
+                查看 </i-button>
               <i-button
                 type = "primary"
-                onClick = { () => { this.newContactMethod(params) }
-                }>
-            新建沟通纪录 </i-button>
+                onClick = {() => { this.receive(params) }}>
+                  领取 </i-button>
               </div>)
           }
         }
       ],
-      installerdata1: [
-        {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }
-      ],
+      installerdata1: [],
       importInstallerModal: false,
+      importInstallerModal1: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
         value: 'Installer',
@@ -612,10 +608,7 @@ export default {
       isSaller: false,
       isSaller1: false,
       allocationSells: '',
-      sellsList: [{
-        value: '0',
-        label: '张三'
-      }],
+      sellsList: [],
       associateStore: '',
       associateStoreList: [],
       noAssociateStore: '',
@@ -660,7 +653,24 @@ export default {
       dateValue: '',
       ids: [],
       selection: [],
-      total1: 0
+      total1: 0,
+      page: 1,
+      allot: 0,
+      formUp: {
+        policy: 'eyJleHBpcmF0aW9uIjoiMjAyMC0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
+        OSSAccessKeyId: 'LTAIdExaLJELmORj',
+        signature: 'Xc8E45q5qzV+9gPLvepFqmS0oVk=',
+        preKey: '',
+        dir: '',
+        host: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/',
+        expire: '',
+        success_action_status: 200
+      },
+      formData: {
+        name: '',
+        key: '',
+        Filename: ''
+      }
     }
   },
   methods: {
@@ -704,9 +714,15 @@ export default {
         ids: this.ids
       }).then((data) => { console.log(data) })
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.getTemplatePoolInstallerList(this.allot)
+    },
+    tableChange (name) {
+      this.allot = name
+      this.getTemplatePoolInstallerList(name)
     },
     mockTableData1 () {
       let data = []
@@ -770,12 +786,18 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {
-      this.ids = []
-      this.selection.forEach((item) => { this.ids.push(item.id) })
-      this.$http.batchSales({
-        salesId: this.allocationSells,
-        companyIds: this.ids.join()
-      }).then(() => {})
+      if (this.selection.length > 0) {
+        this.ids = []
+        this.selection.forEach((item) => { this.ids.push(item.id) })
+        this.$http.batchSales({
+          salesId: this.allocationSells,
+          companyIds: this.ids.join()
+        }).then((data) => {
+          location.reload()
+        })
+      } else {
+        alert('您未选择客户，请选择分配客户')
+      }
     },
     collection (selection, row) {
       this.selection = selection
@@ -820,10 +842,14 @@ export default {
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
         ltsUser: null,
-        allotStatus: val
+        allotStatus: val,
+        page: this.page ? this.page : null,
+        rows: 10
       }).then((data) => {
         this.installerdata = data.list
+        this.installerdata1 = data.list
         this.total = data.total
+        this.total1 = data.total
       })
     },
     check (params) {
@@ -862,12 +888,67 @@ export default {
         }
       })
     },
-    newContactOk () {}
+    newContactOk () {},
+    handleFormatError (file) {
+      this.$Notice.warning({
+        title: 'The file format is incorrect',
+        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+      })
+    },
+    handleMaxSize (file) {
+      this.$Notice.warning({
+        title: 'Exceeding file size limit',
+        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+      })
+    },
+    beforeLoad (file) {
+      this.formData.name = file.name
+      this.formData.key = this.formUp.preKey + '/' + file.name
+      this.formData.Filename = file.name
+      this.$nextTick(() => {
+        this.$refs.upload.post(file)
+      })
+      return false
+    },
+    loadSuccess (response, file) {
+      this.img = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      console.log(this.img)
+      console.log(file)
+    },
+    loadError (error) {
+      console.log(error)
+    },
+    getPolicy () {
+      this.$http.getPolicy().then(data => {
+        this.formUp.policy = data.policy
+        this.formUp.OSSAccessKeyId = data.accessid
+        this.formUp.signature = data.signature
+        this.formUp.dir = data.dir
+        this.formUp.host = data.host
+        this.formUp.preKey = data.dir
+        this.formUp.expire = data.expire
+      })
+    },
+    handleSuccess (res, file) {
+      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
+      file.status = 'finished'
+      this.imgList.push(file)
+    },
+    importInsatterData () {
+      this.$http.crmInstallerListImport({
+        fileUrl: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/' + this.formData.key
+      }).then((data) => {
+        alert('导入成功')
+      })
+    }
   },
   mounted () {
     this.getStoreList()
     this.getTemplatePoolInstallerList('0')
     this.getSalesList()
+  },
+  beforeMount () {
+    this.getPolicy()
   },
   watch: {
     list (newVal) {

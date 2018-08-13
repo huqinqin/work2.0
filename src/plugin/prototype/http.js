@@ -194,6 +194,10 @@ export default {
   crmInstallerListData (params) {
     return axios.post('/crm/bupoll/pub/page', params)
   },
+  /* 公有池导入 */
+  crmInstallerListImport (params) {
+    return axios.post('/crm/company/importData ', params)
+  },
   /* 公海池批量领取 */
   batchCollectionInstaller (params) {
     return axios.post('/crm/company/batchGetCompany', params)
@@ -253,6 +257,10 @@ export default {
   /* 私有池批量分配 */
   privatePoolBatch (params) {
     return axios.post('/crm/bupoll/priv/batch/do', params)
+  },
+  /* 无效商机列表 */
+  invalidBussinessList (params) {
+    return axios.post('/crm/report/company/invalid/page', params)
   },
   /* 无效商机导出 */
   invalidBussinessListExport (params) {

@@ -2,7 +2,7 @@
   <div class="privatePool">
     <Row>
       <Col span="6" style="padding-right:10px">
-      <span>Associate store:</span>
+      <div>Associate store:</div>
       <Select v-model="noAssociateStore" style="width:200px" @on-change="associationSelect">
         <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
@@ -26,7 +26,7 @@
       <Table :columns="installerList" :data="installerdata"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="100" :current="1" @on-change="changePage"></Page>
+          <Page :total="total" :current="1" @on-change="changePage"></Page>
         </div>
       </div>
       </Col>
@@ -42,7 +42,7 @@
           <Table :columns="installerList1" :data="installerdata1"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="100" :current="1" @on-change="changePage"></Page>
+              <Page :total="total1" :current="1" @on-change="changePage"></Page>
             </div>
           </div>
         </Col>
@@ -77,7 +77,7 @@ export default {
         },
         {
           title: '时间',
-          key: 'createTime'
+          key: 'createTimeStr'
         },
         {
           title: '门店',
@@ -152,40 +152,11 @@ export default {
           key: 'email'
         }
       ],
-      installerdata1: [
-        {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          telephone: '896545248',
-          email: '8956254@qq.com',
-          id: 1
-        }, {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          telephone: '896545248',
-          email: '8956254@qq.com',
-          id: 2
-        }, {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          telephone: '896545248',
-          email: '8956254@qq.com',
-          id: 3
-        }
-      ],
+      installerdata1: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       allocationSells: '',
-      sellsList: [{
-        value: '0',
-        label: '张三'
-      }],
+      sellsList: [],
       isSaller: false,
       noAssociateStore: '',
       noAssociateStoreList: [],
@@ -195,9 +166,12 @@ export default {
       },
       list: [],
       total: 0,
+      total1: 0,
       contactInstallerNum: false,
       storeId: 0,
-      salesId: 0
+      salesId: 0,
+      page: 1,
+      dateTimeData: ''
     }
   },
   methods: {
@@ -232,9 +206,11 @@ export default {
     receive () {
       console.log('11111')
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.reportList()
     },
     mockTableData1 () {
       let data = []
@@ -307,7 +283,10 @@ export default {
     },
     overShow (params) {
       this.contactInstallerNum = true
-      this.salesId = params.rows.baseUserId
+      this.salesId = params.row.baseUserId
+      this.dateTimeData = params.row.createTimeStr
+      console.log(this.salesId, this.dateTimeData)
+      this.installerDetailList()
     },
     outHide () {
       // this.contactInstallerNum = false;
@@ -322,9 +301,12 @@ export default {
         storeId: this.storeId ? this.storeId : null,
         salesKeyword: this.sales ? this.sales : null,
         beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
-        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
+        page: this.page,
+        rows: 10
       }).then((data) => {
-        this.installerdata = data
+        this.installerdata = data.list
+        this.total = data.total
       })
     },
     associationSelect (val) {
@@ -336,16 +318,21 @@ export default {
     installerDetail () {
       this.$http.crmInstallerListData({
         baseUserId: this.salesId,
-        storeId: this.storeId
+        storeId: this.storeId,
+        page: this.page,
+        rows: 10
       }).then((data) => {
       })
     },
     installerDetailList () {
       this.$http.detailList({
-        salesId: this.noAssociateStore,
-        date: this.dateValue
+        salesId: this.salesId ? this.salesId : 0,
+        date: this.dateTimeData ? this.dateTimeData : 1,
+        page: this.page,
+        rows: 10
       }).then((data) => {
         this.installerdata1 = data
+        this.total1 = data.total
       })
     }
   },

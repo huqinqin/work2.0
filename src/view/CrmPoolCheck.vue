@@ -86,7 +86,7 @@
         </Form>
       </Modal>
       <Modal v-model="maintenanceInstallerModal" width="360" title="维护用户特点" @on-ok="maintenanceInstaller" @on-cancel="handleReset">
-        <Form :model="formItem" :label-width="100">
+        <Form :model="formItem" :label-width="100" ref="maintenanceForm">
           <FormItem label="用户分类">
             <Select v-model="formItem.select">
               <Option value="1">活跃</Option>
@@ -114,16 +114,16 @@
           </FormItem>
           <FormItem label="促销属性">
             <CheckboxGroup v-model="formItem.checkbox">
-              <Checkbox label="价格敏感" value="1"></Checkbox>
-              <Checkbox label="服务敏感" value="2"></Checkbox>
-              <Checkbox label="品牌敏感" value="3"></Checkbox>
-              <Checkbox label="质量敏感" value="4"></Checkbox>
+              <Checkbox label="1" value="1">价格敏感</Checkbox>
+              <Checkbox label="2" value="2">服务敏感</Checkbox>
+              <Checkbox label="3" value="3">品牌敏感</Checkbox>
+              <Checkbox label="4" value="4">质量敏感</Checkbox>
             </CheckboxGroup>
           </FormItem>
           <FormItem label="接受促销邮件">
             <RadioGroup v-model="formItem.radio">
-              <Radio label="是" value="true">是</Radio>
-              <Radio label="否" value="false">否</Radio>
+              <Radio label="true" value="1">是</Radio>
+              <Radio label="false" value="0">否</Radio>
             </RadioGroup>
           </FormItem>
         </Form>
@@ -154,12 +154,18 @@
             <Input v-model="formValidate.companyName" placeholder="Enter your e-mail"></Input>
           </FormItem>-->
           <FormItem label="分销证号" prop="cardNum">
-            <Input v-model="formValidate.cardNum" placeholder="Enter your e-mail"></Input>
+            <Input v-model="formValidate.cardNum" placeholder="Enter "></Input>
+          </FormItem>
+          <FormItem label="公司名" prop="companyName">
+            <Input v-model="formValidate.companyName" placeholder="Enter "></Input>
           </FormItem>
           <FormItem>
             <i-col :span="24">
               <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
             </i-col>
+          </FormItem>
+          <FormItem label="有效期时间" prop="expireTime">
+            <DatePicker style="width: 200px" type="datetimerange" placeholder="Select date" :value="dateValue" @on-change="handleChange" ></DatePicker>
           </FormItem>
         </Form>
       </Modal>
@@ -171,22 +177,22 @@
         </Col>
         <Col span="6">
           <span>用户分类：</span>
-          <span>{{checkDate.ext?checkDate.ext.cate:"ppppp"}}</span>
+          <span>{{checkDate.ext ? (checkDate.ext.cate === 1 ? '活跃' : (checkDate.ext.cate === 2 ? '不活跃' : (checkDate.ext.cate === 3) ? '潜在': '内部测试')) : ''}}</span>
         </Col>
         <Col span="6">
           <span>用户质量：</span>
-          <span>{{checkDate.ext?checkDate.ext.quality:"ppppp"}}</span>
+          <span>{{checkDate.ext ? (checkDate.ext.quality === 1 ? '高质量' : (checkDate.ext.quality === 2 ? '中质量' :  '低质量')) : ''}}</span>
         </Col>
         <Col span="6">
           <span>用户分层：</span>
-          <span>{{checkDate.ext?checkDate.ext.layer:"ppppp"}}</span>
+          <span>{{checkDate.ext ? parseInt(checkDate.ext.layer) - 1 : ''}}</span>
         </Col>
         <Col span="6">
           <span>促销属性：</span>
-          <span>{{checkDate.ext?checkDate.ext.promotionAttr:"ppppp"}}</span>
+          <span>{{checkDate.ext ? (checkDate.ext.promotionAttr === 1 ? '价格敏感' : (checkDate.ext.promotionAttr === 2 ? '服务敏感' : (checkDate.ext.promotionAttr === 3 ? '品牌敏感' : '质量敏感'))) : ''}}</span>
         </Col>
         <Col span="24">
-          <Checkbox v-model="promotionEmail">是否接受促销邮件</Checkbox>
+          <Checkbox v-if='checkDate.ext' v-model="checkDate.ext.promotionEmail">是否接受促销邮件</Checkbox>
         </Col>
       </Row>
       <Row>
@@ -233,7 +239,7 @@
               </div>
             </li>
           </ul>
-          <a href="/#/crm/CrmContact">More</a>
+          <a @click="jumpContactPage">More</a>
         </Row>
       </div>
       <Row>
@@ -244,7 +250,7 @@
           @on-cancel="cancel">
           <div>
             <span>时间:</span>
-            <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue" @on-change="handleChange"></DatePicker>
+            <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue1" @on-change="handleChange1"></DatePicker>
           </div>
           <div>
             <span>类型:</span>
@@ -491,6 +497,9 @@ export default {
         ], */
         cardNum: [
           { required: true, message: 'cardNum cannot be empty', trigger: 'blur' }
+        ],
+        companyName: [
+          { required: true, message: 'cardNum cannot be empty', trigger: 'blur' }
         ]
       },
       InstallerCardModal: false,
@@ -504,14 +513,15 @@ export default {
           city: '',
           street: '',
           zip: '',
-          company: '',
+          /* company: '', */
           lat: 0,
           lng: 0
         }
       },
       loading: true,
       newContactRecode: false,
-      dateValue: '',
+      dateValue: [],
+      dateValue1: '',
       newType: '',
       newTypeList: [{
         value: '1',
@@ -654,7 +664,7 @@ export default {
       console.log(row)
     },
     maintenance () {
-      this.$refs.formInline.resetFields()
+      this.$refs.maintenanceForm.resetFields()
       this.maintenanceInstallerModal = true
     },
     modify (params) {
@@ -669,8 +679,9 @@ export default {
         cate: this.formItem.select,
         quality: this.formItem.quality,
         layer: this.formItem.level,
-        promotionAttr: this.formItem.checkbox,
-        promotionEmail: this.formItem.radio
+        promotionAttr: this.formItem.checkbox.join(),
+        promotionEmail: this.formItem.radio,
+        companyId: this.$route.params.id
       }).then((data) => {
         console.log(data)
       })
@@ -688,10 +699,13 @@ export default {
             this.changeLoading()
             this.$http.cardSave({
               // companyName: this.formValidate.companyName ? this.formValidate.companyName : null,
-              imgUrl: this.formData.key,
+              imgUrl: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/' + this.formData.key,
               number: this.formValidate.cardNum ? this.formValidate.cardNum : null,
               address: this.form.address ? this.form.address : null,
-              id: this.$route.params.id
+              companyId: this.$route.params.id,
+              companyName: this.formValidate.companyName ? this.formValidate.companyName : null,
+              expireStartTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
+              expireEndTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null
             }).then((data) => {
               this.InstallerCardModal = false
               this.$Message.success('done')
@@ -746,13 +760,16 @@ export default {
         type: this.newType,
         status: this.newContact,
         note: this.contactNote,
-        cdate: this.dateValue
+        cdate: this.dateValue1
       }).then((data) => {
         console.log(data)
       })
     },
     handleChange (date) {
       this.dateValue = date
+    },
+    handleChange1 (date) {
+      this.dateValue1 = date
     },
     associateOms () {
       this.createOmsCustId = true
@@ -776,11 +793,8 @@ export default {
       this.$http.installerCheck({
         id: parseInt(this.$route.params.id)
       }).then((data) => {
-        // this.data = data
         this.checkDate = data
-        // console.log(this.checkDate)
-        // this.installerdata = this.data.contact
-        this.installerdata.push(data)
+        this.installerdata = (data.contact ? data.contact : [])
       })
     },
     /* 分销证列表 */
@@ -788,14 +802,16 @@ export default {
       this.$http.cardList({
         companyId: parseInt(this.$route.params.id)
       }).then((data) => {
-        data.forEach((item) => {
-          item.detail = item.address.detail
-          item.city = item.address.city
-          item.state = item.address.state
-          item.zip = item.address.zip
-          item.country = item.address.country
-          console.log(item.detail)
-        })
+        if (data.length > 0) {
+          data.forEach((item) => {
+            item.detail = item.address.detail
+            item.city = item.address.city
+            item.state = item.address.state
+            item.zip = item.address.zip
+            item.country = item.address.country
+            console.log(item.detail)
+          })
+        }
         this.installerCardData = data
         this.total2 = data.total
       })
@@ -804,7 +820,7 @@ export default {
     handleSuccess (res, file) {
       file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.imgList.push(file)
+      // this.imgList.push(file)
     },
     /* 得到签名 */
     getPolicy () {
@@ -845,13 +861,15 @@ export default {
       this.$http.emailSelect({
         companyId: parseInt(this.$route.params.id)
       }).then((data) => {
-        data.forEach((item) => {
-          let obj = {}
-          obj.label = item
-          obj.value = item
-          this.newAccountList.push(obj)
-          console.log(obj)
-        })
+        if (data.length > 0) {
+          data.forEach((item) => {
+            let obj = {}
+            obj.label = item
+            obj.value = item
+            this.newAccountList.push(obj)
+            console.log(obj)
+          })
+        }
       })
     },
     purchase () {
@@ -861,6 +879,9 @@ export default {
         this.total1 = data.total
         this.installerInfoData = [data]
       })
+    },
+    jumpContactPage () {
+      this.$router.push({name: 'crm_Contact'})
     }
   },
   mounted () {

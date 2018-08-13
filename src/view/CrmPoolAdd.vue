@@ -102,7 +102,7 @@
              <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
            </i-col>
            <i-col :span="24">
-             <Button type="primary" @click="validForm">Submit</Button>
+             <Button type="primary" @click="validForm" :loading="loading">Submit</Button>
              <Button style="margin-left: 8px">Cancel</Button>
            </i-col>
          </Row>
@@ -187,7 +187,7 @@ export default {
           city: '',
           street: '',
           zip: '',
-          company: '',
+          /* company: '', */
           lat: 0,
           lng: 0
         }
@@ -231,7 +231,8 @@ export default {
       lastNameSelect: '',
       custId: '',
       selection: [],
-      ids: []
+      ids: [],
+      loading: false
     }
   },
   methods: {
@@ -313,6 +314,7 @@ export default {
       this.addModal = true
     },
     validForm () {
+      this.loading = true
       Promise.all([this.$refs.address.valid(), this.$refs.formValidate.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
           this.$http.crmInstallerList({
@@ -328,9 +330,20 @@ export default {
             email: this.formValidate.mail,
             inPoolType: this.$route.params.crmFlag
           }).then((data) => {
-            this.custId = data.data
-          })
+            // this.custId = data.data
+            this.loading = false
+            this.$router.push({name: 'Crm Check', params: data.id})
+          }, (error) => {
+            setTimeout(() => {
+              this.loading = false
+            }, 2000)
+            console.log(error)
+          }
+          )
         } else {
+          setTimeout(() => {
+            this.loading = false
+          }, 2000)
         }
       })
     },
