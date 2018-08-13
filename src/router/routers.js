@@ -197,7 +197,7 @@ export default [
   {
     path: '/crm',
     redirect: '/crm/index',
-    meta: { icon: 'lock-combination', title: '客户关系管理', hideInMenu: true },
+    meta: { icon: 'lock-combination', title: '客户关系管理' },
     name: 'crm',
     component: Main,
     children: [
