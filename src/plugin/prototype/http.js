@@ -27,7 +27,7 @@ export default {
     return axios.post('base/store/listStore', params)
   },
   delShop (ids) {
-    return axios.post('', ids)
+    return axios.post('', {ids})
   },
   getStaff (params) {
     return axios.post('base/user/personnel/get', params)
@@ -39,7 +39,7 @@ export default {
     return axios.post('base/user/personnel/save', params)
   },
   delStaff (ids) {
-    return axios.post('base/user/delUsers', ids)
+    return axios.post('base/user/delUsers', {ids})
   },
   resetStaffPw (id) {
     return axios.post('base/user/reset', {id})
@@ -90,7 +90,7 @@ export default {
     return axios.post('item/brand/listBrand', params)
   },
   delBrand (ids) {
-    return axios.post('item/brand/brandDelete', ids)
+    return axios.post('item/brand/brandDelete', {ids})
   },
   saveBrand (params) {
     return axios.post('item/brand/saveOrUpdate', params)
@@ -308,5 +308,54 @@ export default {
   },
   fetchGroupStore () {
     return axios.post('base/store/group')
+  },
+  saveQuotation (params) {
+    console.log(params)
+    return axios.post('order/quotation/saveOrUpdate', params)
+  },
+  fetchQuotationAddress (params) {
+    return axios.post('base/address/listStoreAddress', params)
+  },
+  saveQuotationAddress (params) {
+    return axios.post('base/address/saveStoreAddress', params)
+  },
+  fetchQuotationProduct (params) {
+    return axios.post('product/item/queryItem', params)
+  },
+  queryQuotationInstaller (params) {
+    return axios.post('base/store/queryStore', params)
+  },
+  simulateTrade (params) {
+    console.log(params)
+    return axios.post('trade/trade/simulateTrade', params)
+  },
+  getSupplyInfo () {
+    return axios.post('base/store/getSupply')
+  },
+  fetchQuotationTodo (params) {
+    return axios.post('order/quotation/listToDo', params)
+  },
+  fetchQuotation (params) {
+    return axios.post('order/quotation/list', params)
+  },
+  sendQuotation (params) {
+    return axios.post('order/quotation/send', params)
+  },
+  getQuotation (params) {
+    return axios.post('order/quotation/get', params)
+  },
+  agreeQuotation (params) {
+    return axios.post('order/quotation/agree', params)
+  },
+  refuseQuotation (params) {
+    return axios.post('order/quotation/refuse', params)
+  },
+  saveCoupon (params, {itemIds, cateIds, brandIds}) {
+    if (params.offerCouponInclude.type === '') {
+      params.offerCouponInclude = {}
+    } else {
+      params.offerCouponInclude.itemIds = [params.offerCouponInclude.type + 'Ids']
+    }
+    return axios.post('item/offer/coupon/add', params)
   }
 }

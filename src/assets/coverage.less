@@ -1,3 +1,4 @@
+@import '~iview/src/styles/index.less';
 // .ivu-col{
 //   height: 80px;
 // }
@@ -10,9 +11,9 @@
   width: 1200px;
   padding-bottom: 120px;
 }
-.ivu-card{
-  min-width: 990px;
-}
+//.ivu-card{
+//  min-width: 990px;
+//}
 // .ivu-layout-content{
 //   overflow: auto;
 // }
@@ -146,6 +147,52 @@
     span{
       color: #FF3B41;
     }
+  }
+}
+.ivu-form{
+  label{
+    height: 32px;
+  }
+  .ivu-select{
+    width: 162px;
+  }
+}
+.ivu-table{
+  .ivu-table-cell{
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .ivu-table-expanded-cell{
+    padding: 0;
+  }
+  .ivu-btn{
+    margin-right: 5px;
+    margin-bottom: 6px;
+  }
+}
+.ivu-table-small td {
+  padding-top: 6px;
+  vertical-align: top;
+}
+.installer-popover{
+  width: 100%;
+  margin: 0 16px;
+  li{
+    line-height: 2;
+  }
+  li:hover{
+    background: #e3e3e3;
+    cursor: pointer;
+  }
+}
+.product-popover{
+  width: 100%;
+  li{
+    line-height: 2;
+  }
+  li:hover{
+    background: #e3e3e3;
+    cursor: pointer;
   }
 }
 @media only screen and (max-width: 1500px) {

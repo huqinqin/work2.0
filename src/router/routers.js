@@ -111,7 +111,20 @@ export default [
     component: Main,
     children: [
       { path: 'order_list', meta: { icon: 'lock-combination', title: '订单列表' }, name: 'order_list', component: () => import('@/view/OrderList.vue') },
-      { path: 'order_detail/:id', meta: { icon: 'lock-combination', title: '订单详情' }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
+      { path: 'order_detail/:id', meta: { icon: 'lock-combination', title: '订单详情', hideInMenu: true }, name: 'order_detail', component: () => import('@/view/OrderDetail.vue') }
+    ]
+  },
+  {
+    path: '/quotation',
+    redirect: '/quotation/index',
+    meta: { icon: 'lock-combination', title: '询价单管理' },
+    name: 'quotation',
+    component: Main,
+    children: [
+      { path: 'quotation_add', meta: { icon: 'lock-combination', title: '新增询价单' }, name: 'quotation_add', component: () => import('@/view/QuotationEdit.vue') },
+      { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '编辑询价单', hideInMenu: true }, name: 'quotation_edit/:id?', component: () => import('@/view/QuotationEdit.vue') },
+      { path: 'quotation_review_list', meta: { icon: 'lock-combination', title: '待审核询价单列表' }, name: 'quotation_review_list', component: () => import('@/view/QuotationReviewList.vue') },
+      { path: 'quotation_list', meta: { icon: 'lock-combination', title: '询价单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') }
     ]
   },
   {
@@ -151,7 +164,7 @@ export default [
   },
   {
     path: '/activity',
-    meta: { icon: 'lock-combination', title: '活动优惠' },
+    meta: { icon: 'lock-combination', title: '活动优惠', hideInMenu: true },
     name: 'activity',
     component: Main,
     children: [
@@ -172,7 +185,7 @@ export default [
   },
   {
     path: '/permission',
-    meta: { icon: 'lock-combination', title: '权限管理' },
+    meta: { icon: 'lock-combination', title: '权限管理', hideInMenu: true },
     redirect: '/permission/role',
     name: 'permission',
     component: Main,
@@ -184,7 +197,7 @@ export default [
   {
     path: '/crm',
     redirect: '/crm/index',
-    meta: { icon: 'lock-combination', title: '客户关系管理' },
+    meta: { icon: 'lock-combination', title: '客户关系管理', hideInMenu: true },
     name: 'crm',
     component: Main,
     children: [

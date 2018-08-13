@@ -15,6 +15,7 @@ export default {
       if (key !== './index.js') {
         const name = key.match(/([a-zA-Z0-9-]*)\.js$/i)[1]
         Vue.filter(`${name}`, filters(key).default[name])
+        console.log('filters', key, name)
       }
     })
   }

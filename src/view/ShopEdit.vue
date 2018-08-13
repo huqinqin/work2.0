@@ -13,8 +13,8 @@
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
-          <form-item label="公司电话" prop="phone">
-            <i-input v-model="form.phone" type="text" placeholder="公司电话" ></i-input>
+          <form-item label="公司电话" prop="storeExt.mobile">
+            <i-input v-model="form.storeExt.mobile" type="text" placeholder="公司电话" ></i-input>
           </form-item>
         </i-col>
       </row>
@@ -35,8 +35,8 @@
           </form-item>
         </i-col>
         <i-col :span="5" offset="1">
-          <form-item label="手机" :prop="'contact.' + index + '.mobile'" :rules="rule">
-            <i-input v-model="contact.mobile" type="text" placeholder="手机" ></i-input>
+          <form-item label="手机" :prop="'contact.' + index + '.phone'" :rules="rule">
+            <i-input v-model="contact.phone" type="text" placeholder="手机" ></i-input>
           </form-item>
         </i-col>
         <i-col :span="5" offset="1">
@@ -56,13 +56,14 @@
         </i-col>
       </row>
       <form-item>
-        <i-button type="primary" @click="validForm">Submit</i-button>
+        <Button type="primary" @click="submit" :loading="loading">Submit</Button>
         <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
       </form-item>
     </i-form>
   </card>
 </template>
 <script>
+import md5 from 'md5'
 import mixin from '@/mixins/edit'
 export default {
   mixins: [mixin],
@@ -72,8 +73,12 @@ export default {
       form: {
         storeName: '',
         storeCode: '',
-        phone: '',
-        contact: [{firstName: '', lastName: '', mobile: '', email: ''}],
+        storeExt: {
+          mobile: ''
+        },
+        userAccount: '',
+        userPassword: md5(12345678),
+        contact: [{firstName: '', lastName: '', phone: '', email: ''}],
         address: {
           detail: '',
           country: '',
@@ -133,7 +138,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        mobile: [{
+        'storeExt.mobile': [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
@@ -150,12 +155,16 @@ export default {
     validForm () {
       Promise.all([this.$refs.address.valid(), this.$refs.form.validate()]).then(data => {
         if (data.every(valid => { return valid })) {
-          this.submit()
+          this.form.userAccount = this.form.storeCode + '001'
+          this.loading = true
+          this.submit().then(() => {
+            this.$router.push({name: 'shop_list'})
+          })
         }
       })
     },
     addContact () {
-      this.form.contact.push({firstName: '', lastName: '', mobile: '', email: ''})
+      this.form.contact.push({firstName: '', lastName: '', phone: '', email: ''})
     },
     delContact (index) {
       if (this.form.contact.length > 1) {

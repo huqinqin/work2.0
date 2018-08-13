@@ -1,14 +1,14 @@
 import cloneDeep from 'lodash.clonedeep'
 let default$ = {}
 export default {
+  data () {
+    return {
+      id: '',
+      loading: false
+    }
+  },
   methods: {
-    data () {
-      return {
-        id: ''
-      }
-    },
     query () {
-      console.log(this.url)
       this.$http['get' + this.url]({
         id: this.id
       }).then(data => {
@@ -17,13 +17,15 @@ export default {
       })
     },
     submit () {
-      this.$http['save' + this.url]({
+      return this.$http['save' + this.url]({
         ...this.form
       }).then(data => {
+        this.loading = false
         this.$Notice.success({
           title: 'Edit success',
           desc: ''
         })
+        this.reset()
       })
     },
     reset () {

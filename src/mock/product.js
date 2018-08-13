@@ -94,7 +94,41 @@ const product = Mock.mock({
           }
         ]
       }
-    ]
+    ],
+    storage: '@integer(60, 100)'
+  }
+})
+const qProductList = Mock.mock({
+  'data': {
+    'list|10': [{
+      'id|+1': '@id',
+      title: '@name',
+      'imgUrls|3': ['@image(200x100)'],
+      offerId: '@integer(100, 350)',
+      offerKind: '@last',
+      cateId: '12',
+      status: true,
+      keyword: ['ip', 'ipp', 'iop'],
+      onum: '12',
+      kind: '主商品',
+      itemSku: {
+        id: '@id',
+        offerPrice: '@integer(100, 1000)',
+        vipPrice: '@integer(100, 1000)',
+        basePrice: '@integer(100, 1000)',
+        num: '@integer(100, 1000)',
+        unit: 'pc',
+        size: null,
+        spec: '1',
+        weight: '1',
+        sin: '@last',
+        onum: '12',
+        props: [{
+          name: 'n',
+          value: 'v'
+        }]
+      }
+    }]
   }
 })
 // const cascader = [
@@ -169,6 +203,13 @@ export default {
     return {
       code: '000000',
       ...product,
+      msg: ''
+    }
+  },
+  queryItem () {
+    return {
+      code: '000000',
+      ...qProductList,
       msg: ''
     }
   },
