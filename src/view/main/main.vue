@@ -77,6 +77,7 @@ export default {
       'addTag'
     ]),
     ...mapActions([
+      'fetchStores',
       'fetchBrands',
       'fetchCates',
       'handleLogin'
@@ -99,6 +100,7 @@ export default {
     fetchOptions () {
       this.fetchBrands()
       this.fetchCates()
+      this.fetchStores()
     }
   },
   watch: {
@@ -108,8 +110,8 @@ export default {
     }
   },
   beforeMount () {
-    this.fetchOptions()
     this.setUserInfo()
+    this.fetchOptions()
   },
   mounted () {
     /**

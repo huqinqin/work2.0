@@ -272,8 +272,25 @@ export default {
   sendQuotation (params) {
     return axios.post('order/quotation/send', params)
   },
-  saveCoupon (params) {
-    return axios.post('item/offer/coupon/add', params)
+  saveCoupon ({ couponRule, offerCouponInclude, explains, selProducts, selCates, brandIds, validType }) {
+    const type = offerCouponInclude.type
+    if (type === '') {
+      offerCouponInclude = null
+    } else if (type === 'item') {
+      offerCouponInclude.ids = selProducts.map(item => item.id)
+    } else if (type === 'cate') {
+      offerCouponInclude.ids = selCates.map(item => item.id)
+    } else if (type === 'brand') {
+      offerCouponInclude.ids = brandIds
+    }
+    if (validType === 'range') {
+      couponRule.startTime = new Date(couponRule.startTime)
+      couponRule.endTime = new Date(couponRule.endTime)
+    } else {
+      couponRule.effectiveTime = couponRule.effectiveTime * 1000 * 60 * 60 * 24
+    }
+    couponRule.amount = couponRule.amount * 100
+    return axios.post('item/offer/coupon/add', { couponRule, explains, offerCouponInclude })
   },
   fetchCoupon (params) {
     return axios.post('item/offer/coupon/list', params).then(data => {
@@ -281,9 +298,13 @@ export default {
         id,
         name: rule.name,
         couponType: rule.type,
-        includeType: include.type,
+        includeType: include && include.type ? include.type : '',
         standard: rule.standard,
-        amount: rule.amount
+        amount: rule.amount,
+        isGive: rule.type === 'common',
+        isDel: rule.effectiveTime !== 0 || new Date(rule.endTime).getTime() < new Date().getTime(),
+        isExpire: rule.effectiveTime === 0 && new Date(rule.endTime).getTime() < new Date().getTime(),
+        valid: rule.effectiveTime !== 0 ? `${rule.effectiveTime / 24 / 60 / 60 / 100}天` : `${new Date(rule.startTime)}至${new Date(rule.endTime)}`
       }))
       return data
     })
@@ -293,5 +314,11 @@ export default {
   },
   fetchCouponUse (params) {
     return axios.post('item/offer/coupon/useDetail', params)
+  },
+  sendCoupon (params) {
+    return axios.post('item/offer/coupon/sendCoupon', params)
+  },
+  getCoupon (params) {
+    return axios.post('item/offer/coupon/detail', params)
   }
 }

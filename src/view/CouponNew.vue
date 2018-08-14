@@ -131,7 +131,7 @@ export default {
         selCates: [],
         selProducts: [],
         validType: 'range',
-        explain: '',
+        explains: '',
         couponRule: {
           name: '',
           type: 'common',

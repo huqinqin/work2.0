@@ -18,6 +18,7 @@
     </div>
     <Modal
         v-model="modal"
+        @on-ok="sendCoupon"
         title="赠券">
         <i-form>
           <form-item>
@@ -27,7 +28,9 @@
             </i-select>
           </form-item>
           <form-item>
-            <CodeTable type="group" style="width: 100%;"></CodeTable>
+            <Select v-model="sendForm.ids" multiple style="width:100%">
+              <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
+            </Select>
           </form-item>
           <form-item>
             <Row>
@@ -47,6 +50,9 @@
                   </template>
                 </QueryInput>
               </i-col>
+            </Row>
+            <Row>
+
             </Row>
           </form-item>
         </i-form>
@@ -100,54 +106,55 @@ export default {
         title: '有效期',
         render: (h, params) => {
           return (
-            <span>null</span>
+            <span>{params.row.valid}</span>
           )
         }
       }, {
         title: '状态',
-        key: status
+        key: status,
+        render: (h, params) => {
+          return (
+            <span>{params.row.isExpire ? '已过期' : '未过期'}</span>
+          )
+        }
       }, {
         title: '操作',
         render: (h, params) => {
-          return (
-            <div>
-              <i-button type="primary" size="small" onClick={() => { this.toCouponDetail(params.row.id) }}>查看</i-button>
-              <i-button type="success" size="small" onClick={() => { this.showSendModal() }}>赠券</i-button>
-              <i-button type="error" size="small" onClick={() => { this.deleteItem(params.row.id) }}>删除</i-button>
-            </div>
-          )
+          let content = []
+          content.push(<i-button type="primary" size="small" onClick={() => { this.toCouponDetail(params.row.id) }}>查看</i-button>)
+          if (params.row.isGive) {
+            content.push(<i-button type="success" size="small" onClick={() => { this.showSendModal(params.row.id) }}>赠券</i-button>)
+          }
+          if (params.row.isDel) {
+            content.push(<i-button type="error" size="small" onClick={() => { this.deleteItem(params.row.id) }}>删除</i-button>)
+          }
+          return (<div>{content}</div>)
         }
       }]
     }
   },
   methods: {
-    checkInstaller () {},
+    sendCoupon () {
+      return this.$http.sendCoupon(this.sendForm).then(data => {
+        this.$Notice.success({
+          title: '发送成功',
+          desc: ''
+        })
+      })
+    },
+    checkInstaller (item) {
+      this.sendForm.ids.push(item.id)
+    },
     queryInstaller (query) {
       return this.$http.queryQuotationInstaller({
         [this.installerType]: query
-      }).then(data => {
-        return data.reduce((list, item) => {
-          const array = item.userResponses.map(({id, account, email, mobile, firstName, lastName}) => ({
-            storeCode: item.code,
-            storeName: item.address.company,
-            address: item.address.detail,
-            storeId: item.id,
-            account: account,
-            userId: id,
-            userEmail: email,
-            userMobile: mobile,
-            name: firstName + ' ' + lastName,
-            accountNotes: '',
-            custNotes: ''
-          }))
-          return list.concat(array)
-        }, [])
       })
     },
     toCouponDetail (id) {
       this.$router.push({name: 'coupon_detail', params: {id}})
     },
-    showSendModal () {
+    showSendModal (id) {
+      this.sendForm.offerId = id
       this.modal = true
     }
   },
