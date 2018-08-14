@@ -59,7 +59,7 @@
        <Button type="primary" @click="crmPoolAdd">新增</Button>
        <Button type="primary" @click="batchCollectionInstaller">批量领取</Button>
        <Button type="primary" @click="invalidBussiness">无效商机</Button>
-       <Button type="error">导出</Button>
+       <a @click="reportExportData"><Button type="error">导出</Button></a>
      </Col>
    </Row>
    <Row>
@@ -67,19 +67,17 @@
        <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
        <div style="margin: 10px;overflow: hidden">
          <div style="float: right;">
-           <Page :total="100" :current="1" @on-change="changePage"></Page>
+           <Page :total="total" :current="1" @on-change="changePage"></Page>
          </div>
        </div>
      </Col>
    </Row>
    <Row>
-     <Modal v-model="importInstallerModal" width="360" title="导入模板">
+     <Modal v-model="importInstallerModal" width="360" title="导入模板" @on-ok="importInsatterData">
        <Upload
          ref="upload"
          :show-upload-list="true"
-         :default-file-list="imgUrls"
          :on-success="handleSuccess"
-         :format="['jpg','jpeg','png']"
          :max-size="2048"
          :on-format-error="handleFormatError"
          :on-exceeded-size="handleMaxSize"
@@ -94,26 +92,21 @@
          </div>
        </Upload>
        <span>如没有模板请先下载导入模板</span>
-       <a href="#">下载模板</a>
+       <a href="https://ltsb2b2.oss-us-west-1.aliyuncs.com/crm/123.xlsx">下载模板</a>
      </Modal>
    </Row>
    <Row>
-     <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
+     <Modal v-model="invalidBussinessModal" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
          <FormItem label="类型" prop="invalidBussinessSelect">
              <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
                <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
              </Select>
          </FormItem>
-         <FormItem  prop="subInvalidBussinessSelect">
-             <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
-               <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-             </Select>
-         </FormItem>
          <FormItem label="备注" prop="note">
            <Row>
          <Col span="18">
-         <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
+         <Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
          </Col>
        </Row>
          </FormItem>
@@ -130,6 +123,7 @@ export default {
   name: 'crm-common-pool',
   data () {
     return {
+      total: 0,
       state: '',
       dateValue: '',
       loading1: false,
@@ -216,19 +210,17 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'address',
           render: (h, params) => {
-            return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+            if (params.row.address) {
+              return (
+                <div>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.city}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.state}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.country}</span>
+                </div>
+              )
+            }
           }
         },
         {
@@ -237,7 +229,7 @@ export default {
         },
         {
           title: 'time',
-          key: 'cdate'
+          key: 'updateTime'
         },
         {
           title: '操作',
@@ -259,73 +251,36 @@ export default {
           }
         }
       ],
-      installerdata: [
-        {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 1
-        }, {
-          custCode: '22222',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 2
-        }, {
-          custCode: '3333',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 3
-        }
-      ],
+      installerdata: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
-        value: '0',
+        value: 'Installer',
         label: 'Installer'
       }, {
-        value: '1',
+        value: 'Integrator',
         label: 'Integrator'
       }, {
-        value: '2',
+        value: 'Wholesale',
         label: 'Wholesale'
       }, {
-        value: '3',
+        value: 'Distributor',
         label: 'Distributor'
       }, {
-        value: '4',
+        value: 'Retailer',
         label: 'Retailer'
       }, {
-        value: '5',
+        value: 'Onlinestore',
         label: 'Onlinestore'
       }, {
-        value: '6',
+        value: 'Other',
         label: 'Other'
       }],
-      subInvalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }],
       formValidate: {
-        subInvalidBussinessSelect: '',
         invalidBussinessSelect: '',
         note: ''
       },
       ruleValidate: {
-        subInvalidBussinessSelect: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ],
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -349,7 +304,9 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      searchOptionJoin: {},
+      page: 1
     }
   },
   methods: {
@@ -377,12 +334,14 @@ export default {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
     check (params) {
-      this.$http.installerCheck({
+      // console.log(params);
+      this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
+      /* this.$http.installerCheck({
         id: params.row.id
       }).then((data) => {
         this.$router.push({name: 'Crm Check', params: data.data})
         console.log(data)
-      })
+      }) */
     },
     receive (params) {
       this.selection = []
@@ -391,9 +350,11 @@ export default {
       // console.log(this.selection)
       // console.log('11111')
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.getInstallerList()
     },
     mockTableData1 () {
       let data = []
@@ -432,6 +393,11 @@ export default {
     handleSubmit () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          this.$http.invalidBussinessListSave({
+            companyId: this.selection,
+            bizNote: this.formValidate.invalidBussinessSelect + this.formValidate.note
+          }).then((data) => {
+          })
           this.$Message.success('Success!')
         } else {
           this.$refs.formValidate.resetFields()
@@ -447,18 +413,36 @@ export default {
       this.$router.push({name: 'New crease', params: {crmFlag: 3}})
     },
     getInstallerList () {
-      this.$http.crmInstallerList({
-        state: this.state,
-        city: this.city,
-        name: this.company,
-        beginTime: new Date(this.dateValue[0]).getTime(),
-        endTime: new Date(this.dateValue[1]).getTime(),
-        type: this.type,
-        industry: this.trade,
-        email: this.email
+      this.searchOptionJoin.state = this.state ? this.state : ''
+      this.searchOptionJoin.city = this.city ? this.city : ''
+      this.searchOptionJoin.name = this.company ? this.company : ''
+      this.searchOptionJoin.beginTime = new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : ''
+      this.searchOptionJoin.endTime = new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : ''
+      this.searchOptionJoin.type = this.type ? this.type : ''
+      this.searchOptionJoin.industry = this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null
+      this.searchOptionJoin.email = this.email ? this.email : ''
+      this.$http.crmInstallerListData({
+        state: this.state ? this.state : null,
+        city: this.city ? this.city : null,
+        name: this.company ? this.company : null,
+        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
+        type: this.type ? this.type : null,
+        industry: this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null,
+        email: this.email ? this.email : null,
+        page: this.page ? this.page : null,
+        rows: 10
       }).then((data) => {
-        // this.installerdata = data.list;
-        // data.list.forEach()
+        this.installerdata = data.list
+        this.total = data.total
+        data.list.forEach((item) => {
+          /* if (item.contact !== 'null' && item.contact.length > 0) {
+            item.firstName = item.contact[0].firstName
+            item.lastName = item.contact[0].lastName
+            item.email = item.contact[0].email
+            item.phone = item.contact[0].phone
+          } */
+        })
       })
     },
     handleChange (date) {
@@ -466,11 +450,19 @@ export default {
       console.log(new Date(this.dateValue[0]).getTime())
     },
     batchCollectionInstaller () {
-      this.ids = []
-      this.selection.forEach((item) => { this.ids.push(item.id) })
-      this.$http.batchCollectionInstaller({
-        ids: this.ids
-      }).then((data) => { console.log(data) })
+      if (this.selection.length > 0) {
+        this.ids = []
+        this.selection.forEach((item) => { this.ids.push(item.id) })
+        this.$http.batchCollectionInstaller({
+          ids: this.ids ? this.ids : []
+        }).then((data) => {
+          location.reload()
+        }, (error) => {
+          alert(error.err)
+        })
+      } else {
+        alert('您未选择客户，请选择领取客户')
+      }
     },
     collection (selection, row) {
       this.selection = selection
@@ -493,11 +485,12 @@ export default {
       })
     },
     beforeLoad (file) {
-      console.log('file', file)
       this.formData.name = file.name
       this.formData.key = this.formUp.preKey + '/' + file.name
       this.formData.Filename = file.name
-      this.filelist.push(file)
+      this.$nextTick(() => {
+        this.$refs.upload.post(file)
+      })
       return false
     },
     loadSuccess (response, file) {
@@ -520,9 +513,21 @@ export default {
       })
     },
     handleSuccess (res, file) {
-      file.url = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.uploadList.push(file)
+      this.imgList.push(file)
+    },
+    reportExportData () {
+      let s = '/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
+        '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
+      window.open(s)
+    },
+    importInsatterData () {
+      this.$http.crmInstallerListImport({
+        fileUrl: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/' + this.formData.key
+      }).then((data) => {
+        alert('导入成功')
+      })
     }
   },
   mounted () {

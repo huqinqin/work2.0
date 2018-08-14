@@ -22,7 +22,7 @@ export default {
       AllocationList: [
         {
           title: '时间',
-          key: 'allocationTime'
+          key: 'cdate'
         },
         {
           title: '类型',
@@ -30,15 +30,15 @@ export default {
         },
         {
           title: '店铺',
-          key: 'shop'
+          key: 'storeName'
         },
         {
           title: 'sales',
-          key: 'sales'
+          key: 'salesName'
         },
         {
           title: '操作人',
-          key: 'handle'
+          key: 'note'
         }
       ],
       AllocationData: [
@@ -86,7 +86,15 @@ export default {
     },
     back () {
       this.$router.push('/crm/CrmPoolCheck')
+    },
+    allocationList () {
+      this.$http.allocationSales({}).then((data) => {
+        this.AllocationData = data.list
+      })
     }
+  },
+  mounted () {
+    this.allocationList()
   }
 }
 </script>
