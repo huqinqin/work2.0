@@ -1,7 +1,7 @@
 <template>
     <div class="checkInstaller">
       <h2>查看工程商</h2>
-      <span><span>到期时间:</span><span>{{checkDate.expireTime}}</span></span>
+      <span><span>到期时间:</span><span>{{checkDate.expireTime ? checkDate.expireTime : "无"}}</span></span>
       <div class="btn">
         <Button type="primary" @click="log">登陆日志</Button>
         <Button type="primary" @click="allocation">分配纪录</Button>
@@ -746,7 +746,9 @@ export default {
       this.$http.createAccount({
         companyId: parseInt(this.$route.params.id),
         email: this.newAccount
-      }).then((data) => {})
+      }).then((data) => {
+        location.reload()
+      })
     },
     createCustIdOk () {
       this.$http.omsId({
@@ -861,15 +863,13 @@ export default {
       this.$http.emailSelect({
         companyId: parseInt(this.$route.params.id)
       }).then((data) => {
-        if (data.length > 0) {
-          data.forEach((item) => {
-            let obj = {}
-            obj.label = item
-            obj.value = item
-            this.newAccountList.push(obj)
-            console.log(obj)
-          })
-        }
+        data.forEach((item) => {
+          let obj = {}
+          obj.label = item
+          obj.value = item
+          this.newAccountList.push(obj)
+          console.log(obj)
+        })
       })
     },
     purchase () {

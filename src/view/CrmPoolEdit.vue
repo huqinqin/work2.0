@@ -22,8 +22,8 @@
                </FormItem>
              </i-col>
              <i-col span="8">
-               <FormItem label="E-mail" prop="mail" span="8">
-                 <Input v-model="formValidate.mail" placeholder="Enter your e-mail"></Input>
+               <FormItem label="网址" prop="mail" span="8">
+                 <Input v-model="formValidate.mail" placeholder="Enter your"></Input>
                </FormItem>
              </i-col>
              <i-col span="8">
@@ -316,7 +316,7 @@ export default {
             industry: this.formValidate.industry === '视频监控' ? this.formValidate.industry + '-' + this.formValidate.industryType : this.formValidate.industry,
             phone: this.formValidate.telephone,
             address: this.form.address,
-            email: this.formValidate.mail,
+            homeUrl: this.formValidate.mail,
             inPoolType: this.$route.params.crmFlag
           }).then((data) => {
             // this.custId = data.data
@@ -344,7 +344,7 @@ export default {
         this.formValidate.custCode = data.custCode
         this.formValidate.companyName = data.name
         this.formValidate.telephone = data.phone
-        this.formValidate.mail = data.email
+        this.formValidate.mail = data.homeUrl
         this.formValidate.type = data.type
         this.formValidate.size = data.staffNum
         this.formValidate.num = data.subStoreNum
