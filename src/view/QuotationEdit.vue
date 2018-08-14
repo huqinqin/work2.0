@@ -271,8 +271,8 @@
         <Button type="primary">保存并发送邮件</Button>
         <Button type="primary">保存并下载询价单</Button>
         <!--<Button type="primary" @click="simuTrade">模拟下单</Button>-->
-        <Button type="primary" @click="saveQuotation">保存</Button>
-        <Button type="success" @click="sendQuotation">提交审核</Button>
+        <Button type="primary" @click="saveQuotation('save')">保存</Button>
+        <Button type="success" @click="saveQuotation('send')">提交审核</Button>
       </template>
       <template v-else-if="(status === 'salesManager') || (status === 'financial')">
         <Button type="success" @click="agree">通过</Button>
@@ -339,7 +339,7 @@ export default {
       ],
       toAddr: {},
       fromAddr: {},
-      supplyId: '',
+      supplierId: '',
       showAddressTable: false,
       showAddressForm: false,
       addressList: [],
@@ -459,7 +459,7 @@ export default {
           title: '成本/毛利率',
           render: (h, params) => {
             return (
-              <span>233333</span>
+              <span>{formatPrice.formatPrice(params.row.avgCost)} / {((params.row.diyPrice - params.row.avgCost / 100) / params.row.diyPrice).toFixed(2) * 100} %</span>
             )
           }
         },
@@ -468,7 +468,7 @@ export default {
           render: (h, params) => {
             let content = null
             if (params.row.diyPrice && params.row.amount) {
-              content = <span>{(+params.row.diyPrice) * (+params.row.amount)}</span>
+              content = <span>${(+params.row.diyPrice) * (+params.row.amount)}</span>
             }
             return content
           }
@@ -561,7 +561,18 @@ export default {
       recordColumns: [
         {
           title: '审核人',
-          key: ''
+          render: (h, params) => {
+            return (
+              <div>{params.row.reviewPoint === 'salesManager' ? '销售主管' : '财务'}{params.row.recordStatus === 'refuse' ? '打回' : '通过'}</div>
+            )
+          }
+        }, {
+          title: '时间',
+          render: (h, params) => {
+            return (
+              <div>{params.row.cdate}</div>
+            )
+          }
         }
       ],
       productHistory: [],
@@ -752,6 +763,7 @@ export default {
               id: t.id,
               num: t.amount,
               sku: t.sku,
+              // offerId: t.offerId,
               diyPrice: t.diyPrice * 100,
               note: {remark: t.note.remark}
             }
@@ -810,10 +822,11 @@ export default {
         }
       }, 1000)
     },
-    saveQuotation () {
+    saveQuotation (key) {
       if (this.validateForm()) {
         this.itemList.forEach(t => {
           t.diyPrice = t.diyPrice * 100
+          t.num = t.amount
         })
         let params = {
           store: this.store,
@@ -832,58 +845,38 @@ export default {
           payMethod: this.payMethod,
           payRemark: this.payRemark,
           overSell: this.overSell,
-          dropShipping: this.dropShipping
+          dropShipping: this.dropShipping,
+          supplierId: this.supplierId
         }
         if (this.id) {
           params = Object.assign({}, {id: this.id, mid: this.mid, cdate: this.cdate}, params)
         }
-        this.$http.saveQuotation(params).then(data => {
-          this.$Notice.success({
-            title: '保存询价单成功'
+        if (key === 'save') {
+          this.$http.saveQuotation(params).then(data => {
+            this.$Notice.success({
+              title: '保存询价单成功'
+            })
+            this.$router.push({ name: 'quotation_review_list' })
           })
-          this.$router.push({ name: 'quotation_review_list' })
-        })
-      }
-    },
-    sendQuotation () {
-      if (this.validateForm()) {
-        this.itemList.forEach(t => {
-          t.diyPrice = t.diyPrice * 100
-        })
-        let params = {
-          store: this.store,
-          poNo: this.poNo,
-          itemList: this.itemList,
-          toAddr: this.toAddr,
-          shipping: this.shipping,
-          pay: this.pay,
-          orderNote: this.orderNote,
-          packingType: this.packingType,
-          source: 'quotation',
-          type: 'order',
-          fromAddr: this.fromAddr,
-          sendEmail: false,
-          reviewRecords: this.reviewRecords,
-          payMethod: this.payMethod,
-          payRemark: this.payRemark,
-          overSell: this.overSell,
-          dropShipping: this.dropShipping
-        }
-        if (this.id) {
-          params = Object.assign({}, {id: this.id, mid: this.mid, cdate: this.cdate}, params)
-        }
-        this.$http.sendQuotation(params).then(data => {
-          this.$Notice.success({
-            title: '保存询价单成功'
+        } else if (key === 'send') {
+          this.$http.sendQuotation(params).then(data => {
+            this.$Notice.success({
+              title: '提交审核成功'
+            })
+            this.$router.push({ name: 'quotation_review_list' })
           })
-          this.$router.push({ name: 'quotation_review_list' })
-        })
+        } else if (key === 'email') {
+          params.sendEmail = true
+          console.log('email')
+        } else if (key === 'download') {
+          console.log('download')
+        }
       }
     },
     getFromAddr () {
       this.$http.getSupplyInfo().then(data => {
         this.fromAddr = data[0].address
-        this.supplyId = data[0].id
+        this.supplierId = data[0].id
       })
     },
     validateForm () {
@@ -909,12 +902,13 @@ export default {
       this.$http.getQuotation({
         id: id
       }).then(data => {
+        this.fromAddr = data.fromAddr
+        this.supplierId = data.supplierId
         this.store = data.store
         this.poNo = data.poNo
         this.itemList = data.itemList
         this.toAddr = data.toAddr
         this.shipping = data.shipping
-        this.fromAddr = data.fromAddr
         this.sendEmail = data.sendEmail
         this.orderNote = data.orderNote
         this.mid = data.mid
@@ -936,6 +930,29 @@ export default {
         }
         this.itemList.forEach(t => {
           t.diyPrice = (t.diyPrice / 100).toFixed(2)
+        })
+        let ids = this.itemList.map(t => {
+          return {
+            itemId: t.id,
+            skuId: t.sku.id
+          }
+        })
+        console.log(ids)
+        this.$http.getProductByIds({
+          ids: ids,
+          supplierId: this.supplierId
+        }).then(data => {
+          this.itemList.forEach(t => {
+            data.forEach(v => {
+              if ((t.id === v.id) && (t.sku.id === v.itemSku.id)) {
+                t.avgCost = v.itemSku.avgCost
+                t.basePrice = v.itemSku.basePrice
+                t.offerPrice = v.itemSku.offerPrice
+                t.num = v.itemSku.num
+                t.vipPrice = v.itemSku.vipPrice
+              }
+            })
+          })
         })
       })
     },
@@ -994,8 +1011,11 @@ export default {
     }
   },
   beforeMount () {
-    this.getFromAddr()
-    if (this.$route.params.id) this.getDetail(this.$route.params.id)
+    if (this.$route.params.id) {
+      this.getDetail(this.$route.params.id)
+    } else {
+      this.getFromAddr()
+    }
   }
 }
 </script>

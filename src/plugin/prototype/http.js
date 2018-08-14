@@ -332,6 +332,9 @@ export default {
   fetchQuotationProductHistory (params) {
     return axios.post('trade/order/getItemHisPrice', params)
   },
+  getProductByIds (params) {
+    return axios.post('product/item/getItems', params)
+  },
   queryQuotationInstaller (params) {
     return axios.post('base/store/queryStore', params)
   },
