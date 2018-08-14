@@ -204,7 +204,7 @@
         <Row>
           <Col span="18" style="padding-right:10px">
           <!--<Button type="primary" @click="importInstaller">导入</Button>-->
-         <!-- <Button type="primary" @click="crmPoolAdd">新增</Button>-->
+          <!-- <Button type="primary" @click="crmPoolAdd">新增</Button>-->
           <Button type="primary" @click="allocation">批量分配</Button>
           <Button type="primary" @click="invalidBussiness">无效商机</Button>
           <Button type="error" @click="exportInstallerList('1')">导出</Button>
@@ -481,11 +481,11 @@ export default {
                 type = "primary"
                 onClick = { () => { this.check(params) }
                 }>
-            查看 </i-button>
+                  查看 </i-button>
               <i-button
                 type = "primary"
                 onClick = {() => { this.receive(params) }}>
-            领取 </i-button>
+                    领取 </i-button>
               </div>)
           }
         }
@@ -547,11 +547,11 @@ export default {
                 type = "primary"
                 onClick = { () => { this.check(params) }
                 }>
-                查看 </i-button>
+                  查看 </i-button>
               <i-button
                 type = "primary"
                 onClick = {() => { this.receive(params) }}>
-                  领取 </i-button>
+                    领取 </i-button>
               </div>)
           }
         }
@@ -583,12 +583,12 @@ export default {
         label: 'Other'
       }],
       /* subInvalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }], */
+          value: 'New York',
+          label: 'New York'
+        }, {
+          value: 'New York1',
+          label: 'New York1'
+        }], */
       formValidate: {
         /* subInvalidBussinessSelect: '', */
         invalidBussinessSelect: '',
@@ -596,8 +596,8 @@ export default {
       },
       ruleValidate: {
         /* subInvalidBussinessSelect: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ], */
+            {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+          ], */
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -698,10 +698,10 @@ export default {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
     /* check (params) {
-      // location.href = '/#/crm/CrmPoolCheck' + params
-      this.$router.push({name: 'Crm Check', params: {row: params.row}})
-      // console.log('000000000')
-    }, */
+        // location.href = '/#/crm/CrmPoolCheck' + params
+        this.$router.push({name: 'Crm Check', params: {row: params.row}})
+        // console.log('000000000')
+      }, */
     receive (params) {
       this.selection = []
       this.selection.push(params.row)
@@ -796,7 +796,7 @@ export default {
           location.reload()
         })
       } else {
-        alert('您未选择客户，请选择分配客户')
+        this.$Message.error('您未选择客户，请选择分配客户')
       }
     },
     collection (selection, row) {
@@ -855,11 +855,11 @@ export default {
     check (params) {
       this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
       /* this.$http.installerCheck({
-        id: params.row.id
-      }).then((data) => {
-        this.$router.push({name: 'Crm Check', params: data.data})
-        console.log(data)
-      }) */
+          id: params.row.id
+        }).then((data) => {
+          this.$router.push({name: 'Crm Check', params: data.data})
+          console.log(data)
+        }) */
     },
     exportInstallerList (val) {
       this.$http.templatePoolListExport({

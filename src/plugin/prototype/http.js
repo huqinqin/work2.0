@@ -268,7 +268,7 @@ export default {
   },
   /* 无效商机的保存 */
   invalidBussinessListSave (params) {
-    return axios.post('/crm/company/setCompanyInvalid', params)
+    return axios.post('/crm/company/batchSetCompanyInvalid', params)
   },
   /* 分销证列表 */
   cardList (params) {

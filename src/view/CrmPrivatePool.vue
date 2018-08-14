@@ -376,10 +376,10 @@ export default {
         }).then((data) => {
           location.reload()
         }, (error) => {
-          alert(error.err)
+          this.$Message.error(error.err)
         })
       } else {
-        alert('您未选择客户，请选择分配客户')
+        this.$Message.error('您未选择客户，请选择分配客户')
       }
     },
     collection (selection, row) {
