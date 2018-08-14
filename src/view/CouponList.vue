@@ -27,10 +27,27 @@
             </i-select>
           </form-item>
           <form-item>
-            <CodeTable type="group"></CodeTable>
+            <CodeTable type="group" style="width: 100%;"></CodeTable>
           </form-item>
           <form-item>
-            <installer-select></installer-select>
+            <Row>
+              <i-col span="4">
+                <Select v-model="installerType" style="width: 100%;">
+                  <Option value="storeCode">Cust ID</Option>
+                  <Option value="storeName">公司名称</Option>
+                  <Option value="account">账号</Option>
+                  <Option value="mobile">电话</Option>
+                  <Option value="contactEmail">邮箱</Option>
+                </Select>
+              </i-col>
+              <i-col span="20">
+                <QueryInput :remote="queryInstaller" @change="checkInstaller" :value="installerValue">
+                  <template slot-scope="props">
+                    {{props.item.storeName}} - {{props.item.storeCode}}
+                  </template>
+                </QueryInput>
+              </i-col>
+            </Row>
           </form-item>
         </i-form>
     </Modal>
@@ -45,6 +62,8 @@ export default {
     return {
       url: 'Coupon',
       modal: false,
+      installerType: '',
+      installerValue: '',
       sendForm: {
         offerId: '',
         source: 'installer',
@@ -102,6 +121,29 @@ export default {
     }
   },
   methods: {
+    checkInstaller () {},
+    queryInstaller (query) {
+      return this.$http.queryQuotationInstaller({
+        [this.installerType]: query
+      }).then(data => {
+        return data.reduce((list, item) => {
+          const array = item.userResponses.map(({id, account, email, mobile, firstName, lastName}) => ({
+            storeCode: item.code,
+            storeName: item.address.company,
+            address: item.address.detail,
+            storeId: item.id,
+            account: account,
+            userId: id,
+            userEmail: email,
+            userMobile: mobile,
+            name: firstName + ' ' + lastName,
+            accountNotes: '',
+            custNotes: ''
+          }))
+          return list.concat(array)
+        }, [])
+      })
+    },
     toCouponDetail (id) {
       this.$router.push({name: 'coupon_detail', params: {id}})
     },

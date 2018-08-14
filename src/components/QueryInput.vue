@@ -22,6 +22,7 @@
 export default {
   name: 'QueryInput',
   props: {
+    value: String,
     remote: {
       type: Function,
       default () {
@@ -37,17 +38,31 @@ export default {
       list: []
     }
   },
+  watch: {
+    value: {
+      handler (val) {
+        this.inputValue = val
+      },
+      immediate: true
+    }
+  },
   methods: {
     query () {
       if (this.inputValue) {
         this.loading = true
         clearTimeout(this.clock)
         this.clock = setTimeout(() => {
-          this.remote().then(data => {
+          this.remote(this.inputValue).then(data => {
             this.loading = false
             this.list = data
+          }, msg => {
+            this.loading = false
+            this.list = []
           })
         }, 500)
+      } else {
+        this.loading = false
+        this.list = []
       }
     },
     selItem (item) {
