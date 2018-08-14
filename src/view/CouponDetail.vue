@@ -1,6 +1,6 @@
 <template>
   <div>
-    <card>
+    <card style="margin-bottom: 16px;">
       <p slot="title">
         优惠券信息
       </p>

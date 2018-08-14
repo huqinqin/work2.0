@@ -39,7 +39,9 @@ export default {
     return {
       code: '000000',
       msg: '',
-      ...list
+      data: {
+        ...list
+      }
     }
   },
   useDetail () {

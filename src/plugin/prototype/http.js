@@ -116,8 +116,8 @@ export default {
   delProp (ids) {
     return axios.post('item/category/deleteProps', {ids})
   },
-  addPropValue (categoryId, catePropId, name) {
-    return axios.post('item/category/addPropsTag', { categoryId, catePropId, name })
+  addPropValue (catePropId, name) {
+    return axios.post('item/category/addPropsTag', { catePropId, name })
   },
   delPropValue (categoryId, catePropId, id) {
     return axios.post('item/category/deletePropsTag', { categoryId, catePropId, id })
@@ -276,7 +276,20 @@ export default {
     return axios.post('item/offer/coupon/add', params)
   },
   fetchCoupon (params) {
-    return axios.post('item/offer/coupon/list', params)
+    return axios.post('item/offer/coupon/list', params).then(data => {
+      data.list = data.list.map(({id, include, rule}) => ({
+        id,
+        name: rule.name,
+        couponType: rule.type,
+        includeType: include.type,
+        standard: rule.standard,
+        amount: rule.amount
+      }))
+      return data
+    })
+  },
+  delCoupon (ids) {
+    return axios.post('item/offer/coupon/del', { ids })
   },
   fetchCouponUse (params) {
     return axios.post('item/offer/coupon/useDetail', params)

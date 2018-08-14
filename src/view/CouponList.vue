@@ -16,6 +16,24 @@
         <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
+    <Modal
+        v-model="modal"
+        title="赠券">
+        <i-form>
+          <form-item>
+            <i-select v-model="sendForm.source" style="width: 100%;">
+              <i-option value="lts">门店</i-option>
+              <i-option value="installer">工程商</i-option>
+            </i-select>
+          </form-item>
+          <form-item>
+            <CodeTable type="group"></CodeTable>
+          </form-item>
+          <form-item>
+            <installer-select></installer-select>
+          </form-item>
+        </i-form>
+    </Modal>
   </card>
 </template>
 <script>
@@ -26,6 +44,12 @@ export default {
   data () {
     return {
       url: 'Coupon',
+      modal: false,
+      sendForm: {
+        offerId: '',
+        source: 'installer',
+        ids: []
+      },
       filter: {
         name: '',
         couponType: 'common',
@@ -55,7 +79,7 @@ export default {
         key: 'amount'
       }, {
         title: '有效期',
-        render (h, params) {
+        render: (h, params) => {
           return (
             <span>null</span>
           )
@@ -65,17 +89,28 @@ export default {
         key: status
       }, {
         title: '操作',
-        render (h, params) {
+        render: (h, params) => {
           return (
             <div>
-              <i-button type="primary" size="small">查看</i-button>
-              <i-button type="success" size="small">赠券</i-button>
-              <i-button type="error" size="small">删除</i-button>
+              <i-button type="primary" size="small" onClick={() => { this.toCouponDetail(params.row.id) }}>查看</i-button>
+              <i-button type="success" size="small" onClick={() => { this.showSendModal() }}>赠券</i-button>
+              <i-button type="error" size="small" onClick={() => { this.deleteItem(params.row.id) }}>删除</i-button>
             </div>
           )
         }
       }]
     }
+  },
+  methods: {
+    toCouponDetail (id) {
+      this.$router.push({name: 'coupon_detail', params: {id}})
+    },
+    showSendModal () {
+      this.modal = true
+    }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>

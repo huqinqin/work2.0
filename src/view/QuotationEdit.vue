@@ -16,6 +16,7 @@
           </Select>
         </i-col>
         <i-col span="20">
+          <QueryInput :remote="this.$http.queryQuotationInstaller" @change="(val) => {console.log(val)}"></QueryInput>
           <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="installer-popover">
             <i-input v-model="installerValue" @on-change="queryInstaller"></i-input>
             <template slot="content">
@@ -487,6 +488,7 @@ export default {
         }).then(data => {
           this.gotInstaller = true
           let installerArr = []
+          console.log(data)
           data.forEach(i => {
             i.userResponses.forEach(v => {
               installerArr.push(Object.assign({}, i, {userData: v}))

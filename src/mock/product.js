@@ -266,6 +266,17 @@ export default {
         ...productAttributeList,
         msg: ''
       }
+    },
+    addPropsTag (req) {
+      const data = JSON.parse(req.body)
+      return {
+        code: '000000',
+        data: {
+          id: 9999,
+          name: data.name
+        },
+        msg: ''
+      }
     }
   }
 }
