@@ -16,7 +16,11 @@
           </Select>
         </i-col>
         <i-col span="20">
-          <QueryInput :remote="this.$http.queryQuotationInstaller" @change="(val) => {console.log(val)}"></QueryInput>
+          <QueryInput :remote="this.$http.queryQuotationInstaller" @change="selItem">
+            <template slot-scope="props">
+              {{props.item.name}}
+            </template>
+          </QueryInput>
           <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="installer-popover">
             <i-input v-model="installerValue" @on-change="queryInstaller"></i-input>
             <template slot="content">
@@ -479,6 +483,9 @@ export default {
     }
   },
   methods: {
+    selItem (item) {
+      console.log(item)
+    },
     queryInstaller () {
       this.gotInstaller = false
       clearTimeout(this.queryInstallerClock)
@@ -499,7 +506,7 @@ export default {
               storeCode: t.code,
               storeName: t.address.company,
               address: t.address.detail,
-              storeId: t.id,
+              id: t.id,
               account: t.userResponses[0].account,
               userId: t.userResponses[0].id,
               userEmail: t.userResponses[0].email,
