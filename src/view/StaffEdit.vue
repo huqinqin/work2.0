@@ -29,18 +29,21 @@
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="门店" prop="store">
-            <CodeTable v-model="form.store" type="store"></CodeTable>
+            <Select v-model="form.store" style="width:100%" @on-change="fetchGroups">
+              <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
+            </Select>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="部门" prop="group">
-            <CodeTable v-model="form.group" type="group"></CodeTable>
+            <Select v-model="form.group" style="width:100%">
+              <Option v-for="item in $store.state.options.groups" :value="item.key" :key="item.key">{{ item.value }}</Option>
+            </Select>
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
           <form-item label="角色" prop="role">
             <CodeTable v-model="form.role" type="role"></CodeTable>
-            <!-- <i-input v-model="form.role" type="text" placeholder="角色"></i-input> -->
           </form-item>
         </i-col>
         <i-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -145,6 +148,11 @@ export default {
     }
   },
   methods: {
+    fetchGroups () {
+      if (this.form.store) {
+        this.$store.dispatch('fetchGroups', this.form.store)
+      }
+    },
     validForm () {
       this.$refs.form.validate(valid => {
         if (valid) this.submit()
