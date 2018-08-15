@@ -95,7 +95,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'crm-common-pool',
   data () {
