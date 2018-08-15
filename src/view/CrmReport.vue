@@ -105,7 +105,6 @@ export default {
               <div
                 onMouseover={ () => { this.overShow(params) }}
                 onMouseout={ () => { this.outHide(params) }}>
-                30
                 {params.row.exchangeNum}
               </div>
             )
@@ -293,8 +292,13 @@ export default {
     },
     contactOk () {},
     reportExportData () {
-      let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime()
-      window.open(s)
+      if (this.dateValue) {
+        let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime()
+        window.open(s)
+      } else {
+        let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales
+        window.open(s)
+      }
     },
     reportList () {
       this.$http.reportList({

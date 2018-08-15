@@ -66,19 +66,19 @@
     <Modal v-model="createInstallerModal" width="360" title="新增联系人" @on-ok="submitNewInstaller" @on-cancel="handleReset" class-name="vertical-center-modal">
       <Form ref="formInline" :model="formInline"  inline>
         <FormItem prop="firstName" label="First name">
-          <Input type="text" v-model="formInline.firstName" placeholder="Username"></Input>
+          <Input type="text" v-model="formInline.firstName" placeholder=""></Input>
         </FormItem>
         <FormItem prop="lastName" label="Last name">
-          <Input type="text" v-model="formInline.lastName" placeholder="Username"></Input>
+          <Input type="text" v-model="formInline.lastName" placeholder=""></Input>
         </FormItem>
         <FormItem prop="job" label="职位">
-          <Input type="text" v-model="formInline.job" placeholder="Username"></Input>
+          <Input type="text" v-model="formInline.job" placeholder=""></Input>
         </FormItem>
         <FormItem prop="mobile" label="联系电话">
-          <Input type="text" v-model="formInline.mobile" placeholder="Username"></Input>
+          <Input type="text" v-model="formInline.mobile" placeholder=""></Input>
         </FormItem>
         <FormItem prop="email" label="email">
-          <Input type="text" v-model="formInline.email" placeholder="Username"></Input>
+          <Input type="text" v-model="formInline.email" placeholder=""></Input>
         </FormItem>
         <FormItem prop="checked" label="00" style="color: #fff;">
           <Checkbox v-model="formInline.checked">已验证</Checkbox>
@@ -250,7 +250,7 @@
         @on-cancel="cancel">
         <div>
           <span>时间:</span>
-          <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue1" @on-change="handleChange1"></DatePicker>
+          <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue1" @on-change="handleChange1" :options="options3"></DatePicker>
         </div>
         <div>
           <span>类型:</span>
@@ -588,7 +588,13 @@ export default {
         Filename: ''
       },
       total1: 0,
-      total2: 0
+      total2: 0,
+      options3: {
+        disabledDate (date) {
+          return date && date.valueOf() >= Date.now() - 86400000
+        }
+      },
+      page: 1
     }
   },
   methods: {
@@ -630,9 +636,9 @@ export default {
       console.log('77777')
       this.$refs.formInline.resetFields()
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      this.page = page
     },
     mockTableData1 () {
       let data = []
@@ -808,6 +814,7 @@ export default {
       }).then((data) => {
         this.checkDate = data
         this.installerdata = (data.contact ? data.contact : [])
+        console.log(this.$route.params.id)
       })
     },
     /* 分销证列表 */

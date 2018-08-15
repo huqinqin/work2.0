@@ -64,7 +64,7 @@
     </Row>
     <Row>
       <Col>
-      <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
+      <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
           <Page :total="total" :current="1" @on-change="changePage"></Page>
@@ -356,33 +356,6 @@ export default {
       this.page = page
       this.getInstallerList()
     },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
-    },
     importInstaller () {
       this.importInstallerModal = true
     },
@@ -393,17 +366,21 @@ export default {
     handleSubmit () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          let ids = []
-          this.selection.forEach((item) => {
-            ids.push(item.id)
-          })
-          this.$http.invalidBussinessListSave({
-            companyIds: ids,
-            bizNote: this.formValidate.invalidBussinessSelect,
-            bizType: this.formValidate.note
-          }).then((data) => {
-            this.$Message.success('已添加到无效商机!')
-          })
+          if (this.selection.length > 0) {
+            let ids = []
+            this.selection.forEach((item) => {
+              ids.push(item.id)
+            })
+            this.$http.invalidBussinessListSave({
+              companyIds: ids,
+              bizNote: this.formValidate.invalidBussinessSelect,
+              bizType: this.formValidate.note
+            }).then((data) => {
+              this.$Message.success('已添加到无效商机!')
+            })
+          } else {
+            this.$Message.error('请勾选工程商进行操作！！')
+          }
         } else {
           this.$refs.formValidate.resetFields()
           this.$Message.error('添加失败!')
@@ -466,11 +443,12 @@ export default {
     },
     collection (selection, row) {
       this.selection = selection
-      // console.log(selection);
     },
     collectionAll (selection) {
       this.selection = selection
-      // console.log(selection);
+    },
+    cancleCollection (selection) {
+      this.selection = selection
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -515,12 +493,17 @@ export default {
     handleSuccess (res, file) {
       file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.imgList.push(file)
+      // this.imgList.push(file)
     },
     reportExportData () {
-      let s = '/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
+      if (this.searchOptionJoin.beginTime && this.searchOptionJoin.endTime) {
+        let s = '/work/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
           '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
-      window.open(s)
+        window.open(s)
+      } else {
+        let s = '/work/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
+        window.open(s)
+      }
     },
     importInsatterData () {
       this.$http.crmInstallerListImport({
