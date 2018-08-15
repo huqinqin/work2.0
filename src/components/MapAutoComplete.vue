@@ -129,7 +129,7 @@ export default {
             this.googleAddress.city = place.address_components[i]['long_name']
             break
           case 'administrative_area_level_1':
-            this.googleAddress.state = place.address_components[i]['short_name']
+            this.googleAddress.state = place.address_components[i]['long_name']
             break
           case 'postal_code':
             this.googleAddress.zip = place.address_components[i]['short_name']
