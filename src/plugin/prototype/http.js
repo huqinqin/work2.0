@@ -256,7 +256,7 @@ export default {
   },
   /* 私有池批量分配 */
   privatePoolBatch (params) {
-    return axios.post('/crm/bupoll/priv/batch/do', params)
+    return axios.post('/crm/bupoll/common/batch/allot', params)
   },
   /* 无效商机列表 */
   invalidBussinessList (params) {

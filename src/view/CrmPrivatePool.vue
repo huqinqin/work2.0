@@ -31,7 +31,7 @@
     </Row>
     <Row>
       <Col span="6" style="padding-right:10px">
-      <span>Associate store:</span>
+      <div>Associate store:</div>
       <Select v-model="noAssociateStore" style="width:200px">
         <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
@@ -77,7 +77,7 @@
     </Row>
     <Row>
       <Col>
-      <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
+      <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
           <Page :total="total1" :current="1" @on-change="changePage"></Page>
@@ -223,7 +223,7 @@ export default {
               查看 </i-button>
               <i-button
                 type = "primary"
-                onClick = {this.receive
+                onClick = { () => { this.receive(params) }
                 }>
               领取 </i-button>
               </div>)
@@ -303,8 +303,29 @@ export default {
       // this.$router.push('/crm/CrmPoolCheck')
       // console.log('000000000')
     },
-    receive () {
-      console.log('11111')
+    receive (params) {
+      this.selection = []
+      this.selection.push(params.row)
+      this.batchCollectionInstaller()
+    },
+    batchCollectionInstaller () {
+      if (this.selection.length > 0) {
+        this.ids = []
+        this.selection.forEach((item) => { this.ids.push(item.id) })
+        this.$http.batchCollectionInstaller({
+          ids: this.ids ? this.ids : []
+        }).then((data) => {
+          this.$Message.success('领取成功')
+          setTimeout(() => {
+            location.reload()
+          }, 1000)
+        }, (error) => {
+          this.$Message.error(error.err)
+        })
+      }
+    },
+    cancleCollection (selection) {
+      this.selection = selection
     },
     changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
@@ -371,10 +392,13 @@ export default {
         this.ids = []
         this.selection.forEach((item) => { this.ids.push(item.id) })
         this.$http.privatePoolBatch({
-          salesId: this.allocationSells,
+          userId: this.allocationSells,
           companyIds: this.ids
         }).then((data) => {
-          location.reload()
+          this.$Message.success('批量分配成功')
+          setTimeout(() => {
+            location.reload()
+          }, 2000)
         }, (error) => {
           this.$Message.error(error.err)
         })
@@ -439,7 +463,7 @@ export default {
       }
     },
     privatePoolInstallerExport () {
-      this.$http.privatePoolListExport({
+      /* this.$http.privatePoolListExport({
         storeId: this.noAssociateStore ? this.noAssociateStore : null,
         custCode: this.custId ? this.custId : null,
         email: this.email ? this.email : null,
@@ -449,7 +473,10 @@ export default {
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
         ltsUser: null
-      }).then((data) => {})
+      }).then((data) => {}) */
+      let s = '/work/crm/export/priv/list?storeId=' + this.noAssociateStore + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +
+        '&contactStatus=' + this.contact + '&state=' + this.state
+      window.open(s)
     }
     /* salesCheck () {
       this.$http.salesCheck({}).then((data) => {})

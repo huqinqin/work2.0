@@ -212,7 +212,7 @@
         </Row>
         <Row>
           <Col>
-          <Table :columns="installerList1" :data="installerdata1"></Table>
+          <Table :columns="installerList1" :data="installerdata1" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
               <Page :total="total1" :current="1" @on-change="changePage"></Page>
@@ -890,7 +890,6 @@ export default {
         }) */
     },
     exportInstallerList (val) {
-      console.log(val)
       let s = '/work/crm/export/pub/list?storeId=' + (val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0)) + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +
           '&contactStatus=' + this.contact + '&state=' + this.state + '&allotStatus=' + val
       window.open(s)

@@ -347,8 +347,6 @@ export default {
       this.selection = []
       this.selection.push(params.row)
       this.batchCollectionInstaller()
-      // console.log(this.selection)
-      // console.log('11111')
     },
     changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
@@ -377,6 +375,7 @@ export default {
               bizType: this.formValidate.note
             }).then((data) => {
               this.$Message.success('已添加到无效商机!')
+              location.reload()
             })
           } else {
             this.$Message.error('请勾选工程商进行操作！！')
