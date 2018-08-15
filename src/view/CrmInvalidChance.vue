@@ -334,12 +334,12 @@ export default {
     selectSellOk () {},
     cancel () {},
     invalidBussinessExport () {
-      if (this.dateValue) {
-        let s = '/crm/export/invalid/business?name=' + this.company + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime() +
+      if (this.dateValue.length > 0) {
+        let s = '/work/crm/export/invalid/business?name=' + this.company + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime() +
          '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
         window.open(s)
       } else {
-        let s = '/crm/export/invalid/business?name=' + this.company + '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
+        let s = '/work/crm/export/invalid/business?name=' + this.company + '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
         window.open(s)
       }
     },

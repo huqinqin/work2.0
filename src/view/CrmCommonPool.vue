@@ -347,8 +347,6 @@ export default {
       this.selection = []
       this.selection.push(params.row)
       this.batchCollectionInstaller()
-      // console.log(this.selection)
-      // console.log('11111')
     },
     changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
