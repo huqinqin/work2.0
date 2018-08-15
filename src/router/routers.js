@@ -159,7 +159,7 @@ export default [
       { path: 'product_list', meta: { icon: 'lock-combination', title: '商品管理' }, name: 'product_list', component: () => import('@/view/ProductList.vue') },
       // { path: 'product_record', meta: { icon: 'lock-combination', title: '商品修改记录' }, name: 'product_record', component: () => import('@/view/ProductRecord.vue') },
       // { path: 'product_trash', meta: { icon: 'lock-combination', title: '商品回收站' }, name: 'product_trash', component: () => import('@/view/ProductTrash.vue') },
-      { path: 'product_edit/:id?', name: 'product_edit', meta: { icon: 'lock-combination', title: '商品详情' }, component: () => import('@/view/ProductEdit.vue') }
+      { path: 'product_edit/:id?', name: 'product_edit', meta: { icon: 'lock-combination', title: '新增商品' }, component: () => import('@/view/ProductEdit.vue') }
     ]
   },
   {
