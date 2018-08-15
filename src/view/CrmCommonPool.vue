@@ -1,127 +1,120 @@
 <template>
- <div class="commonPool">
-   <Row>
-     <Col span="6" style="padding-right:10px">
-     <span>state:</span>
-     <AutoComplete
-       v-model="state"
-       :data="stateList"
-       :filter-method="filterMethod"
-       @on-search="handleSearch1"
-       placeholder="input here"></AutoComplete>
-     </Col>
-     <Col span="6" style="padding-right:10px">
-     <span>city:</span>
-     <Input v-model="city" placeholder="Enter city" />
-     </Col>
-     <Col span="6" style="padding-right:10px">
-     <span>company:</span>
-     <Input v-model="company" placeholder="Enter company" />
-     </Col>
-     <Col span="6" style="padding-right:10px">
-     <span>time:</span>
-     <DatePicker @on-change="handleChange" :value="dateValue" type="datetimerange" format="yyyy-MM-dd HH:mm" placement="bottom-end" placeholder="Select date"></DatePicker>
-     </Col>
-   </Row>
-   <Row>
-     <Col span="5" style="padding-right:10px">
-     <span>type:</span>
-     <Select v-model="type">
-       <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-     </Select>
-     </Col>
-     <Col span="5" style="padding-right:10px">
-     <span>行业:</span>
-     <Select v-model="trade">
-       <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-     </Select>
-     </Col>
-     <Col span="5" style="padding-right:10px" v-if="trade === '0'">
-     <span style="color: #F0F0F0">111</span>
-     <Select v-model="trade1">
-       <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
-     </Select>
-     </Col>
-     <Col span="5" style="padding-right:10px">
-     <span>Email:</span>
-     <Input v-model="email" placeholder="Enter email" />
-     </Col>
-     <Col span="4" style="padding-right:10px">
-     <span style="color: #F0F0F0">Search:</span>
-     <div>
-       <Button type="primary" @click="getInstallerList">Search</Button>
-     </div>
-     </Col>
-   </Row>
-   <Row>
-     <Col span="18" style="padding-right:10px">
-       <Button type="primary" @click="importInstaller">导入</Button>
-       <Button type="primary" @click="crmPoolAdd">新增</Button>
-       <Button type="primary" @click="batchCollectionInstaller">批量领取</Button>
-       <Button type="primary" @click="invalidBussiness">无效商机</Button>
-       <Button type="error">导出</Button>
-     </Col>
-   </Row>
-   <Row>
-     <Col>
-       <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
-       <div style="margin: 10px;overflow: hidden">
-         <div style="float: right;">
-           <Page :total="100" :current="1" @on-change="changePage"></Page>
-         </div>
-       </div>
-     </Col>
-   </Row>
-   <Row>
-     <Modal v-model="importInstallerModal" width="360" title="导入模板">
-       <Upload
-         ref="upload"
-         :show-upload-list="true"
-         :default-file-list="imgUrls"
-         :on-success="handleSuccess"
-         :format="['jpg','jpeg','png']"
-         :max-size="2048"
-         :on-format-error="handleFormatError"
-         :on-exceeded-size="handleMaxSize"
-         :before-upload="beforeLoad"
-         :data="Object.assign(formUp, formData)"
-         multiple
-         type="drag"
-         action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
-         style="display: inline-block;width:256px; height: 256px;">
-         <div style="width: 256px;height:256px;line-height: 256px;">
-           <Icon type="camera" size="48"></Icon>
-         </div>
-       </Upload>
-       <span>如没有模板请先下载导入模板</span>
-       <a href="#">下载模板</a>
-     </Modal>
-   </Row>
-   <Row>
-     <Modal v-model="invalidBussinessModal" width="600" title="导入模板" @on-ok="handleSubmit" @on-cancel="handleReset">
-       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-         <FormItem label="类型" prop="invalidBussinessSelect">
-             <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
-               <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-             </Select>
-         </FormItem>
-         <FormItem  prop="subInvalidBussinessSelect">
-             <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
-               <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-             </Select>
-         </FormItem>
-         <FormItem label="备注" prop="note">
-           <Row>
-         <Col span="18">
-         <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
-         </Col>
-       </Row>
-         </FormItem>
-         <div style="margin-left: 80px">注：如果已开通商城账号，加入无效商机名单后将冻结该工程商的账号</div>
-       </Form>
-     </Modal>
-   </Row>
- </div>
+  <div class="commonPool">
+    <Row>
+      <Col span="6" style="padding-right:10px">
+      <span>state:</span>
+      <AutoComplete
+        v-model="state"
+        :data="stateList"
+        :filter-method="filterMethod"
+        @on-search="handleSearch1"
+        placeholder="input here"></AutoComplete>
+      </Col>
+      <Col span="6" style="padding-right:10px">
+      <span>city:</span>
+      <Input v-model="city" placeholder="Enter city" />
+      </Col>
+      <Col span="6" style="padding-right:10px">
+      <span>company:</span>
+      <Input v-model="company" placeholder="Enter company" />
+      </Col>
+      <Col span="6" style="padding-right:10px">
+      <span>time:</span>
+      <DatePicker @on-change="handleChange" :value="dateValue" type="datetimerange" format="yyyy-MM-dd HH:mm" placement="bottom-end" placeholder="Select date"></DatePicker>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="5" style="padding-right:10px">
+      <span>type:</span>
+      <Select v-model="type">
+        <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
+      </Col>
+      <Col span="5" style="padding-right:10px">
+      <span>行业:</span>
+      <Select v-model="trade">
+        <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
+      </Col>
+      <Col span="5" style="padding-right:10px" v-if="trade === '0'">
+      <span style="color: #F0F0F0">111</span>
+      <Select v-model="trade1">
+        <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      </Select>
+      </Col>
+      <Col span="5" style="padding-right:10px">
+      <span>Email:</span>
+      <Input v-model="email" placeholder="Enter email" />
+      </Col>
+      <Col span="4" style="padding-right:10px">
+      <span style="color: #F0F0F0">Search:</span>
+      <div>
+        <Button type="primary" @click="getInstallerList">Search</Button>
+      </div>
+      </Col>
+    </Row>
+    <Row>
+      <Col span="18" style="padding-right:10px">
+      <Button type="primary" @click="importInstaller">导入</Button>
+      <Button type="primary" @click="crmPoolAdd">新增</Button>
+      <Button type="primary" @click="batchCollectionInstaller">批量领取</Button>
+      <Button type="primary" @click="invalidBussiness">无效商机</Button>
+      <a @click="reportExportData"><Button type="error">导出</Button></a>
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+      <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll"></Table>
+      <div style="margin: 10px;overflow: hidden">
+        <div style="float: right;">
+          <Page :total="total" :current="1" @on-change="changePage"></Page>
+        </div>
+      </div>
+      </Col>
+    </Row>
+    <Row>
+      <Modal v-model="importInstallerModal" width="360" title="导入模板" @on-ok="importInsatterData">
+        <Upload
+          ref="upload"
+          :show-upload-list="true"
+          :on-success="handleSuccess"
+          :max-size="2048"
+          :on-format-error="handleFormatError"
+          :on-exceeded-size="handleMaxSize"
+          :before-upload="beforeLoad"
+          :data="Object.assign(formUp, formData)"
+          multiple
+          type="drag"
+          action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
+          style="display: inline-block;width:256px; height: 256px;">
+          <div style="width: 256px;height:256px;line-height: 256px;">
+            <Icon type="camera" size="48"></Icon>
+          </div>
+        </Upload>
+        <span>如没有模板请先下载导入模板</span>
+        <a href="https://ltsb2b2.oss-us-west-1.aliyuncs.com/crm/123.xlsx">下载模板</a>
+      </Modal>
+    </Row>
+    <Row>
+      <Modal v-model="invalidBussinessModal" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+          <FormItem label="类型" prop="invalidBussinessSelect">
+            <Select v-model="formValidate.invalidBussinessSelect" style="width:200px">
+              <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="备注" prop="note">
+            <Row>
+              <Col span="18">
+              <Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
+              </Col>
+            </Row>
+          </FormItem>
+          <div style="margin-left: 80px">注：如果已开通商城账号，加入无效商机名单后将冻结该工程商的账号</div>
+        </Form>
+      </Modal>
+    </Row>
+  </div>
 </template>
 
 <script>
@@ -130,6 +123,7 @@ export default {
   name: 'crm-common-pool',
   data () {
     return {
+      total: 0,
       state: '',
       dateValue: '',
       loading1: false,
@@ -216,19 +210,17 @@ export default {
         },
         {
           title: 'Base info',
-          key: 'address',
           render: (h, params) => {
-            return (
-              < div > < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < span
-                class
-                  = "ivu-icon ivu-icon-ios-checkmark" > 1234 < /span>
-              < /div>)
+            if (params.row.address) {
+              return (
+                <div>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.detail}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.city}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.state}</span>
+                  <span class="ivu-icon ivu-icon-ios-checkmark">{params.row.address.country}</span>
+                </div>
+              )
+            }
           }
         },
         {
@@ -237,7 +229,7 @@ export default {
         },
         {
           title: 'time',
-          key: 'cdate'
+          key: 'updateTime'
         },
         {
           title: '操作',
@@ -250,82 +242,45 @@ export default {
                 type = "primary"
                 onClick = { () => { this.check(params) }
                 }>
-            查看 </i-button>
+                  查看 </i-button>
               <i-button
                 type = "primary"
                 onClick = {() => { this.receive(params) }}>
-            领取 </i-button>
+                    领取 </i-button>
               </div>)
           }
         }
       ],
-      installerdata: [
-        {
-          custCode: '11111',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 1
-        }, {
-          custCode: '22222',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 2
-        }, {
-          custCode: '3333',
-          name: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          open: 'No',
-          cdate: '2016-10-03',
-          id: 3
-        }
-      ],
+      installerdata: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
-        value: '0',
+        value: 'Installer',
         label: 'Installer'
       }, {
-        value: '1',
+        value: 'Integrator',
         label: 'Integrator'
       }, {
-        value: '2',
+        value: 'Wholesale',
         label: 'Wholesale'
       }, {
-        value: '3',
+        value: 'Distributor',
         label: 'Distributor'
       }, {
-        value: '4',
+        value: 'Retailer',
         label: 'Retailer'
       }, {
-        value: '5',
+        value: 'Onlinestore',
         label: 'Onlinestore'
       }, {
-        value: '6',
+        value: 'Other',
         label: 'Other'
       }],
-      subInvalidBussinessList: [{
-        value: 'New York',
-        label: 'New York'
-      }, {
-        value: 'New York1',
-        label: 'New York1'
-      }],
       formValidate: {
-        subInvalidBussinessSelect: '',
         invalidBussinessSelect: '',
         note: ''
       },
       ruleValidate: {
-        subInvalidBussinessSelect: [
-          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-        ],
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -349,7 +304,9 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      searchOptionJoin: {},
+      page: 1
     }
   },
   methods: {
@@ -377,12 +334,14 @@ export default {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
     check (params) {
-      this.$http.installerCheck({
-        id: params.row.id
-      }).then((data) => {
-        this.$router.push({name: 'Crm Check', params: data.data})
-        console.log(data)
-      })
+      // console.log(params);
+      this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
+      /* this.$http.installerCheck({
+          id: params.row.id
+        }).then((data) => {
+          this.$router.push({name: 'Crm Check', params: data.data})
+          console.log(data)
+        }) */
     },
     receive (params) {
       this.selection = []
@@ -391,9 +350,11 @@ export default {
       // console.log(this.selection)
       // console.log('11111')
     },
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      // this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.getInstallerList()
     },
     mockTableData1 () {
       let data = []
@@ -432,10 +393,20 @@ export default {
     handleSubmit () {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
-          this.$Message.success('Success!')
+          let ids = []
+          this.selection.forEach((item) => {
+            ids.push(item.id)
+          })
+          this.$http.invalidBussinessListSave({
+            companyIds: ids,
+            bizNote: this.formValidate.invalidBussinessSelect,
+            bizType: this.formValidate.note
+          }).then((data) => {
+            this.$Message.success('已添加到无效商机!')
+          })
         } else {
           this.$refs.formValidate.resetFields()
-          this.$Message.error('Fail!')
+          this.$Message.error('添加失败!')
         }
       })
     },
@@ -447,18 +418,28 @@ export default {
       this.$router.push({name: 'New crease', params: {crmFlag: 3}})
     },
     getInstallerList () {
-      this.$http.crmInstallerList({
-        state: this.state,
-        city: this.city,
-        name: this.company,
-        beginTime: new Date(this.dateValue[0]).getTime(),
-        endTime: new Date(this.dateValue[1]).getTime(),
-        type: this.type,
-        industry: this.trade,
-        email: this.email
+      this.searchOptionJoin.state = this.state ? this.state : ''
+      this.searchOptionJoin.city = this.city ? this.city : ''
+      this.searchOptionJoin.name = this.company ? this.company : ''
+      this.searchOptionJoin.beginTime = new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : ''
+      this.searchOptionJoin.endTime = new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : ''
+      this.searchOptionJoin.type = this.type ? this.type : ''
+      this.searchOptionJoin.industry = this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null
+      this.searchOptionJoin.email = this.email ? this.email : ''
+      this.$http.crmInstallerListData({
+        state: this.state ? this.state : null,
+        city: this.city ? this.city : null,
+        name: this.company ? this.company : null,
+        beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
+        endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
+        type: this.type ? this.type : null,
+        industry: this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null,
+        email: this.email ? this.email : null,
+        page: this.page ? this.page : null,
+        rows: 10
       }).then((data) => {
-        // this.installerdata = data.list;
-        // data.list.forEach()
+        this.installerdata = data.list
+        this.total = data.total
       })
     },
     handleChange (date) {
@@ -466,11 +447,22 @@ export default {
       console.log(new Date(this.dateValue[0]).getTime())
     },
     batchCollectionInstaller () {
-      this.ids = []
-      this.selection.forEach((item) => { this.ids.push(item.id) })
-      this.$http.batchCollectionInstaller({
-        ids: this.ids
-      }).then((data) => { console.log(data) })
+      if (this.selection.length > 0) {
+        this.ids = []
+        this.selection.forEach((item) => { this.ids.push(item.id) })
+        this.$http.batchCollectionInstaller({
+          ids: this.ids ? this.ids : []
+        }).then((data) => {
+          this.$Message.success('批量选择成功')
+          setTimeout(() => {
+            location.reload()
+          }, 1000)
+        }, (error) => {
+          this.$Message.error(error.err)
+        })
+      } else {
+        this.$Message.error('请勾选工程商进行操作！！')
+      }
     },
     collection (selection, row) {
       this.selection = selection
@@ -493,11 +485,12 @@ export default {
       })
     },
     beforeLoad (file) {
-      console.log('file', file)
       this.formData.name = file.name
       this.formData.key = this.formUp.preKey + '/' + file.name
       this.formData.Filename = file.name
-      this.filelist.push(file)
+      this.$nextTick(() => {
+        this.$refs.upload.post(file)
+      })
       return false
     },
     loadSuccess (response, file) {
@@ -520,9 +513,23 @@ export default {
       })
     },
     handleSuccess (res, file) {
-      file.url = this.formData.host + '/' + this.formData.dir + '/' + file.name
+      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.uploadList.push(file)
+      this.imgList.push(file)
+    },
+    reportExportData () {
+      let s = '/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
+          '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
+      window.open(s)
+    },
+    importInsatterData () {
+      this.$http.crmInstallerListImport({
+        fileUrl: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/' + this.formData.key
+      }).then((data) => {
+        this.$Message.success('导入成功')
+      }, (error) => {
+        this.$Message.error(error.err)
+      })
     }
   },
   mounted () {

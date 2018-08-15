@@ -5,7 +5,7 @@
       <Table :columns="LogList" :data="Logdata"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="100" :current="1" @on-change="changePage"></Page>
+          <Page :total="total1" :current="1" @on-change="changePage"></Page>
         </div>
       </div>
       </Col>
@@ -22,7 +22,7 @@ export default {
       LogList: [
         {
           title: '时间',
-          key: 'logTime'
+          key: 'loginDate'
         },
         {
           title: '账号',
@@ -30,7 +30,7 @@ export default {
         },
         {
           title: '登陆方式',
-          key: 'logMethod'
+          key: 'loginSource'
         }
       ],
       Logdata: [
@@ -39,44 +39,34 @@ export default {
           account: '1984288545@qq.com',
           logMethod: 'pc端登陆'
         }
-      ]
+      ],
+      total1: 0,
+      page: 1
     }
   },
   methods: {
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
-    },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
+      this.page = page
+      this.crmLogList()
     },
     back () {
-      this.$router.push('/crm/CrmPoolCheck')
+      // this.$router.push('/crm/CrmPoolCheck')
+      history.go(-1)
+    },
+    crmLogList () {
+      this.$http.crmLog({
+        companyId: parseInt(this.$route.params.id),
+        page: this.page,
+        rows: 10
+      }).then((data) => {
+        this.total1 = data.total
+        this.Logdata = data.list
+      })
     }
+  },
+  mounted () {
+    this.crmLogList()
   }
 }
 </script>
