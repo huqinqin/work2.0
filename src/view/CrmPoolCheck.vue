@@ -250,7 +250,7 @@
         @on-cancel="cancel">
         <div>
           <span>时间:</span>
-          <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue1" @on-change="handleChange1" :options="options3"></DatePicker>
+          <DatePicker  style="width: 200px" type="date" placeholder="Select" :value="dateValue1" @on-change="handleChange1" :options="options3"></DatePicker>
         </div>
         <div>
           <span>类型:</span>

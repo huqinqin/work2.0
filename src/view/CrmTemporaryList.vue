@@ -331,58 +331,58 @@ export default {
       type: '',
       contact: '',
       contactList: [{
-        value: '0',
+        value: '未联系',
         label: '未联系'
       }, {
-        value: '1',
+        value: '联系中未询价',
         label: '联系中未询价'
       }, {
-        value: '2',
+        value: '联系中询价中',
         label: '联系中询价中'
       }, {
-        value: '3',
+        value: '激活已下单',
         label: '激活已下单'
       }, {
-        value: '4',
+        value: '拉新已下单',
         label: '拉新已下单'
       }, {
-        value: '5',
+        value: '无效客人',
         label: '无效客人'
       }],
       typeList: [{
-        value: '0',
+        value: '未联系',
         label: '未联系'
       }, {
-        value: '1',
+        value: '联系中未询价',
         label: '联系中未询价'
       }, {
-        value: '2',
+        value: '联系中询价中',
         label: '联系中询价中'
       }, {
-        value: '3',
+        value: '激活已下单',
         label: '激活已下单'
       }, {
-        value: '4',
+        value: '拉新已下单',
         label: '拉新已下单'
       }, {
-        value: '5',
+        value: '无效客人',
         label: '无效客人'
       }],
       trade: '',
       tradeList: [{
-        value: '0',
+        value: '视频监控',
         label: '视频监控'
       }, {
-        value: '1',
+        value: '门禁',
         label: '门禁'
       }, {
-        value: '2',
+        value: '报警',
         label: '报警'
       }, {
-        value: '3',
+        value: '音视频',
         label: '音视频'
       }, {
-        value: '4',
+        value: '其他',
         label: '其他'
       }],
       trade1: '',
@@ -890,7 +890,7 @@ export default {
         }) */
     },
     exportInstallerList (val) {
-      let s = '/work/crm/export/pub/list?storeId=' + (val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0)) + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +
+      let s = '/work/crm/export/formoment/list?storeId=' + (val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0)) + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +
           '&contactStatus=' + this.contact + '&state=' + this.state + '&allotStatus=' + val
       window.open(s)
     },

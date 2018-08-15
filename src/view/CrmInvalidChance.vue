@@ -19,7 +19,7 @@
         <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>
-      <Col span="5" style="padding-right:10px" v-if="trade === '0'">
+      <Col span="5" style="padding-right:10px" v-if="trade === '黑名单'">
       <span style="color: #F0F0F0">111</span>
       <Select v-model="trade1">
         <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
