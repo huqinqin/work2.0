@@ -6,10 +6,15 @@
           <Tree :data="treeData" :render="renderContent"></Tree>
         </div>
         <div class="layout-cell flex-item">
+          <div style="overflow: hidden;">
+            <i-button type="primary" style="float: right">新增属性</i-button>
+          </div>
           <LayoutPropItem v-for="sku in skus" :data="sku" :key="sku.id">
             <a href="#">删除SKU</a>
           </LayoutPropItem>
-          <i-button type="primary" style="float: right;">新增</i-button>
+          <LayoutPropItem v-for="spu in spus" :data="spu" :key="spu.id">
+            <a href="#">删除SPU</a>
+          </LayoutPropItem>
         </div>
       </div>
     </Card>
@@ -55,6 +60,7 @@ export default {
   data () {
     return {
       skus: [],
+      spus: [],
       showCateModal: false
     }
   },
@@ -99,8 +105,11 @@ export default {
       )
     },
     check (root, node, data) {
-      this.$http.fetchSkuProps({cateId: data.value}).then(data => {
+      this.$http.fetchSkuProps({id: data.value}).then(data => {
         this.skus = data.list
+      })
+      this.$http.fetchSpuProps({id: data.value}).then(data => {
+        this.spus = data.list
       })
       this.getCategory(data.value)
     },
