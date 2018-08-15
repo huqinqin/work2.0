@@ -7,7 +7,7 @@
       </div>
       <Row>
         <i-col span="4">
-          <Select v-model="installerType">
+          <Select v-model="installerType" :disabled="!canEdit">
             <Option value="storeCode">Cust ID</Option>
             <Option value="storeName">公司名称</Option>
             <Option value="account">账号</Option>
@@ -62,34 +62,44 @@
         <div class="divider"></div>
         <i-form ref="shipping" :model="shipping" label-position="top">
           <form-item label="选择方式" prop="type">
-            <RadioGroup v-model="shipping.methods">
+            <div v-if="!canEdit">
+              <span v-if="shipping.methods === 'willCall'">自提</span>
+              <span v-else>快递</span>
+            </div>
+            <RadioGroup v-model="shipping.methods" v-else @on-change="simuTrade">
               <Radio label="willCall">自提</Radio>
-              <Radio label="express">快递</Radio>
+              <Radio label="shipping">快递</Radio>
             </RadioGroup>
           </form-item>
-          <template v-if="shipping.methods === 'express'">
+          <template v-if="shipping.methods === 'shipping'">
             <form-item label="快递公司" prop="company">
-              <RadioGroup v-model="shipping.expressCompany">
+              <div v-if="!canEdit">
+                <span>{{shipping.expressCompany}}</span>
+              </div>
+              <RadioGroup v-model="shipping.expressCompany" v-else @on-change="simuTrade">
                 <Radio label="UPS">UPS</Radio>
                 <Radio label="Fedex">Fedex</Radio>
               </RadioGroup>
             </form-item>
             <form-item label="快递服务" prop="service">
-              <RadioGroup v-model="shipping.expressService" class="service-radio">
+              <div v-if="!canEdit">
+                <span v-for="item in expressOption" v-if="item.value === shipping.expressService" :key="item.value">{{item.label}}</span>
+              </div>
+              <RadioGroup v-model="shipping.expressService" class="service-radio" v-else @on-change="simuTrade">
                 <Radio v-for="item in expressOption" :label="item.value" :key="item.value">{{item.label}}</Radio>
               </RadioGroup>
             </form-item>
             <form-item>
-              <Checkbox v-model="shipping.expressSignature">本人签收</Checkbox>
-              <Checkbox v-model="shipping.ownExpense">Use customer's shipping account</Checkbox>
+              <Checkbox v-model="shipping.expressSignature" :disabled="!canEdit" @on-change="simuTrade">本人签收</Checkbox>
+              <Checkbox v-model="shipping.ownExpense" :disabled="!canEdit" @on-change="simuTrade">Use customer's shipping account</Checkbox>
             </form-item>
           </template>
         </i-form>
       </div>
     </card>
-    <card class="address-card" v-if="shipping.methods === 'express'" id="address" :class="{'empty': !validForm.address}">
+    <card class="address-card" v-if="shipping.methods === 'shipping'" id="address" :class="{'empty': !validForm.address}">
       <div class="title">
-        <p>选择收货地址 <Button type="text" @click="showAddAddressForm">+添加地址</Button></p>
+        <p>选择收货地址 <Button type="text" @click="showAddAddressForm" :disabled="!canEdit">+添加地址</Button></p>
         <div class="divider"></div>
         <table border="1" class="addressTable">
           <tr>
@@ -105,7 +115,7 @@
             <td>{{toAddr.detail}}</td>
           </tr>
         </table>
-        <Button type="primary" @click="showAddressTable = true">选择地址</Button>
+        <Button type="primary" @click="showAddressTable = true" :disabled="!canEdit">选择地址</Button>
         <Modal
           v-model="showAddressTable"
           width="920"
@@ -124,11 +134,11 @@
         </Modal>
       </div>
     </card>
-    <card class="po-card" v-if="shipping.methods === 'express'">
+    <card class="po-card" v-if="shipping.methods === 'shipping'">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
-        <Input placeholder="请输入P/O NO." v-model="poNo"/>
+        <Input placeholder="请输入P/O NO." v-model="poNo" :readonly="!canEdit"/>
       </div>
     </card>
     <card class="product-card" id="product" :class="{'empty': !validForm.items}">
@@ -156,24 +166,24 @@
         <div class="divider"></div>
         <i-form label-position="top">
           <form-item label="支付方式">
-            <RadioGroup v-model="payType">
-              <Radio label="anet">信用卡</Radio>
-              <Radio label="cash">现金</Radio>
-              <Radio label="check">支票</Radio>
-              <Radio label="cod">COD</Radio>
-              <Radio label="creditmemo">Credit Memo</Radio>
-              <Radio label="term">账期</Radio>
-              <Radio label="other">Other</Radio>
+            <div v-if="!canEdit">
+              <span v-for="item in payMethodOption" :key="item.value" v-if="item.value === payMethod">{{item.name}}</span>
+            </div>
+            <RadioGroup v-model="payMethod" v-else>
+              <Radio v-for="item in payMethodOption" :key="item.value" :label="item.value">{{item.name}}</Radio>
             </RadioGroup>
           </form-item>
           <form-item label="Packing Type">
-            <RadioGroup v-model="note.packingType">
+            <div v-if="!canEdit">
+              <span>{{packingType}}</span>
+            </div>
+            <RadioGroup v-model="packingType" v-else>
               <Radio label="Pick List Only">Pick List Only</Radio>
               <Radio label="No Invoice No Pick List">No Invoice No Pick List</Radio>
             </RadioGroup>
           </form-item>
           <form-item label="备注">
-            <Input v-model="payNote"/>
+            <Input v-model="payRemark" :readonly="!canEdit"/>
           </form-item>
         </i-form>
       </div>
@@ -188,35 +198,41 @@
           </form-item>
           <form-item label="满减优惠">
             <div class="fee">{{pay.rebateFee | formatPrice}}</div>
-            <div class="other"><Checkbox v-model="pay.orderDiscount">Whether to participate in sitewide promotion</Checkbox></div>
+            <div class="other"><Checkbox :disabled="!canEdit" v-model="pay.orderDiscount" @on-change="getFee">Whether to participate in sitewide promotion</Checkbox></div>
           </form-item>
           <form-item label="税率/税费">
             <div class="fee" v-if="['','init','salesManager'].indexOf(status) !== -1">{{pay.taxRate}} / {{pay.taxFee | formatPrice}}</div>
-            <div class="fee" v-if="status === 'financial'"><Input v-model="taxRate"/> {{pay.taxFee | formatPrice}}</div>
+            <div class="fee" v-if="status === 'financial'" style="width: 200px;"><Input v-model="pay.taxRate" @on-change="getFee" />&nbsp;&nbsp;&nbsp;/&nbsp;{{pay.taxFee | formatPrice}}</div>
           </form-item>
           <form-item label="运费">
-            <div class="fee"><Input v-model="shippingFee" @on-change="getFee" /></div>
+            <div class="fee">
+              <template v-if="!canEdit">{{pay.shippingFee | formatPrice}}</template>
+              <template v-else><Input v-model="shippingFee" @on-change="getFee" /></template>
+            </div>
             <div class="other">
-              <Checkbox v-model="dropShipping">Dropship from other office</Checkbox>
-              <Checkbox v-model="overSell">Insufficient inventory/</Checkbox>
+              <Checkbox v-model="dropShipping" :disabled="!canEdit">Dropship from other office</Checkbox>
+              <Checkbox v-model="overSell" :disabled="!canEdit">Insufficient inventory/</Checkbox>
             </div>
           </form-item>
           <form-item label="手续费">
-            <div class="fee"><Input v-model="handleFee" @on-change="getFee" /></div>
+            <div class="fee">
+              <template v-if="!canEdit">{{pay.fee.handleFee | formatPrice}}</template>
+              <template v-else><Input v-model="handleFee" @on-change="getFee" /></template>
+            </div>
           </form-item>
           <form-item label="减免">
-            <div class="discount" v-if="['','init'].indexOf(status) !== -1">
-              <RadioGroup v-model="discountType">
+            <div class="discount">
+              <div class="fee" v-if="!canEdit">
+                {{ pay.fee.reduceFee | formatPrice}}
+              </div>
+              <RadioGroup v-model="discountType" v-else>
                 <Radio label="num"><Input v-model="discountNum" @on-change="getFee" />$</Radio>
                 <Radio label="percent"><Input v-model="discountPercent" @on-change="getFee" />%</Radio>
               </RadioGroup>
             </div>
-            <div class="discount" v-else>
-              {{ pay.otherFee | formatPrice}}
-            </div>
           </form-item>
           <form-item class="total" label="实付金额">
-            <div class="fee">{{total | formatPrice}}</div>
+            <div class="fee"><span v-if="computing">计算中...</span><span v-else>{{pay.amount | formatPrice}}</span></div>
           </form-item>
         </i-form>
       </div>
@@ -225,38 +241,45 @@
       <div class="title">
         <p>订单备注</p>
         <div class="divider"></div>
-        <Input placeholder="请输入备注" type="textarea" :rows="4" v-model="note.remark"/>
+        <Input placeholder="请输入备注" type="textarea" :rows="4" v-model="orderNote" :readonly="!canEdit"/>
+      </div>
+    </card>
+    <card class="order-card">
+      <div class="title">
+        <p>审核记录</p>
+        <div class="divider"></div>
+        <i-table :data="reviewRecords" :columns="recordColumns"></i-table>
       </div>
     </card>
     <div class="buttons">
       <template v-if="(status === 'init') || (status === '')">
         <Button type="primary">保存并发送邮件</Button>
         <Button type="primary">保存并下载询价单</Button>
-        <Button type="primary" @click="simuTrade">模拟下单</Button>
-        <Button type="primary" @click="saveQuotation">保存</Button>
-        <Button type="success" @click="sendQuotation">提交审核</Button>
+        <!--<Button type="primary" @click="simuTrade">模拟下单</Button>-->
+        <Button type="primary" @click="saveQuotation('save')">保存</Button>
+        <Button type="success" @click="saveQuotation('send')">提交审核</Button>
       </template>
-      <template v-else-if="status === 'salesManager'">
-        <Button type="success" @click="agree">销售主管通过</Button>
-        <Button type="success" @click="refuse">销售主管打回</Button>
+      <template v-else-if="(status === 'salesManager') || (status === 'financial')">
+        <Button type="success" @click="agree">通过</Button>
+        <Button type="error" @click="refuse">打回</Button>
       </template>
-      <template v-else-if="status === 'financial'">
-        <Button type="success" @click="agree">财务通过</Button>
-        <Button type="success" @click="refuse">财务打回</Button>
-      </template>
+      <!--<template v-else-if="status === 'financial'">-->
+        <!--<Button type="success" @click="agree">财务通过</Button>-->
+        <!--<Button type="error" @click="refuse">财务打回</Button>-->
+      <!--</template>-->
     </div>
   </div>
 </template>
 
 <script>
+
+import formatPrice from '../plugin/filter/formatPrice'
 export default {
   name: 'quotation-edit',
   data () {
     return {
-      note: {
-        remark: 'order-remark',
-        packingType: 'Pick List Only'
-      },
+      orderNote: '',
+      packingType: '',
       installerValue: '',
       installerType: 'storeCode',
       installerList: [],
@@ -267,7 +290,7 @@ export default {
       },
       poNo: '',
       shipping: {
-        methods: 'express',
+        methods: 'shipping',
         expressCompany: 'Fedex',
         expressService: '01',
         expressSignature: true,
@@ -289,9 +312,19 @@ export default {
         {value: '96', label: 'UPS Worldwide Express Freight'},
         {value: '71', label: 'UPS Worldwide Express Freight Midday'}
       ],
+      payMethodOption: [
+        {value: 'anet', name: '信用卡'},
+        {value: 'cash', name: '现金'},
+        {value: 'check', name: '支票'},
+        {value: 'C.O.D Cashier Check', name: 'C.O.D Cashier Check'},
+        {value: 'C.O.D Company Check', name: 'C.O.D Company Check'},
+        {value: 'creditmemo', name: 'Credit Memo'},
+        {value: 'term', name: '账期'},
+        {value: 'other', name: 'Other'}
+      ],
       toAddr: {},
       fromAddr: {},
-      supplyId: '',
+      supplierId: '',
       showAddressTable: false,
       showAddressForm: false,
       addressList: [],
@@ -389,7 +422,11 @@ export default {
         },
         {
           title: '指导价',
-          key: 'basePrice'
+          render: (h, params) => {
+            return (
+              <div>{formatPrice.formatPrice(params.row.basePrice)}</div>
+            )
+          }
         },
         {
           title: '单价',
@@ -407,7 +444,7 @@ export default {
           title: '成本/毛利率',
           render: (h, params) => {
             return (
-              <span>233333</span>
+              <span>{formatPrice.formatPrice(params.row.avgCost)} / {((params.row.diyPrice - params.row.avgCost / 100) / params.row.diyPrice).toFixed(2) * 100} %</span>
             )
           }
         },
@@ -416,7 +453,7 @@ export default {
           render: (h, params) => {
             let content = null
             if (params.row.diyPrice && params.row.amount) {
-              content = <span>{(+params.row.diyPrice) * (+params.row.amount)}</span>
+              content = <span>${(+params.row.diyPrice) * (+params.row.amount)}</span>
             }
             return content
           }
@@ -430,25 +467,39 @@ export default {
         {
           title: ' ',
           render: (h, params) => {
+            let content = null
+            if (this.productHistory.length) {
+              content = this.productHistory.map(t => {
+                return (
+                  <tr>
+                    <td>{t.edate}</td>
+                    <td>{t.price}</td>
+                  </tr>
+                )
+              })
+            } else {
+              content = (
+                <tr>
+                  <td>/</td>
+                  <td>/</td>
+                </tr>
+              )
+            }
             return (
               <div>
-                <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop"
-                  placement="bottom-end">
+                <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop" placement="bottom-end" on-on-popper-show={e => this.queryHistory(params.row)}>
                   <div slot="content">
                     <table border="1" class="history-table">
                       <tr>
-                        <th>Version</th>
-                        <th>Update Time</th>
+                        <th>时间</th>
+                        <th>价格</th>
                       </tr>
-                      <tr>
-                        <td>0.9.5</td>
-                        <td>2016-10-26</td>
-                      </tr>
+                      {content}
                     </table>
                   </div>
                   <i-button type="primary" size="small">more</i-button>
                 </poptip>
-                <i-button type="error" size="small" on-click={(e) => {
+                <i-button disabled={!this.canEdit} type="error" size="small" on-click={(e) => {
                   this.deleteProduct(params.index)
                 }}>删除
                 </i-button>
@@ -457,11 +508,12 @@ export default {
           }
         }
       ],
-      payType: 'anet', // 支付方式
-      payNote: '支付备注123', // 支付方式
+      payMethod: 'anet', // 支付方式
+      payRemark: '', // 支付方式
       overSell: false, // 是否超卖
       dropShipping: false,
       pay: {
+        amount: '', // 总金额
         itemFee: '', // 商品金额
         taxFee: '', // 税费
         taxRate: '', // 税率
@@ -473,12 +525,14 @@ export default {
         }, // 手动减免
         orderDiscount: false // 是否参与满减
       },
+      handleFee: '0.00',
       discountType: 'num',
       discountNum: '0.00',
       discountPercent: '0.00',
       shippingFee: 0,
       reduceFee: '',
       getFeeClock: null,
+      simuClock: null,
       validForm: {
         store: true,
         address: true,
@@ -488,16 +542,27 @@ export default {
       id: '',
       status: '',
       cdate: '',
-      reviewRecords: []
-    }
-  },
-  computed: {
-    total () {
-      if (this.pay.itemFee) {
-        return (+this.pay.itemFee) + (+this.pay.taxFee) + (+this.pay.rebateFee) + (+this.pay.shippingFee) + (+this.pay.fee.reduceFee) + (+this.pay.fee.handleFee)
-      } else {
-        return 0
-      }
+      reviewRecords: [],
+      recordColumns: [
+        {
+          title: '审核人',
+          render: (h, params) => {
+            return (
+              <div>{params.row.reviewPoint === 'salesManager' ? '销售主管' : '财务'}{params.row.recordStatus === 'refuse' ? '打回' : '通过'}</div>
+            )
+          }
+        }, {
+          title: '时间',
+          render: (h, params) => {
+            return (
+              <div>{params.row.cdate}</div>
+            )
+          }
+        }
+      ],
+      productHistory: [],
+      canEdit: true,
+      computing: false
     }
   },
   methods: {
@@ -541,6 +606,7 @@ export default {
       this.toAddr = row.address
       this.toAddr.zipCode = this.toAddr.zip
       this.showAddressTable = false
+      this.simuTrade()
     },
     editAddress (row) {
       this.showAddressForm = true
@@ -560,18 +626,20 @@ export default {
       this.showAddressForm = true
     },
     submitAddressForm () {
-      if (this.$refs.address.valid()) {
-        this.addressLoading = true
-        this.$http.saveQuotationAddress({
-          ...this.editAddressForm
-        }).then(() => {
-          this.addressLoading = false
-          this.showAddressForm = false
-          this.$Notice.success({
-            title: '保存地址成功'
+      this.$refs.address.valid().then(valid => {
+        if (valid) {
+          this.addressLoading = true
+          this.$http.saveQuotationAddress({
+            ...this.editAddressForm
+          }).then(() => {
+            this.addressLoading = false
+            this.showAddressForm = false
+            this.$Notice.success({
+              title: '保存地址成功'
+            })
           })
-        })
-      }
+        }
+      })
     },
     cancelAddressForm () {
       this.fetchAddress().then(() => {
@@ -612,6 +680,15 @@ export default {
     deleteProduct (index) {
       this.itemList.splice(index, 1)
     },
+    queryHistory (row) {
+      this.$http.fetchQuotationProductHistory({
+        itemId: row.id,
+        storeId: this.store.storeId,
+        skuId: row.sku.id
+      }).then(data => {
+        this.productHistory = data
+      })
+    },
     editCellRender (h, params) {
       let value
       if (params.column.key === 'remark') {
@@ -620,7 +697,7 @@ export default {
         value = params.row[params.column.key]
       }
       return (
-        <i-input on-on-blur={(e) => this.editCell(params.index, params.column.key, e)} value={value} />
+        <i-input on-on-blur={(e) => this.editCell(params.index, params.column.key, e)} value={value} readonly={!this.canEdit}/>
       )
     },
     editCell (rowIndex, key, event) {
@@ -629,6 +706,7 @@ export default {
       } else {
         this.itemList[rowIndex][key] = event.target.value
       }
+      this.simuTrade()
     },
     getFee () {
       clearTimeout(this.getFeeClock)
@@ -643,60 +721,86 @@ export default {
         }
         this.pay.shippingFee = (+this.shippingFee * 100).toFixed()
         this.pay.fee.handleFee = (+this.handleFee * 100).toFixed()
-        // this.pay.taxFee = (this.pay.taxRate * ((+this.pay.itemFee) + (+this.pay.rebateFee) + (+this.pay.shippingFee) + (+this.pay.otherFee))).toFixed()
+        this.simuTrade()
       }, 800)
     },
     simuTrade () {
-      if (this.validateForm()) {
-        let items = this.itemList.map(t => {
-          return {
-            id: t.id,
-            num: t.amount,
-            sku: t.sku,
-            diyPrice: t.diyPrice * 100,
-            note: {remark: t.note.remark}
+      clearTimeout(this.simuClock)
+      this.simuClock = setTimeout(() => {
+        if (this.validateForm()) {
+          if (!this.canEdit && (this.status !== 'financial')) {
+            return false
           }
-        })
-        if (['', 'init', 'salesManager'].indexOf(this.status) !== -1) {
-          delete this.pay.taxRate
-        }
-        let params = {
-          items: items,
-          buyer: {id: this.store.userId},
-          buyerStore: {id: this.store.storeId},
-          shipping: this.shipping,
-          tax: {rate: this.pay.taxRate},
-          pay: Object.assign({}, {payType: 'offline'}, this.pay),
-          note: {remark: this.note.remark},
-          source: 'work',
-          type: 'quotation',
-          orderDiscount: this.pay.orderDiscount,
-          toAddr: this.toAddr,
-          fromAddr: this.fromAddr,
-          ext: {
-            poNo: this.poNo,
-            offlinePayType: 'offline',
-            packingType: this.packingType,
-            offlinePayRemark: this.payNote
+          let items = this.itemList.map(t => {
+            return {
+              id: t.id,
+              num: t.amount,
+              sku: t.sku,
+              // offerId: t.offerId,
+              diyPrice: t.diyPrice * 100,
+              note: {remark: t.note.remark}
+            }
+          })
+          let pay = JSON.parse(JSON.stringify(this.pay))
+          if (['', 'init', 'salesManager'].indexOf(this.status) !== -1) {
+            delete pay.taxRate
+            delete pay.taxFee
+            // delete pay.shippingFee
           }
-        }
-        for (let key in params) {
-          if (params[key] === '') {
-            delete params[key]
+          let shipping = JSON.parse(JSON.stringify(this.shipping))
+          if (this.shippingFee || (this.shippingFee === 0)) {
+            shipping.fee = +this.shippingFee * 100
           }
+          let params = {
+            items: items,
+            buyer: {id: this.store.userId},
+            buyerStore: {id: this.store.storeId},
+            shipping: shipping,
+            tax: {rate: pay.taxRate},
+            pay: Object.assign({}, {payType: 'offline'}, pay),
+            note: {remark: this.orderNote},
+            source: 'quotation',
+            type: 'order',
+            orderDiscount: pay.orderDiscount ? pay.orderDiscount : false,
+            toAddr: this.toAddr,
+            fromAddr: this.fromAddr,
+            fee: this.pay.fee,
+            ext: {
+              poNo: this.poNo,
+              offlinePayType: 'offline',
+              packingType: this.packingType,
+              offlinePayRemark: this.payRemark
+            }
+          }
+          for (let key in params) {
+            if (params[key] === '') {
+              delete params[key]
+            }
+          }
+          this.computing = true
+          this.$http.simulateTrade(params).then(data => {
+            this.computing = false
+            this.pay.itemFee = data.itemFee
+            this.pay.shippingFee = data.shippingFee
+            this.shippingFee = (data.shippingFee / 100).toFixed(2)
+            this.pay.taxFee = data.taxFee
+            if (data.taxRate || (data.taxRate === 0)) {
+              this.pay.taxRate = data.taxRate
+            }
+            this.pay.fee.handleFee = data.handleFee
+            this.pay.fee.reduceFee = data.reduceFee
+            this.pay.rebateFee = data.rebateFee
+            this.pay.amount = this.pay.itemFee + this.pay.shippingFee + this.pay.taxFee + this.pay.rebateFee + this.pay.fee.handleFee + this.pay.fee.reduceFee
+          })
         }
-        this.$http.simulateTrade(params).then(data => {
-          this.pay.itemFee = data.itemFee
-          this.pay.shippingFee = data.shippingFee
-          this.pay.taxFee = data.taxFee
-          this.pay.taxRate = data.taxRate
-          this.pay.otherFee = data.otherFee
-          this.pay.rebateFee = data.rebateFee
-        })
-      }
+      }, 1000)
     },
-    saveQuotation () {
+    saveQuotation (key) {
       if (this.validateForm()) {
+        this.itemList.forEach(t => {
+          t.diyPrice = t.diyPrice * 100
+          t.num = t.amount
+        })
         let params = {
           store: this.store,
           poNo: this.poNo,
@@ -704,63 +808,48 @@ export default {
           toAddr: this.toAddr,
           shipping: this.shipping,
           pay: this.pay,
-          note: this.note,
-          source: 'work',
-          type: 'quotation',
+          orderNote: this.orderNote,
+          packingType: this.packingType,
+          source: 'quotation',
+          type: 'order',
           fromAddr: this.fromAddr,
           sendEmail: false,
           reviewRecords: this.reviewRecords,
-          payType: this.payType,
-          payNote: this.payNote,
+          payMethod: this.payMethod,
+          payRemark: this.payRemark,
           overSell: this.overSell,
-          dropShipping: this.dropShipping
+          dropShipping: this.dropShipping,
+          supplierId: this.supplierId
         }
         if (this.id) {
           params = Object.assign({}, {id: this.id, mid: this.mid, cdate: this.cdate}, params)
         }
-        this.$http.saveQuotation(params).then(data => {
-          this.$Notice.success({
-            title: '保存询价单成功'
+        if (key === 'save') {
+          this.$http.saveQuotation(params).then(data => {
+            this.$Notice.success({
+              title: '保存询价单成功'
+            })
+            this.$router.push({ name: 'quotation_review_list' })
           })
-        })
-        this.$router.push({ name: 'quotation_review_list' })
-      }
-    },
-    sendQuotation () {
-      if (this.validateForm()) {
-        let params = {
-          store: this.store,
-          poNo: this.poNo,
-          itemList: this.itemList,
-          toAddr: this.toAddr,
-          shipping: this.shipping,
-          pay: this.pay,
-          note: this.note,
-          source: 'work',
-          type: 'quotation',
-          fromAddr: this.fromAddr,
-          sendEmail: false,
-          reviewRecords: this.reviewRecords,
-          payType: this.payType,
-          payNote: this.payNote,
-          overSell: this.overSell,
-          dropShipping: this.dropShipping
-        }
-        if (this.id) {
-          params = Object.assign({}, {id: this.id}, params)
-        }
-        this.$http.sendQuotation(params).then(data => {
-          this.$Notice.success({
-            title: '保存询价单成功'
+        } else if (key === 'send') {
+          this.$http.sendQuotation(params).then(data => {
+            this.$Notice.success({
+              title: '提交审核成功'
+            })
+            this.$router.push({ name: 'quotation_review_list' })
           })
-          this.$router.push({ name: 'quotation_review_list' })
-        })
+        } else if (key === 'email') {
+          params.sendEmail = true
+          console.log('email')
+        } else if (key === 'download') {
+          console.log('download')
+        }
       }
     },
     getFromAddr () {
       this.$http.getSupplyInfo().then(data => {
         this.fromAddr = data[0].address
-        this.supplyId = data[0].id
+        this.supplierId = data[0].id
       })
     },
     validateForm () {
@@ -786,20 +875,58 @@ export default {
       this.$http.getQuotation({
         id: id
       }).then(data => {
+        this.fromAddr = data.fromAddr
+        this.supplierId = data.supplierId
         this.store = data.store
         this.poNo = data.poNo
         this.itemList = data.itemList
         this.toAddr = data.toAddr
         this.shipping = data.shipping
-        this.fromAddr = data.fromAddr
         this.sendEmail = data.sendEmail
+        this.orderNote = data.orderNote
         this.mid = data.mid
+        this.packingType = data.packingType
         this.status = data.status
         this.id = data.id
         this.cdate = data.cdate
-        this.payType = data.payType
+        this.payMethod = data.payMethod
+        this.payRemark = data.payRemark
         this.pay = data.pay
+        this.pay.orderDiscount = data.orderDiscount
+        this.discountNum = -(data.pay.fee.reduceFee / 100).toFixed(2)
+        this.handleFee = (data.pay.fee.handleFee / 100).toFixed(2)
         this.reviewRecords = data.reviewRecords
+        this.shippingFee = (data.pay.shippingFee / 100).toFixed(2)
+        this.pay.amount = (+this.pay.itemFee) + (+this.pay.shippingFee) + (+this.pay.taxFee) + (+this.pay.rebateFee) + (+this.pay.fee.handleFee) + (+this.pay.fee.reduceFee)
+        if (['salesManager', 'financial', 'enabled'].indexOf(this.status) !== -1) {
+          this.canEdit = false
+        }
+        this.itemList.forEach(t => {
+          t.diyPrice = (t.diyPrice / 100).toFixed(2)
+        })
+        let ids = this.itemList.map(t => {
+          return {
+            itemId: t.id,
+            skuId: t.sku.id
+          }
+        })
+        console.log(ids)
+        this.$http.getProductByIds({
+          ids: ids,
+          supplierId: this.supplierId
+        }).then(data => {
+          this.itemList.forEach(t => {
+            data.forEach(v => {
+              if ((t.id === v.id) && (t.sku.id === v.itemSku.id)) {
+                t.avgCost = v.itemSku.avgCost
+                t.basePrice = v.itemSku.basePrice
+                t.offerPrice = v.itemSku.offerPrice
+                t.num = v.itemSku.num
+                t.vipPrice = v.itemSku.vipPrice
+              }
+            })
+          })
+        })
       })
     },
     agree () {
@@ -807,14 +934,18 @@ export default {
       this.$Modal.confirm({
         title: '通过备注',
         render: (h) => {
-          return <i-input style="margin-top: 12px;" type="textarea" rows="2" value={content} autofocus="true" placeholder="Please enter note..." on-input={val => { content = val }}></i-input>
+          return <i-input style="margin-top: 12px;" type="textarea" rows={2} value={content} autofocus={true} placeholder="Please enter note..." on-input={val => { content = val }}></i-input>
         },
         onOk: () => {
-          this.$http.agreeQuotation({
+          let params = {
             id: this.id,
             status: this.status,
             content: content
-          }).then(() => {
+          }
+          if (this.status === 'financial') {
+            params.pay = this.pay
+          }
+          this.$http.agreeQuotation(params).then(() => {
             this.$Notice.success({
               title: '操作成功'
             })
@@ -828,27 +959,36 @@ export default {
       this.$Modal.confirm({
         title: '打回备注',
         render: (h) => {
-          return <i-input style="margin-top: 12px;" type="textarea" rows="2" value={content} autofocus="true" placeholder="Please enter note..." on-input={val => { content = val }}></i-input>
+          return <i-input style="margin-top: 12px;" type="textarea" rows={2} value={content} autofocus={true} placeholder="Please enter note..." on-input={val => { content = val }}></i-input>
         },
         onOk: () => {
-          this.$http.refuseQuotation({
-            id: this.id,
-            status: this.status,
-            content: content,
-            reviewStatus: 'refuse'
-          }).then(() => {
-            this.$Notice.success({
-              title: '操作成功'
+          if (content) {
+            this.$http.refuseQuotation({
+              id: this.id,
+              status: this.status,
+              content: content,
+              reviewStatus: 'refuse'
+            }).then(() => {
+              this.$Notice.success({
+                title: '操作成功'
+              })
+              this.$router.push({name: 'quotation_review_list'})
             })
-            this.$router.push({name: 'quotation_review_list'})
-          })
+          } else {
+            this.$Modal.error({
+              title: '请输入备注'
+            })
+          }
         }
       })
     }
   },
   beforeMount () {
-    this.getFromAddr()
-    if (this.$route.params.id) this.getDetail(this.$route.params.id)
+    if (this.$route.params.id) {
+      this.getDetail(this.$route.params.id)
+    } else {
+      this.getFromAddr()
+    }
   }
 }
 </script>
@@ -995,12 +1135,19 @@ export default {
         }
       }
     }
+    .fee{
+      color: #FF3B41;
+    }
+    .total .fee{
+      font-weight: bold;
+      font-size: 14px;
+    }
   }
   .buttons{
     margin-bottom: 24px;
   }
   .empty{
-    border: 1px solid red;
+    border: 1px solid #FF3B41;
     position: relative;
     margin-bottom: 32px;
   }
@@ -1008,7 +1155,7 @@ export default {
     position: absolute;
     top: 100%;
     left: 0;
-    color: red;
+    color: #FF3B41;
   }
   .installer-card.empty::after{
     content: '请选择工程商';

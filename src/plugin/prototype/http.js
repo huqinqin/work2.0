@@ -318,7 +318,6 @@ export default {
     return axios.post('base/store/group')
   },
   saveQuotation (params) {
-    console.log(params)
     return axios.post('order/quotation/saveOrUpdate', params)
   },
   fetchQuotationAddress (params) {
@@ -330,11 +329,16 @@ export default {
   fetchQuotationProduct (params) {
     return axios.post('product/item/queryItem', params)
   },
+  fetchQuotationProductHistory (params) {
+    return axios.post('trade/order/getItemHisPrice', params)
+  },
+  getProductByIds (params) {
+    return axios.post('product/item/getItems', params)
+  },
   queryQuotationInstaller (params) {
     return axios.post('base/store/queryStore', params)
   },
   simulateTrade (params) {
-    console.log(params)
     return axios.post('trade/trade/simulateTrade', params)
   },
   getSupplyInfo () {
