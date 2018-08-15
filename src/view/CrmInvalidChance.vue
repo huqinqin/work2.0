@@ -334,19 +334,14 @@ export default {
     selectSellOk () {},
     cancel () {},
     invalidBussinessExport () {
-      /* this.$http.invalidBussinessListExport({
-        email: this.email ? this.email : '',
-        name: this.company ? this.company : '',
-        industryJoin: this.trade ? this.trade : '',
-        beginTime: new Date(this.dateValue[0]).getTime(),
-        endTime: new Date(this.dateValue[1]).getTime()
-      }).then((data) => {
-        // this.installerdata = data.list;
-      }) */
-      let s = '/crm/export/invalid/business?name=' + this.company + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime() +
-        '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
-      window.open(s)
-      // window.open('http://www/baidu.com')
+      if (this.dateValue) {
+        let s = '/crm/export/invalid/business?name=' + this.company + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime() +
+         '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
+        window.open(s)
+      } else {
+        let s = '/crm/export/invalid/business?name=' + this.company + '&typeJoin=' + ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) + '&email=' + this.email
+        window.open(s)
+      }
     },
     handleChange (date) {
       this.dateValue = date

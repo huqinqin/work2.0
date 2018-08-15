@@ -162,6 +162,7 @@ export default {
         mail: '',
         type: '',
         size: [],
+        total1: 0,
         num: '',
         industry: '',
         industryType: '',
@@ -195,9 +196,17 @@ export default {
       addModal: false,
       installerList: [
         {
-          type: 'selection',
+          type: '',
           width: 60,
-          align: 'center'
+          align: 'center',
+          key: 'raido',
+          render: (h, params) => {
+            return (
+              <div>
+                <input type="radio" name="radio" onClick= {() => { this.radio(params.row) } }></input>
+              </div>
+            )
+          }
         },
         {
           title: 'cust id',
@@ -216,12 +225,12 @@ export default {
           key: 'lastName'
         },
         {
-          title: 'isCount',
-          key: 'account'
+          title: 'email',
+          key: 'email'
         },
         {
-          title: 'time',
-          key: 'createTime'
+          title: '联系电话',
+          key: 'telephone'
         }
       ],
       installerdata: [],
@@ -230,7 +239,8 @@ export default {
       firstNameSelect: '',
       lastNameSelect: '',
       data: {},
-      loading: false
+      loading: false,
+      page: 1
     }
   },
   methods: {
@@ -267,36 +277,10 @@ export default {
       }).then((data) => { console.log(data) })
     },
     cancleSelect () {},
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
-    },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
+      this.page = page
+      this.selectInstallerEvent()
     },
     selectInstaller () {
       this.addModal = true
@@ -321,7 +305,7 @@ export default {
           }).then((data) => {
             // this.custId = data.data
             this.loading = false
-            this.$router.push({name: 'Crm Check', params: data.id})
+            this.$router.push({name: 'Crm Check', params: data})
           }, (error) => {
             setTimeout(() => {
               this.loading = false
@@ -367,13 +351,20 @@ export default {
         custCode: this.custIdSelect ? this.custIdSelect : null,
         fisrtName: this.firstName ? this.firstName : null,
         lastName: this.lastName ? this.lastName : null,
-        name: this.companySelect ? this.companySelect : null
+        name: this.companySelect ? this.companySelect : null,
+        page: this.page,
+        rows: 10
       }).then((data) => {
         this.installerdata = data.list
+        /* this.total1 = data.total */
       })
     },
     cancleBack () {
       history.back()
+    },
+    radio (value) {
+      this.selection1 = value
+      // console.log(this.selection1);
     }
   },
   components: {

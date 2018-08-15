@@ -290,6 +290,10 @@ export default {
   batchSales (params) {
     return axios.post('/crm/bupoll/save', params)
   },
+  /* 临时池批量分配确定 */
+  batchSalesSure (params) {
+    return axios.post('/crm/bupoll/common/batch/allot', params)
+  },
   /* 分配纪录点击进去后的列表 */
   allocationSales (params) {
     return axios.post('/crm/bupool/listBusinessPoolRecord', params)
