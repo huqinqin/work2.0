@@ -98,7 +98,7 @@ const certDetail = Mock.mock({
   }
 })
 const shopList = Mock.mock({
-  'list|10': [{
+  'list|2': [{
     'id|+1': '@id',
     name: '@name',
     account: '@name',
@@ -109,7 +109,14 @@ const shopList = Mock.mock({
       email: '@email',
       phone: '@integer(20000000,90000000)'
     }],
-    phone: '@integer(20000000,90000000)'
+    phone: '@integer(20000000,90000000)',
+    'userResponses|2': [{
+      'id|+1': '@id',
+      firstName: '@first',
+      lastName: '@last',
+      email: '@email',
+      phone: '@integer(20000000,90000000)'
+    }]
   }]
 })
 const shopDetail = Mock.mock({
@@ -147,6 +154,15 @@ const installerList = Mock.mock({
   }]
 })
 export default {
+  queryStore () {
+    const data = shopList.list
+    console.log(data)
+    return {
+      code: '000000',
+      data,
+      msg: ''
+    }
+  },
   listStore () {
     return {
       code: '000000',

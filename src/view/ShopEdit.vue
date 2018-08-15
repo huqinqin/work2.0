@@ -1,55 +1,53 @@
 <template>
   <card>
     <i-form :model="form" label-position="top" :rules="rules" ref="form">
-      <row :gutter="16">
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+      <div class="layout-column">
+        <div class="layout-cell">
           <form-item label="门店名称" prop="storeName">
             <i-input v-model="form.storeName" type="text" placeholder="门店名称" ></i-input>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="门店编码" prop="storeCode">
             <i-input v-model="form.storeCode" type="text" placeholder="门店编码" ></i-input>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="公司电话" prop="storeExt.mobile">
             <i-input v-model="form.storeExt.mobile" type="text" placeholder="公司电话" ></i-input>
           </form-item>
-        </i-col>
-      </row>
-      <row>
-        <i-col :span="24">
-          <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
-        </i-col>
-      </row>
-      <row v-for="(contact, index) in form.contact" :key="index">
-        <i-col :span="5">
+        </div>
+      </div>
+      <div class="layout-column">
+        <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
+      </div>
+      <div class="layout-column" v-for="(contact, index) in form.contact" :key="index">
+        <div class="layout-cell">
           <form-item label="first name" :prop="'contact.' + index + '.firstName'" :rules="rule">
             <i-input v-model="contact.firstName" type="text" placeholder="联系人" ></i-input>
           </form-item>
-        </i-col>
-        <i-col :span="5" offset="1">
+        </div>
+        <div class="layout-cell" offset="1">
           <form-item label="last name" :prop="'contact.' + index + '.lastName'" :rules="rule">
             <i-input v-model="contact.lastName" type="text" placeholder="联系人" ></i-input>
           </form-item>
-        </i-col>
-        <i-col :span="5" offset="1">
+        </div>
+        <div class="layout-cell" offset="1">
           <form-item label="手机" :prop="'contact.' + index + '.phone'" :rules="rule">
             <i-input v-model="contact.phone" type="text" placeholder="手机" ></i-input>
           </form-item>
-        </i-col>
-        <i-col :span="5" offset="1">
+        </div>
+        <div class="layout-cell" offset="1">
           <form-item label="邮箱" :prop="'contact.' + index + '.email'" :rules="rule">
             <i-input v-model="contact.email" type="text" placeholder="邮箱" ></i-input>
           </form-item>
-        </i-col>
-        <i-col :span="1">
+        </div>
+        <div>
           <form-item label=" " style="text-align: center;">
             <Icon type="ios-close" color="red" @click="delContact(index)"></Icon>
           </form-item>
-        </i-col>
-      </row>
+        </div>
+      </div>
       <row>
          <i-col :span="5">
           <i-button @click="addContact">新增联系人</i-button>

@@ -1,51 +1,46 @@
 <template>
   <div class="details">
-    <Row :gutter="16">
-      <i-col span="12">
-        <Card>
-          <p slot="title">类目结构</p>
+    <Card>
+      <div class="layout-column">
+        <div class="layout-cell flex-item">
           <Tree :data="treeData" :render="renderContent"></Tree>
-        </Card>
-      </i-col>
-      <i-col span="12">
-        <Card>
-          <p slot="title">类目预览</p>
-          <Form :model="curCategory" :label-width="80">
-            <FormItem label="上级类目">
-              <Input v-model="curCategory.parentName" placeholder="上级类目" readonly="readonly" />
-            </FormItem>
-            <FormItem label="类目名称">
-              <Input v-model="curCategory.name" placeholder="输入类目名称"/>
-            </FormItem>
-            <FormItem label="类目排序">
-              <Input  v-model="curCategory.onum" placeholder="输入1~99"/>
-            </FormItem>
-            <FormItem label="">
-              <Upload
-                multiple
-                type="drag"
-                action="//jsonplaceholder.typicode.com/posts/">
-                <div style="padding: 20px 0">
-                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                    <p>Click or drag files here to upload</p>
-                </div>
-              </Upload>
-            </FormItem>
-            <FormItem>
-              <Button type="primary" @click="saveCategory">保存</Button>
-              <template v-if="curCategoryId">
-                <Button type="primary" @click="showPropTable(true)">SKU属性</Button>
-                <Button type="primary" @click="showPropTable(false)">非SKU属性</Button>
-              </template>
-              <Button type="error">删除</Button>
-            </FormItem>
-          </Form>
-        </Card>
-      </i-col>
-      <i-col :span="24">
-        <ProductAttribute></ProductAttribute>
-      </i-col>
-    </Row>
+        </div>
+        <div class="layout-cell flex-item">
+          <LayoutPropItem v-for="sku in skus" :data="sku" :key="sku.id">
+            <a href="#">删除SKU</a>
+          </LayoutPropItem>
+          <i-button type="primary" style="float: right;">新增</i-button>
+        </div>
+      </div>
+    </Card>
+    <modal v-model="showCateModal" title="类目">
+      <Form :model="curCategory" :label-width="80">
+        <FormItem label="上级类目">
+          <Input v-model="curCategory.parentName" placeholder="上级类目" readonly="readonly" />
+        </FormItem>
+        <FormItem label="类目名称">
+          <Input v-model="curCategory.name" placeholder="输入类目名称"/>
+        </FormItem>
+        <FormItem label="类目排序">
+          <Input  v-model="curCategory.onum" placeholder="输入1~99"/>
+        </FormItem>
+        <FormItem label="">
+          <Upload
+            multiple
+            type="drag"
+            action="//jsonplaceholder.typicode.com/posts/">
+            <div style="padding: 20px 0">
+                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                <p>Click or drag files here to upload</p>
+            </div>
+          </Upload>
+        </FormItem>
+        <FormItem>
+          <Button type="primary" @click="saveCategory">保存</Button>
+          <Button type="error">删除</Button>
+        </FormItem>
+      </Form>
+    </modal>
   </div>
 </template>
 <script>
@@ -53,10 +48,14 @@ import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'ProductCategory',
   components: {
+    LayoutPropItem: () => import('@/view/components/PropItem.vue'),
+    LayoutTags: () => import('@/view/components/LayoutTags.vue'),
     ProductAttribute: () => import('./ProductAttribute.vue')
   },
   data () {
     return {
+      skus: [],
+      showCateModal: false
     }
   },
   computed: {
@@ -100,6 +99,9 @@ export default {
       )
     },
     check (root, node, data) {
+      this.$http.fetchSkuProps({cateId: data.value}).then(data => {
+        this.skus = data.list
+      })
       this.getCategory(data.value)
     },
     append (event, data) {

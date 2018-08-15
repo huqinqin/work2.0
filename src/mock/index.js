@@ -11,6 +11,7 @@ import store from './store'
 import order from './order'
 import setting from './setting'
 import quotation from './quotation'
+import coupon from './coupon'
 
 const options = Mock.mock({
   'data|9': [
@@ -21,6 +22,7 @@ const options = Mock.mock({
   ]
 })
 
+mapMock('/item/offer/coupon', coupon)
 mapMock('/personnel', personnel)
 mapMock('/user', login)
 mapMock('/item', product)

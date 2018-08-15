@@ -165,6 +165,9 @@ export default {
         content: '销售撤回',
         status: row.status,
         reviewStatus: 'recall'
+      }).then(() => {
+        if (this.filter.status === '') delete this.filter.status
+        this.query()
       })
     },
     detail (id) {

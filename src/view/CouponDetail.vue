@@ -1,6 +1,6 @@
 <template>
   <div>
-    <card>
+    <card style="margin-bottom: 16px;">
       <p slot="title">
         优惠券信息
       </p>
@@ -43,7 +43,7 @@
       </p>
       <i-form>
         <form-item><i-input placeholder="订单编号"></i-input></form-item>
-        <form-item><i-button type="primary">搜索</i-button></form-item>
+        <form-item><i-button type="primary" @click="queryUse">搜索</i-button></form-item>
       </i-form>
       <i-table :columns="columns" :data="list" size="small" ref="table"></i-table>
       <div style="overflow: hidden;padding-top: 10px;height: 40px;padding-right: 4px;">
@@ -55,12 +55,13 @@
   </div>
 </template>
 <script>
-import mixin from '@/mixins/list'
 export default {
   name: 'CouponDetail',
-  mixins: [mixin],
   data () {
     return {
+      url: 'Coupon',
+      form: {},
+      list: [],
       columns: [{
         title: '工程商',
         key: 'installer'
@@ -74,6 +75,26 @@ export default {
         title: '订单编号'
       }]
     }
+  },
+  methods: {
+    queryUse () {
+      this.$http.fetchCouponUse({
+        useStatus: 'enabled',
+        orderNo: ''
+      }).then(data => {
+        this.list = data
+      })
+    },
+    query () {
+      this.$http.getCoupon({
+        id: this.$route.params.id
+      }).then(data => {
+        this.form = data
+      })
+    }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>

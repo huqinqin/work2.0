@@ -6,7 +6,8 @@ export default {
   state: {
     account: '',
     email: '',
-    avatar: ''
+    avatar: '',
+    storeId: ''
   },
   mutations: {
     setUserInfo (state, data) {
@@ -19,6 +20,7 @@ export default {
         state.account = data.account
         state.email = data.email
         state.avatar = data.avatar
+        state.storeId = data.storeId
       } else {
         // router.push({ name: 'login' })
       }

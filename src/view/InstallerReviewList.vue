@@ -53,9 +53,6 @@ import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
   name: 'InstallerReviewList',
-  components: {
-    CodeTable: () => import('@/components/CodeTable')
-  },
   data () {
     return {
       url: 'Review',
