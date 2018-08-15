@@ -226,7 +226,7 @@
                 {{ pay.fee.reduceFee | formatPrice}}
               </div>
               <RadioGroup v-model="discountType" v-else>
-                <Radio label="num"><Input v-model="discountNum" @on-change="getFee" />$</Radio>
+                <Radio label="num">$<Input v-model="discountNum" @on-change="getFee" /></Radio>
                 <Radio label="percent"><Input v-model="discountPercent" @on-change="getFee" />%</Radio>
               </RadioGroup>
             </div>
@@ -651,7 +651,7 @@ export default {
         conditions: query
       }).then(data => {
         return data.map(t => {
-          t.itemSku.skuid = t.itemSku.id
+          t.itemSku.sku = {id: t.itemSku.id}
           let item = {
             ...t.itemSku,
             ...t,
