@@ -1,42 +1,42 @@
 <template>
   <card>
     <i-form :model="form" label-position="top" :rules="rules" ref="form">
-      <row :gutter="16">
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+      <div class="layout-column">
+        <div class="layout-cell">
           <form-item label="商品品牌" prop="brandId">
-            <i-select v-model="form.brandId">
+            <i-select v-model="form.brandId" style="width: 100%">
               <i-option v-for="item in brand" :value="item.key" :key="item.key">{{item.value}}</i-option>
             </i-select>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="类目" prop="cateId" class="ivu-form-item-required">
             <BaseCategory v-model="form.cateId" @input="getProps"></BaseCategory>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="商品类型" prop="kind">
             <i-select v-model="form.kind">
               <i-option v-for="item in kind" :key="item" :value="item">{{ item }}</i-option>
             </i-select>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="商品排序" prop="onum" class="ivu-form-item-required">
             <i-input v-model="form.onum" type="text" placeholder="商品排序"></i-input>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="商品名称" prop="title">
             <i-input v-model="form.title" type="text" placeholder="商品名称"></i-input>
           </form-item>
-        </i-col>
-        <i-col :lg="6" :md="8" :sm="12" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="是否上架" prop="status">
             <i-switch v-model="form.status" true-value="onsale" false-value="enabled" />
           </form-item>
-        </i-col>
-        <i-col :lg="12" :md="24" :sm="24" :xs="24">
+        </div>
+        <div class="layout-cell">
           <form-item label="商品关键词" prop="keyword">
             <Tag v-for="(item, index) in form.keyword" fade color="blue" :key="index" :name="item" closable
                  @on-close="handleCloseTag(index)">{{ item }}
@@ -44,8 +44,10 @@
             <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAddTag" @blur="handleAddTag"
                    v-model="tag">
           </form-item>
-        </i-col>
-        <i-col :span="24" style="height: auto;">
+        </div>
+      </div>
+      <div class="layout-column">
+        <div class="layout-cell flex-item" style="height: auto;">
           <form-item label="商品sku" prop="skus" class="ivu-form-item-required">
             <i-button type="primary" @click="showSku">选择属性</i-button>
             <Modal
@@ -63,8 +65,10 @@
             </Modal>
             <LayoutProductAttribute v-model="form.skus"></LayoutProductAttribute>
           </form-item>
-        </i-col>
-        <i-col :span="24">
+        </div>
+      </div>
+      <div class="layout-column">
+        <div class="layout-cell">
           <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
             <i-form label-position="left" class="prop-form">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
@@ -78,13 +82,11 @@
               </form-item>
             </i-form>
           </form-item>
-        </i-col>
-        <i-col :span="24">
+        </div>
+      </div>
+      <div class="layout-column">
+        <div class="layout-cell flex-item">
           <form-item label="商品图片" prop="imgUrls" class="ivu-form-item-required">
-            <!--<div>-->
-              <!--<i-button @click="upload" type="primary">选择图片</i-button>-->
-              <!--<i-button @click="upload">上传图片</i-button>-->
-            <!--</div>-->
             <div class="demo-upload-list" v-for="(item, index) in imgList" :key="index"
                  :class="{'default': index === 0}">
               <template v-if="item.status === 'finished'">
@@ -123,8 +125,10 @@
             </Modal>
             <!--<BaseUploadProductImgs v-model="imgList"></BaseUploadProductImgs>-->
           </form-item>
-        </i-col>
-        <i-col :span="24">
+        </div>
+      </div>
+      <div class="layout-column">
+        <div class="layout-cell flex-item">
           <form-item label="商品详情" prop="detail">
             <quill-editor v-model="form.detail"
                           ref="myQuillEditor"
@@ -154,12 +158,16 @@
             <Spin size="large" fix v-if="spinShow"></Spin>
             <!--<base-editor :content="content" :height="500" ref="content"></base-editor>-->
           </form-item>
-        </i-col>
-      </row>
-      <form-item>
-        <i-button type="primary" @click="submit">Submit</i-button>
-        <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
-      </form-item>
+        </div>
+      </div>
+      <div class="layout-column">
+        <div class="layout-cell flex-item">
+          <form-item>
+            <i-button type="primary" @click="submit">Submit</i-button>
+            <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
+          </form-item>
+        </div>
+      </div>
     </i-form>
   </card>
 </template>

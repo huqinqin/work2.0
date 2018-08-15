@@ -16,6 +16,47 @@
         <Page @on-change="changePage" :total="total" size="small" show-elevator show-sizer></Page>
       </div>
     </div>
+    <Modal
+        v-model="modal"
+        @on-ok="sendCoupon"
+        title="赠券">
+        <i-form>
+          <form-item>
+            <i-select v-model="sendForm.source" style="width: 100%;">
+              <i-option value="lts">门店</i-option>
+              <i-option value="installer">工程商</i-option>
+            </i-select>
+          </form-item>
+          <form-item>
+            <Select v-model="sendForm.ids" multiple style="width:100%">
+              <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
+            </Select>
+          </form-item>
+          <form-item>
+            <Row>
+              <i-col span="4">
+                <Select v-model="installerType" style="width: 100%;">
+                  <Option value="storeCode">Cust ID</Option>
+                  <Option value="storeName">公司名称</Option>
+                  <Option value="account">账号</Option>
+                  <Option value="mobile">电话</Option>
+                  <Option value="contactEmail">邮箱</Option>
+                </Select>
+              </i-col>
+              <i-col span="20">
+                <QueryInput :remote="queryInstaller" @change="checkInstaller" :value="installerValue">
+                  <template slot-scope="props">
+                    {{props.item.storeName}} - {{props.item.storeCode}}
+                  </template>
+                </QueryInput>
+              </i-col>
+            </Row>
+            <Row>
+
+            </Row>
+          </form-item>
+        </i-form>
+    </Modal>
   </card>
 </template>
 <script>
@@ -26,6 +67,14 @@ export default {
   data () {
     return {
       url: 'Coupon',
+      modal: false,
+      installerType: '',
+      installerValue: '',
+      sendForm: {
+        offerId: '',
+        source: 'installer',
+        ids: []
+      },
       filter: {
         name: '',
         couponType: 'common',
@@ -55,27 +104,62 @@ export default {
         key: 'amount'
       }, {
         title: '有效期',
-        render (h, params) {
+        render: (h, params) => {
           return (
-            <span>null</span>
+            <span>{params.row.valid}</span>
           )
         }
       }, {
         title: '状态',
-        key: status
+        key: status,
+        render: (h, params) => {
+          return (
+            <span>{params.row.isExpire ? '已过期' : '未过期'}</span>
+          )
+        }
       }, {
         title: '操作',
-        render (h, params) {
-          return (
-            <div>
-              <i-button type="primary" size="small">查看</i-button>
-              <i-button type="success" size="small">赠券</i-button>
-              <i-button type="error" size="small">删除</i-button>
-            </div>
-          )
+        render: (h, params) => {
+          let content = []
+          content.push(<i-button type="primary" size="small" onClick={() => { this.toCouponDetail(params.row.id) }}>查看</i-button>)
+          if (params.row.isGive) {
+            content.push(<i-button type="success" size="small" onClick={() => { this.showSendModal(params.row.id) }}>赠券</i-button>)
+          }
+          if (params.row.isDel) {
+            content.push(<i-button type="error" size="small" onClick={() => { this.deleteItem(params.row.id) }}>删除</i-button>)
+          }
+          return (<div>{content}</div>)
         }
       }]
     }
+  },
+  methods: {
+    sendCoupon () {
+      return this.$http.sendCoupon(this.sendForm).then(data => {
+        this.$Notice.success({
+          title: '发送成功',
+          desc: ''
+        })
+      })
+    },
+    checkInstaller (item) {
+      this.sendForm.ids.push(item.id)
+    },
+    queryInstaller (query) {
+      return this.$http.queryQuotationInstaller({
+        [this.installerType]: query
+      })
+    },
+    toCouponDetail (id) {
+      this.$router.push({name: 'coupon_detail', params: {id}})
+    },
+    showSendModal (id) {
+      this.sendForm.offerId = id
+      this.modal = true
+    }
+  },
+  beforeMount () {
+    this.query()
   }
 }
 </script>

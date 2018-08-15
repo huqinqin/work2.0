@@ -42,6 +42,14 @@ const productList = Mock.mock({
     }]
   }
 })
+const itemHistory = Mock.mock({
+  'data': {
+    'list|4-10': [{
+      cdate: '@date',
+      price: '@integer(100, 1000)'
+    }]
+  }
+})
 const product = Mock.mock({
   'data': {
     'id': '@id',
@@ -213,6 +221,13 @@ export default {
       msg: ''
     }
   },
+  queryHistory () {
+    return {
+      code: '000000',
+      ...itemHistory,
+      msg: ''
+    }
+  },
   brand: {
     list () {
       return {
@@ -264,6 +279,17 @@ export default {
       return {
         code: '000000',
         ...productAttributeList,
+        msg: ''
+      }
+    },
+    addPropsTag (req) {
+      const data = JSON.parse(req.body)
+      return {
+        code: '000000',
+        data: {
+          id: 9999,
+          name: data.name
+        },
         msg: ''
       }
     }

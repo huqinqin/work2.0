@@ -64,10 +64,10 @@
             </form-item>
           </div>
           <div class="layout-cell">
-            <form-item label="日期范围" prop="effectiveTime" v-if="validType === 'range'">
+            <form-item label="日期范围" prop="effectiveTime" v-if="form.validType === 'range'">
               <DatePicker type="daterange" :start-date="new Date()" placeholder="Select date" @on-change="setStartAndEndTime"></DatePicker>
             </form-item>
-            <form-item label="固定天数" prop="effectiveTime" v-if="validType === 'day'">
+            <form-item label="固定天数" prop="effectiveTime" v-if="form.validType === 'day'">
               <i-input v-model="form.couponRule.effectiveTime">
                 <span slot="append">天</span>
               </i-input>
@@ -83,21 +83,21 @@
             </form-item>
           </div>
         </div>
-        <div class="layout-column" v-if="includes.indexOf(form.offerCouponInclude.type) === 1">
+        <div class="layout-column" v-if="includes.map(item => item.key).indexOf(form.offerCouponInclude.type) === 1">
           <div class="layout-cell flex-item">
             <i-button type="primary" style="margin-bottom: 16px;" @click="addProducts">选择商品</i-button>
-            <i-table :columns="columns" :data="selProducts"></i-table>
+            <i-table :columns="columns" :data="form.selProducts"></i-table>
           </div>
         </div>
-        <div class="layout-column" v-if="includes.indexOf(form.offerCouponInclude.type) === 2">
+        <div class="layout-column" v-if="includes.map(item => item.key).indexOf(form.offerCouponInclude.type) === 2">
           <div class="layout-cell flex-item">
             购买以下分类商品可使用优惠券抵扣金额  已选中{{cateIds.length}}个分类
             <Tree :data="$store.state.options.cates" show-checkbox :render="renderTree" @on-check-change="setSelCates"></Tree>
           </div>
         </div>
-        <div class="layout-column" v-if="includes.indexOf(form.offerCouponInclude.type) === 3">
+        <div class="layout-column" v-if="includes.map(item => item.key).indexOf(form.offerCouponInclude.type) === 3">
           <div class="layout-cell flex-item">
-            <checkbox-group v-model="brandIds">
+            <checkbox-group v-model="form.brandIds">
               <checkbox v-for="item in $store.state.options.brands" :label="item.key" :key="item.key">{{item.value}}</checkbox>
             </checkbox-group>
           </div>
@@ -116,7 +116,7 @@
         </div>
       </i-form>
     </card>
-    <LayoutSelectProduct v-model="showSelProduct" @select="setSelProducts" :sel-ids="selProducts.map(item => item.id)"></LayoutSelectProduct>
+    <LayoutSelectProduct v-model="showSelProduct" @select="setSelProducts" :sel-ids="form.selProducts.map(item => item.id)"></LayoutSelectProduct>
   </div>
 </template>
 <script>
@@ -125,14 +125,13 @@ export default {
   data () {
     return {
       showSelProduct: false,
-      includeType: '全场通用',
       standard: 10,
-      brandIds: [],
-      selCates: [],
-      selProducts: [],
       form: {
+        brandIds: [],
+        selCates: [],
+        selProducts: [],
         validType: 'range',
-        explain: '',
+        explains: '',
         couponRule: {
           name: '',
           type: 'common',
@@ -200,14 +199,12 @@ export default {
   },
   computed: {
     cateIds () {
-      return this.selCates.filter(item => !item.children).map(item => item.id)
+      return this.form.selCates.filter(item => !item.children).map(item => item.id)
     }
   },
   methods: {
     sumbit () {
-      this.$http.saveCoupon(this.form, {
-        cateIds: this.cateIds, brandIds: this.brandIds, itemIds: this.selProducts.map(item => item.id)
-      }).then(data => {
+      this.$http.saveCoupon(this.form).then(data => {
         this.$Notice.success({
           title: 'Save success',
           desc: ''
@@ -227,13 +224,13 @@ export default {
       this.showSelProduct = true
     },
     setSelProducts (list) {
-      this.selProducts = this.selProducts.concat(list)
+      this.form.selProducts = this.form.selProducts.concat(list)
     },
     setSelCates (list) {
-      this.selCates = list
+      this.form.selCates = list
     },
     delSelProducts (index) {
-      this.selProducts.splice(index, 1)
+      this.form.selProducts.splice(index, 1)
     }
   }
 }

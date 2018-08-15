@@ -14,7 +14,10 @@
         <i-input v-model="filter.mobile" type="text" placeholder="联系方式" ></i-input>
       </form-item>
       <form-item prop="status">
-        <i-select v-model="filter.status" type="text" placeholder="状态" ></i-select>
+        <i-select v-model="filter.status" type="text" clearable  placeholder="状态" >
+          <i-option value="enabled">激活</i-option>
+          <i-option value="freezed">冻结</i-option>
+        </i-select>
       </form-item>
       <form-item>
         <i-button type="primary" @click="query">查询</i-button>

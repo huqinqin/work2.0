@@ -10,10 +10,16 @@ export default {
   },
   methods: {
     query () {
+      const filter = {}
+      for (const key in this.filter) {
+        if (this.filter.hasOwnProperty(key) && this.filter[key] !== '') {
+          filter[key] = this.filter[key]
+        }
+      }
       this.$http[ 'fetch' + this.url ]({
         rows: this.rows,
         page: this.page,
-        ...this.filter
+        ...filter
       }).then(data => {
         console.log(data)
         this.list = data.list

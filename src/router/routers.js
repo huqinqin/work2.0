@@ -159,18 +159,18 @@ export default [
       { path: 'product_list', meta: { icon: 'lock-combination', title: '商品管理' }, name: 'product_list', component: () => import('@/view/ProductList.vue') },
       // { path: 'product_record', meta: { icon: 'lock-combination', title: '商品修改记录' }, name: 'product_record', component: () => import('@/view/ProductRecord.vue') },
       // { path: 'product_trash', meta: { icon: 'lock-combination', title: '商品回收站' }, name: 'product_trash', component: () => import('@/view/ProductTrash.vue') },
-      { path: 'product_edit/:id?', name: 'product_edit', meta: { icon: 'lock-combination', title: '商品详情' }, component: () => import('@/view/ProductEdit.vue') }
+      { path: 'product_edit/:id?', name: 'product_edit', meta: { icon: 'lock-combination', title: '新增商品' }, component: () => import('@/view/ProductEdit.vue') }
     ]
   },
   {
     path: '/activity',
-    meta: { icon: 'lock-combination', title: '活动优惠', hideInMenu: true },
+    meta: { icon: 'lock-combination', title: '活动优惠' },
     name: 'activity',
     component: Main,
     children: [
       { path: 'coupon_new', meta: { icon: 'lock-combination', title: '新增优惠券' }, name: 'coupon_new', component: () => import('@/view/CouponNew.vue') },
       { path: 'coupon_list', meta: { icon: 'lock-combination', title: '优惠券列表' }, name: 'coupon_list', component: () => import('@/view/CouponList.vue') },
-      { path: 'coupon_detail', meta: { icon: 'lock-combination', title: '优惠券详情', hideInMenu: true }, name: 'coupon_detail', component: () => import('@/view/CouponDetail.vue') }
+      { path: 'coupon_detail/:id', meta: { icon: 'lock-combination', title: '优惠券详情', hideInMenu: true }, name: 'coupon_detail', component: () => import('@/view/CouponDetail.vue') }
     ]
   },
   {

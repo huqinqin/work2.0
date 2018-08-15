@@ -206,6 +206,7 @@ export default {
         this.$Notice.success({
           title: '提交审核成功'
         })
+        this.query()
       })
     }
   },
