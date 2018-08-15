@@ -375,6 +375,7 @@ export default {
               bizType: this.formValidate.note
             }).then((data) => {
               this.$Message.success('已添加到无效商机!')
+              location.reload()
             })
           } else {
             this.$Message.error('请勾选工程商进行操作！！')
