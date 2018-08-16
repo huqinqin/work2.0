@@ -87,7 +87,7 @@
       <div class="layout-column">
         <div class="layout-cell flex-item">
           <form-item label="商品图片" prop="imgUrls" class="ivu-form-item-required">
-            <div class="demo-upload-list" v-for="(item, index) in imgList" :key="index"
+            <div class="demo-upload-list" v-for="(item, index) in form.imgUrls" :key="index"
                  :class="{'default': index === 0}">
               <template v-if="item.status === 'finished'">
                 <img :src="item.url">
@@ -104,7 +104,7 @@
             <Upload
               ref="upload"
               :show-upload-list="false"
-              :default-file-list="imgUrls"
+              :default-file-list="form.imgUrls"
               :on-success="handleSuccess"
               :format="['jpg','jpeg','png']"
               :max-size="2048"
@@ -123,7 +123,6 @@
             <Modal title="View Image" v-model="visible">
               <img :src="imgUrl" v-if="visible" style="width: 100%">
             </Modal>
-            <!--<BaseUploadProductImgs v-model="imgList"></BaseUploadProductImgs>-->
           </form-item>
         </div>
       </div>
@@ -263,7 +262,6 @@ export default {
       kind: ['kind1', 'kind2', 'kind3'],
       skuProps: [],
       spuProps: [],
-      imgUrls: [],
       form: {
         cateId: '',
         title: '',
@@ -273,7 +271,7 @@ export default {
         onum: '',
         status: 'onsale',
         keyword: [],
-        imgUrls: ['https://o5wwk8baw.qnssl.com/bc7521e033abdd1e92222d733590f104/avatar', 'https://o5wwk8baw.qnssl.com/a42bdcc1178e62b4694c830f028db5c0/avatar'],
+        imgUrls: [],
         itemProps: [
           {
             skuProps: [],
@@ -293,7 +291,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        imgUrls: [{ validator: validateArr, trigger: 'change' }],
+        imgUrls: [{ validator: validateArr, trigger: '' }],
         onum: [{ validator: validateOnum, trigger: 'change' }],
         skus: [{ validator: validateSku, trigger: 'blur' }],
         'itemProps[0].props': [{ validator: validateArr, trigger: 'change' }],
@@ -336,8 +334,7 @@ export default {
             }
           }
         }
-      },
-      imgList: []
+      }
     }
   },
   methods: {
@@ -468,22 +465,25 @@ export default {
     },
     // 图片上传相关
     handleDefault (index) {
-      let defaultItem = this.imgList[index]
-      this.imgList.splice(index, 1)
-      this.imgList.unshift(defaultItem)
+      let defaultItem = this.form.imgUrls[index]
+      this.form.imgUrls.splice(index, 1)
+      this.form.imgUrls.unshift(defaultItem)
     },
     handleView (url) {
       this.imgUrl = url
       this.visible = true
     },
     handleRemove (file) {
-      const fileList = this.imgList
-      this.imgList.splice(fileList.indexOf(file), 1)
+      const fileList = this.form.imgUrls
+      this.form.imgUrls.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
       file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
       file.status = 'finished'
-      this.imgList.push(file)
+      this.form.imgUrls.push(file)
+      this.$refs.form.validateField('imgUrls', valid => {
+        console.log(valid)
+      })
     },
     handleFormatError (file) {
       this.$Notice.warning({
@@ -540,11 +540,11 @@ export default {
     },
     // 保存商品信息
     submit () {
+      this.form.imgUrls = this.form.imgUrls.map(t => {
+        return t.url
+      })
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.form.imgUrls = this.imgList.map(t => {
-            return t.url
-          })
           this.$http.saveProduct({
             ...this.form
           }).then(data => {
@@ -644,7 +644,7 @@ export default {
       this.$http.getProduct({
         id: this.$route.params.id
       }).then(data => {
-        this.imgList = data.imgUrls.map((url, index) => {
+        data.imgUrls = data.imgUrls.map((url, index) => {
           return {
             name: index,
             url: url,

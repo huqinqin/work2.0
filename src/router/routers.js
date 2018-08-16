@@ -123,7 +123,7 @@ export default [
     children: [
       { path: 'quotation_add', meta: { icon: 'lock-combination', title: '新增询价单' }, name: 'quotation_add', component: () => import('@/view/QuotationEdit.vue') },
       { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '编辑询价单', hideInMenu: true }, name: 'quotation_edit/:id?', component: () => import('@/view/QuotationEdit.vue') },
-      { path: 'quotation_review_list', meta: { icon: 'lock-combination', title: '待审核询价单列表' }, name: 'quotation_review_list', component: () => import('@/view/QuotationReviewList.vue') },
+      { path: 'quotation_review_list', meta: { icon: 'lock-combination', title: '待办列表' }, name: 'quotation_review_list', component: () => import('@/view/QuotationReviewList.vue') },
       { path: 'quotation_list', meta: { icon: 'lock-combination', title: '询价单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') }
     ]
   },
