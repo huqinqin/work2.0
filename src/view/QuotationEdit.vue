@@ -272,7 +272,7 @@
 </template>
 
 <script>
-
+import debounce from 'lodash.debounce'
 import formatPrice from '../plugin/filter/formatPrice'
 export default {
   name: 'quotation-edit',
@@ -711,97 +711,91 @@ export default {
       this.simuTrade()
     },
     getFee () {
-      clearTimeout(this.getFeeClock)
-      this.getFeeClock = setTimeout(() => {
-        if (this.discountType === 'num') {
-          this.pay.fee.reduceFee = -(+this.discountNum) * 100
-          this.discountPercent = ((-this.pay.fee.reduceFee) / (+this.pay.itemFee)).toFixed(2)
-          // if (this.discountNum === '') this.discountNum = '0.00'
-        } else if (this.discountType === 'percent') {
-          this.pay.fee.reduceFee = -(this.discountPercent * (+this.pay.itemFee) / 100).toFixed()
-          this.discountNum = ((-this.pay.fee.reduceFee) / 100).toFixed(2)
-        }
-        if (this.shippingFee || (+this.shippingFee === 0)) {
-          this.pay.shippingFee = (+this.shippingFee * 100).toFixed()
-        } else {
-          this.pay.shippingFee = ''
-        }
-        this.pay.fee.handleFee = (+this.handleFee * 100).toFixed()
-        this.simuTrade()
-      }, 800)
+      if (this.discountType === 'num') {
+        this.pay.fee.reduceFee = -(+this.discountNum) * 100
+        this.discountPercent = ((-this.pay.fee.reduceFee) / (+this.pay.itemFee)).toFixed(2)
+        // if (this.discountNum === '') this.discountNum = '0.00'
+      } else if (this.discountType === 'percent') {
+        this.pay.fee.reduceFee = -(this.discountPercent * (+this.pay.itemFee) / 100).toFixed()
+        this.discountNum = ((-this.pay.fee.reduceFee) / 100).toFixed(2)
+      }
+      if (this.shippingFee || (+this.shippingFee === 0)) {
+        this.pay.shippingFee = (+this.shippingFee * 100).toFixed()
+      } else {
+        this.pay.shippingFee = ''
+      }
+      this.pay.fee.handleFee = (+this.handleFee * 100).toFixed()
+      this.simuTrade()
     },
-    simuTrade () {
-      clearTimeout(this.simuClock)
-      this.simuClock = setTimeout(() => {
-        if (this.validateForm()) {
-          if (!this.canEdit && (this.status !== 'financial')) {
-            return false
-          }
-          let items = this.itemList.map(t => {
-            return {
-              id: t.id,
-              num: t.amount,
-              sku: t.sku,
-              // offerId: t.offerId,
-              diyPrice: t.diyPrice * 100,
-              note: {remark: t.note.remark}
-            }
-          })
-          let pay = JSON.parse(JSON.stringify(this.pay))
-          if (['', 'init', 'salesManager'].indexOf(this.status) !== -1) {
-            delete pay.taxRate
-            delete pay.taxFee
-            // delete pay.shippingFee
-          }
-          let shipping = JSON.parse(JSON.stringify(this.shipping))
-          if (this.shippingFee || (this.shippingFee === 0)) {
-            shipping.fee = +this.shippingFee * 100
-          }
-          let params = {
-            items: items,
-            buyer: {id: this.store.userId},
-            buyerStore: {id: this.store.storeId},
-            shipping: shipping,
-            tax: {rate: pay.taxRate},
-            pay: {payType: 'offline'},
-            // pay: Object.assign({}, {payType: 'offline'}, pay),
-            note: {remark: this.orderNote},
-            source: 'work',
-            type: 'quotation',
-            orderDiscount: pay.orderDiscount ? pay.orderDiscount : false,
-            toAddr: this.toAddr,
-            fromAddr: this.fromAddr,
-            fee: this.pay.fee,
-            ext: {
-              poNo: this.poNo,
-              offlinePayType: 'offline',
-              packingType: this.packingType,
-              offlinePayRemark: this.payRemark
-            }
-          }
-          for (let key in params) {
-            if (params[key] === '') {
-              delete params[key]
-            }
-          }
-          this.computing = true
-          this.$http.simulateTrade(params).then(data => {
-            this.computing = false
-            this.pay.itemFee = data.itemFee
-            this.pay.shippingFee = data.shippingFee
-            this.shippingFee = (data.shippingFee / 100).toFixed(2)
-            this.pay.taxFee = data.taxFee
-            if (data.taxRate || (data.taxRate === 0)) {
-              this.pay.taxRate = data.taxRate
-            }
-            this.pay.fee.handleFee = data.handleFee
-            this.pay.fee.reduceFee = data.reduceFee
-            this.pay.rebateFee = data.rebateFee
-            this.pay.amount = this.pay.itemFee + this.pay.shippingFee + this.pay.taxFee + this.pay.rebateFee + this.pay.fee.handleFee + this.pay.fee.reduceFee
-          })
+    simuTrade: debounce(function () {
+      if (this.validateForm()) {
+        if (!this.canEdit && (this.status !== 'financial')) {
+          return false
         }
-      }, 1000)
-    },
+        let items = this.itemList.map(t => {
+          return {
+            id: t.id,
+            num: t.amount,
+            sku: t.sku,
+            // offerId: t.offerId,
+            diyPrice: t.diyPrice * 100,
+            note: {remark: t.note.remark}
+          }
+        })
+        let pay = JSON.parse(JSON.stringify(this.pay))
+        if (['', 'init', 'salesManager'].indexOf(this.status) !== -1) {
+          delete pay.taxRate
+          delete pay.taxFee
+          // delete pay.shippingFee
+        }
+        let shipping = JSON.parse(JSON.stringify(this.shipping))
+        if (this.shippingFee || (this.shippingFee === 0)) {
+          shipping.fee = +this.shippingFee * 100
+        }
+        let params = {
+          items: items,
+          buyer: {id: this.store.userId},
+          buyerStore: {id: this.store.storeId},
+          shipping: shipping,
+          tax: {rate: pay.taxRate},
+          pay: {payType: 'offline'},
+          // pay: Object.assign({}, {payType: 'offline'}, pay),
+          note: {remark: this.orderNote},
+          source: 'work',
+          type: 'quotation',
+          orderDiscount: pay.orderDiscount ? pay.orderDiscount : false,
+          toAddr: this.toAddr,
+          fromAddr: this.fromAddr,
+          fee: this.pay.fee,
+          ext: {
+            poNo: this.poNo,
+            offlinePayType: 'offline',
+            packingType: this.packingType,
+            offlinePayRemark: this.payRemark
+          }
+        }
+        for (let key in params) {
+          if (params[key] === '') {
+            delete params[key]
+          }
+        }
+        this.computing = true
+        this.$http.simulateTrade(params).then(data => {
+          this.computing = false
+          this.pay.itemFee = data.itemFee
+          this.pay.shippingFee = data.shippingFee
+          this.shippingFee = (data.shippingFee / 100).toFixed(2)
+          this.pay.taxFee = data.taxFee
+          if (data.taxRate || (data.taxRate === 0)) {
+            this.pay.taxRate = data.taxRate
+          }
+          this.pay.fee.handleFee = data.handleFee
+          this.pay.fee.reduceFee = data.reduceFee
+          this.pay.rebateFee = data.rebateFee
+          this.pay.amount = this.pay.itemFee + this.pay.shippingFee + this.pay.taxFee + this.pay.rebateFee + this.pay.fee.handleFee + this.pay.fee.reduceFee
+        })
+      }
+    }, 800),
     saveQuotation (key) {
       if (this.validateForm()) {
         this.itemList.forEach(t => {
