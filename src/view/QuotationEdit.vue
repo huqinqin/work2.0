@@ -97,7 +97,7 @@
         </i-form>
       </div>
     </card>
-    <card class="address-card" v-if="shipping.methods === 'shipping'" :class="{'empty': !validForm.address}">
+    <card class="address-card" v-if="shipping.methods === 'shipping'" id="po" :class="{'empty': !validForm.address}">
       <div class="title">
         <p>选择收货地址 <Button type="text" @click="showAddAddressForm" :disabled="!canEdit">+添加地址</Button></p>
         <div class="divider"></div>
@@ -134,11 +134,11 @@
         </Modal>
       </div>
     </card>
-    <card class="po-card" v-if="shipping.methods === 'shipping'" id="product">
+    <card class="po-card" v-if="shipping.methods === 'shipping'" id="product" :class="{'empty': !validForm.po}">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
-        <Input placeholder="请输入P/O NO." v-model="poNo" :readonly="!canEdit"/>
+        <Input placeholder="请输入P/O NO." v-model="poNo" :readonly="!canEdit" @on-change="inputPO"/>
       </div>
     </card>
     <card class="product-card" :class="{'empty': !validForm.items}">
@@ -255,18 +255,13 @@
       <template v-if="(status === 'init') || (status === '')">
         <Button type="primary">保存并发送邮件</Button>
         <Button type="primary">保存并下载询价单</Button>
-        <!--<Button type="primary" @click="simuTrade">模拟下单</Button>-->
         <Button type="primary" @click="saveQuotation('save')">保存</Button>
         <Button type="success" @click="saveQuotation('send')">提交审核</Button>
       </template>
-      <template v-else-if="(status === 'salesManager') || (status === 'financial')">
+      <template v-if="(status === 'salesManager') || (status === 'financial')">
         <Button type="success" @click="agree">通过</Button>
         <Button type="error" @click="refuse">打回</Button>
       </template>
-      <!--<template v-else-if="status === 'financial'">-->
-        <!--<Button type="success" @click="agree">财务通过</Button>-->
-        <!--<Button type="error" @click="refuse">财务打回</Button>-->
-      <!--</template>-->
     </div>
   </div>
 </template>
@@ -536,7 +531,8 @@ export default {
       validForm: {
         store: true,
         address: true,
-        items: true
+        items: true,
+        po: true
       },
       mid: '',
       id: '',
@@ -648,6 +644,9 @@ export default {
         this.showAddressForm = false
       })
     },
+    inputPO () {
+      this.validForm.po = true
+    },
     queryProduct (query) {
       return this.$http.fetchQuotationProduct({
         conditions: query
@@ -658,7 +657,7 @@ export default {
             ...t.itemSku,
             ...t,
             diyPrice: (t.itemSku.basePrice / 100).toFixed(),
-            amount: 0,
+            amount: 1,
             imgUrl: t.imgUrls[0],
             note: {
               remark: ''
@@ -854,6 +853,10 @@ export default {
       })
     },
     validateForm () {
+      if (this.poNo === '') {
+        this.validForm.po = false
+        location.href = '#po'
+      }
       if (this.itemList.length === 0) {
         this.validForm.items = false
         location.href = '#product'
@@ -1165,5 +1168,8 @@ export default {
   }
   .product-card.empty::after{
     content: '请选择商品';
+  }
+  .po-card.empty::after{
+    content: '请输入P/O NO.';
   }
 </style>
