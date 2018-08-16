@@ -28,22 +28,22 @@
           </form-item>
         </div>
         <div class="layout-cell">
-          <form-item label="门店" prop="store">
-            <Select v-model="form.store" style="width:100%" @on-change="fetchGroups">
+          <form-item label="门店" prop="storeId">
+            <Select v-model="form.storeId" style="width:100%" @on-change="fetchGroups">
               <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
             </Select>
           </form-item>
         </div>
         <div class="layout-cell">
-          <form-item label="部门" prop="group">
-            <Select v-model="form.group" style="width:100%">
+          <form-item label="部门" prop="groupId">
+            <Select v-model="form.groupId" style="width:100%">
               <Option v-for="item in $store.state.options.groups" :value="item.key" :key="item.key">{{ item.value }}</Option>
             </Select>
           </form-item>
         </div>
         <div class="layout-cell">
-          <form-item label="角色" prop="role">
-            <CodeTable v-model="form.role" type="role"></CodeTable>
+          <form-item label="角色" prop="roleId">
+            <CodeTable v-model="form.roleId" type="role"></CodeTable>
           </form-item>
         </div>
         <div class="layout-cell">
@@ -80,9 +80,9 @@ export default {
         account: '',
         email: '',
         mobile: '',
-        store: '',
-        role: '',
-        group: '',
+        storeId: '',
+        roleId: '',
+        groupId: '',
         status: 'enabled',
         address: '',
         allocationDate: ''
@@ -118,17 +118,17 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        store: [{
+        storeId: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        role: [{
+        roleId: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        group: [{
+        groupId: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
@@ -153,9 +153,9 @@ export default {
   },
   methods: {
     fetchGroups () {
-      if (this.form.store) {
-        this.form.group = ''
-        this.$store.dispatch('fetchGroups', this.form.store)
+      if (this.form.storeId) {
+        this.form.groupId = ''
+        this.$store.dispatch('fetchGroups', this.form.storeId)
       }
     },
     validForm () {

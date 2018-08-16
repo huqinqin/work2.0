@@ -1,7 +1,7 @@
 <template>
   <div class="commonPool">
     <Row>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>state:</span>
       <AutoComplete
         v-model="state"
@@ -10,17 +10,17 @@
         @on-search="handleSearch1"
         placeholder="input here"></AutoComplete>
       </Col>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>city:</span>
       <Input v-model="city" placeholder="Enter city" />
       </Col>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>company:</span>
       <Input v-model="company" placeholder="Enter company" />
       </Col>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>time:</span>
-      <DatePicker @on-change="handleChange" :value="dateValue" type="datetimerange" format="yyyy-MM-dd HH:mm" placement="bottom-end" placeholder="Select date"></DatePicker>
+      <DatePicker @on-change="handleChange" :value="dateValue" type="datetimerange" format="yyyy-MM-dd HH:mm:ss" placement="bottom-end" placeholder="Select date"></DatePicker>
       </Col>
     </Row>
     <Row>
@@ -401,8 +401,8 @@ export default {
       this.searchOptionJoin.state = this.state ? this.state : ''
       this.searchOptionJoin.city = this.city ? this.city : ''
       this.searchOptionJoin.name = this.company ? this.company : ''
-      this.searchOptionJoin.beginTime = new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : ''
-      this.searchOptionJoin.endTime = new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : ''
+      this.searchOptionJoin.beginTime = this.dateValue[0] ? this.dateValue[0] : ''
+      this.searchOptionJoin.endTime = this.dateValue[1] ? this.dateValue[1] : ''
       this.searchOptionJoin.type = this.type ? this.type : ''
       this.searchOptionJoin.industry = this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : ''
       this.searchOptionJoin.email = this.email ? this.email : ''
@@ -499,6 +499,7 @@ export default {
       // this.imgList.push(file)
     },
     reportExportData () {
+      console.log(this.searchOptionJoin.beginTime)
       if (this.searchOptionJoin.beginTime && this.searchOptionJoin.endTime) {
         let s = '/work/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
           '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email

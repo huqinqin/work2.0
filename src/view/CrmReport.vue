@@ -2,8 +2,8 @@
   <div class="privatePool">
     <Row>
       <Col span="6" style="padding-right:10px">
-      <div>Associate store:</div>
-      <Select v-model="noAssociateStore" style="width:200px" @on-change="associationSelect">
+      <span>Associate store:</span>
+      <Select v-model="noAssociateStore"  @on-change="associationSelect">
         <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>

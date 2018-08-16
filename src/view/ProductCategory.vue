@@ -7,27 +7,43 @@
         </div>
         <div class="layout-cell flex-item">
           <div style="overflow: hidden;">
-            <i-button type="primary" style="float: right">新增属性</i-button>
+            <i-button type="primary" style="float: right" @click="showProp">新增属性</i-button>
           </div>
           <LayoutPropItem v-for="sku in skus" :data="sku" :key="sku.id">
-            <a href="#">删除SKU</a>
+            <a href="#" @click="delSkuProp(sku.id)">删除SKU</a>
           </LayoutPropItem>
           <LayoutPropItem v-for="spu in spus" :data="spu" :key="spu.id">
-            <a href="#">删除SPU</a>
+            <a href="#" @click="delSpuProp(spu.id)">删除SPU</a>
           </LayoutPropItem>
         </div>
       </div>
     </Card>
-    <modal v-model="showCateModal" title="类目">
-      <Form :model="curCategory" :label-width="80">
+    <modal v-model="showPropNew" @on-ok="saveProp" title="属性">
+      <i-form :model="prop" :label-width="80">
+        <form-item label="类型">
+          <radio-group v-model="prop.type">
+            <radio label="sku">sku属性</radio>
+            <radio label="spu">spu属性</radio>
+          </radio-group>
+        </form-item>
+        <FormItem label="所属类目">
+          <Input v-model="curCate.name" placeholder="所属类目" readonly="readonly" />
+        </FormItem>
+        <form-item label="属性名">
+          <i-input v-model="prop.name" placeholder="属性名"></i-input>
+        </form-item>
+      </i-form>
+    </modal>
+    <modal v-model="showCateModal" @on-ok="saveCategory" title="类目">
+      <Form :model="form" :label-width="80">
         <FormItem label="上级类目">
-          <Input v-model="curCategory.parentName" placeholder="上级类目" readonly="readonly" />
+          <Input v-model="form.parentName" placeholder="上级类目" readonly="readonly" />
         </FormItem>
         <FormItem label="类目名称">
-          <Input v-model="curCategory.name" placeholder="输入类目名称"/>
+          <Input v-model="form.name" placeholder="输入类目名称"/>
         </FormItem>
         <FormItem label="类目排序">
-          <Input  v-model="curCategory.onum" placeholder="输入1~99"/>
+          <Input  v-model="form.onum" placeholder="输入1~99"/>
         </FormItem>
         <FormItem label="">
           <Upload
@@ -40,16 +56,21 @@
             </div>
           </Upload>
         </FormItem>
-        <FormItem>
-          <Button type="primary" @click="saveCategory">保存</Button>
-          <Button type="error">删除</Button>
-        </FormItem>
       </Form>
     </modal>
   </div>
 </template>
 <script>
 import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
+import cloneDeep from 'lodash.clonedeep'
+const initForm = {
+  id: '',
+  name: '',
+  parentId: '',
+  parentName: '',
+  imgUrl: '',
+  onum: 99
+}
 export default {
   name: 'ProductCategory',
   components: {
@@ -59,9 +80,16 @@ export default {
   },
   data () {
     return {
+      curCate: {id: '', name: ''},
+      prop: {
+        type: 'sku',
+        name: ''
+      },
       skus: [],
       spus: [],
-      showCateModal: false
+      showCateModal: false,
+      showPropNew: false,
+      form: cloneDeep(initForm)
     }
   },
   computed: {
@@ -80,7 +108,7 @@ export default {
                   <icon type="ios-folder-outline" style={{marginRight: '8px'}}></icon><span>{data.title}</span>
                 </span>
                 <span style={{ display: 'inline-block', float: 'right', marginRight: '32px' }}>
-                  <i-button icon="ios-plus-empty" size="small" type="primary" style={{width: '52px'}}></i-button>
+                  <i-button icon="ios-plus-empty" size="small" type="primary" style={{width: '52px'}} onClick={() => { this.append(event, data) }}></i-button>
                 </span>
               </span>
             )
@@ -96,7 +124,7 @@ export default {
     renderContent (h, { root, node, data }) {
       return (
         <span class={{'tree-item': true}} onClick={() => { this.check(root, node, data) }}>
-          <span class={{active: this.curCategoryId === data.value}}>{data.label}</span>
+          <span class={{active: this.curCate.id === data.value}}>{data.label}</span>
           <span class={{ 'operate-btns': true }}>
             <i-button class={{ 'operate-btn': true }} icon="ios-plus-empty" type="ghost" size="small" onClick={() => { this.append(event, data) }}></i-button>
             <i-button class={{ 'operate-btn': true }} icon="ios-minus-empty" type="ghost" size="small" onClick={() => { this.remove(root, node, data) } }></i-button>
@@ -104,57 +132,67 @@ export default {
         </span>
       )
     },
-    check (root, node, data) {
-      this.$http.fetchSkuProps({id: data.value}).then(data => {
+    fetchProps () {
+      this.$http.fetchSkuProps({id: this.curCate.id}).then(data => {
         this.skus = data.list
       })
-      this.$http.fetchSpuProps({id: data.value}).then(data => {
+      this.$http.fetchSpuProps({id: this.curCate.id}).then(data => {
         this.spus = data.list
       })
-      this.getCategory(data.value)
+    },
+    showProp () {
+      this.showPropNew = true
+    },
+    check (root, node, data) {
+      this.curCate = { id: data.id, name: data.title }
+      this.fetchProps()
+      // this.getCategory(data.value)
     },
     append (event, data) {
       event.stopPropagation()
-      this.addCategory({id: data.id, name: data.title})
+      this.form.parentId = data.id
+      this.form.parentName = data.title
+      this.showCateModal = true
     },
     remove (root, node, data) {
-      // const parentKey = root.find(el => el === node).parent
-      // const parent = root.find(el => el.nodeKey === parentKey).node
-      // const index = parent.children.indexOf(data)
-      // parent.children.splice(index, 1)
+      this.$http.delCategory([data.id]).then(() => {
+        this.fetchCategory()
+      })
     },
     saveCategory () {
-      // let dataSave = {}
-      // console.log('parentId')
-      // if (this.stagingDate.title === '') {
-      //   let children = this.stagingDate.children
-      //   children.push({
-      //     title: this.curCategory.name,
-      //     expand: true
-      //   })
-      //   this.$set(this.stagingDate.parent, 'children', children)
-      //   dataSave = {
-      //     parentId: this.stagingDate.parentId,
-      //     name: this.curCategory.name,
-      //     level: this.curCategory.level
-      //   }
-      // } else {
-      //   this.$set(this.stagingDate.parent, 'title', this.curCategory.name)
-      //   dataSave = {
-      //     id: this.stagingDate.id,
-      //     parentId: this.stagingDate.parent.parentId,
-      //     name: this.curCategory.name,
-      //     level: this.curCategory.level
-      //   }
-      // }
-      // this.$axios.post(`${this.url}/save`, dataSave).then(data => {
-      //   // this.data[0].children = data
-      // })
+      this.$http.saveCategory(this.form).then(data => {
+        this.fetchCategory()
+        this.form = cloneDeep(initForm)
+      })
     },
     showPropTable (isSku) {
       this.setIsSku(isSku)
       this.setShowPropTable(true)
       this.fetchProp()
+    },
+    saveProp () {
+      const params = {categoryId: this.curCate.id, name: this.prop.name}
+      if (this.prop.type === 'sku') {
+        this.$http.saveSku(params).then(() => {
+          this.fetchProps()
+        })
+      } else {
+        this.$http.saveProp(params).then(() => {
+          this.fetchProps()
+        })
+      }
+    },
+    delSkuProp (id) {
+      this.$http.delSku({categoryId: this.curCate.id, cateSkuPropIds: [id]}).then(() => {
+        this.$Notice.success({title: '删除成功'})
+        this.fetchProps()
+      })
+    },
+    delSpuProp (id) {
+      this.$http.delProp({categoryId: this.curCate.id, cateSkuPropIds: [id]}).then(() => {
+        this.$Notice.success({title: '删除成功'})
+        this.fetchProps()
+      })
     }
   },
   beforeMount () {
