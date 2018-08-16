@@ -236,7 +236,7 @@ export default {
   },
   /* 新增联系人 */
   createLinkman (params) {
-    return axios.post('/crm/company/addContact', params)
+    return axios.post('/crm/company/saveContact', params)
   },
   /* 删除联系人 */
   deleteLinkman (params) {

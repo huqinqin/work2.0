@@ -13,7 +13,7 @@
       </Col>
       <Col span="6" style="padding-right:10px">
       <span>time:</span>
-      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date" :value="dateValue" @on-change="handleChange"></DatePicker>
+      <DatePicker type="daterange" placement="bottom-end" placeholder="Select date" :value="dateValue" format="yyyy-MM-dd HH:mm:ss" @on-change="handleChange"></DatePicker>
       </Col>
     </Row>
     <Row>
@@ -292,8 +292,8 @@ export default {
     },
     contactOk () {},
     reportExportData () {
-      if (this.dateValue) {
-        let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales + '&beginTime=' + new Date(this.dateValue[0]).getTime() + '&endTime=' + new Date(this.dateValue[1]).getTime()
+      if (this.dateValue.length > 0) {
+        let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales + '&beginTime=' + this.dateValue[0] + '&endTime=' + this.dateValue[1]
         window.open(s)
       } else {
         let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales

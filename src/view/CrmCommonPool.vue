@@ -67,7 +67,7 @@
       <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="total" :current="1" @on-change="changePage"></Page>
+          <Page :total="total" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
         </div>
       </div>
       </Col>
@@ -128,6 +128,7 @@ export default {
   name: 'crm-common-pool',
   data () {
     return {
+      row: 0,
       total: 0,
       state: '',
       dateValue: '',
@@ -413,10 +414,10 @@ export default {
         beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
         endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
         type: this.type ? this.type : null,
-        industry: this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null,
+        industryJoin: this.trade ? (this.trade === '视频监控' ? this.trade + '-' + this.trade1 : this.trade) : null,
         email: this.email ? this.email : null,
         page: this.page ? this.page : null,
-        rows: 10
+        rows: this.row
       }).then((data) => {
         this.installerdata = data.list
         this.total = data.total
@@ -424,7 +425,7 @@ export default {
     },
     handleChange (date) {
       this.dateValue = date
-      console.log(new Date(this.dateValue[0]).getTime())
+      console.log(this.searchOptionJoin.beginTime)
     },
     batchCollectionInstaller () {
       if (this.selection.length > 0) {
@@ -517,6 +518,10 @@ export default {
       }, (error) => {
         this.$Message.error(error.err)
       })
+    },
+    changeSize (row) {
+      this.row = row
+      this.getInstallerList()
     }
   },
   mounted () {
