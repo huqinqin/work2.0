@@ -75,7 +75,7 @@
           <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="total" :current="1" @on-change="changePage"></Page>
+              <Page :total="total" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
             </div>
           </div>
           </Col>
@@ -215,7 +215,7 @@
           <Table :columns="installerList1" :data="installerdata1" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="total1" :current="1" @on-change="changePage"></Page>
+              <Page :total="total1" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
             </div>
           </div>
           </Col>
@@ -331,41 +331,41 @@ export default {
       type: '',
       contact: '',
       contactList: [{
-        value: '未联系',
+        value: '0',
         label: '未联系'
       }, {
-        value: '联系中未询价',
+        value: '1',
         label: '联系中未询价'
       }, {
-        value: '联系中询价中',
+        value: '2',
         label: '联系中询价中'
       }, {
-        value: '激活已下单',
+        value: '3',
         label: '激活已下单'
       }, {
-        value: '拉新已下单',
+        value: '4',
         label: '拉新已下单'
       }, {
-        value: '无效客人',
+        value: '5',
         label: '无效客人'
       }],
       typeList: [{
-        value: '未联系',
+        value: '0',
         label: '未联系'
       }, {
-        value: '联系中未询价',
+        value: '1',
         label: '联系中未询价'
       }, {
-        value: '联系中询价中',
+        value: '2',
         label: '联系中询价中'
       }, {
-        value: '激活已下单',
+        value: '3',
         label: '激活已下单'
       }, {
-        value: '拉新已下单',
+        value: '4',
         label: '拉新已下单'
       }, {
-        value: '无效客人',
+        value: '5',
         label: '无效客人'
       }],
       trade: '',
@@ -671,7 +671,8 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      row: 0
     }
   },
   methods: {
@@ -707,6 +708,10 @@ export default {
       this.selection = []
       this.selection.push(params.row)
       this.batchCollectionInstaller()
+    },
+    changeSize (row) {
+      this.row = row
+      this.getTemplatePoolInstallerList(this.allot)
     },
     batchCollectionInstaller () {
       if (this.selection.length > 0) {
@@ -872,7 +877,7 @@ export default {
         ltsUser: null,
         allotStatus: val,
         page: this.page ? this.page : null,
-        rows: 10
+        rows: this.row
       }).then((data) => {
         this.installerdata = data.list
         this.installerdata1 = data.list
