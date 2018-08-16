@@ -105,6 +105,34 @@
         </Select>
       </Modal>
     </Row>
+    <Row>
+      <Modal
+        v-model="newContactRecode"
+        title="新增沟通纪录"
+        @on-ok="newRecordOk"
+        @on-cancel="cancel">
+        <div>
+          <span>时间:</span>
+          <DatePicker  style="width: 200px" type="date" placeholder="Select date" :value="dateValue1" @on-change="handleChange1" :options="options3"></DatePicker>
+        </div>
+        <div>
+          <span>类型:</span>
+          <Select v-model="newType" style="width:200px">
+            <Option v-for="item in newTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </div>
+        <div>
+          <span>沟通状态:</span>
+          <Select v-model="newContact" style="width:200px">
+            <Option v-for="item in newContactList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
+        </div>
+        <div>
+          <span>备注:</span>
+          <Input v-model="contactNote" type="textarea" placeholder="Enter something..." />
+        </div>
+      </Modal>
+    </Row>
   </div>
 </template>
 
@@ -115,6 +143,7 @@ export default {
   mixins: [mixin],
   data () {
     return {
+      newContactRecode: false,
       total1: 0,
       url: 'Shop',
       filter: {
@@ -225,7 +254,7 @@ export default {
                 type = "primary"
                 onClick = { () => { this.receive(params) }
                 }>
-              领取 </i-button>
+              新建沟通纪录 </i-button>
               </div>)
           }
         }
@@ -270,10 +299,55 @@ export default {
       noAssociateStoreList: [],
       selection: [],
       ids: [],
-      page: 1
+      page: 1,
+      options3: {
+        disabledDate (date) {
+          return date && date.valueOf() >= Date.now() - 86400000
+        }
+      },
+      dateValue1: '',
+      newType: '',
+      newTypeList: [{
+        value: '1',
+        label: '电话沟通'
+      }, {
+        value: '2',
+        label: '当面拜访'
+      }, {
+        value: '3',
+        label: '邮件沟通'
+      }, {
+        value: '4',
+        label: '其他'
+      }],
+      newContact: '',
+      newContactList: [{
+        value: '1',
+        label: '未联系'
+      }, {
+        value: '2',
+        label: '联系中未询价'
+      }, {
+        value: '3',
+        label: '联系中询价中'
+      }, {
+        value: '4',
+        label: '激活已下单'
+      }, {
+        value: '5',
+        label: '拉新已下单'
+      }, {
+        value: '6',
+        label: '无效客人'
+      }],
+      contactNote: '',
+      id: 0
     }
   },
   methods: {
+    handleChange1 (date) {
+      this.dateValue1 = date
+    },
     remoteMethod1 (query) {
       if (query !== '') {
         this.loading1 = true
@@ -304,25 +378,22 @@ export default {
       // console.log('000000000')
     },
     receive (params) {
-      this.selection = []
-      this.selection.push(params.row)
-      this.batchCollectionInstaller()
+      this.newContactRecode = true
+      this.id = params.row.id
     },
-    batchCollectionInstaller () {
-      if (this.selection.length > 0) {
-        this.ids = []
-        this.selection.forEach((item) => { this.ids.push(item.id) })
-        this.$http.batchCollectionInstaller({
-          ids: this.ids ? this.ids : []
-        }).then((data) => {
-          this.$Message.success('领取成功')
-          setTimeout(() => {
-            location.reload()
-          }, 1000)
-        }, (error) => {
-          this.$Message.error(error.err)
-        })
-      }
+    newRecordOk () {
+      this.$http.newContactList({
+        companyId: this.id,
+        type: this.newType,
+        status: this.newContact,
+        note: this.contactNote,
+        cdate: this.dateValue1
+      }).then((data) => {
+        this.$Message.success('添加沟通纪录成功')
+        setTimeout(() => {
+          location.reload()
+        }, 1000)
+      })
     },
     cancleCollection (selection) {
       this.selection = selection
@@ -435,7 +506,7 @@ export default {
         email: this.email ? this.email : null,
         name: this.company ? this.company : null,
         industryJoin: this.trade ? this.trade : null,
-        contactStatus: this.contactStatus ? this.contactStatus : null,
+        commStatus: this.contactStatus ? this.contactStatus : null,
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
         page: this.page ? this.page : null,
@@ -475,7 +546,7 @@ export default {
         ltsUser: null
       }).then((data) => {}) */
       let s = '/work/crm/export/priv/list?storeId=' + this.noAssociateStore + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +
-        '&contactStatus=' + this.contact + '&state=' + this.state
+        '&commStatus=' + this.contact + '&state=' + this.state
       window.open(s)
     }
     /* salesCheck () {
