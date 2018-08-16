@@ -29,21 +29,21 @@
         </div>
         <div class="layout-cell">
           <form-item label="门店" prop="store">
-            <Select v-model="form.store" style="width:100%" @on-change="fetchGroups">
+            <Select v-model="form.storeId" style="width:100%" @on-change="fetchGroups">
               <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
             </Select>
           </form-item>
         </div>
         <div class="layout-cell">
           <form-item label="部门" prop="group">
-            <Select v-model="form.group" style="width:100%">
+            <Select v-model="form.groupId" style="width:100%">
               <Option v-for="item in $store.state.options.groups" :value="item.key" :key="item.key">{{ item.value }}</Option>
             </Select>
           </form-item>
         </div>
         <div class="layout-cell">
           <form-item label="角色" prop="role">
-            <CodeTable v-model="form.role" type="role"></CodeTable>
+            <CodeTable v-model="form.roleId" type="role"></CodeTable>
           </form-item>
         </div>
         <div class="layout-cell">
@@ -80,9 +80,9 @@ export default {
         account: '',
         email: '',
         mobile: '',
-        store: '',
-        role: '',
-        group: '',
+        storeId: '',
+        roleId: '',
+        groupId: '',
         status: 'enabled',
         address: '',
         allocationDate: ''
@@ -153,9 +153,9 @@ export default {
   },
   methods: {
     fetchGroups () {
-      if (this.form.store) {
-        this.form.group = ''
-        this.$store.dispatch('fetchGroups', this.form.store)
+      if (this.form.storeId) {
+        this.form.groupId = ''
+        this.$store.dispatch('fetchGroups', this.form.storeId)
       }
     },
     validForm () {
