@@ -44,7 +44,7 @@
             <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="4" style="padding-right:10px" v-if="trade === '0'">
+          <Col span="4" style="padding-right:10px" v-if="trade === '视频监控'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="trade1">
             <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -75,7 +75,7 @@
           <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="total" :current="1" @on-change="changePage"></Page>
+              <Page :total="total" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
             </div>
           </div>
           </Col>
@@ -184,7 +184,7 @@
             <Option v-for="item in noAllocationTradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="5" style="padding-right:10px" v-if="noAllocation === '0'">
+          <Col span="5" style="padding-right:10px" v-if="noAllocation === '视频监控'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="noAllocation1">
             <Option v-for="item in noAllocationTradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -215,7 +215,7 @@
           <Table :columns="installerList1" :data="installerdata1" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="total1" :current="1" @on-change="changePage"></Page>
+              <Page :total="total1" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
             </div>
           </div>
           </Col>
@@ -331,41 +331,41 @@ export default {
       type: '',
       contact: '',
       contactList: [{
-        value: '未联系',
+        value: '0',
         label: '未联系'
       }, {
-        value: '联系中未询价',
+        value: '1',
         label: '联系中未询价'
       }, {
-        value: '联系中询价中',
+        value: '2',
         label: '联系中询价中'
       }, {
-        value: '激活已下单',
+        value: '3',
         label: '激活已下单'
       }, {
-        value: '拉新已下单',
+        value: '4',
         label: '拉新已下单'
       }, {
-        value: '无效客人',
+        value: '5',
         label: '无效客人'
       }],
       typeList: [{
-        value: '未联系',
+        value: '0',
         label: '未联系'
       }, {
-        value: '联系中未询价',
+        value: '1',
         label: '联系中未询价'
       }, {
-        value: '联系中询价中',
+        value: '2',
         label: '联系中询价中'
       }, {
-        value: '激活已下单',
+        value: '3',
         label: '激活已下单'
       }, {
-        value: '拉新已下单',
+        value: '4',
         label: '拉新已下单'
       }, {
-        value: '无效客人',
+        value: '5',
         label: '无效客人'
       }],
       trade: '',
@@ -387,41 +387,41 @@ export default {
       }],
       trade1: '',
       tradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       noAllocation: '',
       noAllocationTradeList: [{
-        value: '0',
+        value: '视频监控',
         label: '视频监控'
       }, {
-        value: '1',
+        value: '门禁',
         label: '门禁'
       }, {
-        value: '2',
+        value: '报警',
         label: '报警'
       }, {
-        value: '3',
+        value: '音视频',
         label: '音视频'
       }, {
-        value: '4',
+        value: '其他',
         label: '其他'
       }],
       noAllocation1: '',
       noAllocationTradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       email: '',
@@ -671,7 +671,8 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      row: 0
     }
   },
   methods: {
@@ -708,6 +709,10 @@ export default {
       this.selection.push(params.row)
       this.batchCollectionInstaller()
     },
+    changeSize (row) {
+      this.row = row
+      this.getTemplatePoolInstallerList(this.allot)
+    },
     batchCollectionInstaller () {
       if (this.selection.length > 0) {
         this.ids = []
@@ -735,33 +740,6 @@ export default {
     tableChange (name) {
       this.allot = name
       this.getTemplatePoolInstallerList(name)
-    },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
     },
     importInstaller () {
       this.importInstallerModal = true
@@ -865,14 +843,14 @@ export default {
         custCode: this.custId ? this.custId : null,
         email: this.email ? this.email : null,
         name: this.company ? this.company : null,
-        industryJoin: this.trade ? this.trade : null,
+        industryJoin: val === '0' ? (this.trade === '视频监控' ? this.trade + '-' + this.trade1 : this.trade) : (this.noAllocation === '视频监控' ? this.noAllocation + '-' + this.noAllocation1 : this.noAllocation),
         contactStatus: this.contact ? this.contact : null,
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
         ltsUser: null,
         allotStatus: val,
         page: this.page ? this.page : null,
-        rows: 10
+        rows: this.row
       }).then((data) => {
         this.installerdata = data.list
         this.installerdata1 = data.list

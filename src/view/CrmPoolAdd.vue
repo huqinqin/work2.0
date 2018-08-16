@@ -350,6 +350,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style  lang="less">
+  .crmPoolAdd {
+    .layout-column{
+      margin: 0;
+    }
+  }
 </style>
