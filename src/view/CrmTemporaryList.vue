@@ -3,9 +3,9 @@
     <TabPane label="未分配">
       <div class="temporaryPool">
         <Row>
-          <Col span="6" style="padding-right:10px">
-          <div>Associate store:</div>
-          <Select v-model="noAssociateStore" style="width:200px">
+          <Col span="4" style="padding-right:10px">
+          <span>Associate store:</span>
+          <Select v-model="noAssociateStore">
             <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
@@ -32,25 +32,25 @@
           </Col>
         </Row>
         <Row>
-          <Col span="5" style="padding-right:10px">
+          <Col span="4" style="padding-right:10px">
           <span>联系状态:</span>
           <Select v-model="contact">
             <Option v-for="item in contactList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="5" style="padding-right:10px">
+          <Col span="4" style="padding-right:10px">
           <span>行业:</span>
           <Select v-model="trade">
             <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="5" style="padding-right:10px" v-if="trade === '0'">
+          <Col span="4" style="padding-right:10px" v-if="trade === '0'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="trade1">
             <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="5" style="padding-right:10px">
+          <Col span="4" style="padding-right:10px">
           <span>Email:</span>
           <Input v-model="email" placeholder="Enter email" />
           </Col>
@@ -143,9 +143,9 @@
     <TabPane label="已分配">
       <div class="hasTemporaryPool">
         <Row>
-          <Col span="6" style="padding-right:10px">
+          <Col span="4" style="padding-right:10px">
           <div>Associate store:</div>
-          <Select v-model="associateStore" style="width:200px">
+          <Select v-model="associateStore">
             <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>

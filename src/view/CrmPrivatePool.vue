@@ -1,7 +1,7 @@
 <template>
   <div class="privatePool">
     <Row>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>state:</span>
       <AutoComplete
         v-model="state"
@@ -10,15 +10,15 @@
         @on-search="handleSearch1"
         placeholder="input here"></AutoComplete>
       </Col>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>city:</span>
       <Input v-model="city" placeholder="Enter city" />
       </Col>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>company:</span>
       <Input v-model="company" placeholder="Enter company" />
       </Col>
-      <Col span="6" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span>联系状态:</span>
       <Select v-model="contactStatus">
         <Option v-for="item in contactStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -30,9 +30,9 @@
       </Col>-->
     </Row>
     <Row>
-      <Col span="6" style="padding-right:10px">
-      <div>Associate store:</div>
-      <Select v-model="noAssociateStore" style="width:200px">
+      <Col span="5" style="padding-right:10px">
+      <span>Associate store:</span>
+      <Select v-model="noAssociateStore">
         <Option v-for="item in noAssociateStoreList" :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>
@@ -62,7 +62,7 @@
       <span>cust id:</span>
       <Input v-model="custId" placeholder="Enter cust id" />
       </Col>
-      <Col span="4" style="padding-right:10px">
+      <Col span="5" style="padding-right:10px">
       <span style="color: #F0F0F0">Search:</span>
       <div>
         <Button type="primary" @click="getPrivateInstallerList">Search</Button>
