@@ -49,7 +49,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$http.delPropValue(this.data.id, data.id).then(data => {
+          this.$http.delPropValue(this.data.id, [data.id]).then(data => {
             this.data.values.splice(index, 1)
             this.$Modal.remove()
             this.$Notice.success({title: '删除成功'})

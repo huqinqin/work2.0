@@ -107,20 +107,20 @@ export default {
   saveCategory (params) {
     return axios.post('item/category/saveOrUpdate', params)
   },
-  fetchProp (catePropIds, categoryId) {
-    return axios.post('item/category/listProp', {catePropIds, categoryId})
+  fetchProp (params) {
+    return axios.post('item/category/listProp', params)
   },
   saveProp (params) {
-    return axios.post('item/category/addProps', params)
+    return axios.post('item/category/addProp', params)
   },
   delProp (params) {
-    return axios.post('item/category/deleteProps', params)
+    return axios.post('item/category/deleteProp', params)
   },
-  addPropValue (catePropId, name) {
-    return axios.post('item/category/addPropsTag', { catePropId, name })
+  addPropValue (propId, name) {
+    return axios.post('item/category/addPropValue', { propId, name })
   },
-  delPropValue (catePropId, id) {
-    return axios.post('item/category/deletePropsTag', { catePropId, id })
+  delPropValue (propId, ids) {
+    return axios.post('item/category/deletePropValue', { propId, ids })
   },
   fetchSku (cateSkuPropIds, categoryId) {
     return axios.post('item/category/listSkuProp', { cateSkuPropIds, categoryId })
