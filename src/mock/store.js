@@ -185,7 +185,7 @@ export default {
       data: {}
     }
   },
-  getInstallerList () {
+  listInstallerStore () {
     return {
       code: '000000',
       data: {

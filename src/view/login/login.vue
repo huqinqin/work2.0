@@ -37,6 +37,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+/deep/ .ivu-card-body{
+  min-width: 0;
+}
 </style>

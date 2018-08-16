@@ -59,42 +59,45 @@ export default {
           render (h, params) {
             const accounts = []
             for (const account of params.row.account) {
-              accounts.push(<row>
-                <i-col span={4}>账号：{account.account}</i-col>
-                <i-col span={4}>firstName：{account.firstName}</i-col>
-                <i-col span={4}>lastName：{account.lastName}</i-col>
-                <i-col span={4}>email：{account.email}</i-col>
-                <i-col span={4}>mobile：{account.mobile}</i-col>
-                <i-col span={4}>
-                  <i-switch value={params.row.status === 'enabled'} size="large">
-                    <span slot="open">激活</span>
-                    <span slot="close">冻结</span>
-                  </i-switch>
-                </i-col>
-              </row>)
+              accounts.push(<tr>
+                <td>账号：{account.account}</td>
+                <td>姓名：{account.lastName}-{account.firstName}</td>
+                <td>email：{account.email}</td>
+                <td>mobile：{account.mobile}</td>
+                <td>状态：{account.status}</td>
+              </tr>)
             }
-            return accounts
+            return <table width="100%" class="account-table">{accounts}</table>
           }
         }, {
           title: 'Cust ID',
           key: 'custId'
         }, {
-          title: '公司名',
+          title: '公司名称',
           key: 'companyName'
         }, {
-          title: '会员等级',
+          title: '等级',
           key: 'grade'
         }, {
-          title: '消费金额',
+          title: '联系信息',
           key: 'historyMoney'
         }, {
-          title: '订单数量',
+          title: '地址',
           key: 'orderNum'
         }, {
-          title: '可用积分',
+          title: '所属',
           key: 'availableIntegral'
         }, {
-          title: '账户启用状态',
+          title: '分销资格',
+          key: 'status'
+        }, {
+          title: '创建时间',
+          key: 'status'
+        }, {
+          title: '状态',
+          key: 'status'
+        }, {
+          title: '来源',
           key: 'status'
         },
         {
@@ -102,56 +105,17 @@ export default {
           key: 'action',
           width: 250,
           align: 'center',
-          render (h, params) {
+          render: (h, params) => {
             console.log(params)
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({
-                      name: 'installer_details',
-                      params: {}
-                    })
-                  }
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({
-                      name: 'installer_edit',
-                      params: {}
-                    })
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
-                }
-              }, '删除')
-            ])
+            return (
+              <div>
+                <i-button type="primary" size="small" style="margin-right: 5px;" onClick={() => {
+                  this.$router.push({name: 'installer_details', params: {id: params.row.id}})
+                }}>查看</i-button>
+                <i-button type="primary" size="small" style="margin-right: 5px;" onClick={() => {}}>编辑</i-button>
+                <i-button type="error" size="small" style="margin-right: 5px;" onClick={() => {}}>删除</i-button>
+              </div>
+            )
           }
         }
       ]
@@ -162,3 +126,13 @@ export default {
   }
 }
 </script>
+<style lang="less">
+.account-table {
+  &, tr, td{
+    padding: 0 16px;
+    line-height: 40px;
+    border: none;
+    background-color: #F6F6F6;
+  }
+}
+</style>

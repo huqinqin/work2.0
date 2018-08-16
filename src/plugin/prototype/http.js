@@ -177,7 +177,7 @@ export default {
     return axios.post('trade/orderSell/getOrderSellerDetail', params)
   },
   fetchInstaller (params) {
-    return axios.post('base/store/getInstallerList', params)
+    return axios.post('base/store/listInstallerStore', params)
   },
   changeOrderPrice (params) {
     return axios.post('trade/orderSell/updateOrderPrice', params)
