@@ -28,21 +28,21 @@
           </form-item>
         </div>
         <div class="layout-cell">
-          <form-item label="门店" prop="store">
+          <form-item label="门店" prop="storeId">
             <Select v-model="form.storeId" style="width:100%" @on-change="fetchGroups">
               <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
             </Select>
           </form-item>
         </div>
         <div class="layout-cell">
-          <form-item label="部门" prop="group">
+          <form-item label="部门" prop="groupId">
             <Select v-model="form.groupId" style="width:100%">
               <Option v-for="item in $store.state.options.groups" :value="item.key" :key="item.key">{{ item.value }}</Option>
             </Select>
           </form-item>
         </div>
         <div class="layout-cell">
-          <form-item label="角色" prop="role">
+          <form-item label="角色" prop="roleId">
             <CodeTable v-model="form.roleId" type="role"></CodeTable>
           </form-item>
         </div>
@@ -118,17 +118,17 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        store: [{
+        storeId: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        role: [{
+        roleId: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        group: [{
+        groupId: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'

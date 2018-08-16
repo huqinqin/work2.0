@@ -26,7 +26,7 @@
             <radio label="spu">spu属性</radio>
           </radio-group>
         </form-item>
-        <FormItem label="上级类目">
+        <FormItem label="所属类目">
           <Input v-model="curCate.name" placeholder="所属类目" readonly="readonly" />
         </FormItem>
         <form-item label="属性名">
