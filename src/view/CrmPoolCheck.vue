@@ -338,7 +338,7 @@ export default {
                   编辑 </i-button>
               <i-button
                 type = "primary"
-                onClick = {() => { this.del(params) }
+                onClick = {() => { this.del1(params) }
                 }>
                     删除 </i-button>
               </div>)
@@ -612,7 +612,17 @@ export default {
       this.$http.delCard({
         id: params.row.id
       }).then((data) => {
-        this.self.installerdata.splice(params.index, 1)
+        this.$Message.success('删除分销证成功！！！！')
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
+      })
+    },
+    del1 (params) {
+      this.$http.deleteLinkman({
+        id: params.row.id
+      }).then((data) => {
+        // this.self.installerdata.splice(params.index, 1)
       })
     },
     ceateNewInstaller () {
@@ -799,6 +809,7 @@ export default {
     },
     contactListRecode () {
       this.$http.contactList({
+        companyId: parseInt(this.$route.params.id)
       }).then((data) => {
         this.contactInstallerList = data.list
         console.log(this.contactInstallerList)

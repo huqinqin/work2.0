@@ -238,6 +238,10 @@ export default {
   createLinkman (params) {
     return axios.post('/crm/company/addContact', params)
   },
+  /* 删除联系人 */
+  deleteLinkman (params) {
+    return axios.post('/crm/company/deleteContact ', params)
+  },
   /* 临时池工程商列表 */
   templatePoolInstallerList (params) {
     return axios.post('/crm/bupoll/formoment/page', params)
