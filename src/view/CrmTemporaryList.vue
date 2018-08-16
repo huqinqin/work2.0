@@ -44,7 +44,7 @@
             <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="4" style="padding-right:10px" v-if="trade === '0'">
+          <Col span="4" style="padding-right:10px" v-if="trade === '视频监控'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="trade1">
             <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -184,7 +184,7 @@
             <Option v-for="item in noAllocationTradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="5" style="padding-right:10px" v-if="noAllocation === '0'">
+          <Col span="5" style="padding-right:10px" v-if="noAllocation === '视频监控'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="noAllocation1">
             <Option v-for="item in noAllocationTradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -387,41 +387,41 @@ export default {
       }],
       trade1: '',
       tradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       noAllocation: '',
       noAllocationTradeList: [{
-        value: '0',
+        value: '视频监控',
         label: '视频监控'
       }, {
-        value: '1',
+        value: '门禁',
         label: '门禁'
       }, {
-        value: '2',
+        value: '报警',
         label: '报警'
       }, {
-        value: '3',
+        value: '音视频',
         label: '音视频'
       }, {
-        value: '4',
+        value: '其他',
         label: '其他'
       }],
       noAllocation1: '',
       noAllocationTradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       email: '',
@@ -741,33 +741,6 @@ export default {
       this.allot = name
       this.getTemplatePoolInstallerList(name)
     },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
-    },
     importInstaller () {
       this.importInstallerModal = true
     },
@@ -870,7 +843,7 @@ export default {
         custCode: this.custId ? this.custId : null,
         email: this.email ? this.email : null,
         name: this.company ? this.company : null,
-        industryJoin: this.trade ? this.trade : null,
+        industryJoin: val === '0' ? (this.trade === '视频监控' ? this.trade + '-' + this.trade1 : this.trade) : (this.noAllocation === '视频监控' ? this.noAllocation + '-' + this.noAllocation1 : this.noAllocation),
         contactStatus: this.contact ? this.contact : null,
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
