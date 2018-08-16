@@ -147,12 +147,22 @@ export default {
           width: 150,
           align: 'center',
           render: (h, params) => {
-            return (
-              <div>
-                <i-button type="primary" size="small" on-click={(e) => this.detail(params.row.id)}>查看</i-button>
-                <i-button type="primary" size="small" on-click={(e) => this.recall(params.row)}>销售撤回</i-button>
-              </div>
-            )
+            let content = null
+            if (params.row.status === 'enabled') {
+              content = (
+                <div>
+                  <i-button type="primary" size="small" on-click={(e) => this.detail(params.row.id)}>查看</i-button>
+                </div>
+              )
+            } else {
+              content = (
+                <div>
+                  <i-button type="primary" size="small" on-click={(e) => this.detail(params.row.id)}>查看</i-button>
+                  <i-button type="primary" size="small" on-click={(e) => this.recall(params.row)}>销售撤回</i-button>
+                </div>
+              )
+            }
+            return content
           }
         }
       ]
