@@ -19,7 +19,9 @@
         </div>
       </div>
       <div class="layout-column">
-        <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
+        <div class="layout-cell flex-item">
+          <MapAutoComplete :googleAddress="form.address" ref="address"></MapAutoComplete>
+        </div>
       </div>
       <div class="layout-column" v-for="(contact, index) in form.contact" :key="index">
         <div class="layout-cell">
@@ -48,15 +50,19 @@
           </form-item>
         </div>
       </div>
-      <row>
-         <i-col :span="5">
+      <div class="layout-column">
+        <div class="layout-cell">
           <i-button @click="addContact">新增联系人</i-button>
-        </i-col>
-      </row>
-      <form-item>
-        <Button type="primary" @click="submit" :loading="loading">Submit</Button>
-        <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
-      </form-item>
+        </div>
+      </div>
+      <div class="layout-column">
+        <div class="layout-cell">
+          <form-item>
+            <Button type="primary" @click="submit" :loading="loading">Submit</Button>
+            <i-button type="ghost" style="margin-left: 8px" @click="reset">Reset</i-button>
+          </form-item>
+        </div>
+      </div>
     </i-form>
   </card>
 </template>
@@ -79,7 +85,6 @@ export default {
         contact: [{firstName: '', lastName: '', phone: '', email: ''}],
         address: {
           detail: '',
-          country: '',
           state: '',
           city: '',
           street: '',

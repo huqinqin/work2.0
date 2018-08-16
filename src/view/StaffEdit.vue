@@ -154,6 +154,7 @@ export default {
   methods: {
     fetchGroups () {
       if (this.form.store) {
+        this.form.group = ''
         this.$store.dispatch('fetchGroups', this.form.store)
       }
     },

@@ -1,63 +1,57 @@
 <template>
   <Form :model="googleAddress" label-position="top" ref="form" :rules="rules">
-    <div class="layout-column">
-      <div class="layout-cell" v-if="googleAddress.hasOwnProperty('receiver')">
+    <row>
+      <i-col :span="12" v-if="googleAddress.hasOwnProperty('receiver')">
         <form-item label="收货人" prop="receiver">
           <i-input v-model="googleAddress.receiver" placeholder="输入收货人"></i-input>
         </form-item>
-      </div>
-      <div class="layout-cell" v-if="googleAddress.hasOwnProperty('telnum')">
+      </i-col>
+      <i-col :span="24" v-if="googleAddress.hasOwnProperty('telnum')">
         <form-item label="联系电话" prop="telnum">
           <i-input v-model="googleAddress.telnum" placeholder="输入联系电话"></i-input>
         </form-item>
-      </div>
-    </div>
-    <div class="layout-column">
-      <div class="layout-cell flex-item">
+      </i-col>
+      <i-col :span="24">
         <form-item label="地址" prop="detail">
           <input id="addressel-input" class="ivu-input" v-model="googleAddress.detail" type="text" />
         </form-item>
-      </div>
-    </div>
-    <div class="layout-column">
-      <div class="layout-cell flex-item">
+      </i-col>
+      <i-col :span="24">
         <form-item label="街道" prop="street">
           <i-input v-model="googleAddress.street" placeholder="输入街道"></i-input>
         </form-item>
-      </div>
-    </div>
-    <div class="layout-column">
-      <div class="layout-cell">
+      </i-col>
+      <i-col :span="12">
         <form-item label="城市" prop="city">
           <i-input v-model="googleAddress.city" placeholder="输入城市"></i-input>
         </form-item>
-      </div>
-      <div class="layout-cell">
+      </i-col>
+      <i-col :span="12">
         <form-item label="州" prop="state">
           <i-input v-model="googleAddress.state" placeholder="输入州"></i-input>
         </form-item>
-      </div>
-      <div class="layout-cell">
+      </i-col>
+      <i-col :span="12">
         <form-item label="邮编" prop="zip">
           <i-input v-model="googleAddress.zip" placeholder="输入邮编"></i-input>
         </form-item>
-      </div>
-      <div class="layout-cell">
+      </i-col>
+      <i-col :span="12">
         <form-item label="国家" prop="country">
           <i-input v-model="googleAddress.country" placeholder="输入国家"></i-input>
         </form-item>
-      </div>
-      <div class="layout-cell" v-if="googleAddress.hasOwnProperty('company')">
+      </i-col>
+      <i-col :span="24" v-if="googleAddress.hasOwnProperty('company')">
         <form-item label="公司" prop="company">
           <i-input v-model="googleAddress.company" placeholder="输入公司"></i-input>
         </form-item>
-      </div>
-      <div class="layout-cell" v-if="googleAddress.hasOwnProperty('isDefault')">
+      </i-col>
+      <i-col :span="24" v-if="googleAddress.hasOwnProperty('isDefault')">
         <form-item label="">
           <i-checkbox v-model="googleAddress.isDefault">设为默认地址</i-checkbox>
         </form-item>
-      </div>
-    </div>
+      </i-col>
+    </row>
   </Form>
 </template>
 <script>
