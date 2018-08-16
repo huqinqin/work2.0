@@ -37,6 +37,8 @@ export default {
       }).then(data => {
         if (rootState.user.storeId === 1) {
           commit('setStores', data)
+        } else {
+          commit('setStores', data.filter(item => item.key.toString() === rootState.user.storeId.toString()))
         }
       })
     },

@@ -26,17 +26,17 @@
     <Row>
       <Col span="5" style="padding-right:10px">
       <span>type:</span>
-      <Select v-model="type">
-        <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      <Select v-model="type" clearable>
+        <Option v-for="item in typeList" :value="item.value" :key="item.value" >{{ item.label }}</Option>
       </Select>
       </Col>
       <Col span="5" style="padding-right:10px">
       <span>行业:</span>
-      <Select v-model="trade">
-        <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+      <Select v-model="trade" clearable>
+        <Option v-for="item in tradeList"   :value="item.value" :key="item.value">{{ item.label }}</Option>
       </Select>
       </Col>
-      <Col span="5" style="padding-right:10px" v-if="trade === '0'">
+      <Col span="5" style="padding-right:10px" v-if="trade === '视频监控'">
       <span style="color: #F0F0F0">111</span>
       <Select v-model="trade1">
         <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -103,6 +103,11 @@
               <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
           </FormItem>
+          <FormItem label="" prop="invalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === '黑名单'">
+            <Select v-model="formValidate.invalidBussinessSelect1" style="width:200px">
+              <Option v-for="item in invalidBussinessList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </FormItem>
           <FormItem label="备注" prop="note">
             <Row>
               <Col span="18">
@@ -136,53 +141,53 @@ export default {
       company: '',
       type: '',
       typeList: [{
-        value: '0',
+        value: 'Installer',
         label: 'Installer'
       }, {
-        value: '1',
+        value: 'Integrator',
         label: 'Integrator'
       }, {
-        value: '2',
+        value: 'Wholesale',
         label: 'Wholesale'
       }, {
-        value: '3',
+        value: 'Distributor',
         label: 'Distributor'
       }, {
-        value: '4',
+        value: 'Retailer',
         label: 'Retailer'
       }, {
-        value: '5',
+        value: 'Onlinestore',
         label: 'Onlinestore'
       }, {
-        value: '6',
+        value: 'Other',
         label: 'Other'
       }],
       trade: '',
       tradeList: [{
-        value: '0',
+        value: '视频监控',
         label: '视频监控'
       }, {
-        value: '1',
+        value: '门禁',
         label: '门禁'
       }, {
-        value: '2',
+        value: '报警',
         label: '报警'
       }, {
-        value: '3',
+        value: '音视频',
         label: '音视频'
       }, {
-        value: '4',
+        value: '其他',
         label: '其他'
       }],
       trade1: '',
       tradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       email: '',
@@ -255,30 +260,29 @@ export default {
       importInstallerModal: false,
       invalidBussinessModal: false,
       invalidBussinessList: [{
-        value: 'Installer',
-        label: 'Installer'
+        value: '黑名单',
+        label: '黑名单'
       }, {
-        value: 'Integrator',
-        label: 'Integrator'
+        value: '终端用户',
+        label: '终端用户'
       }, {
-        value: 'Wholesale',
-        label: 'Wholesale'
+        value: '非安防行业',
+        label: '非安防行业'
+      }],
+      invalidBussinessList1: [{
+        value: '竞争对手',
+        label: '竞争对手'
       }, {
-        value: 'Distributor',
-        label: 'Distributor'
+        value: '坏账',
+        label: '坏账'
       }, {
-        value: 'Retailer',
-        label: 'Retailer'
-      }, {
-        value: 'Onlinestore',
-        label: 'Onlinestore'
-      }, {
-        value: 'Other',
-        label: 'Other'
+        value: '其它',
+        label: '其它'
       }],
       formValidate: {
         invalidBussinessSelect: '',
-        note: ''
+        note: '',
+        invalidBussinessSelect1: ''
       },
       ruleValidate: {
         invalidBussinessSelect: [
@@ -371,7 +375,7 @@ export default {
             })
             this.$http.invalidBussinessListSave({
               companyIds: ids,
-              bizNote: this.formValidate.invalidBussinessSelect,
+              bizNote: this.formValidate.invalidBussinessSelect === '黑名单' ? this.formValidate.invalidBussinessSelect + '-' + this.formValidate.invalidBussinessSelect1 : this.formValidate.invalidBussinessSelect,
               bizType: this.formValidate.note
             }).then((data) => {
               this.$Message.success('已添加到无效商机!')
@@ -400,7 +404,7 @@ export default {
       this.searchOptionJoin.beginTime = new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : ''
       this.searchOptionJoin.endTime = new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : ''
       this.searchOptionJoin.type = this.type ? this.type : ''
-      this.searchOptionJoin.industry = this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : null
+      this.searchOptionJoin.industry = this.trade ? (this.trade === '0' ? this.trade + '-' + this.trade1 : this.trade) : ''
       this.searchOptionJoin.email = this.email ? this.email : ''
       this.$http.crmInstallerListData({
         state: this.state ? this.state : null,
