@@ -171,29 +171,35 @@ const qProductList = Mock.mock({
 // ]
 const cascader = [
   {
+    id: '1-1',
     value: '1-1',
     label: '类目 1-1',
     children: [
       {
         value: '1-1-1',
+        id: '1-1-1',
         label: '类目 1-1-1'
       },
       {
         value: '1-1-2',
+        id: '1-1-2',
         label: '类目 1-1-2'
       }
     ]
   },
   {
     value: '1-2',
+    id: '1-2',
     label: '类目 1-2',
     children: [
       {
         value: '1-2-1',
+        id: '1-2-1',
         label: '类目 1-2-1'
       },
       {
         value: '1-2-2',
+        id: '1-2-2',
         label: '类目 1-2-2'
       }
     ]

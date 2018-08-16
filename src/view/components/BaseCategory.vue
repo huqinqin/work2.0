@@ -1,5 +1,5 @@
 <template>
-  <Cascader :data="data" v-model="checked" change-on-select @on-change="onInput"></Cascader>
+  <Cascader :data="data" :value="checked" change-on-select @on-change="onInput"></Cascader>
 </template>
 <script>
 export default {
@@ -11,26 +11,21 @@ export default {
     }
   },
   computed: {
-    checked: {
-      get: function () {
-        const id = this.value
-        const data = this.data
-        const list = []
-        const fn = (list, data) => {
-          for (const item of data) {
-            if (item.id === id) {
-              list.push(item.id)
-              return list
-            }
+    checked () {
+      const id = this.value
+      const data = this.data
+      const list = []
+      const fn = (list, data) => {
+        for (const item of data) {
+          if (item.id.toString() === id.toString()) {
             list.push(item.id)
-            if (data.children) return fn(list, data.children)
+            return list
           }
+          list.push(item.id)
+          if (item.children) return fn(list, item.children)
         }
-        return fn(list, data)
-      },
-      set: function () {
-        console.log('set')
       }
+      return fn(list, data)
     }
   },
   methods: {

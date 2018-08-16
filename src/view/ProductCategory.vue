@@ -71,6 +71,11 @@ const initForm = {
   imgUrl: '',
   onum: 99
 }
+const initProp = {
+  onum: 99,
+  type: 'sku',
+  name: ''
+}
 export default {
   name: 'ProductCategory',
   components: {
@@ -81,11 +86,7 @@ export default {
   data () {
     return {
       curCate: {id: '', name: ''},
-      prop: {
-        onum: 99,
-        type: 'sku',
-        name: ''
-      },
+      prop: cloneDeep(initProp),
       props: [],
       showCateModal: false,
       showPropNew: false,
@@ -170,6 +171,7 @@ export default {
       const params = { cateId: this.curCate.id, ...this.prop }
       this.$http.saveProp(params).then(() => {
         this.fetchProps()
+        this.prop = cloneDeep(initProp)
       })
     },
     delProp (id) {
