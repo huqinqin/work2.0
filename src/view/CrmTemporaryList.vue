@@ -44,7 +44,7 @@
             <Option v-for="item in tradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="4" style="padding-right:10px" v-if="trade === '0'">
+          <Col span="4" style="padding-right:10px" v-if="trade === '视频监控'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="trade1">
             <Option v-for="item in tradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -75,7 +75,7 @@
           <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="total" :current="1" @on-change="changePage"></Page>
+              <Page :total="total" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
             </div>
           </div>
           </Col>
@@ -112,7 +112,7 @@
                 </Select>
               </FormItem>
               <FormItem  prop="subInvalidBussinessSelect">
-                <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
+                <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === '黑名单'" style="width:200px">
                   <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </FormItem>
@@ -184,7 +184,7 @@
             <Option v-for="item in noAllocationTradeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
           </Col>
-          <Col span="5" style="padding-right:10px" v-if="noAllocation === '0'">
+          <Col span="5" style="padding-right:10px" v-if="noAllocation === '视频监控'">
           <span style="color: #F0F0F0">111</span>
           <Select v-model="noAllocation1">
             <Option v-for="item in noAllocationTradeList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -215,7 +215,7 @@
           <Table :columns="installerList1" :data="installerdata1" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
           <div style="margin: 10px;overflow: hidden">
             <div style="float: right;">
-              <Page :total="total1" :current="1" @on-change="changePage"></Page>
+              <Page :total="total1" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
             </div>
           </div>
           </Col>
@@ -243,6 +243,30 @@
             <a href="https://ltsb2b2.oss-us-west-1.aliyuncs.com/crm/123.xlsx">下载模板</a>
           </Modal>
         </Row>-->
+        <!--<Row>
+          <Modal v-model="invalidBussinessModal1" width="600" title="无效商机" @on-ok="handleSubmit1" @on-cancel="handleReset">
+            <Form ref="formValidate1" :model="formValidate1" :rules="ruleValidate1" :label-width="80">
+              <FormItem label="类型" prop="invalidBussinessSelect1">
+                <Select v-model="formValidate1.invalidBussinessSelect1" style="width:200px">
+                  <Option v-for="item in invalidBussinessList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </FormItem>
+              <FormItem  prop="subInvalidBussinessSelect1">
+                <Select v-model="formValidate1.subInvalidBussinessSelect1" v-if="formValidate1.invalidBussinessSelect1 === '黑名单'" style="width:200px">
+                  <Option v-for="item in subInvalidBussinessList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+              </FormItem>
+              <FormItem label="备注" prop="note1">
+                <Row>
+                  <Col span="18">
+                  <Input v-model="formValidate1.note1" type="textarea" placeholder="Enter something..." />
+                  </Col>
+                </Row>
+              </FormItem>
+              <div style="margin-left: 80px">注：如果已开通商城账号，加入无效商机名单后将冻结该工程商的账号</div>
+            </Form>
+          </Modal>
+        </Row>-->
         <Row>
           <Modal v-model="invalidBussinessModal1" width="600" title="无效商机" @on-ok="handleSubmit" @on-cancel="handleReset">
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
@@ -251,15 +275,15 @@
                   <Option v-for="item in invalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
               </FormItem>
-              <!--<FormItem  prop="subInvalidBussinessSelect">
-                <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === 'New York1'" style="width:200px">
+              <FormItem  prop="subInvalidBussinessSelect">
+                <Select v-model="formValidate.subInvalidBussinessSelect" v-if="formValidate.invalidBussinessSelect === '黑名单'" style="width:200px">
                   <Option v-for="item in subInvalidBussinessList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-              </FormItem>-->
+              </FormItem>
               <FormItem label="备注" prop="note">
                 <Row>
                   <Col span="18">
-                  <span>备注:</span><Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
+                  <Input v-model="formValidate.note" type="textarea" placeholder="Enter something..." />
                   </Col>
                 </Row>
               </FormItem>
@@ -331,41 +355,41 @@ export default {
       type: '',
       contact: '',
       contactList: [{
-        value: '未联系',
+        value: '0',
         label: '未联系'
       }, {
-        value: '联系中未询价',
+        value: '1',
         label: '联系中未询价'
       }, {
-        value: '联系中询价中',
+        value: '2',
         label: '联系中询价中'
       }, {
-        value: '激活已下单',
+        value: '3',
         label: '激活已下单'
       }, {
-        value: '拉新已下单',
+        value: '4',
         label: '拉新已下单'
       }, {
-        value: '无效客人',
+        value: '5',
         label: '无效客人'
       }],
       typeList: [{
-        value: '未联系',
+        value: '0',
         label: '未联系'
       }, {
-        value: '联系中未询价',
+        value: '1',
         label: '联系中未询价'
       }, {
-        value: '联系中询价中',
+        value: '2',
         label: '联系中询价中'
       }, {
-        value: '激活已下单',
+        value: '3',
         label: '激活已下单'
       }, {
-        value: '拉新已下单',
+        value: '4',
         label: '拉新已下单'
       }, {
-        value: '无效客人',
+        value: '5',
         label: '无效客人'
       }],
       trade: '',
@@ -387,41 +411,41 @@ export default {
       }],
       trade1: '',
       tradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       noAllocation: '',
       noAllocationTradeList: [{
-        value: '0',
+        value: '视频监控',
         label: '视频监控'
       }, {
-        value: '1',
+        value: '门禁',
         label: '门禁'
       }, {
-        value: '2',
+        value: '报警',
         label: '报警'
       }, {
-        value: '3',
+        value: '音视频',
         label: '音视频'
       }, {
-        value: '4',
+        value: '其他',
         label: '其他'
       }],
       noAllocation1: '',
       noAllocationTradeList1: [{
-        value: '0',
+        value: 'IP',
         label: 'IP'
       }, {
-        value: '1',
+        value: 'HD-TVI',
         label: 'HD-TVI'
       }, {
-        value: '2',
+        value: 'Both',
         label: 'Both'
       }],
       email: '',
@@ -562,43 +586,59 @@ export default {
       invalidBussinessModal: false,
       invalidBussinessModal1: false,
       invalidBussinessList: [{
-        value: 'Installer',
-        label: 'Installer'
+        value: '黑名单',
+        label: '黑名单'
       }, {
-        value: 'Integrator',
-        label: 'Integrator'
+        value: '终端用户',
+        label: '终端用户'
       }, {
-        value: 'Wholesale',
-        label: 'Wholesale'
-      }, {
-        value: 'Distributor',
-        label: 'Distributor'
-      }, {
-        value: 'Retailer',
-        label: 'Retailer'
-      }, {
-        value: 'Onlinestore',
-        label: 'Onlinestore'
-      }, {
-        value: 'Other',
-        label: 'Other'
+        value: '非安防行业',
+        label: '非安防行业'
       }],
-      /* subInvalidBussinessList: [{
-          value: 'New York',
-          label: 'New York'
-        }, {
-          value: 'New York1',
-          label: 'New York1'
-        }], */
+      subInvalidBussinessList: [{
+        value: '竞争对手',
+        label: '竞争对手'
+      }, {
+        value: '坏账',
+        label: '坏账'
+      }, {
+        value: '其它',
+        label: '其它'
+      }],
+      /* invalidBussinessList1: [{
+        value: '黑名单',
+        label: '黑名单'
+      }, {
+        value: '终端用户',
+        label: '终端用户'
+      }, {
+        value: '非安防行业',
+        label: '非安防行业'
+      }],
+      subInvalidBussinessList1: [{
+        value: '竞争对手',
+        label: '竞争对手'
+      }, {
+        value: '坏账',
+        label: '坏账'
+      }, {
+        value: '其它',
+        label: '其它'
+      }], */
       formValidate: {
-        /* subInvalidBussinessSelect: '', */
+        subInvalidBussinessSelect: '',
         invalidBussinessSelect: '',
         note: ''
       },
+      /* formValidate1: {
+        subInvalidBussinessSelect1: '',
+        invalidBussinessSelect1: '',
+        note1: ''
+      }, */
       ruleValidate: {
         /* subInvalidBussinessSelect: [
-            {required: true, message: 'The name cannot be empty', trigger: 'blur'}
-          ], */
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ], */
         invalidBussinessSelect: [
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ],
@@ -606,6 +646,17 @@ export default {
           {required: true, message: 'The name cannot be empty', trigger: 'blur'}
         ]
       },
+      /* ruleValidate1: {
+        /!*subInvalidBussinessSelect1: [
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ],*!/
+        invalidBussinessSelect1: [
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ],
+        note1: [
+          {required: true, message: 'The name cannot be empty', trigger: 'blur'}
+        ]
+      }, */
       isSaller: false,
       isSaller1: false,
       allocationSells: '',
@@ -671,7 +722,8 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
+      },
+      row: 0
     }
   },
   methods: {
@@ -699,14 +751,18 @@ export default {
       return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
     },
     /* check (params) {
-        // location.href = '/#/crm/CrmPoolCheck' + params
-        this.$router.push({name: 'Crm Check', params: {row: params.row}})
-        // console.log('000000000')
-      }, */
+          // location.href = '/#/crm/CrmPoolCheck' + params
+          this.$router.push({name: 'Crm Check', params: {row: params.row}})
+          // console.log('000000000')
+        }, */
     receive (params) {
       this.selection = []
       this.selection.push(params.row)
       this.batchCollectionInstaller()
+    },
+    changeSize (row) {
+      this.row = row
+      this.getTemplatePoolInstallerList(this.allot)
     },
     batchCollectionInstaller () {
       if (this.selection.length > 0) {
@@ -715,7 +771,7 @@ export default {
         this.$http.batchCollectionInstaller({
           ids: this.ids ? this.ids : []
         }).then((data) => {
-          this.$Message.success('批量选择成功')
+          this.$Message.success('success')
           setTimeout(() => {
             location.reload()
           }, 1000)
@@ -735,33 +791,6 @@ export default {
     tableChange (name) {
       this.allot = name
       this.getTemplatePoolInstallerList(name)
-    },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
     },
     importInstaller () {
       this.importInstallerModal = true
@@ -784,8 +813,35 @@ export default {
             })
             this.$http.invalidBussinessListSave({
               companyIds: ids,
-              bizNote: this.formValidate.invalidBussinessSelect,
+              bizNote: this.formValidate.invalidBussinessSelect === '黑名单' ? this.formValidate.invalidBussinessSelect + this.formValidate.subInvalidBussinessSelect : this.formValidate.invalidBussinessSelect,
               bizType: this.formValidate.note
+            }).then((data) => {
+              this.$Message.success('已添加到无效商机!')
+              setTimeout(() => {
+                location.reload()
+              }, 2000)
+            })
+          } else {
+            this.$Message.error('请勾选工程商进行操作！！')
+          }
+        } else {
+          this.$refs.formValidate.resetFields()
+          this.$Message.error('添加失败!')
+        }
+      })
+    },
+    handleSubmit1 () {
+      this.$refs.formValidate1.validate((valid) => {
+        if (valid) {
+          if (this.selection.length > 0) {
+            let ids = []
+            this.selection.forEach((item) => {
+              ids.push(item.id)
+            })
+            this.$http.invalidBussinessListSave({
+              companyIds: ids,
+              bizNote: this.formValidate1.invalidBussinessSelect1 === '黑名单' ? this.formValidate1.invalidBussinessSelect1 + this.formValidate1.subInvalidBussinessSelect1 : this.formValidate1.invalidBussinessSelect1,
+              bizType: this.formValidate1.note1
             }).then((data) => {
               this.$Message.success('已添加到无效商机!')
             })
@@ -865,14 +921,14 @@ export default {
         custCode: this.custId ? this.custId : null,
         email: this.email ? this.email : null,
         name: this.company ? this.company : null,
-        industryJoin: this.trade ? this.trade : null,
+        industryJoin: val === '0' ? (this.trade === '视频监控' ? this.trade + '-' + this.trade1 : this.trade) : (this.noAllocation === '视频监控' ? this.noAllocation + '-' + this.noAllocation1 : this.noAllocation),
         contactStatus: this.contact ? this.contact : null,
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
         ltsUser: null,
         allotStatus: val,
         page: this.page ? this.page : null,
-        rows: 10
+        rows: this.row
       }).then((data) => {
         this.installerdata = data.list
         this.installerdata1 = data.list
@@ -883,11 +939,11 @@ export default {
     check (params) {
       this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
       /* this.$http.installerCheck({
-          id: params.row.id
-        }).then((data) => {
-          this.$router.push({name: 'Crm Check', params: data.data})
-          console.log(data)
-        }) */
+            id: params.row.id
+          }).then((data) => {
+            this.$router.push({name: 'Crm Check', params: data.data})
+            console.log(data)
+          }) */
     },
     exportInstallerList (val) {
       let s = '/work/crm/export/formoment/list?storeId=' + (val === '0' ? (this.noAssociateStore ? this.noAssociateStore : '') : (this.associateStore ? this.associateStore : 0)) + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +

@@ -42,7 +42,7 @@
       <Table :columns="installerList" :data="installerdata"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="total1" :current="1" @on-change="changePage"></Page>
+          <Page :total="total1" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
         </div>
       </div>
       </Col>
@@ -237,7 +237,8 @@ export default {
       isSaller: false,
       dateValue: [],
       total1: 0,
-      page: 1
+      page: 1,
+      row: 10
     }
   },
   methods: {
@@ -271,37 +272,12 @@ export default {
       console.log('11111')
     },
     changePage (page) {
-      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      // this.tableData1 = this.mockTableData1()
       this.page = page
       this.invalidInstallerList()
     },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
+    changeSize (row) {
+      this.row = row
+      this.invalidInstallerList()
     },
     importInstaller () {
       this.importInstallerModal = true
@@ -351,7 +327,9 @@ export default {
         beginTime: new Date(this.dateValue[0]).getTime() ? new Date(this.dateValue[0]).getTime() : null,
         endTime: new Date(this.dateValue[1]).getTime() ? new Date(this.dateValue[1]).getTime() : null,
         typeJoin: this.trade ? ((this.trade === '黑名单') ? (this.trade + this.trade1) : this.trade) : null,
-        email: this.email ? this.email : null
+        email: this.email ? this.email : null,
+        page: this.page,
+        rows: this.row
       }).then((data) => {
         this.installerdata = data.list
         this.total1 = data.total

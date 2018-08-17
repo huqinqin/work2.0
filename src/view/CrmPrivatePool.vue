@@ -80,7 +80,7 @@
       <Table :columns="installerList" :data="installerdata" @on-select="collection" @on-select-all="collectionAll" @on-selection-change="cancleCollection"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="total1" :current="1" @on-change="changePage"></Page>
+          <Page :total="total1" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
         </div>
       </div>
       </Col>
@@ -341,7 +341,8 @@ export default {
         label: '无效客人'
       }],
       contactNote: '',
-      id: 0
+      id: 0,
+      row: 10
     }
   },
   methods: {
@@ -402,6 +403,10 @@ export default {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
       // this.tableData1 = this.mockTableData1()
       this.page = page
+      this.getPrivateInstallerList()
+    },
+    changeSize (row) {
+      this.row = row
       this.getPrivateInstallerList()
     },
     mockTableData1 () {
@@ -510,7 +515,7 @@ export default {
         state: this.state ? this.state : null,
         city: this.city ? this.city : null,
         page: this.page ? this.page : null,
-        rows: 10
+        rows: this.row
       }).then((data) => {
         this.installerdata = data.list
         this.total1 = data.total
@@ -546,7 +551,7 @@ export default {
         ltsUser: null
       }).then((data) => {}) */
       let s = '/work/crm/export/priv/list?storeId=' + this.noAssociateStore + '&city=' + this.city + '&name=' + this.company + '&custCode=' + this.custId + '&industryJoin=' + this.trade + '&email=' + this.email +
-        '&commStatus=' + this.contact + '&state=' + this.state
+        '&commStatus=' + this.contactStatus + '&state=' + this.state
       window.open(s)
     }
     /* salesCheck () {

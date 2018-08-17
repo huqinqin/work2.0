@@ -128,7 +128,7 @@
         </FormItem>
       </Form>
     </Modal>
-    <Modal ref="InstallerCardModal" :loading="loading"  v-model="InstallerCardModal" width="600" title="分销证信息" @on-ok="InstallerCardInfo" @on-cancel="handleReset">
+    <Modal ref="InstallerCardModal" :loading="loading"  v-model="InstallerCardModal" width="600" title="分销证信息" @on-ok="InstallerCardInfo" @on-cancel="handleReset" class-name="newCardModal">
       <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
         <FormItem label="分销证信息" prop="cardInfo">
           <Upload
@@ -225,9 +225,9 @@
         <ul>
           <li v-for="(item,index) in contactInstallerList" :key="item.id" v-if="index < 3">
             <div span="24">
-              <span>{{item.cdate}}</span>
+              <span>{{item.cdate1}}</span>
               <span class="status">{{item.status === 1 ? "未联系" : (item.status === 2 ? "联系中未询价" : (item.status === 3 ? "联系询价中" : (item.status === 4 ? "激活已下单" : (item.status === 5 ? "拉新已下单" : "无效客人"))))}}</span>
-              <span>{{item.type === 1 ? " 电话沟通" : (item.type === 2 ? "邮件沟通" : "当面拜访")}}</span>
+              <span>{{item.type === 1 ? " 电话沟通" : (item.type === 3 ? "当面拜访" : (item.type === 2 ? "邮件沟通" : '其他'))}}</span>
             </div>
             <div span="24">
               <span>{{item.storeName}}门店</span>
@@ -528,10 +528,10 @@ export default {
         value: '1',
         label: '电话沟通'
       }, {
-        value: '2',
+        value: '3',
         label: '当面拜访'
       }, {
-        value: '3',
+        value: '2',
         label: '邮件沟通'
       }, {
         value: '4',
@@ -594,7 +594,10 @@ export default {
           return date && date.valueOf() >= Date.now() - 86400000
         }
       },
-      page: 1
+      page: 1,
+      id: 0,
+      row: 10,
+      createTime1: ''
     }
   },
   methods: {
@@ -606,6 +609,7 @@ export default {
       this.formInline.job = params.row.position
       this.formInline.email = params.row.email
       this.formInline.mobile = params.row.phone
+      this.id = params.row.id
       // this.formInline.checked = params.row.open
     },
     del (params) {
@@ -620,9 +624,14 @@ export default {
     },
     del1 (params) {
       this.$http.deleteLinkman({
+        companyId: parseInt(this.$route.params.id),
         id: params.row.id
       }).then((data) => {
         // this.self.installerdata.splice(params.index, 1)
+        this.$Message.success('删除联系人成功！！！！')
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
       })
     },
     ceateNewInstaller () {
@@ -631,6 +640,7 @@ export default {
     },
     submitNewInstaller () {
       this.$http.createLinkman({
+        id: this.id ? this.id : null,
         companyId: parseInt(this.$route.params.id),
         firstName: this.formInline.firstName,
         lastName: this.formInline.lastName,
@@ -649,6 +659,7 @@ export default {
     changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
       this.page = page
+      this.cardNumList()
     },
     mockTableData1 () {
       let data = []
@@ -678,7 +689,8 @@ export default {
       return data
     },
     changeSize (row) {
-      console.log(row)
+      this.row = row
+      this.cardNumList()
     },
     maintenance () {
       this.$refs.maintenanceForm.resetFields()
@@ -807,12 +819,27 @@ export default {
       this.createNewAccount = true
       console.log('1111')
     },
+    /* 标准时间转成时间戳 */
+    add0 (m) { return m < 10 ? '0' + m : m },
+    timeFormat (timestamp) {
+      var time = new Date(timestamp)
+      var year = time.getFullYear()
+      var month = time.getMonth() + 1
+      var date = time.getDate()
+      var hours = time.getHours()
+      var minutes = time.getMinutes()
+      var seconds = time.getSeconds()
+      return year + '-' + this.add0(month) + '-' + this.add0(date) + ' ' + this.add0(hours) + ':' + this.add0(minutes) + ':' + this.add0(seconds)
+    },
     contactListRecode () {
       this.$http.contactList({
         companyId: parseInt(this.$route.params.id)
       }).then((data) => {
+        data.list.forEach((item) => {
+          item.cdate1 = this.timeFormat(item.cdate)
+        })
         this.contactInstallerList = data.list
-        console.log(this.contactInstallerList)
+        // console.log(this.contactInstallerList)
       })
     },
     editInstallerList () {
@@ -825,13 +852,15 @@ export default {
       }).then((data) => {
         this.checkDate = data
         this.installerdata = (data.contact ? data.contact : [])
-        console.log(this.$route.params.id)
+        // console.log(this.$route.params.id)
       })
     },
     /* 分销证列表 */
     cardNumList () {
       this.$http.cardList({
-        companyId: parseInt(this.$route.params.id)
+        companyId: parseInt(this.$route.params.id),
+        page: this.page,
+        rows: this.row
       }).then((data) => {
         if (data.length > 0) {
           data.forEach((item) => {
@@ -911,7 +940,7 @@ export default {
       })
     },
     jumpContactPage () {
-      this.$router.push({name: 'crm_Contact'})
+      this.$router.push({name: 'crm_Contact', params: this.$route.params.id})
     }
   },
   mounted () {
@@ -979,6 +1008,17 @@ export default {
     .status{
       color: red;
       margin: 0 10px;
+    }
+  }
+  .newCardModal{
+    .ivu-form-item-content{
+      margin-left: 34px !important;
+      .layout-column{
+        width: 100%;
+        .layout-cell{
+          width: 100%;
+        }
+      }
     }
   }
   .vertical-center-modal{

@@ -15,7 +15,7 @@
       </li>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="total" :current="1" @on-change="changePage"></Page>
+          <Page :total="total" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
         </div>
       </div>
     </ul>
@@ -29,7 +29,8 @@ export default {
     return {
       contactInstallerList: [],
       page: 1,
-      total: 0
+      total: 0,
+      row: 10
     }
   },
   methods: {
@@ -44,8 +45,9 @@ export default {
       }, */
     contactListRecode () {
       this.$http.contactList({
+        companyId: this.$route.params.id,
         page: this.page,
-        rows: 10
+        rows: this.row
       }).then((data) => {
         this.contactInstallerList = data.list
         this.total = data.total
@@ -56,6 +58,10 @@ export default {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
       // this.tableData1 = this.mockTableData1()
       this.page = page
+      this.contactListRecode()
+    },
+    changeSize (row) {
+      this.row = row
       this.contactListRecode()
     }
   },
