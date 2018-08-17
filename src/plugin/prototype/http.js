@@ -113,14 +113,14 @@ export default {
   saveProp (params) {
     return axios.post('item/category/addProps', params)
   },
-  delProp (ids) {
-    return axios.post('item/category/deleteProps', {ids})
+  delProp (params) {
+    return axios.post('item/category/deleteProps', params)
   },
   addPropValue (catePropId, name) {
     return axios.post('item/category/addPropsTag', { catePropId, name })
   },
-  delPropValue (categoryId, catePropId, id) {
-    return axios.post('item/category/deletePropsTag', { categoryId, catePropId, id })
+  delPropValue (catePropId, id) {
+    return axios.post('item/category/deletePropsTag', { catePropId, id })
   },
   fetchSku (cateSkuPropIds, categoryId) {
     return axios.post('item/category/listSkuProp', { cateSkuPropIds, categoryId })
@@ -128,8 +128,8 @@ export default {
   saveSku (params) {
     return axios.post('item/category/addSkuProps', params)
   },
-  delSku (ids) {
-    return axios.post('item/category/deleteSkuProps', {ids})
+  delSku (params) {
+    return axios.post('item/category/deleteSkuProps', params)
   },
   addSkuValue (categoryId, catePropId, name) {
     return axios.post('item/category/addSkuPropsTag', { categoryId, catePropId, name })

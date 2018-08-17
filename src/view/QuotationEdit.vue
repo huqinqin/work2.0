@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <card class="installer-card" id="store" :class="{'empty': !validForm.store}">
+  <div id="store">
+    <card class="installer-card" :class="{'empty': !validForm.store}">
       <div class="title">
         <p>选择工程商</p>
         <div class="divider"></div>
@@ -60,7 +60,7 @@
       <div class="title">
         <p>物流方式</p>
         <div class="divider"></div>
-        <i-form ref="shipping" :model="shipping" label-position="top">
+        <i-form ref="shipping" :model="shipping" label-position="top" id="address">
           <form-item label="选择方式" prop="type">
             <div v-if="!canEdit">
               <span v-if="shipping.methods === 'willCall'">自提</span>
@@ -97,7 +97,7 @@
         </i-form>
       </div>
     </card>
-    <card class="address-card" v-if="shipping.methods === 'shipping'" id="address" :class="{'empty': !validForm.address}">
+    <card class="address-card" v-if="shipping.methods === 'shipping'" :class="{'empty': !validForm.address}">
       <div class="title">
         <p>选择收货地址 <Button type="text" @click="showAddAddressForm" :disabled="!canEdit">+添加地址</Button></p>
         <div class="divider"></div>
@@ -134,14 +134,14 @@
         </Modal>
       </div>
     </card>
-    <card class="po-card" v-if="shipping.methods === 'shipping'">
+    <card class="po-card" v-if="shipping.methods === 'shipping'" id="product">
       <div class="title">
         <p>P/O NO.</p>
         <div class="divider"></div>
         <Input placeholder="请输入P/O NO." v-model="poNo" :readonly="!canEdit"/>
       </div>
     </card>
-    <card class="product-card" id="product" :class="{'empty': !validForm.items}">
+    <card class="product-card" :class="{'empty': !validForm.items}">
       <div class="title">
         <p>选择商品</p>
         <div class="divider"></div>
@@ -201,7 +201,7 @@
             <div class="other"><Checkbox :disabled="!canEdit" v-model="pay.orderDiscount" @on-change="getFee">Whether to participate in sitewide promotion</Checkbox></div>
           </form-item>
           <form-item label="税率/税费">
-            <div class="fee" v-if="['','init','salesManager'].indexOf(status) !== -1">{{pay.taxRate}} / {{pay.taxFee | formatPrice}}</div>
+            <div class="fee" v-if="['','init','salesManager', 'enabled'].indexOf(status) !== -1">{{pay.taxRate}} / {{pay.taxFee | formatPrice}}</div>
             <div class="fee" v-if="status === 'financial'" style="width: 200px;"><Input v-model="pay.taxRate" @on-change="getFee" />&nbsp;&nbsp;&nbsp;/&nbsp;{{pay.taxFee | formatPrice}}</div>
           </form-item>
           <form-item label="运费">
@@ -342,7 +342,7 @@ export default {
           lng: '',
           company: ''
         },
-        status: ''
+        status: 'enabled'
       },
       addressColumns: [
         {
@@ -546,6 +546,7 @@ export default {
       recordColumns: [
         {
           title: '审核人',
+          width: 150,
           render: (h, params) => {
             return (
               <div>{params.row.reviewPoint === 'salesManager' ? '销售主管' : '财务'}{params.row.recordStatus === 'refuse' ? '打回' : '通过'}</div>
@@ -553,11 +554,15 @@ export default {
           }
         }, {
           title: '时间',
+          width: 150,
           render: (h, params) => {
             return (
               <div>{params.row.cdate}</div>
             )
           }
+        }, {
+          title: '备注',
+          key: 'content'
         }
       ],
       productHistory: [],
@@ -573,14 +578,16 @@ export default {
         return data.reduce((list, item) => {
           const array = item.userResponses.map(({id, account, email, mobile, firstName, lastName}) => ({
             storeCode: item.code,
-            storeName: item.address.company,
-            address: item.address.detail,
+            storeName: item.name,
+            address: item.address,
             storeId: item.id,
-            account: account,
+            userAccount: account,
             userId: id,
             userEmail: email,
             userMobile: mobile,
             name: firstName + ' ' + lastName,
+            userFirstName: firstName,
+            userLastName: lastName,
             accountNotes: '',
             custNotes: ''
           }))
@@ -595,8 +602,7 @@ export default {
     },
     fetchAddress () {
       return this.$http.fetchQuotationAddress({
-        // storeId: this.store.storeId
-        storeId: 10004
+        storeId: this.store.storeId
       }).then(data => {
         this.addressList = data.list
       })
@@ -614,14 +620,8 @@ export default {
     },
     showAddAddressForm () {
       // 新增地址打开弹框时首先清空表单
-      for (let key in this.editAddressForm) {
-        if (typeof this.editAddressForm[key] === 'object') {
-          for (let address in this.editAddressForm[key]) {
-            this.editAddressForm[key][address] = ''
-          }
-        } else {
-          this.editAddressForm[key] = ''
-        }
+      for (let item in this.editAddressForm.address) {
+        this.editAddressForm.address[item] = ''
       }
       this.showAddressForm = true
     },
@@ -630,6 +630,7 @@ export default {
         if (valid) {
           this.addressLoading = true
           this.$http.saveQuotationAddress({
+            objId: this.store.storeId,
             ...this.editAddressForm
           }).then(() => {
             this.addressLoading = false
@@ -637,6 +638,7 @@ export default {
             this.$Notice.success({
               title: '保存地址成功'
             })
+            this.fetchAddress()
           })
         }
       })
@@ -719,7 +721,11 @@ export default {
           this.pay.fee.reduceFee = -(this.discountPercent * (+this.pay.itemFee) / 100).toFixed()
           this.discountNum = ((-this.pay.fee.reduceFee) / 100).toFixed(2)
         }
-        this.pay.shippingFee = (+this.shippingFee * 100).toFixed()
+        if (this.shippingFee || (+this.shippingFee === 0)) {
+          this.pay.shippingFee = (+this.shippingFee * 100).toFixed()
+        } else {
+          this.pay.shippingFee = ''
+        }
         this.pay.fee.handleFee = (+this.handleFee * 100).toFixed()
         this.simuTrade()
       }, 800)
@@ -757,10 +763,11 @@ export default {
             buyerStore: {id: this.store.storeId},
             shipping: shipping,
             tax: {rate: pay.taxRate},
-            pay: Object.assign({}, {payType: 'offline'}, pay),
+            pay: {payType: 'offline'},
+            // pay: Object.assign({}, {payType: 'offline'}, pay),
             note: {remark: this.orderNote},
-            source: 'quotation',
-            type: 'order',
+            source: 'work',
+            type: 'quotation',
             orderDiscount: pay.orderDiscount ? pay.orderDiscount : false,
             toAddr: this.toAddr,
             fromAddr: this.fromAddr,
@@ -810,8 +817,8 @@ export default {
           pay: this.pay,
           orderNote: this.orderNote,
           packingType: this.packingType,
-          source: 'quotation',
-          type: 'order',
+          source: 'work',
+          type: 'quotation',
           fromAddr: this.fromAddr,
           sendEmail: false,
           reviewRecords: this.reviewRecords,
@@ -910,7 +917,6 @@ export default {
             skuId: t.sku.id
           }
         })
-        console.log(ids)
         this.$http.getProductByIds({
           ids: ids,
           supplierId: this.supplierId

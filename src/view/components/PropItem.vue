@@ -60,9 +60,9 @@ export default {
     addValue () {
       if (this.newValue !== '') {
         this.$http.addPropValue(this.data.id, this.newValue).then(data => {
-          this.$Notice.success({title: '新增成功'})
-          this.data.values.push(data)
+          this.data.values.push({id: data.id, name: this.newValue})
           this.newValue = ''
+          this.$Notice.success({title: '新增成功'})
         })
       }
     },
