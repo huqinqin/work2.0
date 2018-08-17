@@ -2,8 +2,8 @@
   <Card :bordered="false">
     <p slot="title">{{data.name}}</p>
     <span slot="extra"><slot></slot></span>
-    <div v-for="(value, index) in data.values" :key="value.id" class="tag border" :class="isChecked(value.id)" @click="select(value)">
-      <span>{{value.name}}</span>
+    <div v-for="(value, index) in data.values" :key="value" class="tag border" :class="isChecked(value)" @click="select(value)">
+      <span>{{value}}</span>
       <Icon type="ios-close-empty" @click.stop="delValue(value, index)"></Icon>
     </div>
     <input type="text" class="btn-add" placeholder="添加" v-model="newValue" @keydown.enter="addValue"/>
@@ -40,7 +40,7 @@ export default {
       console.log('​delValue -> data', data)
       this.$Modal.confirm({
         title: '删除操作',
-        content: `<p>确认删除属性值${data.name}？</p>`,
+        content: `<p>确认删除属性值${data}？</p>`,
         loading: true,
         onCancel: () => {
           this.$Notice.success({
@@ -49,7 +49,7 @@ export default {
           })
         },
         onOk: () => {
-          this.$http.delPropValue(this.data.id, [data.id]).then(data => {
+          this.$http.delPropValue(this.data.id, [data]).then(data => {
             this.data.values.splice(index, 1)
             this.$Modal.remove()
             this.$Notice.success({title: '删除成功'})
@@ -60,7 +60,7 @@ export default {
     addValue () {
       if (this.newValue !== '') {
         this.$http.addPropValue(this.data.id, this.newValue).then(data => {
-          this.data.values.push({id: data.id, name: this.newValue})
+          this.data.values.push(this.newValue)
           this.newValue = ''
           this.$Notice.success({title: '新增成功'})
         })
@@ -75,14 +75,14 @@ export default {
     },
     select (data) {
       if (this.mode === 'multiple') {
-        const list = this.multiple.filter(item => item !== data.id)
+        const list = this.multiple.filter(item => item !== data)
         if (list.length < this.multiple.length) {
           this.$emit('change', list)
         } else {
-          this.$emit('change', [...this.multiple, data.id])
+          this.$emit('change', [...this.multiple, data])
         }
       } else if (this.mode === 'single') {
-        this.$emit('change', data.id)
+        this.$emit('change', data)
       }
     }
   }

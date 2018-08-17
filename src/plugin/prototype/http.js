@@ -116,11 +116,11 @@ export default {
   delProp (params) {
     return axios.post('item/category/deleteProp', params)
   },
-  addPropValue (propId, name) {
-    return axios.post('item/category/addPropValue', { propId, name })
+  addPropValue (propId, value) {
+    return axios.post('item/category/addPropValue', { propId, value })
   },
-  delPropValue (propId, ids) {
-    return axios.post('item/category/deletePropValue', { propId, ids })
+  delPropValue (propId, values) {
+    return axios.post('item/category/deletePropValue', { propId, values })
   },
   fetchSku (cateSkuPropIds, categoryId) {
     return axios.post('item/category/listSkuProp', { cateSkuPropIds, categoryId })
