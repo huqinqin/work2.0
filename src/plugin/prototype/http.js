@@ -192,7 +192,7 @@ export default {
   },
   /* 公海池列表 */
   crmInstallerListData (params) {
-    return axios.post('/crm/bupoll/pub/page', params)
+    return axios.post('/crm/bupool/pub/page', params)
   },
   /* 公有池导入 */
   crmInstallerListImport (params) {
@@ -244,7 +244,7 @@ export default {
   },
   /* 临时池工程商列表 */
   templatePoolInstallerList (params) {
-    return axios.post('/crm/bupoll/formoment/page', params)
+    return axios.post('/crm/bupool/formoment/page', params)
   },
   /* 临时池列表的导出 */
   templatePoolListExport (params) {
@@ -252,7 +252,7 @@ export default {
   },
   /* 私有池列表 */
   privatePoolInstallerList (params) {
-    return axios.post('/crm/bupoll/priv/page', params)
+    return axios.post('/crm/bupool/priv/page', params)
   },
   /* 私有池列表的导出 */
   privatePoolListExport (params) {
@@ -260,7 +260,7 @@ export default {
   },
   /* 私有池批量分配 */
   privatePoolBatch (params) {
-    return axios.post('/crm/bupoll/common/batch/allot', params)
+    return axios.post('/crm/bupool/common/batch/allot', params)
   },
   /* 无效商机列表 */
   invalidBussinessList (params) {
@@ -292,11 +292,11 @@ export default {
   },
   /* 临时池批量分配sales */
   batchSales (params) {
-    return axios.post('/crm/bupoll/save', params)
+    return axios.post('/crm/bupool/save', params)
   },
   /* 临时池批量分配确定 */
   batchSalesSure (params) {
-    return axios.post('/crm/bupoll/common/batch/allot', params)
+    return axios.post('/crm/bupool/common/batch/allot', params)
   },
   /* 分配纪录点击进去后的列表 */
   allocationSales (params) {
