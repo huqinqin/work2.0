@@ -284,7 +284,7 @@ export default {
   },
   /* 分销证的刪除 */
   delCard (params) {
-    return axios.post('/crm/company/deleteComanyCert', params)
+    return axios.post('/crm/company/deleteCompanyCert', params)
   },
   /* 私有池sales查询 */
   salesCheck (params) {
