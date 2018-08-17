@@ -45,8 +45,9 @@ export default {
       }, */
     contactListRecode () {
       this.$http.contactList({
+        companyId: this.$route.params.id,
         page: this.page,
-        rows: this.rows
+        rows: this.row
       }).then((data) => {
         this.contactInstallerList = data.list
         this.total = data.total

@@ -342,11 +342,11 @@ export default {
       // console.log(params);
       this.$router.push({name: 'Crm Check', params: {id: params.row.id}})
       /* this.$http.installerCheck({
-          id: params.row.id
-        }).then((data) => {
-          this.$router.push({name: 'Crm Check', params: data.data})
-          console.log(data)
-        }) */
+            id: params.row.id
+          }).then((data) => {
+            this.$router.push({name: 'Crm Check', params: data.data})
+            console.log(data)
+          }) */
     },
     receive (params) {
       this.selection = []
@@ -434,7 +434,7 @@ export default {
         this.$http.batchCollectionInstaller({
           ids: this.ids ? this.ids : []
         }).then((data) => {
-          this.$Message.success('批量选择成功')
+          this.$Message.success('success！！！')
           setTimeout(() => {
             location.reload()
           }, 1000)
@@ -503,7 +503,7 @@ export default {
       console.log(this.searchOptionJoin.beginTime)
       if (this.searchOptionJoin.beginTime && this.searchOptionJoin.endTime) {
         let s = '/work/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&beginTime=' + this.searchOptionJoin.beginTime + '&endTime=' + this.searchOptionJoin.endTime +
-          '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
+            '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
         window.open(s)
       } else {
         let s = '/work/crm/export/pub/list?state=' + this.searchOptionJoin.state + '&city=' + this.searchOptionJoin.city + '&name=' + this.searchOptionJoin.name + '&type=' + this.searchOptionJoin.type + '&industryJoin=' + this.searchOptionJoin.industry + '&email=' + this.searchOptionJoin.email
