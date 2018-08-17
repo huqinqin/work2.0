@@ -914,6 +914,7 @@ export default {
             skuId: t.sku.id
           }
         })
+        this.fetchAddress()
         this.$http.getProductByIds({
           ids: ids,
           supplierId: this.supplierId
