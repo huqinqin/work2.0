@@ -626,6 +626,10 @@ export default {
         id: params.row.id
       }).then((data) => {
         // this.self.installerdata.splice(params.index, 1)
+        this.$Message.success('删除联系人成功！！！！')
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
       })
     },
     ceateNewInstaller () {
@@ -915,7 +919,7 @@ export default {
       })
     },
     jumpContactPage () {
-      this.$router.push({name: 'crm_Contact'})
+      this.$router.push({name: 'crm_Contact', params: this.$route.params.id})
     }
   },
   mounted () {
