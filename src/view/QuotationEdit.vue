@@ -213,7 +213,7 @@
         <div class="divider"></div>
         <i-form label-position="left">
           <form-item label="商品金额">
-            <div class="fee">{{pay.itemFee | formatPrice}}</div><div class="other">Gross Profit Margin : {{allProfit}}</div>
+            <div class="fee">{{pay.itemFee | formatPrice}}</div><div class="other" v-if="showProfit">Gross Profit Margin : {{allProfit}}</div>
           </form-item>
           <form-item label="满减优惠">
             <div class="fee">{{pay.rebateFee | formatPrice}}</div>
