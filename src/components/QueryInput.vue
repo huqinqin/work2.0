@@ -1,7 +1,7 @@
 <template>
   <Poptip trigger="focus" class="select-pop" placement="bottom" popper-class="installer-popover">
-    <i-input v-model="inputValue" @on-change="query"></i-input>
-    <template slot="content">
+    <i-input v-model="inputValue" @on-change="query" :readonly="readonly"></i-input>
+    <template slot="content" v-if="!readonly">
       <div class="content" v-if="loading">
         数据加载中...
       </div>
@@ -28,6 +28,10 @@ export default {
       default () {
         return []
       }
+    },
+    readonly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
