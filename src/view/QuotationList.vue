@@ -39,6 +39,7 @@
   </card>
 </template>
 <script>
+import formatDate from '../plugin/filter/formatDate'
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
@@ -133,10 +134,22 @@ export default {
           key: 'sName'
         }, {
           title: '状态',
-          key: 'status'
+          render: (h, params) => {
+            let status = null
+            this.statusOption.forEach(t => {
+              if (t.status === params.row.status) status = t.label
+            })
+            return (
+              <div>{status}</div>
+            )
+          }
         }, {
           title: '创建时间',
-          key: 'cdate'
+          render: (h, params) => {
+            return (
+              <div>{formatDate.formatDate(params.row.cdate)}</div>
+            )
+          }
         }, {
           title: 'sales',
           key: 'sales'
@@ -158,7 +171,7 @@ export default {
               content = (
                 <div>
                   <i-button type="primary" size="small" on-click={(e) => this.detail(params.row.id)}>查看</i-button>
-                  <i-button type="primary" size="small" on-click={(e) => this.recall(params.row)}>销售撤回</i-button>
+                  <i-button type="primary" size="small" on-click={(e) => this.recall(params.row)}>撤回</i-button>
                 </div>
               )
             }

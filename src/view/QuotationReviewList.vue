@@ -39,6 +39,7 @@
   </card>
 </template>
 <script>
+import formatDate from '../plugin/filter/formatDate'
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
@@ -152,7 +153,11 @@ export default {
           }
         }, {
           title: '创建时间',
-          key: 'cdate'
+          render: (h, params) => {
+            return (
+              <div>{formatDate.formatDate(params.row.cdate)}</div>
+            )
+          }
         }, {
           title: 'sales',
           render: (h, params) => {
@@ -175,8 +180,8 @@ export default {
             if (params.row.status === 'init') {
               content = (
                 <div>
-                  <i-button type="primary" size="small" on-click={(e) => this.send(params.row.id)}>提交审核</i-button>
-                  <i-button type="success" size="small" on-click={(e) => this.edit(params.row.id)}>销售编辑</i-button>
+                  <i-button type="primary" size="small" on-click={(e) => this.send(params.row.id)}>提交</i-button>
+                  <i-button type="success" size="small" on-click={(e) => this.edit(params.row.id)}>编辑</i-button>
                 </div>
               )
             } else {
