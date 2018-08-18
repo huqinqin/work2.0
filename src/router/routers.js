@@ -117,14 +117,14 @@ export default [
   {
     path: '/quotation',
     redirect: '/quotation/index',
-    meta: { icon: 'lock-combination', title: '询价单管理' },
+    meta: { icon: 'lock-combination', title: '代客下单' },
     name: 'quotation',
     component: Main,
     children: [
-      { path: 'quotation_add', meta: { icon: 'lock-combination', title: '新增询价单' }, name: 'quotation_add', component: () => import('@/view/QuotationEdit.vue') },
-      { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '编辑询价单', hideInMenu: true }, name: 'quotation_edit/:id?', component: () => import('@/view/QuotationEdit.vue') },
       { path: 'quotation_review_list', meta: { icon: 'lock-combination', title: '待办列表' }, name: 'quotation_review_list', component: () => import('@/view/QuotationReviewList.vue') },
-      { path: 'quotation_list', meta: { icon: 'lock-combination', title: '询价单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') }
+      { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '编辑订单', hideInMenu: true }, name: 'quotation_edit/:id?', component: () => import('@/view/QuotationEdit.vue') },
+      { path: 'quotation_list', meta: { icon: 'lock-combination', title: '订单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') },
+      { path: 'quotation_add', meta: { icon: 'lock-combination', title: '新增订单' }, name: 'quotation_add', component: () => import('@/view/QuotationEdit.vue') }
     ]
   },
   {

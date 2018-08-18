@@ -16,7 +16,7 @@
           </Select>
         </i-col>
         <i-col span="20">
-          <QueryInput :remote="queryInstaller" @change="checkInstaller" :value="installerValue">
+          <QueryInput :remote="queryInstaller" @change="checkInstaller" :value="installerValue" :readonly="!canEdit">
             <template slot-scope="props">
               {{props.item.storeName}} - {{props.item.storeCode}}
             </template>
@@ -143,17 +143,36 @@
     </card>
     <card class="product-card" :class="{'empty': !validForm.items}">
       <div class="title">
-        <p>选择商品</p>
+        <Row class="product-title">
+          <i-col span="12">
+            <p>选择商品</p>
+          </i-col>
+          <i-col span="12">
+            <Tag class="props">2MP</Tag><span style="color:#91d5ff">: Props</span>
+            <Tag class="storage">999</Tag><span style="color:#ffa39e">: In Stock</span>
+          </i-col>
+        </Row>
         <div class="divider"></div>
         <Row>
           <i-col span="24">
-            <QueryInput :value="productValue" :remote="queryProduct" @change="checkProduct">
+            <QueryInput :value="productValue" :remote="queryProduct" @change="checkProduct" :readonly="!canEdit">
               <template slot-scope="props">
-                product - {{props.item.title}}
+                <div class="item-list-pop">
+                  <div class="content">
+                    <img width="28" height="28" :src="props.item.imgUrl" alt="图"><div class="title">{{props.item.title}}</div>
+                  </div>
+                  <div class="tips">
+                    <Tag class="props" v-for="prop in props.item.sku.props" :key="prop.nameId">{{prop.value}}</Tag>
+                    <Tag class="storage">{{props.item.num}}</Tag>
+                  </div>
+                </div>
               </template>
             </QueryInput>
           </i-col>
         </Row>
+        <div class="show-more">
+          Show More <i-switch v-model="showProfit" @on-change="showProfitColumn"></i-switch>
+        </div>
         <i-table
           :data="itemList"
           :columns="productColumns"
@@ -194,7 +213,7 @@
         <div class="divider"></div>
         <i-form label-position="left">
           <form-item label="商品金额">
-            <div class="fee">{{pay.itemFee | formatPrice}}</div><div class="other">Gross Profit Margin : 100.00%</div>
+            <div class="fee">{{pay.itemFee | formatPrice}}</div><div class="other">Gross Profit Margin : {{allProfit}}</div>
           </form-item>
           <form-item label="满减优惠">
             <div class="fee">{{pay.rebateFee | formatPrice}}</div>
@@ -207,7 +226,7 @@
           <form-item label="运费">
             <div class="fee">
               <template v-if="!canEdit">{{pay.shippingFee | formatPrice}}</template>
-              <template v-else><Input v-model="shippingFee" @on-change="getFee" /></template>
+              <template v-else><Input v-model="shippingFee" @on-change="changeShippingFee"/></template>
             </div>
             <div class="other">
               <Checkbox v-model="dropShipping" :disabled="!canEdit">Dropship from other office</Checkbox>
@@ -253,15 +272,27 @@
     </card>
     <div class="buttons">
       <template v-if="(status === 'init') || (status === '')">
-        <Button type="primary">保存并发送邮件</Button>
-        <Button type="primary">保存并下载询价单</Button>
+        <Button type="primary" @click="saveQuotation('download')">下载</Button>
         <Button type="primary" @click="saveQuotation('save')">保存</Button>
         <Button type="success" @click="saveQuotation('send')">提交审核</Button>
       </template>
       <template v-if="(status === 'salesManager') || (status === 'financial')">
         <Button type="success" @click="agree">通过</Button>
-        <Button type="error" @click="refuse">打回</Button>
+        <Button type="error" @click="refuseModal = true">打回</Button>
       </template>
+      <Modal v-model="refuseModal" width="360" class="refuseModal">
+        <p slot="header">请输入备注</p>
+        <div>
+          <Form ref="refuseForm" :model="refuseForm">
+            <FormItem  prop="note" :rules="{required: true, message: '请输入备注', trigger: 'blur, change'}">
+              <Input type="textarea" :rows="2" autofocus v-model="refuseForm.note" />
+            </FormItem>
+          </Form>
+        </div>
+        <div slot="footer">
+          <Button @click="refuseModal = false">取消</Button><Button type="primary" @click="refuse">确定</Button>
+        </div>
+      </Modal>
     </div>
   </div>
 </template>
@@ -273,6 +304,11 @@ export default {
   name: 'quotation-edit',
   data () {
     return {
+      refuseModal: false,
+      showProfit: false,
+      refuseForm: {
+        note: ''
+      },
       orderNote: '',
       packingType: '',
       installerValue: '',
@@ -393,116 +429,7 @@ export default {
       productValue: '',
       productList: [],
       itemList: [],
-      productColumns: [
-        {
-          type: 'index',
-          width: 50,
-          align: 'center'
-        },
-        {
-          title: '图片',
-          render: (h, params) => {
-            return (
-              <img src={params.row.imgUrl} alt="主图" width="26" height="26" />
-            )
-          }
-        },
-        {
-          title: '商品名称',
-          key: 'title'
-        },
-        {
-          title: '库存',
-          key: 'num'
-        },
-        {
-          title: '指导价',
-          render: (h, params) => {
-            return (
-              <div>{formatPrice.formatPrice(params.row.basePrice)}</div>
-            )
-          }
-        },
-        {
-          title: '单价',
-          align: 'center',
-          key: 'diyPrice',
-          render: this.editCellRender
-        },
-        {
-          title: '数量',
-          align: 'center',
-          key: 'amount',
-          render: this.editCellRender
-        },
-        {
-          title: '成本/毛利率',
-          render: (h, params) => {
-            return (
-              <span>{formatPrice.formatPrice(params.row.avgCost)} / {((params.row.diyPrice - params.row.avgCost / 100) / params.row.diyPrice).toFixed(2) * 100} %</span>
-            )
-          }
-        },
-        {
-          title: '总价',
-          render: (h, params) => {
-            let content = null
-            if (params.row.diyPrice && params.row.amount) {
-              content = <span>${(+params.row.diyPrice) * (+params.row.amount)}</span>
-            }
-            return content
-          }
-        },
-        {
-          title: '备注',
-          align: 'center',
-          key: 'remark',
-          render: this.editCellRender
-        },
-        {
-          title: ' ',
-          render: (h, params) => {
-            let content = null
-            if (this.productHistory.length) {
-              content = this.productHistory.map(t => {
-                return (
-                  <tr>
-                    <td>{t.edate}</td>
-                    <td>{t.price}</td>
-                  </tr>
-                )
-              })
-            } else {
-              content = (
-                <tr>
-                  <td>/</td>
-                  <td>/</td>
-                </tr>
-              )
-            }
-            return (
-              <div>
-                <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop" placement="bottom-end" on-on-popper-show={e => this.queryHistory(params.row)}>
-                  <div slot="content">
-                    <table border="1" class="history-table">
-                      <tr>
-                        <th>时间</th>
-                        <th>价格</th>
-                      </tr>
-                      {content}
-                    </table>
-                  </div>
-                  <i-button type="primary" size="small">more</i-button>
-                </poptip>
-                <i-button disabled={!this.canEdit} type="error" size="small" on-click={(e) => {
-                  this.deleteProduct(params.index)
-                }}>删除
-                </i-button>
-              </div>
-            )
-          }
-        }
-      ],
+      productColumns: [],
       payMethod: 'anet', // 支付方式
       payRemark: '', // 支付方式
       overSell: false, // 是否超卖
@@ -563,7 +490,19 @@ export default {
       ],
       productHistory: [],
       canEdit: true,
-      computing: false
+      computing: false,
+      changedShipping: false
+    }
+  },
+  computed: {
+    allProfit () {
+      let allCost = 0
+      let allFee = 0
+      this.itemList.forEach(t => {
+        allCost += t.avgCost * t.amount
+      })
+      allFee = this.pay.itemFee + this.pay.fee.reduceFee + this.pay.rebateFee
+      return ((allFee - allCost) * 100 / allFee).toFixed(2) + '%'
     }
   },
   methods: {
@@ -652,11 +591,11 @@ export default {
         conditions: query
       }).then(data => {
         return data.map(t => {
-          t.itemSku.sku = {id: t.itemSku.id}
+          t.itemSku.sku = {id: t.itemSku.id, props: t.itemSku.props, sin: t.itemSku.sin}
           let item = {
             ...t.itemSku,
             ...t,
-            diyPrice: (t.itemSku.basePrice / 100).toFixed(),
+            diyPrice: (t.itemSku.basePrice / 100).toFixed(2),
             amount: 1,
             imgUrl: t.imgUrls[0],
             note: {
@@ -668,18 +607,249 @@ export default {
         })
       })
     },
+    showProfitColumn (value) {
+      if (value) {
+        this.productColumns = [
+          {
+            type: 'index',
+            width: 50,
+            align: 'center'
+          },
+          {
+            title: '图片',
+            width: 50,
+            render: (h, params) => {
+              return (
+                <img src={params.row.imgUrl} alt="主图" width="26" height="26" />
+              )
+            }
+          },
+          {
+            title: '商品名称',
+            key: 'title'
+          },
+          {
+            title: 'sin',
+            key: 'sin'
+          },
+          {
+            title: '库存',
+            key: 'num'
+          },
+          {
+            title: '指导价',
+            render: (h, params) => {
+              return (
+                <div>{formatPrice.formatPrice(params.row.basePrice)}</div>
+              )
+            }
+          },
+          {
+            title: '单价',
+            align: 'center',
+            key: 'diyPrice',
+            render: this.editCellRender
+          },
+          {
+            title: '数量',
+            align: 'center',
+            key: 'amount',
+            render: this.editCellRender
+          },
+          {
+            title: '成本/毛利率',
+            render: (h, params) => {
+              return (
+                <span>{formatPrice.formatPrice(params.row.avgCost)} / {((params.row.diyPrice - params.row.avgCost / 100) / params.row.diyPrice).toFixed(2) * 100} %</span>
+              )
+            }
+          },
+          {
+            title: '总价',
+            render: (h, params) => {
+              let content = null
+              if (params.row.diyPrice && params.row.amount) {
+                content = <span>${((+params.row.diyPrice) * (+params.row.amount)).toFixed(2)}</span>
+              }
+              return content
+            }
+          },
+          {
+            title: '备注',
+            align: 'center',
+            key: 'remark',
+            render: this.editCellRender
+          },
+          {
+            title: ' ',
+            width: 120,
+            render: (h, params) => {
+              let content = null
+              if (this.productHistory.length) {
+                content = this.productHistory.map(t => {
+                  return (
+                    <tr>
+                      <td>{t.edate}</td>
+                      <td>{t.price}</td>
+                    </tr>
+                  )
+                })
+              } else {
+                content = (
+                  <tr>
+                    <td>/</td>
+                    <td>/</td>
+                  </tr>
+                )
+              }
+              return (
+                <div>
+                  <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop" placement="bottom-end" on-on-popper-show={e => this.queryHistory(params.row)}>
+                    <div slot="content">
+                      <table border="1" class="history-table">
+                        <tr>
+                          <th>时间</th>
+                          <th>价格</th>
+                        </tr>
+                        {content}
+                      </table>
+                    </div>
+                    <i-button type="primary" size="small">more</i-button>
+                  </poptip>
+                  <i-button disabled={!this.canEdit} type="error" size="small" on-click={(e) => {
+                    this.deleteProduct(params.index)
+                  }}>删除
+                  </i-button>
+                </div>
+              )
+            }
+          }
+        ]
+      } else {
+        this.productColumns = [
+          {
+            type: 'index',
+            width: 50,
+            align: 'center'
+          },
+          {
+            title: '图片',
+            width: 50,
+            render: (h, params) => {
+              return (
+                <img src={params.row.imgUrl} alt="主图" width="26" height="26" />
+              )
+            }
+          },
+          {
+            title: '商品名称',
+            key: 'title'
+          },
+          {
+            title: 'sin',
+            key: 'sin'
+          },
+          {
+            title: '库存',
+            key: 'num'
+          },
+          {
+            title: '指导价',
+            render: (h, params) => {
+              return (
+                <div>{formatPrice.formatPrice(params.row.basePrice)}</div>
+              )
+            }
+          },
+          {
+            title: '单价',
+            align: 'center',
+            key: 'diyPrice',
+            render: this.editCellRender
+          },
+          {
+            title: '数量',
+            align: 'center',
+            key: 'amount',
+            render: this.editCellRender
+          },
+          {
+            title: '总价',
+            render: (h, params) => {
+              let content = null
+              if (params.row.diyPrice && params.row.amount) {
+                content = <span>${((+params.row.diyPrice) * (+params.row.amount)).toFixed(2)}</span>
+              }
+              return content
+            }
+          },
+          {
+            title: '备注',
+            align: 'center',
+            key: 'remark',
+            render: this.editCellRender
+          },
+          {
+            title: ' ',
+            width: 120,
+            render: (h, params) => {
+              let content = null
+              if (this.productHistory.length) {
+                content = this.productHistory.map(t => {
+                  return (
+                    <tr>
+                      <td>{t.edate}</td>
+                      <td>{t.price}</td>
+                    </tr>
+                  )
+                })
+              } else {
+                content = (
+                  <tr>
+                    <td>/</td>
+                    <td>/</td>
+                  </tr>
+                )
+              }
+              return (
+                <div>
+                  <poptip class="history-poptip" width="300" trigger="hover" title="历史成交价" popper-class="history-pop" placement="bottom-end" on-on-popper-show={e => this.queryHistory(params.row)}>
+                    <div slot="content">
+                      <table border="1" class="history-table">
+                        <tr>
+                          <th>时间</th>
+                          <th>价格</th>
+                        </tr>
+                        {content}
+                      </table>
+                    </div>
+                    <i-button type="primary" size="small">more</i-button>
+                  </poptip>
+                  <i-button disabled={!this.canEdit} type="error" size="small" on-click={(e) => {
+                    this.deleteProduct(params.index)
+                  }}>删除
+                  </i-button>
+                </div>
+              )
+            }
+          }
+        ]
+      }
+    },
     checkProduct (product) {
       this.validForm.items = true
-      for (let item in this.itemList) {
-        if ((item.id === product.id) && (item.skuid === product.skuid)) {
+      for (let item of this.itemList) {
+        if ((item.id === product.id) && (item.sku.id === product.sku.id)) {
           this.$Message.error('已经选择了该商品')
           return false
         }
       }
       this.itemList.push(product)
+      this.simuTrade()
     },
     deleteProduct (index) {
       this.itemList.splice(index, 1)
+      this.simuTrade()
     },
     queryHistory (row) {
       this.$http.fetchQuotationProductHistory({
@@ -708,6 +878,10 @@ export default {
         this.itemList[rowIndex][key] = event.target.value
       }
       this.simuTrade()
+    },
+    changeShippingFee () {
+      this.changedShipping = true
+      this.getFee()
     },
     getFee () {
       if (this.discountType === 'num') {
@@ -748,8 +922,10 @@ export default {
           // delete pay.shippingFee
         }
         let shipping = JSON.parse(JSON.stringify(this.shipping))
-        if (this.shippingFee || (this.shippingFee === 0)) {
+        if (this.changedShipping && (this.shippingFee || (this.shippingFee === 0))) {
           shipping.fee = +this.shippingFee * 100
+        } else {
+          delete shipping.fee
         }
         let params = {
           items: items,
@@ -780,6 +956,7 @@ export default {
         }
         this.computing = true
         this.$http.simulateTrade(params).then(data => {
+          this.changedShipping = false
           this.computing = false
           this.pay.itemFee = data.itemFee
           this.pay.shippingFee = data.shippingFee
@@ -838,11 +1015,14 @@ export default {
             })
             this.$router.push({ name: 'quotation_review_list' })
           })
-        } else if (key === 'email') {
-          params.sendEmail = true
-          console.log('email')
         } else if (key === 'download') {
-          console.log('download')
+          this.$http.saveQuotation(params).then(data => {
+            this.$Notice.success({
+              title: '保存询价单成功'
+            })
+            console.log('download')
+            // this.$router.push({ name: 'quotation_review_list' })
+          })
         }
       }
     },
@@ -934,17 +1114,14 @@ export default {
       })
     },
     agree () {
-      let content = ''
       this.$Modal.confirm({
-        title: '通过备注',
-        render: (h) => {
-          return <i-input style="margin-top: 12px;" type="textarea" rows={2} value={content} autofocus={true} placeholder="Please enter note..." on-input={val => { content = val }}></i-input>
-        },
+        title: '提示',
+        content: '是否通过',
         onOk: () => {
           let params = {
             id: this.id,
             status: this.status,
-            content: content
+            content: '通过'
           }
           if (this.status === 'financial') {
             params.pay = this.pay
@@ -959,30 +1136,19 @@ export default {
       })
     },
     refuse () {
-      let content = ''
-      this.$Modal.confirm({
-        title: '打回备注',
-        render: (h) => {
-          return <i-input style="margin-top: 12px;" type="textarea" rows={2} value={content} autofocus={true} placeholder="Please enter note..." on-input={val => { content = val }}></i-input>
-        },
-        onOk: () => {
-          if (content) {
-            this.$http.refuseQuotation({
-              id: this.id,
-              status: this.status,
-              content: content,
-              reviewStatus: 'refuse'
-            }).then(() => {
-              this.$Notice.success({
-                title: '操作成功'
-              })
-              this.$router.push({name: 'quotation_review_list'})
+      this.$refs.refuseForm.validate(valid => {
+        if (valid) {
+          this.$http.refuseQuotation({
+            id: this.id,
+            status: this.status,
+            content: this.refuseForm.note,
+            reviewStatus: 'refuse'
+          }).then(() => {
+            this.$Notice.success({
+              title: '操作成功'
             })
-          } else {
-            this.$Modal.error({
-              title: '请输入备注'
-            })
-          }
+            this.$router.push({name: 'quotation_review_list'})
+          })
         }
       })
     }
@@ -993,6 +1159,7 @@ export default {
     } else {
       this.getFromAddr()
     }
+    this.showProfitColumn(false)
   }
 }
 </script>
@@ -1098,6 +1265,44 @@ export default {
 
   }
   .product-card{
+    .product-title{
+      .ivu-col{
+        min-height: 0;
+      }
+      .ivu-col:last-child{
+        text-align: right;
+      }
+    }
+    .show-more{
+      text-align: right;
+      margin-bottom: 12px;
+    }
+    .ivu-tag.props{
+      background: #e6f7ff;
+      border-color:#91d5ff;
+      /deep/ .ivu-tag-text{
+        color:#91d5ff;
+      }
+    }
+    .ivu-tag.storage{
+      background: #fff1f0;
+      border-color: #ffa39e;
+      margin-left: 12px;
+      /deep/ .ivu-tag-text{
+        color: #ffa39e;
+      }
+    }
+    .item-list-pop{
+      display: flex;
+      padding: 6px 0;
+      justify-content: space-between;
+      .content{
+        display: flex;
+      }
+      .title{
+        margin-left: 12px;
+      }
+    }
     /deep/ .history-poptip{
       .history-table{
         width: 100%;
@@ -1135,7 +1340,7 @@ export default {
       }
       .discount{
         /deep/ .ivu-radio-group{
-          margin-left: -20px;
+          margin-left: -26px;
         }
       }
     }
