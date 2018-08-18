@@ -225,7 +225,7 @@
         <ul>
           <li v-for="(item,index) in contactInstallerList" :key="item.id" v-if="index < 3">
             <div span="24">
-              <span>{{item.cdate}}</span>
+              <span>{{item.cdate1}}</span>
               <span class="status">{{item.status === 1 ? "未联系" : (item.status === 2 ? "联系中未询价" : (item.status === 3 ? "联系询价中" : (item.status === 4 ? "激活已下单" : (item.status === 5 ? "拉新已下单" : "无效客人"))))}}</span>
               <span>{{item.type === 1 ? " 电话沟通" : (item.type === 3 ? "当面拜访" : (item.type === 2 ? "邮件沟通" : '其他'))}}</span>
             </div>
@@ -595,7 +595,9 @@ export default {
         }
       },
       page: 1,
-      id: 0
+      id: 0,
+      row: 10,
+      createTime1: ''
     }
   },
   methods: {
@@ -626,6 +628,10 @@ export default {
         id: params.row.id
       }).then((data) => {
         // this.self.installerdata.splice(params.index, 1)
+        this.$Message.success('删除联系人成功！！！！')
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
       })
     },
     ceateNewInstaller () {
@@ -653,6 +659,7 @@ export default {
     changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
       this.page = page
+      this.cardNumList()
     },
     mockTableData1 () {
       let data = []
@@ -682,7 +689,8 @@ export default {
       return data
     },
     changeSize (row) {
-      console.log(row)
+      this.row = row
+      this.cardNumList()
     },
     maintenance () {
       this.$refs.maintenanceForm.resetFields()
@@ -811,12 +819,27 @@ export default {
       this.createNewAccount = true
       console.log('1111')
     },
+    /* 标准时间转成时间戳 */
+    add0 (m) { return m < 10 ? '0' + m : m },
+    timeFormat (timestamp) {
+      var time = new Date(timestamp)
+      var year = time.getFullYear()
+      var month = time.getMonth() + 1
+      var date = time.getDate()
+      var hours = time.getHours()
+      var minutes = time.getMinutes()
+      var seconds = time.getSeconds()
+      return year + '-' + this.add0(month) + '-' + this.add0(date) + ' ' + this.add0(hours) + ':' + this.add0(minutes) + ':' + this.add0(seconds)
+    },
     contactListRecode () {
       this.$http.contactList({
         companyId: parseInt(this.$route.params.id)
       }).then((data) => {
+        data.list.forEach((item) => {
+          item.cdate1 = this.timeFormat(item.cdate)
+        })
         this.contactInstallerList = data.list
-        console.log(this.contactInstallerList)
+        // console.log(this.contactInstallerList)
       })
     },
     editInstallerList () {
@@ -835,7 +858,9 @@ export default {
     /* 分销证列表 */
     cardNumList () {
       this.$http.cardList({
-        companyId: parseInt(this.$route.params.id)
+        companyId: parseInt(this.$route.params.id),
+        page: this.page,
+        rows: this.row
       }).then((data) => {
         if (data.length > 0) {
           data.forEach((item) => {
@@ -915,7 +940,7 @@ export default {
       })
     },
     jumpContactPage () {
-      this.$router.push({name: 'crm_Contact'})
+      this.$router.push({name: 'crm_Contact', params: this.$route.params.id})
     }
   },
   mounted () {

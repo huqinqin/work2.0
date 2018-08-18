@@ -5,7 +5,7 @@
       <Table :columns="AllocationList" :data="AllocationData"></Table>
       <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">
-          <Page :total="100" :current="1" @on-change="changePage"></Page>
+          <Page :total="total" :current="1" @on-change="changePage" @on-page-size-change="changeSize" size="small" show-elevator show-sizer></Page>
         </div>
       </div>
       </Col>
@@ -22,74 +22,52 @@ export default {
       AllocationList: [
         {
           title: '时间',
-          key: 'cdate'
+          key: 'createTime'
         },
         {
           title: '类型',
-          key: 'type'
+          key: 'recordNote'
         },
         {
           title: '店铺',
-          key: 'storeName'
+          key: 'operatorUid'
         },
         {
           title: 'sales',
-          key: 'salesName'
+          key: 'operatorName'
         },
         {
           title: '操作人',
-          key: 'note'
+          key: 'operatorName'
         }
       ],
-      AllocationData: [
-        {
-          allocationTime: '09-23-2018 10：00：00',
-          type: '系统到期进入公海池',
-          shop: 'GA',
-          sales: 'qincai',
-          handle: '系统自动'
-        }
-      ]
+      AllocationData: [],
+      total: 0,
+      page: 1,
+      row: 10
     }
   },
   methods: {
-    changePage () {
+    changePage (page) {
       // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      this.tableData1 = this.mockTableData1()
+      this.page = page
+      this.allocationList()
     },
-    mockTableData1 () {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          name: 'Business' + Math.floor(Math.random() * 100 + 1),
-          status: Math.floor(Math.random() * 3 + 1),
-          portrayal: ['City', 'People', 'Cost', 'Life', 'Entertainment'],
-          people: [
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            },
-            {
-              n: 'People' + Math.floor(Math.random() * 100 + 1),
-              c: Math.floor(Math.random() * 1000000 + 100000)
-            }
-          ],
-          time: Math.floor(Math.random() * 7 + 1),
-          update: new Date()
-        })
-      }
-      return data
+    changeSize (row) {
+      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
+      this.row = row
+      this.allocationList()
     },
     back () {
       this.$router.push('/crm/CrmPoolCheck')
     },
     allocationList () {
-      this.$http.allocationSales({}).then((data) => {
+      this.$http.allocationSales({
+        page: this.page,
+        rows: this.row
+      }).then((data) => {
         this.AllocationData = data.list
+        this.total = data.total
       })
     }
   },
