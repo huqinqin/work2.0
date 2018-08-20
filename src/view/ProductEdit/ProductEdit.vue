@@ -1,6 +1,7 @@
 <template>
-  <card>
-    <i-form :model="form" label-position="top" :rules="rules" ref="form">
+  <i-form :model="form" label-position="top" :rules="rules" ref="form">
+    <card style="marginBottom: 16px;">
+      <p slot="title">基础信息</p>
       <div class="layout-column">
         <div class="layout-cell">
           <form-item label="商品品牌" prop="brandId">
@@ -39,37 +40,26 @@
         <div class="layout-cell">
           <form-item label="商品关键词" prop="keyword">
             <Tag v-for="(item, index) in form.keyword" fade color="blue" :key="index" :name="item" closable
-                 @on-close="handleCloseTag(index)">{{ item }}
+                  @on-close="handleCloseTag(index)">{{ item }}
             </Tag>
             <input type="text" class="btn-add" placeholder="添加" @keydown.enter="handleAddTag" @blur="handleAddTag"
-                   v-model="tag">
+                    v-model="tag">
           </form-item>
         </div>
       </div>
+    </card>
+    <card style="marginBottom: 16px;">
+      <p slot="title">SKU</p>
       <div class="layout-column">
-        <div class="layout-cell flex-item" style="height: auto;">
-          <form-item label="商品sku" prop="skus" class="ivu-form-item-required">
-            <i-button type="primary" @click="showSku">选择属性</i-button>
-            <Modal
-              v-model="isShowSku"
-              @on-ok="checkProps"
-              @on-cancel="cancelChecked"
-              title="选择sku属性">
-              <i-form label-position="top" ref="propForm">
-                <form-item v-for="(item, index) in skuProps" :key="item.id" :label="item.name">
-                  <CheckboxGroup v-model="item.checked" >
-                    <Checkbox v-for="prop in item.values" :label="prop.id" :key="prop.id">{{prop.name}}</Checkbox>
-                  </CheckboxGroup><i-button type="error" size="small" @clicl="deleteSku(index)">删除</i-button>
-                </form-item>
-              </i-form>
-            </Modal>
-            <LayoutProductAttribute v-model="form.skus"></LayoutProductAttribute>
-          </form-item>
-        </div>
+        <ProductSku :cate-id="form.cateId"></ProductSku>
       </div>
+    </card>
+    <card style="marginBottom: 16px;">
+      <p slot="title">其他属性</p>
       <div class="layout-column">
-        <div class="layout-cell">
-          <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
+        <div class="layout-cell flex-item">
+          <ProductSpu :cate-id="form.cateId"></ProductSpu>
+          <!-- <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
             <i-form label-position="left" class="prop-form">
               <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
                 <RadioGroup v-model="item.valueId" @on-change="checkSpu">
@@ -81,14 +71,17 @@
                 <Checkbox v-model="item.canSee" @on-change="checkSpu">是否可视</Checkbox>
               </form-item>
             </i-form>
-          </form-item>
+          </form-item> -->
         </div>
       </div>
+    </card>
+    <card style="marginBottom: 16px;">
+      <p slot="title">商品图片</p>
       <div class="layout-column">
         <div class="layout-cell flex-item">
-          <form-item label="商品图片" prop="imgUrls" class="ivu-form-item-required">
+          <form-item label=" " prop="imgUrls" class="ivu-form-item-required">
             <div class="demo-upload-list" v-for="(item, index) in form.imgUrls" :key="index"
-                 :class="{'default': index === 0}">
+                  :class="{'default': index === 0}">
               <template v-if="item.status === 'finished'">
                 <img :src="item.url">
                 <div class="demo-upload-list-cover">
@@ -126,6 +119,8 @@
           </form-item>
         </div>
       </div>
+    </card>
+    <card>
       <div class="layout-column">
         <div class="layout-cell flex-item">
           <form-item label="商品详情" prop="detail">
@@ -159,16 +154,16 @@
           </form-item>
         </div>
       </div>
-      <div class="layout-column">
-        <div class="layout-cell flex-item">
-          <form-item>
-            <i-button type="primary" @click="submit">Submit</i-button>
-            <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
-          </form-item>
-        </div>
+    </card>
+    <div class="layout-column">
+      <div class="layout-cell flex-item">
+        <form-item>
+          <i-button type="primary" @click="submit">Submit</i-button>
+          <i-button type="ghost" style="margin-left: 8px">Cancel</i-button>
+        </form-item>
       </div>
-    </i-form>
-  </card>
+    </div>
+  </i-form>
 </template>
 <script>
 // require styles
@@ -199,9 +194,12 @@ const toolbarOptions = [
 
 export default {
   components: {
-    LayoutProductAttribute: () => import('@/view/components/LayoutProductAttribute.vue'),
+    ProductSku: () => import('./components/ProductSku.vue'),
+    ProductSpu: () => import('./components/ProductSpu.vue'),
+    ProductAttribute: () => import('./components/ProductAttribute.vue'),
     BaseUploadProductImgs: () => import('@/view/components/BaseUploadProductImgs.vue'),
     BaseCategory: () => import('@/view/components/BaseCategory.vue'),
+    PropItem: () => import('@/view/components/PropItem.vue'),
     BaseTags: () => import('@/view/components/BaseTags.vue'),
     quillEditor
   },
@@ -339,6 +337,10 @@ export default {
     }
   },
   methods: {
+    selSkuProps (index, value) {
+      console.log(index, value)
+      this.skuProps[index].checked = value
+    },
     // 选择sku属性
     showSku () {
       if (this.form.cateId) {
@@ -357,10 +359,10 @@ export default {
     checkProps () {
       this.form.itemProps[0].skuProps = []
       this.skuProps.forEach(sku => {
-        if (sku.checked.length) {
+        if (sku.checked) {
           let values = []
           sku.values.forEach(t => {
-            if (sku.checked.indexOf(t.id) !== -1) values.push({id: t.id, name: t.name})
+            if (sku.checked) values.push({id: t.id, name: t.name})
           })
           this.form.itemProps[0].skuProps.push({name: sku.name, id: sku.id, values: values})
         }
@@ -601,7 +603,7 @@ export default {
           id: this.form.cateId,
           type: 'sku'
         }).then(data => {
-          this.skuProps = data.map(t => Object.assign({}, t, {checked: []}))
+          this.skuProps = data.map(t => Object.assign({}, t, {checked: ''}))
         })
         this.$http.fetchProp({
           id: this.form.cateId,

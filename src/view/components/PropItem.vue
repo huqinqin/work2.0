@@ -2,7 +2,7 @@
   <Card :bordered="false">
     <p slot="title">{{data.name}}</p>
     <span slot="extra"><slot></slot></span>
-    <div v-for="(value, index) in data.values" :key="value" class="tag border" :class="isChecked(value)" @click="select(value)">
+    <div v-for="(value, index) in data.values" :key="index" class="tag border" :class="isChecked(value)" @click="select(value)">
       <span>{{value}}</span>
       <Icon type="ios-close-empty" @click.stop="delValue(value, index)"></Icon>
     </div>
@@ -82,7 +82,11 @@ export default {
           this.$emit('change', [...this.multiple, data])
         }
       } else if (this.mode === 'single') {
-        this.$emit('change', data)
+        if (this.single === data) {
+          this.$emit('change', '')
+        } else {
+          this.$emit('change', data)
+        }
       }
     }
   }
