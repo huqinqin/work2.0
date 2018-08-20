@@ -8,9 +8,6 @@
 </template>
 <script>
 export default {
-  components: {
-    DragableTable: () => import('@/components/DragableTable.vue')
-  },
   props: ['value'],
   data () {
     return {

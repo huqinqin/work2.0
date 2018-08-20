@@ -117,14 +117,14 @@ export default [
   {
     path: '/quotation',
     redirect: '/quotation/index',
-    meta: { icon: 'lock-combination', title: '询价单管理' },
+    meta: { icon: 'lock-combination', title: '代客下单' },
     name: 'quotation',
     component: Main,
     children: [
-      { path: 'quotation_add', meta: { icon: 'lock-combination', title: '新增询价单' }, name: 'quotation_add', component: () => import('@/view/QuotationEdit.vue') },
-      { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '编辑询价单', hideInMenu: true }, name: 'quotation_edit/:id?', component: () => import('@/view/QuotationEdit.vue') },
       { path: 'quotation_review_list', meta: { icon: 'lock-combination', title: '待办列表' }, name: 'quotation_review_list', component: () => import('@/view/QuotationReviewList.vue') },
-      { path: 'quotation_list', meta: { icon: 'lock-combination', title: '询价单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') }
+      { path: 'quotation_edit/:id?', meta: { icon: 'lock-combination', title: '编辑订单', hideInMenu: true }, name: 'quotation_edit/:id?', component: () => import('@/view/QuotationEdit.vue') },
+      { path: 'quotation_list', meta: { icon: 'lock-combination', title: '订单列表' }, name: 'quotation_list', component: () => import('@/view/QuotationList.vue') },
+      { path: 'quotation_add', meta: { icon: 'lock-combination', title: '新增订单' }, name: 'quotation_add', component: () => import('@/view/QuotationEdit.vue') }
     ]
   },
   {
@@ -159,7 +159,7 @@ export default [
       { path: 'product_list', meta: { icon: 'lock-combination', title: '商品管理' }, name: 'product_list', component: () => import('@/view/ProductList.vue') },
       // { path: 'product_record', meta: { icon: 'lock-combination', title: '商品修改记录' }, name: 'product_record', component: () => import('@/view/ProductRecord.vue') },
       // { path: 'product_trash', meta: { icon: 'lock-combination', title: '商品回收站' }, name: 'product_trash', component: () => import('@/view/ProductTrash.vue') },
-      { path: 'product_edit/:id?', name: 'product_edit', meta: { icon: 'lock-combination', title: '新增商品' }, component: () => import('@/view/ProductEdit.vue') }
+      { path: 'product_edit/:id?', name: 'product_edit', meta: { icon: 'lock-combination', title: '新增商品' }, component: () => import('@/view/ProductEdit') }
     ]
   },
   {

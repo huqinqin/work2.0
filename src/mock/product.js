@@ -1,16 +1,11 @@
 import Mock from 'mockjs'
 const productAttributeList = Mock.mock({
-  data: {
-    'list|10': [{
-      'id|+1': '@id',
-      name: '@name',
-      category: '@name',
-      'values|3-6': [{
-        name: '属性@integer(1, 10)',
-        id: '@id'
-      }]
-    }]
-  }
+  'data|10': [{
+    'id|+1': '@id',
+    name: '@name',
+    category: '@name',
+    'values|3-6': ['属性@integer(1, 10)']
+  }]
 })
 const productBrandList = Mock.mock({
   data: {
@@ -171,35 +166,35 @@ const qProductList = Mock.mock({
 // ]
 const cascader = [
   {
-    id: '1-1',
-    value: '1-1',
+    id: 1,
+    value: 11,
     label: '类目 1-1',
     children: [
       {
-        value: '1-1-1',
-        id: '1-1-1',
+        value: 111,
+        id: 111,
         label: '类目 1-1-1'
       },
       {
-        value: '1-1-2',
-        id: '1-1-2',
+        value: 112,
+        id: 112,
         label: '类目 1-1-2'
       }
     ]
   },
   {
-    value: '1-2',
-    id: '1-2',
+    value: 12,
+    id: 12,
     label: '类目 1-2',
     children: [
       {
-        value: '1-2-1',
-        id: '1-2-1',
+        value: 121,
+        id: 121,
         label: '类目 1-2-1'
       },
       {
-        value: '1-2-2',
-        id: '1-2-2',
+        value: 122,
+        id: 122,
         label: '类目 1-2-2'
       }
     ]
