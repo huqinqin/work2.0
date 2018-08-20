@@ -59,7 +59,8 @@ export default {
       this.allocationList()
     },
     back () {
-      this.$router.push('/crm/CrmPoolCheck')
+      console.log(this.$route.params)
+      this.$router.push({name: 'Crm Check', params: this.$route.params})
     },
     allocationList () {
       this.$http.allocationSales({

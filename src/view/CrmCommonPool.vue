@@ -235,7 +235,7 @@ export default {
         },
         {
           title: 'time',
-          key: 'updateTime'
+          key: 'updateTime1'
         },
         {
           title: '操作',
@@ -398,6 +398,17 @@ export default {
     crmPoolAdd () {
       this.$router.push({name: 'New crease', params: {crmFlag: 3}})
     },
+    add0 (m) { return m < 10 ? '0' + m : m },
+    timeFormat (timestamp) {
+      var time = new Date(timestamp)
+      var year = time.getFullYear()
+      var month = time.getMonth() + 1
+      var date = time.getDate()
+      var hours = time.getHours()
+      var minutes = time.getMinutes()
+      var seconds = time.getSeconds()
+      return year + '-' + this.add0(month) + '-' + this.add0(date) + ' ' + this.add0(hours) + ':' + this.add0(minutes) + ':' + this.add0(seconds)
+    },
     getInstallerList () {
       this.searchOptionJoin.state = this.state ? this.state : ''
       this.searchOptionJoin.city = this.city ? this.city : ''
@@ -419,6 +430,9 @@ export default {
         page: this.page ? this.page : null,
         rows: this.row
       }).then((data) => {
+        data.list.forEach((item) => {
+          item.updateTime1 = this.timeFormat(item.updateTime)
+        })
         this.installerdata = data.list
         this.total = data.total
       })

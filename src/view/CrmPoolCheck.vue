@@ -226,7 +226,7 @@
           <li v-for="(item,index) in contactInstallerList" :key="item.id" v-if="index < 3">
             <div span="24">
               <span>{{item.cdate1}}</span>
-              <span class="status">{{item.status === 1 ? "未联系" : (item.status === 2 ? "联系中未询价" : (item.status === 3 ? "联系询价中" : (item.status === 4 ? "激活已下单" : (item.status === 5 ? "拉新已下单" : "无效客人"))))}}</span>
+              <span class="status">{{item.status === 1 ? "未联系" : (item.status === 2 ? "联系中未询价" : (item.status === 3 ? "联系中询价中" : (item.status === 4 ? "激活已下单" : (item.status === 5 ? "拉新已下单" : "无效客人"))))}}</span>
               <span>{{item.type === 1 ? " 电话沟通" : (item.type === 3 ? "当面拜访" : (item.type === 2 ? "邮件沟通" : '其他'))}}</span>
             </div>
             <div span="24">
@@ -514,7 +514,6 @@ export default {
           city: '',
           street: '',
           zip: '',
-          /* company: '', */
           lat: 0,
           lng: 0
         }
@@ -701,7 +700,11 @@ export default {
       this.InstallerCardModal = true
       this.formValidate.cardNum = params.row.number
       // this.formValidate.companyName = params.row.number;
-      this.form.address = params.row.address
+      this.form.address.detail = params.row.address.detail
+      this.form.address.country = params.row.address.country
+      this.form.address.street = params.row.address.street
+      this.form.address.zip = params.row.address.zip
+      this.form.address.state = params.row.address.state
     },
     maintenanceInstaller () {
       this.$http.maintenanceList({
@@ -771,7 +774,7 @@ export default {
       this.$router.push({name: 'Crm Log', params: this.$route.params.id})
     },
     allocation () {
-      this.$router.push('/crm/CrmAllocation')
+      this.$router.push({name: 'Crm Allocation', params: this.$route.params.id})
     },
     newContactMethod () {
       this.newContactRecode = true
