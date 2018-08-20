@@ -5,33 +5,42 @@
         <div class="layout-column">
           <div class="layout-cell">
             <form-item label="编码">
-              <i-input :value="sku.sin"></i-input>
+              <i-input v-model="sku.sin" @on-change="checkSku"></i-input>
             </form-item>
           </div>
           <div class="layout-cell">
             <form-item label="排序">
-              <i-input :value="sku.onum"></i-input>
+              <i-input v-model="sku.onum" @on-change="checkSku"></i-input>
             </form-item>
           </div>
           <div class="layout-cell">
             <form-item label="重量">
-              <i-input :value="sku.weight"></i-input>
+              <i-input v-model="sku.weight" @on-change="checkSku"></i-input>
             </form-item>
           </div>
           <div class="layout-cell">
             <form-item label="成本价">
-              <i-input :value="sku.price.basePrice"></i-input>
+              <i-input v-model="sku.price.basePrice" @on-change="checkSku"></i-input>
             </form-item>
           </div>
         </div>
       </i-form>
     </div>
     <div class="layout-cell flex-item">
-      <PropItem v-for="(item, index) in skuProps" :data="item" :key="item.id" mode="single" :single="item.checked" @change="selSkuProps(index, $event)"></PropItem>
+      <p v-if="!skuProps.length">此类目下没有sku属性，或者你没有选择类目</p>
+      <PropItem
+        v-for="(item, index) in skuProps"
+        :data="item"
+        :key="item.id"
+        mode="single"
+        :single="item.checked"
+        @change="selSkuProps(index, $event)">
+      </PropItem>
     </div>
   </div>
 </template>
 <script>
+import debounce from 'lodash.debounce'
 export default {
   name: 'ProductSku',
   components: {
@@ -45,12 +54,13 @@ export default {
           unit: 'pc',
           size: null,
           spec: 1,
-          weight: 0,
+          weight: '',
           sin: '',
           onum: 99,
           skuProps: [],
           price: {
-            basePrice: 0
+            basePrice: '',
+            status: 'enabled'
           }
         }
       }
@@ -71,6 +81,13 @@ export default {
             type: 'sku'
           }).then(data => {
             this.skuProps = data.map(t => Object.assign({}, t, {checked: ''}))
+            this.sku.skuProps.forEach(v => {
+              this.skuProps.forEach(t => {
+                if (v.catePropId === t.id) {
+                  t.checked = v.value
+                }
+              })
+            })
           })
         }
       },
@@ -80,37 +97,22 @@ export default {
   methods: {
     selSkuProps (index, value) {
       this.skuProps[index].checked = value
+      this.checkSku()
     },
-    checkProps () {
-      this.form.itemProps[0].skuProps = []
-      this.skuProps.forEach(sku => {
-        if (sku.checked) {
-          let values = []
-          sku.values.forEach(t => {
-            if (sku.checked) values.push({id: t.id, name: t.name})
-          })
-          this.form.itemProps[0].skuProps.push({name: sku.name, id: sku.id, values: values})
-        }
-      })
-      let skuArr = this.form.itemProps[0].skuProps.map(t => {
-        return t.values.map(v => {
-          return {valueId: v.id, value: v.name, name: t.name, nameId: t.id}
-        })
-      })
-      if (skuArr.length === 0) {
-        this.$Modal.info({
-          title: 'Info',
-          content: '<p>请先选择类目</p>',
-          loading: true,
-          onOk: () => {
-            this.$Modal.remove()
+    checkSku: debounce(function () {
+      let sku = Object.assign({}, this.sku, {
+        skuProps: this.skuProps.map(t => {
+          if (t.checked) {
+            return {
+              catePropId: t.id,
+              value: t.checked
+              // status: ''
+            }
           }
-        })
-      }
-      this.form.skus = this.descartes(skuArr).map(t => {
-        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: '', priceStatus: 'enabled'}
+        }).filter(v => v)
       })
-    }
+      this.$emit('getSku', sku)
+    }, 400)
   }
 }
 </script>

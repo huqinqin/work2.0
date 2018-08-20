@@ -12,7 +12,7 @@
         </div>
         <div class="layout-cell">
           <form-item label="类目" prop="cateId" class="ivu-form-item-required">
-            <BaseCategory v-model="form.cateId" @input="getProps"></BaseCategory>
+            <BaseCategory v-model="form.cateId"></BaseCategory>
           </form-item>
         </div>
         <div class="layout-cell">
@@ -51,27 +51,14 @@
     <card style="marginBottom: 16px;">
       <p slot="title">SKU</p>
       <div class="layout-column">
-        <ProductSku :cate-id="form.cateId"></ProductSku>
+        <ProductSku :cate-id="form.cateId" :sku="form.skus[0]" @getSku="getSku"></ProductSku>
       </div>
     </card>
     <card style="marginBottom: 16px;">
       <p slot="title">其他属性</p>
       <div class="layout-column">
         <div class="layout-cell flex-item">
-          <ProductSpu :cate-id="form.cateId"></ProductSpu>
-          <!-- <form-item label="商品属性" prop="itemProps[0].props" class="ivu-form-item-required">
-            <i-form label-position="left" class="prop-form">
-              <form-item v-for="(item, index) in spuProps" :key="index" :label="item.name + ': '">
-                <RadioGroup v-model="item.valueId" @on-change="checkSpu">
-                  <Radio v-for="value in item.values" :label="value.valueId" :key="value.valueId">{{value.value}}</Radio>
-                </RadioGroup>
-                <i-button type="primary" size="small" style="marginLeft: 8px" @click="addProp(index)">新增</i-button>
-                <i-button type="error" size="small" style="marginLeft: 8px" @click="delProp(index)">删除</i-button>
-                <Checkbox style="marginLeft: 8px;" v-model="item.canSearch" @on-change="checkSpu">是否可搜索</Checkbox>
-                <Checkbox v-model="item.canSee" @on-change="checkSpu">是否可视</Checkbox>
-              </form-item>
-            </i-form>
-          </form-item> -->
+          <ProductSpu :cate-id="form.cateId" @getSpu="getSpu" :spu="form.itemProps"></ProductSpu>
         </div>
       </div>
     </card>
@@ -79,78 +66,18 @@
       <p slot="title">商品图片</p>
       <div class="layout-column">
         <div class="layout-cell flex-item">
-          <form-item label=" " prop="imgUrls" class="ivu-form-item-required">
-            <div class="demo-upload-list" v-for="(item, index) in form.imgUrls" :key="index"
-                  :class="{'default': index === 0}">
-              <template v-if="item.status === 'finished'">
-                <img :src="item.url">
-                <div class="demo-upload-list-cover">
-                  <Icon type="ios-eye-outline" @click="handleView(item.url)"></Icon>
-                  <div class="default" @click="handleDefault(index)">设为默认</div>
-                  <div class="delete" @click="handleRemove(item.name)">删除</div>
-                </div>
-              </template>
-              <template v-else>
-                <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-              </template>
-            </div>
-            <Upload
-              ref="upload"
-              :show-upload-list="false"
-              :default-file-list="form.imgUrls"
-              :on-success="handleSuccess"
-              :format="['jpg','jpeg','png']"
-              :max-size="2048"
-              :on-format-error="handleFormatError"
-              :on-exceeded-size="handleMaxSize"
-              :before-upload="beforeLoad"
-              :data="Object.assign(formUp, formData)"
-              multiple
-              type="drag"
-              action="//chen0711.oss-cn-hangzhou.aliyuncs.com"
-              style="display: inline-block;width:256px; height: 256px;">
-              <div style="width: 256px;height:256px;line-height: 256px;">
-                <Icon type="camera" size="48"></Icon>
-              </div>
-            </Upload>
-            <Modal title="View Image" v-model="visible">
-              <img :src="imgUrl" v-if="visible" style="width: 100%">
-            </Modal>
+          <form-item label="" prop="imgUrls" class="ivu-form-item-required">
+            <BaseUploadProductImgs v-model="form.imgUrls"></BaseUploadProductImgs>
           </form-item>
         </div>
       </div>
     </card>
     <card>
+      <p slot="title">商品详情</p>
       <div class="layout-column">
         <div class="layout-cell flex-item">
-          <form-item label="商品详情" prop="detail">
-            <quill-editor v-model="form.detail"
-                          ref="myQuillEditor"
-                          :options="editorOption"
-                          @blur="onEditorBlur($event)"
-                          @focus="onEditorFocus($event)"
-                          @ready="onEditorReady($event)">
-            </quill-editor>
-            <Upload
-              class="edit-upload"
-              type="drag"
-              ref="editUpload"
-              :before-upload="beforeUpload"
-              :on-success="loadSuccess"
-              :on-error="loadError"
-              :data="Object.assign(formUp, formData)"
-              :format="['jpg','jpeg','png']"
-              :max-size="2048"
-              :on-format-error="handleFormatError"
-              :on-exceeded-size="handleMaxSize"
-              action="//chen0711.oss-cn-hangzhou.aliyuncs.com">
-              <div style="padding: 20px 0">
-                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                <p>Click or drag files here to upload</p>
-              </div>
-            </Upload>
-            <Spin size="large" fix v-if="spinShow"></Spin>
-            <!--<base-editor :content="content" :height="500" ref="content"></base-editor>-->
+          <form-item label="" prop="detail">
+            <ProductDetail v-model="form.detail"></ProductDetail>
           </form-item>
         </div>
       </div>
@@ -166,32 +93,6 @@
   </i-form>
 </template>
 <script>
-// require styles
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-import {quillEditor} from 'vue-quill-editor'
-import debounce from 'lodash.debounce'
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-  ['blockquote', 'code-block'],
-
-  [{'header': 1}, {'header': 2}], // custom button values
-  [{'list': 'ordered'}, {'list': 'bullet'}],
-  [{'script': 'sub'}, {'script': 'super'}], // superscript/subscript
-  [{'indent': '-1'}, {'indent': '+1'}], // outdent/indent
-  [{'direction': 'rtl'}], // text direction
-
-  [{'size': ['small', false, 'large', 'huge']}], // custom dropdown
-  [{'header': [1, 2, 3, 4, 5, 6, false]}],
-
-  [{'color': []}, {'background': []}], // dropdown with defaults from theme
-  [{'font': []}],
-  [{'align': []}],
-  ['link', 'image', 'video'],
-  ['clean'] // remove formatting button
-]
-
 export default {
   components: {
     ProductSku: () => import('./components/ProductSku.vue'),
@@ -201,12 +102,12 @@ export default {
     BaseCategory: () => import('@/view/components/BaseCategory.vue'),
     PropItem: () => import('@/view/components/PropItem.vue'),
     BaseTags: () => import('@/view/components/BaseTags.vue'),
-    quillEditor
+    ProductDetail: () => import('./components/ProductDetail.vue')
   },
   data () {
     const validateSku = (rule, value, callback) => {
       value.forEach(t => {
-        if ((t.sin === '') || (t.onum === '') || (t.price === '') || (t.weight === '') || ((t.props.length === 0))) {
+        if ((t.sin === '') || (t.onum === '') || (t.price === '') || (t.weight === '') || ((t.skuProps.length === 0))) {
           callback(new Error('Something is empty'))
           return false
         }
@@ -235,24 +136,6 @@ export default {
       }
     }
     return {
-      isShowSku: false,
-      formUp: {
-        policy: 'eyJleHBpcmF0aW9uIjoiMjAyMC0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF1dfQ==',
-        OSSAccessKeyId: 'LTAIdExaLJELmORj',
-        signature: 'Xc8E45q5qzV+9gPLvepFqmS0oVk=',
-        preKey: '',
-        dir: '',
-        host: 'http://chen0711.oss-cn-hangzhou.aliyuncs.com/',
-        expire: '',
-        success_action_status: 200
-      },
-      formData: {
-        name: '',
-        key: '',
-        Filename: ''
-      },
-      spinShow: false,
-      imgName: '',
       visible: false,
       tag: '',
       spu: '',
@@ -270,14 +153,21 @@ export default {
         onum: '',
         status: 'onsale',
         keyword: [],
-        imgUrls: [],
-        itemProps: [
-          {
-            skuProps: [],
-            props: []
+        imgUrls: [12],
+        itemProps: [],
+        skus: [{
+          unit: 'pc',
+          size: null,
+          spec: 1,
+          weight: '',
+          sin: '',
+          onum: 99,
+          skuProps: [],
+          price: {
+            basePrice: '',
+            status: 'enabled'
           }
-        ],
-        skus: []
+        }]
       },
       rules: {
         title: [{
@@ -315,237 +205,40 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'change'
         }]
-      },
-      editorOption: {
-        placeholder: '',
-        theme: 'snow', // or 'bubble'
-        modules: {
-          toolbar: {
-            container: toolbarOptions, // 工具栏
-            handlers: {
-              'image': function (value) {
-                if (value) {
-                  document.querySelector('.edit-upload input').click()
-                } else {
-                  this.quill.format('image', false)
-                }
-              }
-            }
-          }
-        }
       }
     }
   },
   methods: {
-    selSkuProps (index, value) {
-      console.log(index, value)
-      this.skuProps[index].checked = value
-    },
     // 选择sku属性
-    showSku () {
-      if (this.form.cateId) {
-        this.isShowSku = true
-      } else {
-        this.$Modal.info({
-          title: 'Info',
-          content: '<p>请先选择类目</p>',
-          loading: true,
-          onOk: () => {
-            this.$Modal.remove()
-          }
-        })
-      }
+    getSku (sku) {
+      this.form.skus = [sku]
     },
-    checkProps () {
-      this.form.itemProps[0].skuProps = []
-      this.skuProps.forEach(sku => {
-        if (sku.checked) {
-          let values = []
-          sku.values.forEach(t => {
-            if (sku.checked) values.push({id: t.id, name: t.name})
-          })
-          this.form.itemProps[0].skuProps.push({name: sku.name, id: sku.id, values: values})
-        }
-      })
-      let skuArr = this.form.itemProps[0].skuProps.map(t => {
-        return t.values.map(v => {
-          return {valueId: v.id, value: v.name, name: t.name, nameId: t.id}
-        })
-      })
-      if (skuArr.length === 0) {
-        this.$Modal.info({
-          title: 'Info',
-          content: '<p>请先选择类目</p>',
-          loading: true,
-          onOk: () => {
-            this.$Modal.remove()
-          }
-        })
-      }
-      this.form.skus = this.descartes(skuArr).map(t => {
-        return {spec: 1, basePrice: '', unit: 'pc', size: null, weight: '', sin: '', props: t, onum: '', priceStatus: 'enabled'}
-      })
+    getSpu (spu) {
+      this.form.itemProps = spu
     },
-    descartes (skuArr) {
-      if (skuArr.length === 0) {
-        return []
-      } else if (skuArr.length === 1) {
-        return skuArr[0].map(v => {
-          return [v]
-        })
-      } else {
-        return [].reduce.call(skuArr, (col, set) => {
-          let res = []
-          col.forEach(c => {
-            set.forEach(s => {
-              let t = [].concat(Array.isArray(c) ? c : [c])
-              t.push(s)
-              res.push(t)
-            })
-          })
-          return res
-        })
-      }
-    },
-    cancelChecked () {
-      console.log('cancel')
-    },
-    deleteSku (index) {
-      this.skuProps[index].checked = []
-    },
-    // 上传图片
-    getPolicy () {
-      this.$http.getPolicy().then(data => {
-        this.formUp.policy = data.policy
-        this.formUp.OSSAccessKeyId = data.accessid
-        this.formUp.signature = data.signature
-        this.formUp.dir = data.dir
-        this.formUp.host = data.host
-        this.formUp.preKey = data.dir
-        this.formUp.expire = data.expire
-      })
-    },
-    // 富文本编辑相关
-    onEditorBlur (event) {
-      console.log(event)
-    },
-    onEditorFocus (event) {
-      console.log(event)
-    },
-    onEditorReady (event) {
-      console.log(event)
-    },
-    beforeLoad (file) {
-      this.formData.name = file.name
-      this.formData.key = this.formUp.preKey + '/' + file.name
-      this.formData.Filename = file.name
-      this.$nextTick(() => {
-        this.$refs.upload.post(file)
-      })
-      return false
-    },
-    beforeUpload (file) {
-      this.formData.name = file.name
-      this.formData.key = this.formUp.preKey + '/' + file.name
-      this.formData.Filename = file.name
-      this.$nextTick(() => {
-        this.$refs.editUpload.post(file)
-      })
-      return false
-    },
-    loadSuccess (response, file) {
-      let quill = this.$refs.myQuillEditor.quill
-      let img = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
-      // 获取光标所在位置
-      let length = quill.getSelection().index
-      // 插入图片  res.info为服务器返回的图片地址
-      quill.insertEmbed(length, 'image', img)
-      // 调整光标到最后
-      quill.setSelection(length + 1)
-    },
-    loadError (error) {
-      console.log(error)
-    },
-    // 图片上传相关
-    handleDefault (index) {
-      let defaultItem = this.form.imgUrls[index]
-      this.form.imgUrls.splice(index, 1)
-      this.form.imgUrls.unshift(defaultItem)
-    },
-    handleView (url) {
-      this.imgUrl = url
-      this.visible = true
-    },
-    handleRemove (file) {
-      const fileList = this.form.imgUrls
-      this.form.imgUrls.splice(fileList.indexOf(file), 1)
-    },
-    handleSuccess (res, file) {
-      file.url = this.formUp.host + '/' + this.formUp.dir + '/' + file.name
-      file.status = 'finished'
-      this.form.imgUrls.push(file)
-      this.$refs.form.validateField('imgUrls', valid => {
-        console.log(valid)
-      })
-    },
-    handleFormatError (file) {
-      this.$Notice.warning({
-        title: 'The file format is incorrect',
-        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
-      })
-    },
-    handleMaxSize (file) {
-      this.$Notice.warning({
-        title: 'Exceeding file size limit',
-        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
-      })
-    },
-    addProp (index) {
-      this.$Modal.confirm({
-        title: this.spuProps[index].name,
-        render: (h) => {
-          return h('Input', {
-            props: {
-              value: this.spu,
-              autofocus: true,
-              placeholder: 'Please enter prop...'
-            },
-            on: {
-              input: (val) => {
-                this.spu = val
-              }
-            }
-          })
-        },
-        onOk: () => {
-          if (this.spu) {
-            this.spuProps[index].values.push(this.spu)
-            this.spu = ''
-            this.$Notice.open({
-              title: '新增属性成功',
-              desc: ''
-            })
-          } else {
-            this.$Notice.open({
-              title: '请先输入属性',
-              desc: ''
-            })
-          }
-        },
-        onCancel: () => {
-          this.spu = ''
-          this.$Notice.open({
-            title: '取消新增属性',
-            desc: ''
-          })
-        }
-      })
-    },
+    // descartes (skuArr) {
+    //   if (skuArr.length === 0) {
+    //     return []
+    //   } else if (skuArr.length === 1) {
+    //     return skuArr[0].map(v => {
+    //       return [v]
+    //     })
+    //   } else {
+    //     return [].reduce.call(skuArr, (col, set) => {
+    //       let res = []
+    //       col.forEach(c => {
+    //         set.forEach(s => {
+    //           let t = [].concat(Array.isArray(c) ? c : [c])
+    //           t.push(s)
+    //           res.push(t)
+    //         })
+    //       })
+    //       return res
+    //     })
+    //   }
+    // },
     // 保存商品信息
     submit () {
-      this.form.imgUrls = this.form.imgUrls.map(t => {
-        return t.url
-      })
       this.$refs.form.validate(valid => {
         if (valid) {
           this.$http.saveProduct({
@@ -596,75 +289,29 @@ export default {
     handleCloseTag (index) {
       this.form.keyword.splice(index, 1)
     },
-    getProps: debounce(function () {
-      if (this.form.cateId) {
-        this.spuProps = []
-        this.$http.fetchProp({
-          id: this.form.cateId,
-          type: 'sku'
-        }).then(data => {
-          this.skuProps = data.map(t => Object.assign({}, t, {checked: ''}))
-        })
-        this.$http.fetchProp({
-          id: this.form.cateId,
-          type: 'spu'
-        }).then(data => {
-          data.forEach((t, index) => {
-            let values = []
-            t.values.forEach(v => {
-              values.push({
-                value: v.name,
-                valueId: v.id
-              })
-            })
-            this.spuProps.push({name: t.name, nameId: t.id, canSee: false, canSearch: false, values: values, valueId: ''})
-            this.form.itemProps[0].props.forEach(v => {
-              this.spuProps.forEach(t => {
-                if (t.nameId === v.nameId) {
-                  t.values.forEach(x => {
-                    if (x.valueId === v.valueId) {
-                      t.valueId = v.valueId
-                      t.canSee = v.canSee
-                      t.canSearch = v.canSearch
-                    }
-                  })
-                }
-              })
-            })
-          })
-        })
-      }
-    }, 500),
     getBrand () {
       this.$http.fetchCodeTable({
         type: 'brand',
         source: 'lts'
       }).then(data => {
-        this.$nextTick(() => {
-          this.brand = data
-        })
+        this.brand = data
       })
     },
     getDetail () {
       this.$http.getProduct({
         id: this.$route.params.id
       }).then(data => {
-        data.imgUrls = data.imgUrls.map((url, index) => {
-          return {
-            name: index,
-            url: url,
-            status: 'finished'
-          }
-        })
+        this.getBrand()
         this.form = data
-        this.getProps()
       })
     }
   },
   beforeMount () {
-    this.getPolicy()
-    this.getBrand()
-    if (this.$route.params.id) this.getDetail()
+    if (this.$route.params.id) {
+      this.getDetail()
+    } else {
+      this.getBrand()
+    }
   }
 }
 </script>
@@ -682,82 +329,5 @@ export default {
   .btn-add:focus {
     border: 1px dashed #57a3f3;
     outline: none;
-  }
-
-  // 上传图片相关
-  .demo-upload-list {
-    display: inline-block;
-    width: 256px;
-    height: 256px;
-    text-align: center;
-    line-height: 256px;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    overflow: hidden;
-    background: #fff;
-    position: relative;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-    margin-right: 4px;
-  }
-
-  .demo-upload-list img {
-    width: 100%;
-    height: 100%;
-  }
-
-  .demo-upload-list-cover {
-    display: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, .6);
-    color: #fff;
-  }
-
-  .demo-upload-list:hover .demo-upload-list-cover {
-    display: block;
-  }
-
-  .demo-upload-list-cover i {
-    font-size: 56px;
-    cursor: pointer;
-    margin: 0 2px;
-  }
-
-  .demo-upload-list-cover div {
-    width: 50%;
-    font-size: 16px;
-    position: absolute;
-    bottom: 0;
-    line-height: 48px;
-    cursor: pointer;
-  }
-
-  .demo-upload-list-cover .default {
-    left: 0;
-  }
-
-  .demo-upload-list-cover .delete {
-    right: 0;
-  }
-
-  .demo-upload-list.default .default {
-    cursor: default;
-  }
-
-  /deep/ .ql-container {
-    min-height: 640px;
-  }
-  .edit-upload{
-    visibility: hidden;
-    height: 0;
-  }
-  /deep/ .prop-form label.ivu-form-item-label::before{
-    content: '';
-  }
-  /deep/ .ivu-checkbox-group{
-    display: inline-block;
   }
 </style>
