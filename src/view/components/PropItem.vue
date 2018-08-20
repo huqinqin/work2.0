@@ -82,6 +82,7 @@ export default {
           this.$emit('change', [...this.multiple, data])
         }
       } else if (this.mode === 'single') {
+        this.$emit('change', data)
         if (this.single === data) {
           this.$emit('change', '')
         } else {
