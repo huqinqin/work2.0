@@ -1,31 +1,39 @@
 <template>
   <card>
     <i-form ref="filter" :model="filter" inline>
-      <form-item prop="custId">
+      <form-item prop="custId" label="Cust ID">
         <i-input v-model="filter.custId" type="text" placeholder="Cust ID" ></i-input>
       </form-item>
-      <form-item prop="account">
-        <i-input v-model="filter.account" type="text" placeholder="账号" ></i-input>
+      <form-item prop="storePhone" label="Contact Phone">
+        <i-input v-model="filter.storePhone" type="text" placeholder="Contact Phone" ></i-input>
       </form-item>
-      <form-item prop="companyName">
-        <i-input v-model="filter.companyName" type="text" placeholder="公司名" ></i-input>
+      <form-item prop="companyName" label="公司名称">
+        <i-input v-model="filter.companyName" type="text" placeholder="公司名称" ></i-input>
       </form-item>
-      <form-item prop="grade">
-        <i-input v-model="filter.grade" type="text" placeholder="会员等级" ></i-input>
+      <form-item prop="channel" label="来源">
+        <i-input v-model="filter.channel" type="text" placeholder="来源" ></i-input>
       </form-item>
-      <form-item prop="historyMoney">
-        <i-input v-model="filter.historyMoney" type="text" placeholder="消费金额" ></i-input>
+      <form-item prop="ownerSalesId" label="Associated Sales">
+        <i-input v-model="filter.ownerSalesId" type="text" placeholder="Associated Sales" ></i-input>
       </form-item>
-      <form-item prop="orderNum">
-        <i-input v-model="filter.orderNum" type="text" placeholder="订单数量" ></i-input>
+      <form-item prop="zipCode" label="Zip Code">
+        <i-input v-model="filter.zipCode" type="text" placeholder="Zip Code" ></i-input>
       </form-item>
-      <form-item prop="availableIntegral">
-        <i-input v-model="filter.availableIntegral" type="text" placeholder="可用积分" ></i-input>
+      <form-item prop="storeEmail" label="Email">
+        <i-input v-model="filter.storeEmail" type="text" placeholder="Email" ></i-input>
       </form-item>
-      <form-item prop="status">
-        <i-input v-model="filter.status" type="text" placeholder="账户启用状态" ></i-input>
+      <form-item prop="storeStatus" label="状态">
+        <i-select v-model="filter.storeStatus">
+          <i-option value="enabled">enabled</i-option>
+          <i-option value="freeze">freeze</i-option>
+        </i-select>
       </form-item>
-      <form-item>
+      <form-item prop="status" label="所属门店">
+        <Select v-model="filter.ownerStoreId">
+          <Option v-for="item in $store.state.options.stores" :value="item.key" :key="item.key">{{ item.value }}</Option>
+        </Select>
+      </form-item>
+      <form-item label=" ">
         <i-button type="primary">查询</i-button>
       </form-item>
     </i-form>
@@ -46,7 +54,7 @@ export default {
     return {
       url: 'Installer',
       filter: {
-        custId: '', id: '', account: '', companyName: '', grade: '', historyMoney: '', orderNum: '', availableIntegral: '', status: ''
+        custId: '', storePhone: '', account: '', channel: '', companyName: '', ownerSalesId: '', zipCode: '', storeEmail: '', storeStatus: '', ownerStoreId: ''
       },
       columns: [
         {
@@ -58,100 +66,91 @@ export default {
           width: 50,
           render (h, params) {
             const accounts = []
-            for (const account of params.row.account) {
-              accounts.push(<row>
-                <i-col span={4}>账号：{account.account}</i-col>
-                <i-col span={4}>firstName：{account.firstName}</i-col>
-                <i-col span={4}>lastName：{account.lastName}</i-col>
-                <i-col span={4}>email：{account.email}</i-col>
-                <i-col span={4}>mobile：{account.mobile}</i-col>
-                <i-col span={4}>
-                  <i-switch value={params.row.status === 'enabled'} size="large">
-                    <span slot="open">激活</span>
-                    <span slot="close">冻结</span>
-                  </i-switch>
-                </i-col>
-              </row>)
+            for (const account of params.row.userList) {
+              accounts.push(<tr>
+                <td>账号：{account.userAccount}</td>
+                <td>姓名：{account.userLastName}-{account.userFirstName}</td>
+                <td>email：{account.userEmail}</td>
+                <td>mobile：{account.userMobile}</td>
+                <td>状态：{account.userStatus}</td>
+              </tr>)
             }
-            return accounts
+            return <table width="100%" class="account-table">{accounts}</table>
           }
         }, {
           title: 'Cust ID',
           key: 'custId'
         }, {
-          title: '公司名',
+          title: '公司名称',
           key: 'companyName'
         }, {
-          title: '会员等级',
+          title: '等级',
           key: 'grade'
         }, {
-          title: '消费金额',
-          key: 'historyMoney'
+          title: '联系信息',
+          render: (h, params) => {
+            const more = []
+            const contact = params.row.storeContact
+            if (contact && contact.length > 0) {
+              contact.forEach(item => {
+                more.push(
+                  <div>
+                    <icon type="person"></icon><strong>{item.firstName}{item.lastName}</strong><br/>
+                    <icon type="ios-telephone"></icon><strong>{item.phone}</strong>
+                    <icon type="ios-mail"></icon><strong>{item.email}</strong>
+                  </div>
+                )
+              })
+              return (
+                <poptip trigger="hover" placement="right" width="300">
+                  <icon type="person"></icon><strong>{contact[0].firstName}{contact[0].lastName}</strong><br/>
+                  <icon type="ios-telephone"></icon><strong>{contact[0].phone}</strong>
+                  <icon type="ios-mail"></icon><strong>{contact[0].email}</strong>
+                  <div slot="content">
+                    {more}
+                  </div>
+                </poptip>
+              )
+            }
+            return <span></span>
+          }
         }, {
-          title: '订单数量',
-          key: 'orderNum'
+          title: '地址',
+          key: 'storeAddress'
         }, {
-          title: '可用积分',
-          key: 'availableIntegral'
+          title: '所属',
+          render: (h, params) => {
+            return (<span>{params.row.ownerSalesAccount}</span>)
+          }
         }, {
-          title: '账户启用状态',
-          key: 'status'
+          title: '分销资格',
+          key: 'storeCert'
+        }, {
+          title: '创建时间',
+          key: 'storeCdate'
+        }, {
+          title: '状态',
+          key: 'storeStatus'
+        }, {
+          title: '来源',
+          key: 'storeChannel'
         },
         {
           title: '操作',
           key: 'action',
           width: 250,
           align: 'center',
-          render (h, params) {
+          render: (h, params) => {
             console.log(params)
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({
-                      name: 'installer_details',
-                      params: {}
-                    })
-                  }
-                }
-              }, '查看'),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$router.push({
-                      name: 'installer_edit',
-                      params: {}
-                    })
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {}
-                }
-              }, '删除')
-            ])
+            return (
+              <div>
+                <i-button type="primary" size="small" style="margin-right: 5px;" onClick={() => {
+                  this.$router.push({name: 'installer_details', params: {id: params.row.id}})
+                }}>查看</i-button>
+                <i-button type="primary" size="small" style="margin-right: 5px;" onClick={() => {}}>编辑</i-button>
+                <i-button type="error" size="small" style="margin-right: 5px;" onClick={() => {}}>删除</i-button>
+              </div>
+            )
           }
         }
       ]
@@ -162,3 +161,13 @@ export default {
   }
 }
 </script>
+<style lang="less">
+.account-table {
+  &, tr, td{
+    padding: 0 16px;
+    line-height: 40px;
+    border: none;
+    background-color: #F6F6F6;
+  }
+}
+</style>

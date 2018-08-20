@@ -176,6 +176,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import {quillEditor} from 'vue-quill-editor'
+import debounce from 'lodash.debounce'
 const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'], // toggled buttons
   ['blockquote', 'code-block'],
@@ -593,18 +594,20 @@ export default {
     handleCloseTag (index) {
       this.form.keyword.splice(index, 1)
     },
-    getProps () {
+    getProps: debounce(function () {
       if (this.form.cateId) {
         this.spuProps = []
-        this.$http.fetchSkuProps({
-          id: this.form.cateId
+        this.$http.fetchProp({
+          id: this.form.cateId,
+          type: 'sku'
         }).then(data => {
-          this.skuProps = data.list.map(t => Object.assign({}, t, {checked: []}))
+          this.skuProps = data.map(t => Object.assign({}, t, {checked: []}))
         })
-        this.$http.fetchSpuProps({
-          id: this.form.cateId
+        this.$http.fetchProp({
+          id: this.form.cateId,
+          type: 'spu'
         }).then(data => {
-          data.list.forEach((t, index) => {
+          data.forEach((t, index) => {
             let values = []
             t.values.forEach(v => {
               values.push({
@@ -629,7 +632,7 @@ export default {
           })
         })
       }
-    },
+    }, 500),
     getBrand () {
       this.$http.fetchCodeTable({
         type: 'brand',

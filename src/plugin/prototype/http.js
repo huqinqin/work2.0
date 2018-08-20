@@ -107,20 +107,20 @@ export default {
   saveCategory (params) {
     return axios.post('item/category/saveOrUpdate', params)
   },
-  fetchProp (catePropIds, categoryId) {
-    return axios.post('item/category/listProp', {catePropIds, categoryId})
+  fetchProp (params) {
+    return axios.post('item/category/listProp', params)
   },
   saveProp (params) {
-    return axios.post('item/category/addProps', params)
+    return axios.post('item/category/addProp', params)
   },
   delProp (params) {
-    return axios.post('item/category/deleteProps', params)
+    return axios.post('item/category/deleteProp', params)
   },
-  addPropValue (catePropId, name) {
-    return axios.post('item/category/addPropsTag', { catePropId, name })
+  addPropValue (propId, value) {
+    return axios.post('item/category/addPropValue', { propId, value })
   },
-  delPropValue (catePropId, id) {
-    return axios.post('item/category/deletePropsTag', { catePropId, id })
+  delPropValue (propId, values) {
+    return axios.post('item/category/deletePropValue', { propId, values })
   },
   fetchSku (cateSkuPropIds, categoryId) {
     return axios.post('item/category/listSkuProp', { cateSkuPropIds, categoryId })
@@ -177,7 +177,7 @@ export default {
     return axios.post('trade/orderSell/getOrderSellerDetail', params)
   },
   fetchInstaller (params) {
-    return axios.post('base/store/getInstallerList', params)
+    return axios.post('base/store/listInstallerStore', params)
   },
   changeOrderPrice (params) {
     return axios.post('trade/orderSell/updateOrderPrice', params)

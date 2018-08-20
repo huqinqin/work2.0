@@ -9,11 +9,8 @@
           <div style="overflow: hidden;">
             <i-button type="primary" style="float: right" @click="showProp">新增属性</i-button>
           </div>
-          <LayoutPropItem v-for="sku in skus" :data="sku" :key="sku.id">
-            <a href="#" @click="delSkuProp(sku.id)">删除SKU</a>
-          </LayoutPropItem>
-          <LayoutPropItem v-for="spu in spus" :data="spu" :key="spu.id">
-            <a href="#" @click="delSpuProp(spu.id)">删除SPU</a>
+          <LayoutPropItem v-for="prop in props" :data="prop" :key="prop.id">
+            <a href="#" @click="delProp(prop.id)">删除{{prop.type}}</a>
           </LayoutPropItem>
         </div>
       </div>
@@ -31,6 +28,9 @@
         </FormItem>
         <form-item label="属性名">
           <i-input v-model="prop.name" placeholder="属性名"></i-input>
+        </form-item>
+        <form-item label="排序值">
+          <i-input v-model="prop.onum" placeholder="排序值"></i-input>
         </form-item>
       </i-form>
     </modal>
@@ -71,6 +71,11 @@ const initForm = {
   imgUrl: '',
   onum: 99
 }
+const initProp = {
+  onum: 99,
+  type: 'sku',
+  name: ''
+}
 export default {
   name: 'ProductCategory',
   components: {
@@ -81,12 +86,8 @@ export default {
   data () {
     return {
       curCate: {id: '', name: ''},
-      prop: {
-        type: 'sku',
-        name: ''
-      },
-      skus: [],
-      spus: [],
+      prop: cloneDeep(initProp),
+      props: [],
       showCateModal: false,
       showPropNew: false,
       form: cloneDeep(initForm)
@@ -133,11 +134,8 @@ export default {
       )
     },
     fetchProps () {
-      this.$http.fetchSkuProps({id: this.curCate.id}).then(data => {
-        this.skus = data.list
-      })
-      this.$http.fetchSpuProps({id: this.curCate.id}).then(data => {
-        this.spus = data.list
+      this.$http.fetchProp({id: this.curCate.id, type: ''}).then(data => {
+        this.props = data
       })
     },
     showProp () {
@@ -146,7 +144,6 @@ export default {
     check (root, node, data) {
       this.curCate = { id: data.id, name: data.title }
       this.fetchProps()
-      // this.getCategory(data.value)
     },
     append (event, data) {
       event.stopPropagation()
@@ -171,25 +168,14 @@ export default {
       this.fetchProp()
     },
     saveProp () {
-      const params = {categoryId: this.curCate.id, name: this.prop.name}
-      if (this.prop.type === 'sku') {
-        this.$http.saveSku(params).then(() => {
-          this.fetchProps()
-        })
-      } else {
-        this.$http.saveProp(params).then(() => {
-          this.fetchProps()
-        })
-      }
-    },
-    delSkuProp (id) {
-      this.$http.delSku({categoryId: this.curCate.id, cateSkuPropIds: [id]}).then(() => {
-        this.$Notice.success({title: '删除成功'})
+      const params = { cateId: this.curCate.id, ...this.prop }
+      this.$http.saveProp(params).then(() => {
         this.fetchProps()
+        this.prop = cloneDeep(initProp)
       })
     },
-    delSpuProp (id) {
-      this.$http.delProp({categoryId: this.curCate.id, cateSkuPropIds: [id]}).then(() => {
+    delProp (id) {
+      this.$http.delProp({ids: [id]}).then(() => {
         this.$Notice.success({title: '删除成功'})
         this.fetchProps()
       })
