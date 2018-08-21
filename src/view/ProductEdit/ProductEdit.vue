@@ -72,7 +72,7 @@
         </div>
       </div>
     </card>
-    <card>
+    <card style="marginBottom: 16px;">
       <p slot="title">商品详情</p>
       <div class="layout-column">
         <div class="layout-cell flex-item">
@@ -141,7 +141,7 @@ export default {
       spu: '',
       content: '',
       brand: [],
-      kind: ['kind1', 'kind2', 'kind3'],
+      kind: ['kind'],
       skuProps: [],
       spuProps: [],
       form: {
@@ -153,7 +153,7 @@ export default {
         onum: '',
         status: 'onsale',
         keyword: [],
-        imgUrls: [12],
+        imgUrls: [],
         itemProps: [],
         skus: [{
           unit: 'pc',
@@ -183,7 +183,7 @@ export default {
         imgUrls: [{ validator: validateArr, trigger: '' }],
         onum: [{ validator: validateOnum, trigger: 'change' }],
         skus: [{ validator: validateSku, trigger: 'blur' }],
-        'itemProps[0].props': [{ validator: validateArr, trigger: 'change' }],
+        itemProps: [{ validator: validateArr, trigger: 'change' }],
         cateId: [{ validator: validateVal, trigger: 'change' }],
         brandId: [{
           required: true,
@@ -199,11 +199,6 @@ export default {
           required: true,
           message: 'The input cannot be empty',
           trigger: 'blur'
-        }],
-        status: [{
-          required: true,
-          message: 'The input cannot be empty',
-          trigger: 'change'
         }]
       }
     }
