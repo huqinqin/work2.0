@@ -272,9 +272,9 @@
     </card>
     <div class="buttons">
       <template v-if="(status === 'init') || (status === '')">
-        <Button type="primary" @click="saveQuotation('download')">下载</Button>
-        <Button type="primary" @click="saveQuotation('save')">保存</Button>
-        <Button type="success" @click="saveQuotation('send')">提交审核</Button>
+        <Button type="primary" @click="saveQuotation('download')" :disabled="computing" :loading="!canSubmit">下载</Button>
+        <Button type="primary" @click="saveQuotation('save')" :disabled="computing" :loading="!canSubmit">保存</Button>
+        <Button type="success" @click="saveQuotation('send')" :disabled="computing" :loading="!canSubmit">提交审核</Button>
       </template>
       <template v-if="(status === 'salesManager') || (status === 'financial')">
         <Button type="success" @click="agree">通过</Button>
@@ -491,7 +491,8 @@ export default {
       productHistory: [],
       canEdit: true,
       computing: false,
-      changedShipping: false
+      changedShipping: false,
+      canSubmit: true
     }
   },
   computed: {
@@ -499,10 +500,10 @@ export default {
       let allCost = 0
       let allFee = 0
       this.itemList.forEach(t => {
-        allCost += t.avgCost * t.amount
+        allCost += (+t.avgCost) * t.amount
       })
-      allFee = this.pay.itemFee + this.pay.fee.reduceFee + this.pay.rebateFee
-      return ((allFee - allCost) * 100 / allFee).toFixed(2) + '%'
+      allFee = (+this.pay.itemFee) + (+this.pay.fee.reduceFee) + (+this.pay.rebateFee)
+      return allFee ? (((+allFee) - (+allCost)) * 100 / (+allFee)).toFixed(2) + '%' : 0 + '%'
     }
   },
   methods: {
@@ -628,10 +629,10 @@ export default {
             title: '商品名称',
             key: 'title'
           },
-          {
-            title: 'sin',
-            key: 'sin'
-          },
+          // {
+          //   title: 'sin',
+          //   key: 'sin'
+          // },
           {
             title: '库存',
             key: 'num'
@@ -745,10 +746,10 @@ export default {
             title: '商品名称',
             key: 'title'
           },
-          {
-            title: 'sin',
-            key: 'sin'
-          },
+          // {
+          //   title: 'sin',
+          //   key: 'sin'
+          // },
           {
             title: '库存',
             key: 'num'
@@ -1001,8 +1002,10 @@ export default {
         if (this.id) {
           params = Object.assign({}, {id: this.id, mid: this.mid, cdate: this.cdate}, params)
         }
+        this.canSubmit = false
         if (key === 'save') {
           this.$http.saveQuotation(params).then(data => {
+            this.canSubmit = true
             this.$Notice.success({
               title: '保存询价单成功'
             })
@@ -1010,6 +1013,7 @@ export default {
           })
         } else if (key === 'send') {
           this.$http.sendQuotation(params).then(data => {
+            this.canSubmit = true
             this.$Notice.success({
               title: '提交审核成功'
             })
@@ -1017,10 +1021,10 @@ export default {
           })
         } else if (key === 'download') {
           this.$http.saveQuotation(params).then(data => {
-            this.$Notice.success({
-              title: '保存询价单成功'
-            })
-            console.log('download')
+            this.canSubmit = true
+            // this.$Notice.success({
+            //   title: '保存询价单成功'
+            // })
             // this.$router.push({ name: 'quotation_review_list' })
           })
         }
