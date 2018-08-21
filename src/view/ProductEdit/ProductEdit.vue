@@ -178,7 +178,7 @@ export default {
             status: 'default'
           }
         }],
-        introduction: ''
+        introduction: '<p>test123</p>'
       },
       rules: {
         title: [{

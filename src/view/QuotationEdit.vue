@@ -162,7 +162,7 @@
                     <img width="28" height="28" :src="props.item.imgUrl" alt="图"><div class="title">{{props.item.title}}</div>
                   </div>
                   <div class="tips">
-                    <Tag class="props" v-for="prop in props.item.sku.props" :key="prop.nameId">{{prop.value}}</Tag>
+                    <Tag class="props" v-for="(prop, index) in props.item.skuProps" :key="index">{{prop.value}}</Tag>
                     <Tag class="storage">{{props.item.num}}</Tag>
                   </div>
                 </div>
@@ -230,7 +230,7 @@
             </div>
             <div class="other">
               <Checkbox v-model="dropShipping" :disabled="!canEdit">Dropship from other office</Checkbox>
-              <Checkbox v-model="overSell" :disabled="!canEdit">Insufficient inventory/</Checkbox>
+              <Checkbox v-model="overSell" :disabled="!canEdit">Insufficient inventory</Checkbox>
             </div>
           </form-item>
           <form-item label="手续费">
@@ -935,7 +935,6 @@ export default {
           shipping: shipping,
           tax: {rate: pay.taxRate},
           pay: {payType: 'offline'},
-          // pay: Object.assign({}, {payType: 'offline'}, pay),
           note: {remark: this.orderNote},
           source: 'work',
           type: 'quotation',
@@ -976,6 +975,9 @@ export default {
     saveQuotation (key) {
       if (this.validateForm()) {
         this.itemList.forEach(t => {
+          if (t.amount > t.num) {
+            this.overSell = true
+          }
           t.diyPrice = t.diyPrice * 100
           t.num = t.amount
         })
@@ -1012,20 +1014,28 @@ export default {
             this.$router.push({ name: 'quotation_review_list' })
           })
         } else if (key === 'send') {
-          this.$http.sendQuotation(params).then(data => {
-            this.canSubmit = true
-            this.$Notice.success({
-              title: '提交审核成功'
+          if (this.overSell) {
+            this.$Modal.confirm({
+              title: '库存不足,是否调货?',
+              onOk: () => {
+                this.$http.sendQuotation(params).then(data => {
+                  this.canSubmit = true
+                  params.dropShipping = true
+                  this.$Notice.success({
+                    title: '提交审核成功'
+                  })
+                  this.$router.push({ name: 'quotation_review_list' })
+                })
+              },
+              onCancel: () => {
+                this.canSubmit = true
+                return false
+              }
             })
-            this.$router.push({ name: 'quotation_review_list' })
-          })
+          }
         } else if (key === 'download') {
           this.$http.saveQuotation(params).then(data => {
             this.canSubmit = true
-            // this.$Notice.success({
-            //   title: '保存询价单成功'
-            // })
-            // this.$router.push({ name: 'quotation_review_list' })
           })
         }
       }
@@ -1064,6 +1074,8 @@ export default {
         id: id
       }).then(data => {
         this.fromAddr = data.fromAddr
+        this.dropShipping = data.dropShipping
+        this.overSell = data.overSell
         this.supplierId = data.supplierId
         this.store = data.store
         this.poNo = data.poNo
