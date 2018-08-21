@@ -7,28 +7,23 @@
   <form-item prop="name">
     <i-input v-model="filter.title" type="text" placeholder="商品名称" ></i-input>
   </form-item>
-  <form-item prop="image">
-    <i-input v-model="filter.image" type="text" placeholder="商品图片" ></i-input>
-  </form-item>
   <form-item prop="brand">
-    <i-input v-model="filter.brandName" type="text" placeholder="商品品牌" ></i-input>
-  </form-item>
-  <form-item prop="price">
-    <i-input v-model="filter.price" type="text" placeholder="单价" ></i-input>
+    <i-select v-model="filter.brandId" placeholder="商品品牌">
+      <i-option v-for="item in brand" :value="item.key" :key="item.key">{{item.value}}</i-option>
+    </i-select>
   </form-item>
   <form-item prop="num">
-    <i-input v-model="filter.num" type="text" placeholder="编码" ></i-input>
+    <i-input v-model="filter.sin" type="text" placeholder="编码" ></i-input>
   </form-item>
   <form-item prop="label">
     <i-input v-model="filter.keyword" type="text" placeholder="标签" ></i-input>
   </form-item>
-  <form-item prop="sale">
-    <i-input v-model="filter.sale" type="text" placeholder="销量" ></i-input>
+  <form-item prop="status">
+    <i-select v-model="filter.status" placeholder="是否上架">
+      <Option value="onsale">上架</Option>
+      <Option value="enabled">下架</Option>
+    </i-select>
   </form-item>
-  <form-item prop="putaway">
-    <i-input v-model="filter.status" type="text" placeholder="是否上架" ></i-input>
-  </form-item>
-
   <form-item>
     <i-button type="primary" @click="query">查询</i-button>
     <i-button type="error">删除所选</i-button>
@@ -43,6 +38,7 @@
   </card>
 </template>
 <script>
+import formatPrice from '../plugin/filter/formatPrice'
 import mixin from '@/mixins/list'
 export default {
   mixins: [mixin],
@@ -50,7 +46,7 @@ export default {
     return {
       url: 'Product',
       filter: {
-        id: '', name: '', image: '', brand: '', price: '', num: '', label: '', sale: '', putaway: ''
+        id: '', name: '', image: '', brandId: '', sin: '', keyword: '', status: 'onsale'
       },
       columns: [
         {
@@ -69,7 +65,7 @@ export default {
           key: 'image',
           render: (h, params) => {
             return (
-              <img src={params.row.imgUrls[0]} alt="商品主图" height="100"/>
+              <img src={params.row.imgUrls[0]} alt="商品主图" height="48"/>
             )
           }
         }, {
@@ -77,10 +73,18 @@ export default {
           key: 'brandName'
         }, {
           title: '单价',
-          key: 'price'
+          render: (h, params) => {
+            return (
+              <div>{formatPrice.formatPrice(params.row.skus[0].basePrice)}</div>
+            )
+          }
         }, {
           title: '编码',
-          key: 'sin'
+          render: (h, params) => {
+            return (
+              <div>{params.row.skus[0].sin}</div>
+            )
+          }
         }, {
           title: '标签',
           key: 'keyword',
@@ -133,7 +137,8 @@ export default {
             ])
           }
         }
-      ]
+      ],
+      brand: []
     }
   },
   methods: {
@@ -155,9 +160,18 @@ export default {
           desc: ''
         })
       })
+    },
+    getBrand () {
+      this.$http.fetchCodeTable({
+        type: 'brand',
+        source: 'lts'
+      }).then(data => {
+        this.brand = data
+      })
     }
   },
   beforeMount () {
+    this.getBrand()
     this.query()
   }
 }

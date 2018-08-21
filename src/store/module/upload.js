@@ -18,11 +18,13 @@ export default {
   actions: {
     // 获取签名
     getPolicy ({ commit, state }) {
-      state.policy = cache('policy')
-      if (state.policy.expire && (state.policy.expire > (new Date().getTime()) / 1000)) {
-        commit('setPolicy')
+      if (cache('policy') && state.policy.expire && (state.policy.expire > (new Date().getTime()) / 1000)) {
+        return new Promise(resolve => {
+          resolve('gotPolicy')
+          commit('setPolicy')
+        })
       } else {
-        http.getPolicy().then(data => {
+        return http.getPolicy().then(data => {
           data.OSSAccessKeyId = data.accessid
           commit('setPolicy', data)
         })

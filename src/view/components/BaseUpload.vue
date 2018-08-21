@@ -3,15 +3,16 @@
     ref="upload"
     :show-upload-list="false"
     :on-success="handleSuccess"
+    :on-error="handleError"
     :format="['jpg','jpeg','png']"
     :max-size="2048"
     :on-format-error="handleFormatError"
     :on-exceeded-size="handleMaxSize"
     :before-upload="handleBeforeUpload"
-    :data="Object.assign(policy, formData)"
+    :data="Object.assign({}, policy, formData)"
     multiple
     type="drag"
-    :action="policy.host">
+    :action="policy.host || ''">
     <div class="camera-icon">
       <Icon type="camera" size="48"></Icon>
     </div>
@@ -26,18 +27,17 @@ export default {
         name: '',
         key: '',
         Filename: ''
-      }
-    }
-  },
-  computed: {
-    policy () {
-      return this.$store.state.upload.policy
+      },
+      policy: {}
     }
   },
   methods: {
     ...mapActions([
       'getPolicy'
     ]),
+    handleError () {
+      this.$emit('startUpload', false)
+    },
     handleSuccess (res, file) {
       let url = this.policy.host + '/' + this.policy.dir + '/' + file.name
       this.$emit('getUrl', url)
@@ -60,12 +60,15 @@ export default {
       this.formData.Filename = file.name
       this.$nextTick(() => {
         this.$refs.upload.post(file)
+        this.$emit('startUpload', true)
       })
       return false
     }
   },
   created () {
-    this.getPolicy()
+    this.getPolicy().then(() => {
+      this.policy = this.$store.state.upload.policy
+    })
   }
 }
 </script>
