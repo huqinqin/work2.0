@@ -7,7 +7,7 @@
         <span></span>
         <div>
           <span>{{item.cdate1}}</span>
-          <span class="status">{{item.status === 1 ? "未联系" : (item.status === 2 ? "联系中未询价" : (item.status === 3 ? "联系询价中" : (item.status === 4 ? "激活已下单" : (item.status === 5 ? "拉新已下单" : "无效客人"))))}}</span>
+          <span class="status">{{item.status === 1 ? "未联系" : (item.status === 2 ? "联系中未询价" : (item.status === 3 ? "联系中询价中" : (item.status === 4 ? "激活已下单" : (item.status === 5 ? "拉新已下单" : "无效客人"))))}}</span>
           <span>{{item.type === 1 ? " 电话沟通" : (item.type === 2 ? "邮件沟通" : (item.type === 3 ? "当面拜访" : "其他"))}}</span></div>
         <div><span>{{item.storeName}}门店</span><span>{{item.salesName}}sales</span></div>
         <div><span>备注:</span></div>

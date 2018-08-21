@@ -492,7 +492,7 @@ export default {
         },
         {
           title: 'time',
-          key: 'cdate'
+          key: 'updateTime1'
         },
         {
           title: '操作',
@@ -558,7 +558,7 @@ export default {
         },
         {
           title: 'time',
-          key: 'cdate'
+          key: 'updateTime1'
         },
         {
           title: '操作',
@@ -915,6 +915,17 @@ export default {
         console.log(this.list)
       }
     },
+    add0 (m) { return m < 10 ? '0' + m : m },
+    timeFormat (timestamp) {
+      var time = new Date(timestamp)
+      var year = time.getFullYear()
+      var month = time.getMonth() + 1
+      var date = time.getDate()
+      var hours = time.getHours()
+      var minutes = time.getMinutes()
+      var seconds = time.getSeconds()
+      return year + '-' + this.add0(month) + '-' + this.add0(date) + ' ' + this.add0(hours) + ':' + this.add0(minutes) + ':' + this.add0(seconds)
+    },
     getTemplatePoolInstallerList (val) {
       this.$http.templatePoolInstallerList({
         storeId: val === '0' ? (this.noAssociateStore ? this.noAssociateStore : null) : (this.associateStore ? this.associateStore : null),
@@ -930,6 +941,9 @@ export default {
         page: this.page ? this.page : null,
         rows: this.row
       }).then((data) => {
+        data.list.forEach((item) => {
+          item.updateTime1 = this.timeFormat(item.updateTime)
+        })
         this.installerdata = data.list
         this.installerdata1 = data.list
         this.total = data.total
