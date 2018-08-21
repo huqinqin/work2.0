@@ -122,11 +122,6 @@ export default {
       ],
       installerList1: [
         {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
-        {
           title: 'cust id',
           key: 'custCode'
         },
@@ -171,7 +166,8 @@ export default {
       salesId: 0,
       page: 1,
       dateTimeData: '',
-      row: 10
+      row: 10,
+      flag: 0
     }
   },
   methods: {
@@ -207,28 +203,22 @@ export default {
       console.log('11111')
     },
     changePage (page) {
-      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      // this.tableData1 = this.mockTableData1()
       this.page = page
       this.reportList()
     },
     changeSize (row) {
-      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      // this.tableData1 = this.mockTableData1()
       this.row = row
       this.reportList()
     },
     changePage1 (page) {
-      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      // this.tableData1 = this.mockTableData1()
       this.page = page
       this.installerDetailList()
     },
     changeSize1 (row) {
-      // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
-      // this.tableData1 = this.mockTableData1()
-      this.row = row
-      this.installerDetailList()
+      if (this.flag) {
+        this.row = row
+        this.installerDetailList()
+      }
     },
     importInstaller () {
       this.importInstallerModal = true
@@ -258,7 +248,9 @@ export default {
       this.isSaller = true
     },
     selectSellOk () {},
-    cancel () {},
+    cancel () {
+      this.flag = 0
+    },
     getStoreList () {
       this.query()
       if (this.list.length > 0) {
@@ -279,11 +271,14 @@ export default {
       this.dateTimeData = params.row.createTimeStr
       console.log(this.salesId, this.dateTimeData)
       this.installerDetailList()
+      this.flag = 1
     },
     outHide () {
       // this.contactInstallerNum = false;
     },
-    contactOk () {},
+    contactOk () {
+      this.flag = 0
+    },
     reportExportData () {
       if (this.dateValue.length > 0) {
         let s = '/work/crm/export/storesales?storeId=' + this.storeId + '&salesKeyword=' + this.sales + '&beginTime=' + this.dateValue[0] + '&endTime=' + this.dateValue[1]
@@ -324,8 +319,8 @@ export default {
     },
     installerDetailList () {
       this.$http.detailList({
-        salesId: this.salesId ? this.salesId : 0,
-        date: this.dateTimeData ? this.dateTimeData : 1,
+        salesId: this.salesId ? this.salesId : null,
+        date: this.dateTimeData ? this.dateTimeData : null,
         page: this.page,
         rows: 10
       }).then((data) => {
