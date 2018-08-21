@@ -274,7 +274,7 @@ export default {
     },
     overShow (params) {
       this.contactInstallerNum = true
-      //this.salesId = params.row.baseUserId
+      // this.salesId = params.row.baseUserId
       this.salesId = params.row.allotUserId
       this.dateTimeData = params.row.createTimeStr
       console.log(this.salesId, this.dateTimeData)
@@ -314,7 +314,7 @@ export default {
     },
     installerDetail () {
       this.$http.crmInstallerListData({
-        //baseUserId: this.salesId,
+        // baseUserId: this.salesId,
         allotUserId: this.salesId,
         storeId: this.storeId,
         page: this.page,
