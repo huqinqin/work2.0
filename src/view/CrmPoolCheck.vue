@@ -793,7 +793,12 @@ export default {
       this.$http.omsId({
         companyId: parseInt(this.$route.params.id),
         custCode: this.createCustId
-      }).then((data) => {})
+      }).then((data) => {
+        this.$Message.success('关联OMS的cust  成功！！！')
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
+      })
     },
     newRecordOk () {
       this.$http.newContactList({
