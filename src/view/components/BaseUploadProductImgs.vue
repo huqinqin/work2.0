@@ -1,115 +1,84 @@
 <template>
   <div>
-    <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index" :class="{'default': index === 0}">
-      <template v-if="item.status === 'finished'">
-        <img :src="item.url">
-        <div class="demo-upload-list-cover">
-          <Icon type="ios-eye-outline" @click="handleView(item.name)"></Icon>
-          <div class="default" @click="handleDefault(index)">设为默认</div>
-          <div class="delete" @click="handleRemove(item.name)">删除</div>
-        </div>
-      </template>
-      <template v-else>
-        <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-      </template>
+    <div class="demo-upload-list" v-for="(url, index) in uploadList" :key="index" :class="{'default': index === 0}">
+      <img :src="url">
+      <div class="demo-upload-list-cover">
+        <Icon type="ios-eye-outline" @click="handleView(index)"></Icon>
+        <div class="default" @click="handleDefault(index)" v-if="index !== 0">设为默认</div>
+        <div class="delete" @click="handleRemove(index)">删除</div>
+      </div>
     </div>
-    <Upload
-        ref="upload"
-        :show-upload-list="false"
-        :on-success="handleSuccess"
-        :format="['jpg','jpeg','png']"
-        :max-size="2048"
-        :on-format-error="handleFormatError"
-        :on-exceeded-size="handleMaxSize"
-        :before-upload="handleBeforeUpload"
-        multiple
-        type="drag"
-        action="//jsonplaceholder.typicode.com/posts/"
-        style="display: inline-block;width:256px; height: 256px;">
-        <div style="width: 256px;height:256px;line-height: 256px;">
-            <Icon type="camera" size="48"></Icon>
-        </div>
-    </Upload>
+    <BaseUpload @getUrl="getUrl"></BaseUpload>
     <Modal title="View Image" v-model="visible">
-        <img :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" v-if="visible" style="width: 100%">
+      <img :src="imgUrl" style="width: 100%">
     </Modal>
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex'
 export default {
   props: ['value'],
+  components: {
+    BaseUpload: () => import('./BaseUpload')
+  },
   data () {
     return {
-      imgName: '',
-      visible: false
+      imgUrl: '',
+      visible: false,
+      formData: {
+        name: '',
+        key: '',
+        Filename: ''
+      }
     }
   },
   computed: {
-    uploadList: {
-      get: function () {
-        return this.value.map(t => Object.assign({}, t, {status: 'finished'}))
-      },
-      set: function (newValue) {
-        return newValue
-      }
+    policy () {
+      return this.$store.state.upload.policy
+    },
+    uploadList () {
+      return this.value
     }
   },
   watch: {
     uploadList: {
       handler: function (newO, oldO) {
-        this.$emit('input', this.uploadList)
+        this.$emit('input', newO)
       },
       deep: true
     }
   },
   methods: {
+    ...mapActions([
+      'getPolicy'
+    ]),
+    getUrl (url) {
+      this.uploadList.push(url)
+    },
     handleDefault (index) {
       let defaultItem = this.uploadList[index]
       this.uploadList.splice(index, 1)
       this.uploadList.unshift(defaultItem)
     },
-    handleView (name) {
-      this.imgName = name
+    handleView (index) {
+      this.imgUrl = this.uploadList[index]
       this.visible = true
     },
-    handleRemove (file) {
-      const fileList = this.uploadList
-      this.uploadList.splice(fileList.indexOf(file), 1)
-    },
-    handleSuccess (res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar'
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
-      file.status = 'finished'
-      this.uploadList.push(file)
-    },
-    handleFormatError (file) {
-      this.$Notice.warning({
-        title: 'The file format is incorrect',
-        desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
-      })
-    },
-    handleMaxSize (file) {
-      this.$Notice.warning({
-        title: 'Exceeding file size limit',
-        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
-      })
-    },
-    handleBeforeUpload () {
-      const check = this.uploadList.length < 5
-      if (!check) {
-        this.$Notice.warning({
-          title: 'Up to five pictures can be uploaded.'
-        })
-      }
-      return check
+    handleRemove (index) {
+      this.uploadList.splice(index, 1)
     }
-  },
-  mounted () {
-    this.uploadList = this.$refs.upload.fileList
   }
 }
 </script>
 <style lang="less" scoped>
+  /deep/ .ivu-upload{
+    width:256px;
+    height: 256px;
+    display: inline-flex;
+    vertical-align: top;
+    align-items: center;
+    justify-content: center;
+  }
     .demo-upload-list{
         display: inline-block;
         width: 256px;
