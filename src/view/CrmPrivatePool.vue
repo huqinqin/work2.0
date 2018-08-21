@@ -234,11 +234,19 @@ export default {
         },
         {
           title: 'isCount',
-          key: 'account'
+          key: 'hasAccount'
         },
         {
           title: 'time',
-          key: 'updateTime'
+          key: 'updateTime1'
+        },
+        {
+          title: 'last time',
+          key: 'updateTime222'
+        },
+        {
+          title: 'expire time',
+          key: 'expireTime1'
         },
         {
           title: '操作',
@@ -259,16 +267,7 @@ export default {
           }
         }
       ],
-      installerdata: [
-        {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }
-      ],
+      installerdata: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       allocationSells: '',
@@ -504,6 +503,17 @@ export default {
       })
     },
     cancel () {},
+    add0 (m) { return m < 10 ? '0' + m : m },
+    timeFormat (timestamp) {
+      var time = new Date(timestamp)
+      var year = time.getFullYear()
+      var month = time.getMonth() + 1
+      var date = time.getDate()
+      var hours = time.getHours()
+      var minutes = time.getMinutes()
+      var seconds = time.getSeconds()
+      return year + '-' + this.add0(month) + '-' + this.add0(date) + ' ' + this.add0(hours) + ':' + this.add0(minutes) + ':' + this.add0(seconds)
+    },
     getPrivateInstallerList () {
       this.$http.privatePoolInstallerList({
         storeId: this.noAssociateStore ? this.noAssociateStore : null,
@@ -517,6 +527,14 @@ export default {
         page: this.page ? this.page : null,
         rows: this.row
       }).then((data) => {
+        data.list.forEach((item) => {
+          if (item.createTime) {
+            item.updateTime1 = this.timeFormat(item.createTime)
+          }
+          if (item.expireTime) {
+            item.expireTime1 = this.timeFormat(item.expireTime)
+          }
+        })
         this.installerdata = data.list
         this.total1 = data.total
       })

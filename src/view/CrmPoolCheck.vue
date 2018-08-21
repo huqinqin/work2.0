@@ -80,7 +80,7 @@
         <FormItem prop="email" label="email">
           <Input type="text" v-model="formInline.email" placeholder=""></Input>
         </FormItem>
-        <FormItem prop="checked" label="00" style="color: #fff;">
+        <FormItem prop="checked" label="00" style="">
           <Checkbox v-model="formInline.checked">已验证</Checkbox>
         </FormItem>
       </Form>
@@ -129,7 +129,7 @@
       </Form>
     </Modal>
     <Modal ref="InstallerCardModal" :loading="loading"  v-model="InstallerCardModal" width="600" title="分销证信息" @on-ok="InstallerCardInfo" @on-cancel="handleReset" class-name="newCardModal">
-      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+      <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
         <FormItem label="分销证信息" prop="cardInfo">
           <Upload
             ref="upload"
@@ -793,7 +793,12 @@ export default {
       this.$http.omsId({
         companyId: parseInt(this.$route.params.id),
         custCode: this.createCustId
-      }).then((data) => {})
+      }).then((data) => {
+        this.$Message.success('关联OMS的cust  成功！！！')
+        setTimeout(() => {
+          location.reload()
+        }, 2000)
+      })
     },
     newRecordOk () {
       this.$http.newContactList({
@@ -805,7 +810,7 @@ export default {
       }).then((data) => {
         this.$Message.success('添加沟通纪录成功')
         setTimeout(() => {
-          location.reload()
+          // location.reload()
         }, 1000)
       })
     },
@@ -968,13 +973,13 @@ export default {
     .top{
       display: flex;
       .topLeft{
-        flex: 0 0 200px;
-        width: 200px;
-        height: 200px;
+        flex: 0 0 300px;
+        width: 300px;
+        height: 300px;
         text-align: center;
         .imgLeft{
-          width: 100%;
-          height: 100%;
+          width: 80%;
+          height: 80%;
           border-radius: 50%;
           img{
             width: 100%;
@@ -1015,7 +1020,7 @@ export default {
   }
   .newCardModal{
     .ivu-form-item-content{
-      margin-left: 34px !important;
+      //margin-left: 34px !important;
       .layout-column{
         width: 100%;
         .layout-cell{

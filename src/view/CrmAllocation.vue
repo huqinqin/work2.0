@@ -22,7 +22,7 @@ export default {
       AllocationList: [
         {
           title: '时间',
-          key: 'createTime'
+          key: 'updateTime1'
         },
         {
           title: '类型',
@@ -62,11 +62,25 @@ export default {
       console.log(this.$route.params)
       this.$router.push({name: 'Crm Check', params: this.$route.params})
     },
+    add0 (m) { return m < 10 ? '0' + m : m },
+    timeFormat (timestamp) {
+      var time = new Date(timestamp)
+      var year = time.getFullYear()
+      var month = time.getMonth() + 1
+      var date = time.getDate()
+      var hours = time.getHours()
+      var minutes = time.getMinutes()
+      var seconds = time.getSeconds()
+      return year + '-' + this.add0(month) + '-' + this.add0(date) + ' ' + this.add0(hours) + ':' + this.add0(minutes) + ':' + this.add0(seconds)
+    },
     allocationList () {
       this.$http.allocationSales({
         page: this.page,
         rows: this.row
       }).then((data) => {
+        data.list.forEach((item) => {
+          item.updateTime1 = this.timeFormat(item.createTime)
+        })
         this.AllocationData = data.list
         this.total = data.total
       })
