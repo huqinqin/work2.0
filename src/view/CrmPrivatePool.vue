@@ -241,6 +241,14 @@ export default {
           key: 'updateTime1'
         },
         {
+          title: 'last time',
+          key: 'updateTime222'
+        },
+        {
+          title: 'expire time',
+          key: 'expireTime1'
+        },
+        {
           title: '操作',
           width: 250,
           align: 'center',
@@ -259,16 +267,7 @@ export default {
           }
         }
       ],
-      installerdata: [
-        {
-          custId: '11111',
-          company: '2222',
-          firstName: 'xiao',
-          lastName: 'qincai',
-          isCount: 'No',
-          time: '2016-10-03'
-        }
-      ],
+      installerdata: [],
       importInstallerModal: false,
       invalidBussinessModal: false,
       allocationSells: '',
@@ -529,7 +528,12 @@ export default {
         rows: this.row
       }).then((data) => {
         data.list.forEach((item) => {
-          item.updateTime1 = this.timeFormat(item.updateTime)
+          if (item.createTime) {
+            item.updateTime1 = this.timeFormat(item.createTime)
+          }
+          if (item.expireTime) {
+            item.expireTime1 = this.timeFormat(item.expireTime)
+          }
         })
         this.installerdata = data.list
         this.total1 = data.total

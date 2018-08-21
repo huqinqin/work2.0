@@ -942,7 +942,7 @@ export default {
         rows: this.row
       }).then((data) => {
         data.list.forEach((item) => {
-          item.updateTime1 = this.timeFormat(item.updateTime)
+          item.updateTime1 = this.timeFormat(item.createTime)
         })
         this.installerdata = data.list
         this.installerdata1 = data.list
