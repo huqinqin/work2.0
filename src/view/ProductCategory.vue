@@ -9,8 +9,13 @@
           <div style="overflow: hidden;">
             <i-button type="primary" style="float: right" @click="showProp">新增属性</i-button>
           </div>
-          <LayoutPropItem v-for="prop in props" :data="prop" :key="prop.id">
-            <a href="#" @click="delProp(prop.id)">删除{{prop.type}}</a>
+          <h3 v-if="skus.length > 0">SKU属性</h3>
+          <LayoutPropItem v-for="prop in skus" :data="prop" :key="prop.id">
+            <a href="#" @click="delProp(prop.id)">删除</a>
+          </LayoutPropItem>
+          <h3 v-if="spus.length > 0">非SKU属性</h3>
+          <LayoutPropItem v-for="prop in spus" :data="prop" :key="prop.id">
+            <a href="#" @click="delProp(prop.id)">删除</a>
           </LayoutPropItem>
         </div>
       </div>
@@ -20,7 +25,7 @@
         <form-item label="类型">
           <radio-group v-model="prop.type">
             <radio label="sku">sku属性</radio>
-            <radio label="spu">spu属性</radio>
+            <radio label="spu">非sku属性</radio>
           </radio-group>
         </form-item>
         <FormItem label="所属类目">
@@ -94,6 +99,12 @@ export default {
     }
   },
   computed: {
+    skus () {
+      return this.props.filter(item => item.type === 'sku')
+    },
+    spus () {
+      return this.props.filter(item => item.type === 'spu')
+    },
     ...mapState('category/', ['categories', 'curCategory']),
     ...mapGetters('category/', ['curCategoryId']),
     treeData () {
@@ -152,8 +163,23 @@ export default {
       this.showCateModal = true
     },
     remove (root, node, data) {
-      this.$http.delCategory([data.id]).then(() => {
-        this.fetchCategory()
+      console.log('​delValue -> data', data)
+      this.$Modal.confirm({
+        title: '删除操作',
+        content: `<p>确认删除类目${data}？</p>`,
+        loading: true,
+        onCancel: () => {
+          this.$Notice.success({
+            title: '删除取消',
+            desc: ''
+          })
+        },
+        onOk: () => {
+          this.$http.delCategory([data.id]).then(() => {
+            this.fetchCategory()
+            this.$Notice.success({title: '删除成功'})
+          })
+        }
       })
     },
     saveCategory () {
