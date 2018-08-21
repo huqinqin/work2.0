@@ -488,7 +488,7 @@ export default {
         },
         {
           title: 'isCount',
-          key: 'account'
+          key: 'hasAccount'
         },
         {
           title: 'time',
@@ -554,7 +554,7 @@ export default {
         },
         {
           title: 'isCount',
-          key: 'account'
+          key: 'hasAccount'
         },
         {
           title: 'time',
