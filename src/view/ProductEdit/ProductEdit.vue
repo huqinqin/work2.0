@@ -67,7 +67,17 @@
       <div class="layout-column">
         <div class="layout-cell flex-item">
           <form-item label="" prop="imgUrls" class="ivu-form-item-required">
-            <BaseUploadProductImgs v-model="form.imgUrls"></BaseUploadProductImgs>
+            <ProductImgUrls v-model="form.imgUrls"></ProductImgUrls>
+          </form-item>
+        </div>
+      </div>
+    </card>
+    <card style="marginBottom: 16px;">
+      <p slot="title">关键描述</p>
+      <div class="layout-column">
+        <div class="layout-cell flex-item">
+          <form-item label="" prop="introduction">
+            <ProductDetail v-model="form.introduction"></ProductDetail>
           </form-item>
         </div>
       </div>
@@ -98,7 +108,7 @@ export default {
     ProductSku: () => import('./components/ProductSku.vue'),
     ProductSpu: () => import('./components/ProductSpu.vue'),
     ProductAttribute: () => import('./components/ProductAttribute.vue'),
-    BaseUploadProductImgs: () => import('@/view/components/BaseUploadProductImgs.vue'),
+    ProductImgUrls: () => import('./components/ProductImgUrls.vue'),
     BaseCategory: () => import('@/view/components/BaseCategory.vue'),
     PropItem: () => import('@/view/components/PropItem.vue'),
     BaseTags: () => import('@/view/components/BaseTags.vue'),
@@ -141,7 +151,7 @@ export default {
       spu: '',
       content: '',
       brand: [],
-      kind: ['kind'],
+      kind: ['kind1', 'kind'],
       skuProps: [],
       spuProps: [],
       form: {
@@ -165,9 +175,10 @@ export default {
           skuProps: [],
           price: {
             basePrice: '',
-            status: 'enabled'
+            status: 'default'
           }
-        }]
+        }],
+        introduction: '<p>test123</p>'
       },
       rules: {
         title: [{
@@ -180,7 +191,7 @@ export default {
           message: 'The input cannot be empty',
           trigger: 'blur'
         }],
-        imgUrls: [{ validator: validateArr, trigger: '' }],
+        imgUrls: [{ validator: validateArr, trigger: 'blur' }],
         onum: [{ validator: validateOnum, trigger: 'change' }],
         skus: [{ validator: validateSku, trigger: 'blur' }],
         itemProps: [{ validator: validateArr, trigger: 'change' }],
@@ -191,6 +202,11 @@ export default {
           trigger: 'change'
         }],
         detail: [{
+          required: true,
+          message: 'The input cannot be empty',
+          trigger: 'change'
+        }],
+        introduction: [{
           required: true,
           message: 'The input cannot be empty',
           trigger: 'change'
@@ -211,31 +227,11 @@ export default {
     getSpu (spu) {
       this.form.itemProps = spu
     },
-    // descartes (skuArr) {
-    //   if (skuArr.length === 0) {
-    //     return []
-    //   } else if (skuArr.length === 1) {
-    //     return skuArr[0].map(v => {
-    //       return [v]
-    //     })
-    //   } else {
-    //     return [].reduce.call(skuArr, (col, set) => {
-    //       let res = []
-    //       col.forEach(c => {
-    //         set.forEach(s => {
-    //           let t = [].concat(Array.isArray(c) ? c : [c])
-    //           t.push(s)
-    //           res.push(t)
-    //         })
-    //       })
-    //       return res
-    //     })
-    //   }
-    // },
     // 保存商品信息
     submit () {
       this.$refs.form.validate(valid => {
         if (valid) {
+          this.form.skus[0].price.basePrice = this.form.skus[0].price.basePrice * 100
           this.$http.saveProduct({
             ...this.form
           }).then(data => {
@@ -297,6 +293,12 @@ export default {
         id: this.$route.params.id
       }).then(data => {
         this.getBrand()
+        data.skus[0].price = {
+          basePrice: (data.skus[0].basePrice / 100).toFixed(2),
+          status: 'enabled'
+        }
+        delete data.skus[0].basePrice
+        data.brandId = '' + data.brandId
         this.form = data
       })
     }

@@ -162,7 +162,7 @@
                     <img width="28" height="28" :src="props.item.imgUrl" alt="图"><div class="title">{{props.item.title}}</div>
                   </div>
                   <div class="tips">
-                    <Tag class="props" v-for="prop in props.item.sku.props" :key="prop.nameId">{{prop.value}}</Tag>
+                    <Tag class="props" v-for="(prop, index) in props.item.skuProps" :key="index">{{prop.value}}</Tag>
                     <Tag class="storage">{{props.item.num}}</Tag>
                   </div>
                 </div>
@@ -230,7 +230,7 @@
             </div>
             <div class="other">
               <Checkbox v-model="dropShipping" :disabled="!canEdit">Dropship from other office</Checkbox>
-              <Checkbox v-model="overSell" :disabled="!canEdit">Insufficient inventory/</Checkbox>
+              <Checkbox v-model="overSell" :disabled="!canEdit">Insufficient inventory</Checkbox>
             </div>
           </form-item>
           <form-item label="手续费">
@@ -272,9 +272,9 @@
     </card>
     <div class="buttons">
       <template v-if="(status === 'init') || (status === '')">
-        <Button type="primary" @click="saveQuotation('download')">下载</Button>
-        <Button type="primary" @click="saveQuotation('save')">保存</Button>
-        <Button type="success" @click="saveQuotation('send')">提交审核</Button>
+        <Button type="primary" @click="saveQuotation('download')" :disabled="computing" :loading="!canSubmit">下载</Button>
+        <Button type="primary" @click="saveQuotation('save')" :disabled="computing" :loading="!canSubmit">保存</Button>
+        <Button type="success" @click="saveQuotation('send')" :disabled="computing" :loading="!canSubmit">提交审核</Button>
       </template>
       <template v-if="(status === 'salesManager') || (status === 'financial')">
         <Button type="success" @click="agree">通过</Button>
@@ -491,7 +491,8 @@ export default {
       productHistory: [],
       canEdit: true,
       computing: false,
-      changedShipping: false
+      changedShipping: false,
+      canSubmit: true
     }
   },
   computed: {
@@ -499,10 +500,10 @@ export default {
       let allCost = 0
       let allFee = 0
       this.itemList.forEach(t => {
-        allCost += t.avgCost * t.amount
+        allCost += (+t.avgCost) * t.amount
       })
-      allFee = this.pay.itemFee + this.pay.fee.reduceFee + this.pay.rebateFee
-      return ((allFee - allCost) * 100 / allFee).toFixed(2) + '%'
+      allFee = (+this.pay.itemFee) + (+this.pay.fee.reduceFee) + (+this.pay.rebateFee)
+      return allFee ? (((+allFee) - (+allCost)) * 100 / (+allFee)).toFixed(2) + '%' : 0 + '%'
     }
   },
   methods: {
@@ -628,10 +629,10 @@ export default {
             title: '商品名称',
             key: 'title'
           },
-          {
-            title: 'sin',
-            key: 'sin'
-          },
+          // {
+          //   title: 'sin',
+          //   key: 'sin'
+          // },
           {
             title: '库存',
             key: 'num'
@@ -745,10 +746,10 @@ export default {
             title: '商品名称',
             key: 'title'
           },
-          {
-            title: 'sin',
-            key: 'sin'
-          },
+          // {
+          //   title: 'sin',
+          //   key: 'sin'
+          // },
           {
             title: '库存',
             key: 'num'
@@ -934,7 +935,6 @@ export default {
           shipping: shipping,
           tax: {rate: pay.taxRate},
           pay: {payType: 'offline'},
-          // pay: Object.assign({}, {payType: 'offline'}, pay),
           note: {remark: this.orderNote},
           source: 'work',
           type: 'quotation',
@@ -975,6 +975,9 @@ export default {
     saveQuotation (key) {
       if (this.validateForm()) {
         this.itemList.forEach(t => {
+          if (t.amount > t.num) {
+            this.overSell = true
+          }
           t.diyPrice = t.diyPrice * 100
           t.num = t.amount
         })
@@ -1001,27 +1004,38 @@ export default {
         if (this.id) {
           params = Object.assign({}, {id: this.id, mid: this.mid, cdate: this.cdate}, params)
         }
+        this.canSubmit = false
         if (key === 'save') {
           this.$http.saveQuotation(params).then(data => {
+            this.canSubmit = true
             this.$Notice.success({
               title: '保存询价单成功'
             })
             this.$router.push({ name: 'quotation_review_list' })
           })
         } else if (key === 'send') {
-          this.$http.sendQuotation(params).then(data => {
-            this.$Notice.success({
-              title: '提交审核成功'
+          if (this.overSell) {
+            this.$Modal.confirm({
+              title: '库存不足,是否调货?',
+              onOk: () => {
+                this.$http.sendQuotation(params).then(data => {
+                  this.canSubmit = true
+                  params.dropShipping = true
+                  this.$Notice.success({
+                    title: '提交审核成功'
+                  })
+                  this.$router.push({ name: 'quotation_review_list' })
+                })
+              },
+              onCancel: () => {
+                this.canSubmit = true
+                return false
+              }
             })
-            this.$router.push({ name: 'quotation_review_list' })
-          })
+          }
         } else if (key === 'download') {
           this.$http.saveQuotation(params).then(data => {
-            this.$Notice.success({
-              title: '保存询价单成功'
-            })
-            console.log('download')
-            // this.$router.push({ name: 'quotation_review_list' })
+            this.canSubmit = true
           })
         }
       }
@@ -1060,6 +1074,8 @@ export default {
         id: id
       }).then(data => {
         this.fromAddr = data.fromAddr
+        this.dropShipping = data.dropShipping
+        this.overSell = data.overSell
         this.supplierId = data.supplierId
         this.store = data.store
         this.poNo = data.poNo

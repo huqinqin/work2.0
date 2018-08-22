@@ -13,6 +13,7 @@
             <i-input v-model="form.shortName" type="text" placeholder="品牌首字母" ></i-input>
           </form-item>
         </i-col>
+        <Spin size="large" fix v-if="spinShow"></Spin>
       </row>
       <form-item>
         <i-button type="primary" @click="submit" :loading="loading">Submit</i-button>
@@ -29,6 +30,7 @@ export default {
   data () {
     return {
       form: {},
+      spinShow: true,
       loading: false,
       rules: {
         id: [{
@@ -62,8 +64,10 @@ export default {
   watch: {
     id (id) {
       if (id) {
+        this.spinShow = true
         this.$http.getBrand({id}).then(data => {
           this.form = data
+          this.spinShow = false
         })
       }
     }
