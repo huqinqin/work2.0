@@ -208,11 +208,11 @@ export default {
         },
         {
           title: 'First name',
-          key: 'firstName'
+          key: 'firstName1'
         },
         {
           title: 'Last name',
-          key: 'lastName'
+          key: 'lastName1'
         },
         {
           title: 'Base info',
@@ -234,7 +234,7 @@ export default {
           key: 'hasAccount'
         },
         {
-          title: 'time',
+          title: 'Create time',
           key: 'updateTime1'
         },
         {
@@ -432,6 +432,10 @@ export default {
       }).then((data) => {
         data.list.forEach((item) => {
           item.updateTime1 = this.timeFormat(item.createTime)
+          if (item.contact && item.contact.length > 0) {
+            item.firstName1 = item.contact[0].firstName
+            item.lastName1 = item.contact[0].lastName
+          }
         })
         this.installerdata = data.list
         this.total = data.total
