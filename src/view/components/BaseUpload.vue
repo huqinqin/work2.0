@@ -20,6 +20,7 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
+import upload from '~libs/upload'
 export default {
   data () {
     return {
@@ -59,14 +60,18 @@ export default {
       this.formData.key = this.policy.dir + '/' + file.name
       this.formData.Filename = file.name
       this.$nextTick(() => {
-        this.$refs.upload.post(file)
+        // this.$refs.upload.post(file)
+        upload('item-pic', file).then(url => {
+          this.$emit('startUpload', false)
+          this.$emit('getUrl', url)
+        })
         this.$emit('startUpload', true)
       })
       return false
     }
   },
   created () {
-    this.getPolicy().then(() => {
+    this.getPolicy({dir: 'product'}).then(() => {
       this.policy = this.$store.state.upload.policy
     })
   }

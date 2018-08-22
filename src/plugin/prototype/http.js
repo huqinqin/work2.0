@@ -138,7 +138,11 @@ export default {
     return axios.post('item/category/deleteSkuPropsTag', { categoryId, catePropId, id })
   },
   getPolicy () {
-    return axios.post('base/common/getPolicy')
+    return axios.post('base/common/getPolicy').then((data) => {
+      data.OSSAccessKeyId = data.accessid
+      delete data.accessid
+      return data
+    })
   },
   fetchCert (params) {
     return axios.post('base/store/cert/list', params)
