@@ -150,11 +150,11 @@ export default {
           key: 'name'
         },
         {
-          title: 'firstName',
+          title: 'First name',
           key: 'firstName'
         },
         {
-          title: 'lastName',
+          title: 'Last name',
           key: 'lastName'
         },
         {
