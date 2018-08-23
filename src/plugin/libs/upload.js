@@ -2,6 +2,7 @@
 // 1、使用xhr代替axios（当前使用）
 // 2、修改拦截器设置使拦截器拦截上传图片的请求
 import axios from 'axios'
+import md5 from 'md5'
 export default (dir, file) => {
   return axios.post('base/common/getPolicy', {dir}).then(data => {
     data.OSSAccessKeyId = data.accessid
@@ -12,8 +13,9 @@ export default (dir, file) => {
         formData.append(key, data[key])
       }
     }
-    formData.append('name', file.name)
-    formData.append('key', data.dir + '/' + file.name)
+    const fileName = `${md5(Math.random())}.${file.name.replace(/.+\./, '')}`
+    formData.append('name', fileName)
+    formData.append('key', data.dir + '/' + fileName)
     formData.append('file', file)
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
@@ -25,8 +27,8 @@ export default (dir, file) => {
         if (xhr.status < 200 || xhr.status >= 300) {
           reject(xhr.status)
         }
-        console.log(`${data.host}/${dir}/${file.name}`)
-        resolve(`${data.host}/${dir}/${file.name}`)
+        console.log(`${data.host}/${dir}/${fileName}`)
+        resolve(`${data.host}/${dir}/${fileName}`)
       }
       xhr.open('post', data.host, true)
       // xhr.withCredentials = true
