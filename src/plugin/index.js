@@ -22,11 +22,29 @@ export default {
       if (key !== './index.js') {
         const name = key.match(/([a-zA-Z0-9-]*)\.js$/i)[1]
         // `$${name}`就是$http,下面这句话也就是Vue[$http]=Vue.prototype[$http]=http.js中的所有方法，所以在调用方法的时候可以用this.$http.crmList({}).then()
+        /*
+        这就是context的函数，context(key)其中key是'./http.js'或者'./selectProducts.js',返回一个default，default中包含http.js的所有的方法。
+        function webpackContext(req) {
+            var id = webpackContextResolve(req);
+            var module = __webpack_require__(id);
+            return module;
+        }
+        function webpackContextResolve(req) {
+          var id = map[req];
+          if(!(id + 1)) { // check for number or string
+            var e = new Error('Cannot find module "' + req + '".');
+            e.code = 'MODULE_NOT_FOUND';
+            throw e;
+          }
+          return id;
+        }
+        */
         Vue[`$${name}`] = Vue.prototype[`$${name}`] = context(key).default
         console.log('prototype', key, name)
       }
     })
     const filters = require.context('./filter/', false, /\.js$/)
+    // filters(key)就是filter文件夹的所有上下文，传入key值，表示的是获取formatDate的上下文和formatPrice的上下文
     filters.keys().forEach(key => {
       if (key !== './index.js') {
         const name = key.match(/([a-zA-Z0-9-]*)\.js$/i)[1]
