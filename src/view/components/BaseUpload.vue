@@ -42,6 +42,7 @@ export default {
     handleSuccess (res, file) {
       let url = this.policy.host + '/' + this.policy.dir + '/' + file.name
       this.$emit('getUrl', url)
+      console.log(url)
     },
     handleFormatError (file) {
       this.$Notice.warning({

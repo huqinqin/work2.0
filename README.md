@@ -100,3 +100,4 @@ webpack配置文件，vue-cli3.0使用；现在使用
 ```
 设置路径别名，将src/plugin/libs映射为~libs。
 
+# work2.0

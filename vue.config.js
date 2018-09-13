@@ -7,8 +7,9 @@ const resolve = dir => {
 // 比如你打包的文件放到服务器的my-app文件夹，域名为a.com，则应改为
 // http(s)://a.com/my-app/
 const BASE_URL = '/'
-const TRAGET_URL = 'http://47.89.251.79:8882'
+// const TRAGET_URL = 'http://47.89.251.79:8882'
 // const TRAGET_URL = 'http://192.168.1.103:8882'
+const TRAGET_URL = 'http://47.89.251.79:8062'
 
 module.exports = {
   baseUrl: BASE_URL,
