@@ -1,6 +1,6 @@
 export default {
+  /* 这个方法是把http.js的所有方法添加到Vue原型和Vue的$http上，这就是我们为什么可以直接使用this.$http */
   install (Vue) {
-    debugger
     // 批量导入实例方法
     /* 可以使用 require.context() 方法来创建自己的（模块）上下文，这个方法有 3 个参数：要搜索的文件夹目录，是否还应该搜索它的子目录，以及一个匹配文件的正则表达式。 */
     // require.context（创建了）一个包含了 prototype 文件夹（不包含子目录）下面的、所有文件名以 `.js` 结尾的、能被 require 请求到的文件的上下文。
